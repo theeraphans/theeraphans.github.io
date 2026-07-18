@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Selected AI engineering case studies by Theeraphan Sukchok: computer vision, agentic AI, sales recovery, and enterprise data platforms.">
+  <meta name="description" content="Selected AI engineering case studies by Theeraphan Sukchok: computer vision, agentic AI, enterprise AI workspaces, sales recovery, and data platforms.">
   <meta name="author" content="Theeraphan Sukchok">
   <meta name="theme-color" content="#081a16">
   <title>Selected Projects | Theeraphan Sukchok</title>
@@ -19,6 +19,7 @@
       <a href="#voc">Agentic AI</a>
       <a href="#data">Data</a>
       <a href="#platform">Platform</a>
+      <a href="#hermes">Hermes</a>
     </nav>
     <a class="back-link" href="../">Back to portfolio <span aria-hidden="true">↗</span></a>
   </header>
@@ -29,7 +30,7 @@
         <p class="eyebrow"><span></span> Selected work · 2022—2026</p>
         <h1>AI systems built for <em>production</em>, not just demos.</h1>
         <div class="hero-bottom">
-          <p>Four end-to-end case studies spanning computer vision, multi-agent workflows, revenue recovery, and enterprise data infrastructure—each connected to a measurable business outcome.</p>
+          <p>Six selected systems spanning computer vision, multi-agent workflows, revenue recovery, enterprise data infrastructure, and secure AI workspaces—each built around a real business need.</p>
           <a href="#vision">Explore the work <span aria-hidden="true">↓</span></a>
         </div>
       </div>
@@ -209,6 +210,67 @@
         </div>
 
         <div class="platform-value"><article><strong>Faster</strong><span>agent development</span></article><article><strong>Safer</strong><span>production adoption</span></article><article><strong>Better</strong><span>traceability and evaluation</span></article><article><strong>Continuous</strong><span>human-controlled improvement</span></article></div>
+      </div>
+    </section>
+
+    <section class="hermes-section" id="hermes">
+      <div class="section-shell">
+        <div class="hermes-topline">
+          <p class="project-index">Side project / Enterprise AI workspace</p>
+          <span class="work-badge"><i aria-hidden="true"></i> Work in progress</span>
+        </div>
+
+        <div class="platform-heading hermes-heading">
+          <h2>Hermes Enterprise AI Workspace.</h2>
+          <p>A secure enterprise layer around Hermes Agent for governed conversations, observable tool use, persistent context, and controlled operating cost.</p>
+        </div>
+
+        <div class="hermes-showcase">
+          <div class="hermes-console" aria-label="Conceptual preview of the Hermes Enterprise Portal">
+            <div class="console-bar"><span></span><span></span><span></span><strong>HERMES / ENTERPRISE</strong></div>
+            <div class="console-body">
+              <aside><b>H</b><span class="active">New conversation</span><span>Recent chats</span><span>Agent settings</span><span>Usage</span></aside>
+              <div class="console-chat">
+                <small>ENTERPRISE ASSISTANT</small>
+                <h3>How can I help your team?</h3>
+                <div class="chat-card"><i>01</i><p><strong>Analyze a document</strong><span>Attach an image, PDF, or text file</span></p></div>
+                <div class="chat-card"><i>02</i><p><strong>Run a business workflow</strong><span>Stream reasoning and tool activity</span></p></div>
+                <div class="chat-input"><span>Ask Hermes anything…</span><b>↑</b></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hermes-brief">
+            <article><span>Why</span><p>Teams need the power of an autonomous agent without exposing credentials, losing session ownership, or operating without usage visibility.</p></article>
+            <article><span>What</span><p>A full-stack workspace that adds identity, streaming chat, tool traces, file handling, configurable personas, and cost monitoring around Hermes.</p></article>
+            <article><span>Current focus</span><p>Hardening the proof of concept into a reliable multi-user enterprise architecture with persistent memory and production-ready controls.</p></article>
+          </div>
+        </div>
+
+        <div class="hermes-architecture">
+          <div class="architecture-title"><span>System architecture</span><strong>Protected from browser to agent runtime</strong></div>
+          <div class="hermes-flow" aria-label="Hermes enterprise architecture flow">
+            <article><small>Experience</small><b>Enterprise Portal</b><span>Next.js · TypeScript</span></article>
+            <i aria-hidden="true">→</i>
+            <article class="gateway"><small>Security boundary</small><b>FastAPI BFF</b><span>Auth · ownership · SSE proxy</span></article>
+            <i aria-hidden="true">→</i>
+            <article><small>Agent runtime</small><b>Hermes Agent</b><span>Reasoning · tools · execution</span></article>
+            <i aria-hidden="true">→</i>
+            <article><small>Persistent context</small><b>Honcho Memory</b><span>Memory · retrieval · continuity</span></article>
+          </div>
+          <div class="hermes-capabilities">
+            <article><b>Identity &amp; isolation</b><span>Signed access tokens and user-owned sessions</span></article>
+            <article><b>Live execution</b><span>Streaming responses, reasoning, and tool lifecycle events</span></article>
+            <article><b>Workspace controls</b><span>Personas, attachments, conversation history, and previews</span></article>
+            <article><b>Usage visibility</b><span>Tokens, caching, API calls, and estimated model cost</span></article>
+          </div>
+        </div>
+
+        <div class="outcome-grid hermes-outcome">
+          <div><p class="mini-label">Current stage</p><div class="big-stat"><strong>POC → Platform</strong><span>actively evolving toward an enterprise-ready workspace</span></div></div>
+          <ul><li>Keeps the Hermes API credential out of the browser</li><li>Separates portal identities and conversation ownership</li><li>Makes agent behavior, tools, and cost inspectable</li></ul>
+          <div class="stack"><span>Next.js</span><span>TypeScript</span><span>FastAPI</span><span>Python</span><span>SSE</span><span>SQLite</span><span>Hermes Agent</span><span>Honcho</span></div>
+        </div>
       </div>
     </section>
 
