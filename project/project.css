@@ -54,6 +54,12 @@ a { color:inherit; }
 .architecture-title span { color:var(--green); font:700 .62rem ui-monospace,SFMono-Regular,Menlo,monospace; text-transform:uppercase; }
 .dark .architecture-title span { color:var(--lime); }
 .architecture-title strong { font-size:1.25rem; letter-spacing:-.03em; }
+.diagram { margin:0 0 30px; padding:12px; overflow:hidden; border:1px solid var(--line); background:#fff; }
+.diagram img { display:block; width:100%; height:auto; }
+.diagram figcaption { padding:11px 4px 1px; color:var(--muted); font-size:.64rem; }
+.dark .diagram { border-color:rgba(255,255,255,.16); }
+.platform-visual { margin:62px 0 0; padding:16px; }
+.platform-visual figcaption { color:var(--muted); }
 .flow { display:grid; gap:10px; }
 .five-steps { grid-template-columns:repeat(5,1fr); }
 .seven-steps { grid-template-columns:repeat(7,1fr); }
