@@ -15,11 +15,8 @@
   <header class="site-header">
     <a class="brand" href="../">TS<span>.</span> <small>Projects</small></a>
     <nav aria-label="Project navigation">
-      <a href="#vision">Vision</a>
-      <a href="#voc">Agentic AI</a>
-      <a href="#data">Data</a>
-      <a href="#platform">Platform</a>
-      <a href="#hermes">Hermes</a>
+      <a href="#production-impact">Production impact</a>
+      <a href="#independent-work">Independent work</a>
     </nav>
     <a class="back-link" href="../">Back to portfolio <span aria-hidden="true">↗</span></a>
   </header>
@@ -42,6 +39,22 @@
       </div>
     </section>
 
+    <nav class="project-jump-nav" aria-label="Jump to a project">
+      <a href="#vision" data-project-link="vision">Vision</a>
+      <a href="#voc" data-project-link="voc">VOC intelligence</a>
+      <a href="#sales" data-project-link="sales">Sales recovery</a>
+      <a href="#data" data-project-link="data">Data platform</a>
+      <a href="#platform" data-project-link="platform">Agentic platform</a>
+      <a href="#hermes" data-project-link="hermes">Hermes</a>
+    </nav>
+
+    <section class="work-group-intro production-group" id="production-impact">
+      <div class="section-shell group-intro-grid">
+        <p class="project-index">Production impact</p>
+        <div><h2>Employer systems, described without proprietary details.</h2><p>These case studies focus on the business problem, my contribution, system design, and outcomes that can be shared publicly.</p></div>
+      </div>
+    </section>
+
     <section class="project-section" id="vision">
       <div class="section-shell">
         <div class="project-index">01 / Computer vision</div>
@@ -54,6 +67,8 @@
           <article><span>Problem</span><p>Manual shop audits were time-consuming and difficult to scale across many product categories and store conditions.</p></article>
           <article><span>Solution</span><p>Developed a computer vision system using detection, classification, and similarity search to recognize products and analyze shelf placement.</p></article>
         </div>
+
+        <div class="role-block"><span>My role</span><p>Led the visual-analytics work; developed and deployed the detection, classification, and similarity-search pipeline; built Flask APIs and OpenCV post-processing; and connected AI outputs to downstream BI analysis.</p></div>
 
         <div class="architecture">
           <div class="architecture-title"><span>System flow</span><strong>Visual recognition pipeline</strong></div>
@@ -91,6 +106,8 @@
           <article><span>Solution</span><p>Built an AI-driven inquiry pipeline to classify intent and sentiment, retrieve business context, and route cases to the responsible team.</p></article>
         </div>
 
+        <div class="role-block"><span>My role</span><p>Architected and deployed the agent workflow; developed LLM-based classification for voice and text; designed Multi-RAG context retrieval and routing; and added LangFuse observability for operational analysis.</p></div>
+
         <div class="architecture glass">
           <div class="architecture-title"><span>System flow</span><strong>Inquiry intelligence pipeline</strong></div>
           <figure class="diagram">
@@ -111,7 +128,7 @@
 
         <div class="outcome-grid">
           <div><p class="mini-label">Daily scale</p><div class="big-stat"><strong>3,600+</strong><span>inquiries handled across channels</span></div></div>
-          <ul><li>Improved routing accuracy and response efficiency</li><li>Detected urgent and negative cases faster</li><li>Enabled satisfaction and inquiry-trend analysis</li></ul>
+          <ul><li>Exact production accuracy and response-time figures are confidential</li><li>Designed urgent and negative case escalation</li><li>Enabled satisfaction and inquiry-trend analysis</li></ul>
           <div class="stack"><span>LangChain</span><span>CrewAI</span><span>LangFuse</span><span>Multi-RAG</span><span>Power BI</span></div>
         </div>
       </div>
@@ -130,6 +147,8 @@
           <article><span>Solution</span><p>Developed an autonomous recovery agent to analyze transaction signals, infer recovery actions, and optimize follow-up strategies.</p></article>
         </div>
 
+        <div class="role-block"><span>My role</span><p>Built the autonomous recovery logic, including ambiguity detection, heuristic inference, lead-time analysis, and next-best-action recommendations for follow-up workflows.</p></div>
+
         <div class="architecture">
           <div class="architecture-title"><span>System flow</span><strong>Sales recovery workflow</strong></div>
           <figure class="diagram">
@@ -147,7 +166,7 @@
 
         <div class="outcome-grid">
           <div><p class="mini-label">Core value</p><div class="big-stat"><strong>Always on</strong><span>recovery opportunity monitoring</span></div></div>
-          <ul><li>Improved sales follow-up efficiency</li><li>Prioritized high-value opportunities</li><li>Reduced manual decision workload</li></ul>
+          <ul><li>Exact production revenue figures are confidential</li><li>Prioritized high-value recovery opportunities</li><li>Moved follow-up decisions into a repeatable workflow</li></ul>
           <div class="stack"><span>Heuristic inference</span><span>Lead-time analysis</span><span>Business rules</span><span>Airflow</span></div>
         </div>
       </div>
@@ -165,6 +184,8 @@
           <article><span>Problem</span><p>Business data was scattered, making reporting, BI, and AI use cases harder to scale.</p></article>
           <article><span>Solution</span><p>Built scalable data infrastructure to support centralized analytics and enterprise-wide business intelligence.</p></article>
         </div>
+
+        <div class="role-block"><span>My role</span><p>Built the enterprise data foundation from scratch using Airflow, dbt, Docker, and SQL; established centralized warehouse models; and enabled downstream Power BI and automation use cases.</p></div>
 
         <div class="architecture white-card">
           <div class="architecture-title"><span>System flow</span><strong>Data platform architecture</strong></div>
@@ -184,9 +205,16 @@
 
         <div class="outcome-grid">
           <div><p class="mini-label">Foundation</p><div class="big-stat"><strong>One platform</strong><span>for analytics, automation, and AI</span></div></div>
-          <ul><li>Enabled centralized and self-service BI</li><li>Reduced manual reporting effort</li><li>Improved enterprise data accessibility</li></ul>
+          <ul><li>Exact production adoption figures are confidential</li><li>Centralized reporting logic into reusable models</li><li>Enabled self-service BI and automation workloads</li></ul>
           <div class="stack"><span>Apache Airflow</span><span>dbt</span><span>Docker</span><span>SQL</span><span>Data Warehouse</span><span>Power BI</span></div>
         </div>
+      </div>
+    </section>
+
+    <section class="work-group-intro independent-group" id="independent-work">
+      <div class="section-shell group-intro-grid">
+        <p class="project-index">Independent engineering work</p>
+        <div><h2>Platforms I am designing and building beyond employer systems.</h2><p>These projects are active builds. Current evidence and next milestones are stated explicitly so work in progress is not presented as finished production software.</p></div>
       </div>
     </section>
 
@@ -194,6 +222,8 @@
       <div class="section-shell">
         <p class="project-index">Side project / Agentic AI platform</p>
         <div class="platform-heading"><h2>A platform to build, evaluate, and continuously improve business AI agents.</h2><p>Designed beyond prompts: workflow control, tool integration, evaluation, observability, and human review in one modular system.</p></div>
+
+        <div class="role-block platform-role"><span>My role</span><p>Designed the modular platform architecture, multi-agent runtime, workflow orchestration, business-tool boundary, evaluation loop, observability model, and human-controlled version-promotion flow.</p></div>
 
         <figure class="diagram platform-visual">
           <img src="media/agentic-ai-platform.svg" alt="Agentic AI platform architecture showing input channels, FastAPI core engine, multi-agent runtime, MCP tools, training harness, observability, infrastructure, and output actions" width="1200" height="760" loading="lazy" decoding="async">
@@ -210,6 +240,7 @@
         </div>
 
         <div class="platform-value"><article><strong>Faster</strong><span>agent development</span></article><article><strong>Safer</strong><span>production adoption</span></article><article><strong>Better</strong><span>traceability and evaluation</span></article><article><strong>Continuous</strong><span>human-controlled improvement</span></article></div>
+        <div class="evidence-note"><span>Current evidence</span><p>Architecture and workflow design are published here. Next milestone: release a focused reference implementation with tests, evaluation traces, and documented limitations.</p></div>
       </div>
     </section>
 
@@ -224,6 +255,8 @@
           <h2>Hermes Enterprise AI Workspace.</h2>
           <p>A secure enterprise layer around Hermes Agent for governed conversations, observable tool use, persistent context, and controlled operating cost.</p>
         </div>
+
+        <div class="role-block hermes-role"><span>My role</span><p>Designing and implementing the Next.js portal and FastAPI security boundary, including authentication, session ownership, SSE streaming, tool traces, attachments, configurable personas, and usage visibility.</p></div>
 
         <div class="hermes-showcase">
           <div class="hermes-console" aria-label="Conceptual preview of the Hermes Enterprise Portal">
@@ -271,6 +304,7 @@
           <ul><li>Keeps the Hermes API credential out of the browser</li><li>Separates portal identities and conversation ownership</li><li>Makes agent behavior, tools, and cost inspectable</li></ul>
           <div class="stack"><span>Next.js</span><span>TypeScript</span><span>FastAPI</span><span>Python</span><span>SSE</span><span>SQLite</span><span>Hermes Agent</span><span>Honcho</span></div>
         </div>
+        <div class="evidence-note hermes-evidence"><span>Prototype status &amp; limitations</span><p>A working portal and backend prototype exists locally. Public repository and recorded demo are not yet released. Planned hardening includes enterprise SSO, RBAC, multi-user reliability testing, and deployment documentation.</p></div>
       </div>
     </section>
 
