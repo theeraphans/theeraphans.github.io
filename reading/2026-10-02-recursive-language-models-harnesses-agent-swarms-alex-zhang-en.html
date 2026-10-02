@@ -1,0 +1,1160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>
+      Recursive Language Models: When the Harness Becomes the Architecture
+    </title>
+    <meta
+      name="description"
+      content="A detailed, critical guide to Alex Zhang's discussion of recursive language models, agent harnesses, context offloading, persistent subagents, swarms, speculative tool calling, and research taste."
+    />
+    <link rel="stylesheet" href="article-theme.css" />
+    <style>
+      .visual {
+        margin: 1.7rem 0 2rem;
+      }
+      .visual img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: #111;
+      }
+      .visual figcaption {
+        margin-top: 0.65rem;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+      .visual figcaption strong {
+        color: var(--ink);
+      }
+      .callout {
+        margin: 1.5rem 0;
+        padding: 1rem !important;
+        border-left: 3px solid var(--green) !important;
+        background: var(--surface) !important;
+      }
+      .callout.warning {
+        border-left-color: #8a6417 !important;
+      }
+      .callout p:last-child {
+        margin-bottom: 0;
+      }
+      .layer-grid,
+      .principle-grid,
+      .risk-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1px;
+        margin: 1.5rem 0;
+        background: var(--line);
+        border: 1px solid var(--line);
+      }
+      .layer-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .layer-grid > div,
+      .principle-grid > div,
+      .risk-grid > div {
+        padding: 1rem;
+        background: var(--paper);
+      }
+      .layer-grid h3,
+      .principle-grid h3,
+      .risk-grid h3 {
+        margin: 0 0 0.45rem;
+        font-size: 1.02rem;
+      }
+      .layer-grid p,
+      .principle-grid p,
+      .risk-grid p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+      .architecture {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr auto 1fr;
+        gap: 0.55rem;
+        align-items: stretch;
+        margin: 1.6rem 0;
+        padding: 1rem;
+        background: var(--surface);
+        border: 1px solid var(--line);
+      }
+      .architecture > div:not(.arrow) {
+        padding: 0.9rem;
+        background: var(--paper);
+        border: 1px solid var(--line);
+      }
+      .architecture strong,
+      .architecture small {
+        display: block;
+      }
+      .architecture small {
+        margin-top: 0.35rem;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+      .architecture .arrow {
+        align-self: center;
+        color: var(--green);
+        font-size: 1.35rem;
+      }
+      .comparison-table {
+        width: 100%;
+        min-width: 0 !important;
+        margin: 1.5rem 0;
+        table-layout: fixed;
+        border-collapse: collapse;
+      }
+      .comparison-table th,
+      .comparison-table td {
+        padding: 0.75rem 0.55rem;
+        text-align: left;
+        vertical-align: top;
+        overflow-wrap: anywhere;
+        border-bottom: 1px solid var(--line);
+      }
+      .comparison-table th {
+        font-weight: 600;
+      }
+      .chapter-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin: 1.25rem 0;
+        padding: 0;
+        border-top: 1px solid var(--line);
+        list-style: none;
+      }
+      .chapter-list li {
+        border-bottom: 1px solid var(--line);
+      }
+      .chapter-list a {
+        display: flex;
+        gap: 0.75rem;
+        min-height: 100%;
+        padding: 0.8rem 0.45rem;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      .chapter-list time {
+        flex: 0 0 4rem;
+        color: var(--green);
+        font-variant-numeric: tabular-nums;
+      }
+      @media (max-width: 850px) {
+        .layer-grid {
+          grid-template-columns: 1fr;
+        }
+        .architecture {
+          grid-template-columns: 1fr;
+        }
+        .architecture .arrow {
+          transform: rotate(90deg);
+          justify-self: center;
+        }
+      }
+      @media (max-width: 750px) {
+        .principle-grid,
+        .risk-grid,
+        .chapter-list {
+          grid-template-columns: 1fr;
+        }
+        .comparison-table {
+          font-size: 0.86rem;
+        }
+        .comparison-table thead {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip: rect(0 0 0 0);
+        }
+        .comparison-table,
+        .comparison-table tbody,
+        .comparison-table tr,
+        .comparison-table td {
+          display: block;
+          width: 100%;
+        }
+        .comparison-table tr {
+          padding: 0.55rem 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .comparison-table td {
+          display: grid;
+          grid-template-columns: 6.8rem minmax(0, 1fr);
+          gap: 0.65rem;
+          padding: 0.32rem 0.2rem;
+          border: 0;
+        }
+        .comparison-table td::before {
+          color: var(--muted);
+          font-weight: 600;
+        }
+        .comparison-table td:nth-child(1)::before {
+          content: "Dimension";
+        }
+        .comparison-table td:nth-child(2)::before {
+          content: "Ordinary agent";
+        }
+        .comparison-table td:nth-child(3)::before {
+          content: "RLM-style";
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="/reading/">Reading room</a>
+      <div class="top-actions">
+        <a
+          class="action-link"
+          href="https://www.youtube.com/watch?v=kog7mwsDqnk"
+          >Watch video</a
+        >
+      </div>
+    </nav>
+
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Agent harnesses · Recursive systems</p>
+          <h1>
+            Recursive Language Models: When the Harness Becomes the Architecture
+          </h1>
+          <p class="subtitle">
+            Alex Zhang argues that the next gains may come not only from a
+            stronger model, but from changing how models see context, express
+            computation, call copies of themselves, and coordinate search.
+          </p>
+          <div class="meta">
+            <span>1:43:24 video</span
+            ><span>Auto-generated English captions</span
+            ><span>Published October 02, 2026</span
+            ><span>Summary run: October 02, 2026 · 18:39 ICT</span>
+          </div>
+        </div>
+        <figure class="hero-card">
+          <img
+            src="2026-10-02-recursive-language-models-alex-zhang-thumbnail.webp"
+            alt="Recursive Language Models interview with Alex Zhang on Latent Space"
+          />
+          <figcaption>
+            This interview ranges from GPU kernels to RLMs, agent swarms,
+            open-ended research, speculative tool calls, and machine-native
+            reasoning. The useful thread is how structure changes what a model
+            can reliably do.
+          </figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="section-label">Executive summary</p>
+            <h2>
+              The central argument: intelligence depends on the program around
+              the model
+            </h2>
+            <p>
+              Most agent products place a language model inside a loop: give it
+              the accumulated trajectory, let it choose a tool, append the
+              result, and repeat. Zhang's criticism is not that this pattern is
+              useless. It is that the industry has converged on it so strongly
+              that different coding agents often vary more in polish, prompts,
+              and cost than in the computational structure they expose to the
+              model.
+            </p>
+            <p>
+              Recursive Language Models (RLMs) offer a sharper alternative.
+              Instead of forcing the entire input and every intermediate result
+              through one ever-growing chat history, the system keeps large
+              context in an external environment. The model writes code to
+              inspect, partition, transform, and aggregate that context. When a
+              semantic judgment is needed, the code can invoke another model
+              call on a smaller local subproblem. Recursion therefore becomes a
+              programmable operation, not merely a supervisor handing natural
+              language tasks to named agents.
+            </p>
+            <ul class="summary-list">
+              <li>
+                <strong>A harness is an algorithm, not packaging.</strong> It
+                chooses what state exists, what the model observes, what actions
+                are legal, and how partial answers become a final result.
+              </li>
+              <li>
+                <strong>Context offloading changes the scaling problem.</strong>
+                Long inputs can remain in files, variables, or a REPL while the
+                model retrieves only the pieces required for each local call.
+              </li>
+              <li>
+                <strong>Recursion can expose reusable programs.</strong> A
+                retrieval problem and an aggregation problem may share the same
+                high-level decomposition even when their surface content looks
+                unrelated.
+              </li>
+              <li>
+                <strong>More agents mostly buy more search.</strong> Without
+                strong verification, coordination, and convergence rules, a
+                swarm also scales duplication, noise, and cost.
+              </li>
+              <li>
+                <strong>Human expertise remains a powerful optimizer.</strong>
+                One domain insight can remove a vast region of unproductive
+                machine search, especially when the objective is incomplete.
+              </li>
+            </ul>
+            <div class="callout warning">
+              <strong>Evidence boundary</strong>
+              <p>
+                The video is a research interview, not an audited comparison of
+                production platforms. Claims about harness sameness, capability
+                overhang, month-long autonomous work, and future machine-native
+                languages are Zhang's hypotheses or informed opinions. RLM
+                benchmark results support a narrower claim about particular
+                long-context tasks. Product-scale reliability, security, and
+                economic advantage still require independent evaluation in the
+                target workflow.
+              </p>
+            </div>
+          </section>
+
+          <section id="layers">
+            <p class="section-label">A useful mental model</p>
+            <h2>
+              Separate model capability, harness structure, and search budget
+            </h2>
+            <p>
+              The conversation repeatedly crosses three layers that are easy to
+              conflate. A larger model may solve more local problems. A better
+              harness may decompose the same global task into easier calls. More
+              compute may explore more candidate solutions. Observing a better
+              result does not by itself tell us which layer caused the gain.
+            </p>
+            <div class="layer-grid">
+              <div>
+                <h3>Model</h3>
+                <p>
+                  Learned knowledge, reasoning behavior, code generation, tool
+                  selection, and local verification ability.
+                </p>
+              </div>
+              <div>
+                <h3>Harness</h3>
+                <p>
+                  State representation, tool API, recursion, memory, planning,
+                  context policy, retries, and aggregation logic.
+                </p>
+              </div>
+              <div>
+                <h3>Search budget</h3>
+                <p>
+                  Parallel attempts, tokens, wall-clock time, environments, and
+                  the verifier used to select or reject candidates.
+                </p>
+              </div>
+            </div>
+            <p>
+              This separation matters for platform teams. If a workflow fails
+              because the model lacks domain knowledge, another orchestration
+              layer may only hide the failure. If it fails because relevant
+              context cannot fit or be navigated, a larger model may be an
+              expensive substitute for a better state design. If success comes
+              only after thousands of parallel attempts, the result may be a
+              search achievement rather than a repeatable agent capability.
+            </p>
+          </section>
+
+          <section id="kernels">
+            <p class="section-label">From GPU Mode to KernelBench</p>
+            <h2>
+              Benchmarks need a verifier, but the verifier defines the game
+            </h2>
+            <figure class="visual">
+              <img
+                src="2026-10-02-recursive-language-models-kernelbench-hd.jpg"
+                alt="Alex Zhang discussing GPU kernels and KernelBench"
+              />
+              <figcaption>
+                <strong>Source frame, about 08:20.</strong> A GPU Mode
+                leaderboard makes the search objective concrete: preserve
+                correctness while competing on measured execution time.
+              </figcaption>
+            </figure>
+            <p>
+              Kernel generation is a useful case study because the reward looks
+              unusually concrete: preserve correctness and reduce execution
+              time. KernelBench contains 250 workloads and evaluates generated
+              kernels against PyTorch baselines. Its paper reports that, at the
+              time of publication, frontier models matched the baseline on fewer
+              than 20 percent of problems under the benchmark's fast-and-correct
+              metric. Feedback and iterative execution helped, but the task
+              remained difficult.
+            </p>
+            <p>
+              Even here, the objective is not complete. A kernel can be fast in
+              isolation but less useful inside a full model. End-to-end systems
+              may deliberately keep data in cache, fuse operations, or trade
+              local speed for less movement at the next layer. Hardware,
+              numerical tolerance, compilation cost, input shape, warm-up, and
+              stability all influence what “faster” means. A model can also
+              exploit a weak benchmark instead of discovering a generally useful
+              optimization.
+            </p>
+            <p>
+              Zhang's broader lesson is that expertise changes the search
+              distribution. A swarm can spend enormous token budgets exploring
+              candidates, while one expert can identify a constraint, data-flow
+              property, or invalid assumption that eliminates most of that
+              space. AI does not make expertise obsolete; it can make expert
+              verification the scarce resource.
+            </p>
+          </section>
+
+          <section id="taste">
+            <p class="section-label">Research taste</p>
+            <h2>
+              Academia's advantage is permission to investigate ideas that look
+              trivial
+            </h2>
+            <p>
+              The interview's most human section concerns research taste. Zhang
+              argues that academic researchers cannot usually beat industrial
+              labs by following the same obvious hill-climbing path with fewer
+              GPUs and less data. Their comparative advantage is the freedom to
+              make a strange bet before it is legible as a product.
+            </p>
+            <p>
+              RLMs, SWE-bench, ReAct, and work such as Quiet-STaR can look
+              deceptively simple after the fact. The intellectual contribution
+              is often not a complicated mechanism; it is choosing the right
+              abstraction early and showing why the field should care. A good
+              paper can define a useful problem or computational form before it
+              wins a leaderboard.
+            </p>
+            <div class="callout">
+              <strong>What “big bet” means here</strong>
+              <p>
+                It does not mean maximizing novelty language or skipping
+                evidence. It means accepting that many projects fail, while
+                reserving some work for questions that current industrial
+                incentives underexplore. The bet still needs a falsifiable
+                mechanism and disciplined experiments.
+              </p>
+            </div>
+          </section>
+
+          <section id="harness">
+            <p class="section-label">Harnesses as programs</p>
+            <h2>A tool loop silently encodes a theory of problem solving</h2>
+            <figure class="visual">
+              <img
+                src="2026-10-02-recursive-language-models-harness-hd.jpg"
+                alt="Interview discussion of coding-agent harnesses and trajectories"
+              />
+              <figcaption>
+                <strong>Source frame, about 37:30.</strong> Two different tasks
+                induce the same root trajectory after context is offloaded and
+                local semantic work is delegated programmatically.
+              </figcaption>
+            </figure>
+            <p>
+              Next-token prediction is an awkward interface for tasks that need
+              navigation, experimentation, and revision. A coding agent cannot
+              reasonably receive an entire repository and emit the perfect patch
+              in one pass. The harness turns a single predictor into an
+              iterative process by exposing search, files, shells, tests, and
+              edit operations.
+            </p>
+            <p>
+              That process is highly opinionated. It decides whether
+              observations are appended verbatim, summarized, or stored
+              externally. It decides whether tools are selected through JSON
+              calls or composed as code. It decides which errors the model sees,
+              when context is compacted, and whether parallel workers share
+              state. These choices act like an inductive bias: they make some
+              solution programs easy to express and others awkward.
+            </p>
+            <div class="principle-grid">
+              <div>
+                <h3>State is architecture</h3>
+                <p>
+                  Chat history, files, database rows, variables, and checkpoints
+                  are different computational objects, not interchangeable forms
+                  of “memory.”
+                </p>
+              </div>
+              <div>
+                <h3>Tools are a language</h3>
+                <p>
+                  A flat tool menu encourages one-call-at-a-time behavior. Code
+                  supports loops, functions, filtering, branching, concurrency,
+                  and reusable composition.
+                </p>
+              </div>
+              <div>
+                <h3>Training sees the harness</h3>
+                <p>
+                  Once models are trained on agent trajectories, the harness is
+                  part of the learning environment rather than a neutral
+                  runtime.
+                </p>
+              </div>
+              <div>
+                <h3>Evaluation must see the trace</h3>
+                <p>
+                  Final-answer accuracy cannot reveal wasted calls, hidden state
+                  loss, unsafe actions, or a verifier that selected the answer
+                  by luck.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="rlm">
+            <p class="section-label">RLM architecture</p>
+            <h2>
+              Keep the world outside the prompt; use code to decide what enters
+            </h2>
+            <figure class="visual">
+              <img
+                src="2026-10-02-recursive-language-models-rlm-hd.jpg"
+                alt="Alex Zhang explaining recursive language models and external context"
+              />
+              <figcaption>
+                <strong>Source frame, about 47:20.</strong> An RLM exposes a
+                programmatic environment where the model can inspect external
+                context and recursively call a model on selected subproblems.
+              </figcaption>
+            </figure>
+            <div
+              class="architecture"
+              role="img"
+              aria-label="Recursive language model execution architecture"
+            >
+              <div>
+                <strong>External context</strong>
+                <small
+                  >Files, long documents, variables, datasets, and durable state
+                  remain outside the model window.</small
+                >
+              </div>
+              <div class="arrow" aria-hidden="true">→</div>
+              <div>
+                <strong>Root model writes code</strong>
+                <small
+                  >Search, slice, transform, loop, branch, and launch local
+                  semantic calls.</small
+                >
+              </div>
+              <div class="arrow" aria-hidden="true">→</div>
+              <div>
+                <strong>Recursive calls + aggregation</strong>
+                <small
+                  >Subcalls solve bounded pieces; code checks, combines, and
+                  returns a final answer.</small
+                >
+              </div>
+            </div>
+            <p>
+              The official RLM paper frames a long prompt as an external
+              environment. The model can programmatically examine and decompose
+              it, then recursively invoke itself. In the reported experiments,
+              this enabled inputs up to two orders of magnitude beyond the base
+              model's context window and improved performance on four
+              long-context tasks at comparable or lower query cost. Those are
+              task-specific results, not proof that every workload benefits.
+            </p>
+            <p>
+              The most important difference from a conventional named-agent
+              graph is programmability. “Researcher,” “critic,” and “writer” are
+              organizational metaphors. An RLM instead exposes a computational
+              substrate: the root can create a loop over chunks, call the model
+              only where semantic interpretation is needed, filter results with
+              deterministic code, and recursively repeat the pattern.
+            </p>
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>Ordinary agent loop</th>
+                  <th>RLM-style runtime</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Primary state</td>
+                  <td>Growing conversational trajectory</td>
+                  <td>External environment plus selected model context</td>
+                </tr>
+                <tr>
+                  <td>Composition</td>
+                  <td>Sequential tool calls and handoffs</td>
+                  <td>
+                    Code, functions, loops, branching, and recursive calls
+                  </td>
+                </tr>
+                <tr>
+                  <td>Long input</td>
+                  <td>Stuff, retrieve, or compact into prompt</td>
+                  <td>Inspect in place and pull local slices when needed</td>
+                </tr>
+                <tr>
+                  <td>Subagent result</td>
+                  <td>Usually natural-language message</td>
+                  <td>Value returned into a program for further processing</td>
+                </tr>
+                <tr>
+                  <td>Main risk</td>
+                  <td>Trajectory bloat and brittle handoffs</td>
+                  <td>
+                    Unsafe generated code, recursion cost, and weak aggregation
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="composition">
+            <p class="section-label">Compositional generalization</p>
+            <h2>
+              Make the global problem out-of-distribution but the local calls
+              familiar
+            </h2>
+            <p>
+              Zhang's deeper hypothesis is that recursion can change what the
+              model learns. Two tasks with very different wording may reduce to
+              the same program: partition an input, ask a bounded question over
+              each part, validate local outputs, and aggregate them. If training
+              exposes that structure, the system may reuse the high-level
+              program on new domains or much longer inputs.
+            </p>
+            <p>
+              The interview describes results where strategies learned on
+              shorter tasks transferred to tasks 8 to 30 times longer, and where
+              a high-level behavior transferred across superficially different
+              math and writing problems. The claimed mechanism is
+              <em>local in-distribution reasoning</em>: the complete task may be
+              unfamiliar, but each recursive call sees a smaller problem close
+              to something the model already knows how to solve.
+            </p>
+            <div class="callout warning">
+              <strong>Do not turn this into a universal law</strong>
+              <p>
+                Decomposition helps only when the task is actually decomposable,
+                local answers preserve the information needed globally, and the
+                aggregation operation is reliable. Cross-chunk dependencies,
+                irreversible early filtering, correlated errors, and adversarial
+                inputs can all break the induction.
+              </p>
+            </div>
+          </section>
+
+          <section id="prime">
+            <p class="section-label">Prime Agent</p>
+            <h2>
+              Persistent execution turns memory into an inspectable workspace
+            </h2>
+            <figure class="visual">
+              <img
+                src="2026-10-02-recursive-language-models-prime-agent-hd.jpg"
+                alt="Discussion of Prime Agent and persistent subagents"
+              />
+              <figcaption>
+                <strong>Source frame, about 56:40.</strong> Prime Agent is
+                discussed as a practical hybrid: familiar agent trajectories, an
+                IPython environment, externalized state, compaction, and
+                recursive workers.
+              </figcaption>
+            </figure>
+            <p>
+              Prime Agent's RLM runtime documentation makes the abstraction
+              concrete. The agent works in a persistent Python REPL and can
+              invoke recursive subagents as native operations. The host runtime,
+              not the model, owns lifecycle and accounting. Variables and
+              artifacts can survive between turns, while compaction keeps the
+              conversational layer manageable.
+            </p>
+            <p>
+              Persistence is valuable because workers can communicate through
+              shared artifacts instead of re-explaining every observation in
+              natural language. It is also dangerous. A durable REPL can retain
+              stale variables, sensitive data, poisoned files, and side effects
+              from earlier steps. Production systems need isolated execution,
+              explicit scopes, quotas, audit logs, deterministic cleanup, and a
+              way to reproduce the state that produced an answer.
+            </p>
+          </section>
+
+          <section id="swarms">
+            <p class="section-label">Agent swarms</p>
+            <h2>
+              Parallelism scales exploration faster than it scales judgment
+            </h2>
+            <figure class="visual">
+              <img
+                src="2026-10-02-recursive-language-models-swarms-hd.jpg"
+                alt="Interview discussion of OpenAI and Kimi agent swarms"
+              />
+              <figcaption>
+                <strong>Source frame, about 01:05:00.</strong> OpenAI's report
+                exposes the scale directly: millions of messages and hundreds of
+                billions of output tokens across the research effort.
+              </figcaption>
+            </figure>
+            <p>
+              A swarm increases the number of hypotheses, implementations, and
+              critiques a system can generate. That is valuable when solutions
+              are sparse and a strong external verifier exists. But every extra
+              worker creates overlap, communication, scheduling, and selection
+              costs. If workers share the same model and prompt, their errors
+              may also be correlated rather than independent.
+            </p>
+            <p>
+              The video occasionally describes the OpenAI mathematics work as
+              involving “10,000 agents.” OpenAI's own Navier-Stokes article is
+              more precise: its Euler phase used nearly 100 agents; the
+              Navier-Stokes run produced about 2.7 million messages and roughly
+              130 billion output tokens over 88 hours. Across the full project,
+              OpenAI reports 4.9 million messages and 300 billion output tokens.
+              Those numbers demonstrate extraordinary search scale, but not a
+              generic recipe for economical enterprise workflows.
+            </p>
+            <p>
+              Kimi's current swarm documentation presents a more explicitly
+              organized product pattern: a commander delegates to specialist
+              workers, contexts are sharded, and the service advertises up to
+              300 agents and 4,000 tool calls. The reported speed and quality
+              improvements are vendor claims and should be tested against a
+              sequential or small-team baseline. Its coding documentation also
+              notes the important economics: every subagent consumes tokens,
+              returns only a final result to the parent context, and built-in
+              subagents do not recursively spawn more workers by default.
+            </p>
+            <div class="risk-grid">
+              <div>
+                <h3>Coordination</h3>
+                <p>
+                  Who owns which region of the search space, and how is
+                  duplicate work detected?
+                </p>
+              </div>
+              <div>
+                <h3>Verification</h3>
+                <p>
+                  Can the evaluator distinguish a correct result from persuasive
+                  consensus?
+                </p>
+              </div>
+              <div>
+                <h3>Convergence</h3>
+                <p>
+                  What stops exploration, resolves incompatible answers, and
+                  preserves minority evidence?
+                </p>
+              </div>
+              <div>
+                <h3>Economics</h3>
+                <p>
+                  Does marginal answer quality justify tokens, environments,
+                  latency, and human review?
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="open-endedness">
+            <p class="section-label">Open-ended research</p>
+            <h2>
+              Generating more ideas is easier than recognizing the hidden gem
+            </h2>
+            <figure class="visual">
+              <img
+                src="2026-10-02-recursive-language-models-open-ended-hd.jpg"
+                alt="Sakana Fugu page describing a coordinated multi-agent system"
+              />
+              <figcaption>
+                <strong>Source frame, about 01:15:00.</strong> Sakana's Fugu is
+                presented as a coordinated ecosystem of models. Coordination can
+                broaden search, but open-ended discovery still depends on what
+                the system rewards and retains.
+              </figcaption>
+            </figure>
+            <p>
+              Evolutionary and multi-agent systems can continuously propose,
+              mutate, test, and recombine ideas. This resembles open-ended
+              research only when the system also preserves interesting novelty
+              and changes direction intelligently. With a fixed benchmark, the
+              objective supplies that pressure. In science, the important result
+              may be the one that violates the current scoring rule.
+            </p>
+            <p>
+              The AI Scientist v2 from Sakana AI is a useful adjacent example.
+              Its paper reports an automated pipeline that produced three
+              workshop manuscripts. This is evidence that substantial pieces of
+              the research loop can be automated under a designed environment;
+              it is not evidence that the system independently chooses the most
+              valuable scientific questions or replaces expert peer judgment.
+            </p>
+            <p>
+              Zhang's position is pragmatic: open-ended systems still need
+              steering. The scarce capability moves from producing candidates to
+              defining worthwhile directions, designing feedback, spotting
+              anomalies, and deciding when a strange result deserves more
+              resources.
+            </p>
+          </section>
+
+          <section id="speculation">
+            <p class="section-label">Speculative tool calling</p>
+            <h2>
+              Execute predictable branches early, but never speculate
+              irreversible actions
+            </h2>
+            <figure class="visual">
+              <img
+                src="2026-10-02-recursive-language-models-speculative-tools-hd.jpg"
+                alt="Speculative programmatic tool calling diagram comparing parallel speculation with sequential execution"
+              />
+              <figcaption>
+                <strong>Source frame, about 01:23:20.</strong> Independent
+                subcalls begin while the rest of the program is still being
+                decoded, collapsing execution latency when the speculation is
+                valid.
+              </figcaption>
+            </figure>
+            <p>
+              Programmatic tool use creates a systems opportunity. If generated
+              code will eventually issue several independent retrieval calls,
+              static analysis or a runtime can launch them in parallel before
+              the model has finished narrating the entire plan. Recent work on
+              ToolSpec and real-time speculative tool calling explores this
+              family of latency optimizations.
+            </p>
+            <p>
+              The analogy to speculative decoding is tempting but incomplete. A
+              wrongly predicted token can be discarded cheaply. A wrongly
+              predicted tool call may spend money, consume rate limits, expose
+              data, modify external state, or trigger an irreversible action.
+              Speculation is safest for pure, idempotent, read-only operations
+              with bounded cost and reliable cancellation.
+            </p>
+            <div class="callout warning">
+              <strong>Production rule</strong>
+              <p>
+                Classify tools by side effect. Permit speculation only for an
+                allowlist of read operations; attach deadlines, budgets, and
+                cancellation; deduplicate identical calls; and require the
+                finalized plan before any write, purchase, message, deployment,
+                or privilege change.
+              </p>
+            </div>
+          </section>
+
+          <section id="overhang">
+            <p class="section-label">Capability overhang</p>
+            <h2>
+              Today's models may be underused, but reliability does not emerge
+              from optimism
+            </h2>
+            <p>
+              Zhang suspects current models could perform much more useful work
+              if harnesses translated their strong coding and mathematical
+              abilities into other domains. He imagines a general system that
+              can take an intern-like assignment, work for a long time, and
+              complete the straightforward parts reliably without requiring a
+              custom agent for every narrow workflow.
+            </p>
+            <p>
+              This is a valuable design target, not an established capability.
+              Long duration multiplies small failure probabilities. A system
+              that is correct on 99 percent of independent steps succeeds over
+              500 steps only about 0.66 percent of the time if one error is
+              fatal. Real workflows are not independent, but the arithmetic
+              explains why checkpoints, invariant tests, bounded retries,
+              reversible actions, and human review matter more as the horizon
+              grows.
+            </p>
+          </section>
+
+          <section id="neuralese">
+            <p class="section-label">Speculative frontier</p>
+            <h2>
+              Could machines reason in a representation better than English?
+            </h2>
+            <p>
+              The closing discussion asks whether English and today's code
+              languages constrain model reasoning. Human languages package time,
+              social relationships, causality, and categories differently. A
+              machine might prefer a representation that reveals a whole
+              relational structure at once, closer to diffusion or a functional
+              constraint system than sequential prose.
+            </p>
+            <p>
+              This is the interview's most speculative idea. An opaque internal
+              language could improve compression or computation while making
+              oversight harder. For practical systems, a useful split may be to
+              allow latent or machine-native internal operations but require
+              inspectable plans, typed tool calls, reproducible artifacts, and
+              human-readable evidence at the control boundary.
+            </p>
+          </section>
+
+          <section id="platform">
+            <p class="section-label">Platform implications</p>
+            <h2>What this means for an agentic AI platform</h2>
+            <p>
+              The strongest product lesson is to stop treating Master Agent,
+              Sub-Agent, Skill, and Tool as four prompt templates. They are
+              runtime contracts with different responsibilities. A platform for
+              business analysts should expose those contracts visually while
+              keeping execution policy explicit and testable.
+            </p>
+            <div class="principle-grid">
+              <div>
+                <h3>Master Agent: own the objective</h3>
+                <p>
+                  Hold the user goal, business constraints, completion criteria,
+                  budget, escalation policy, and final accountability. Avoid
+                  duplicating every specialist instruction here.
+                </p>
+              </div>
+              <div>
+                <h3>Sub-Agent: own a bounded context</h3>
+                <p>
+                  Define input and output schemas, accessible data, allowed
+                  skills, maximum cost, stop condition, and evidence returned to
+                  the parent.
+                </p>
+              </div>
+              <div>
+                <h3>Skill: own a reusable method</h3>
+                <p>
+                  A cognitive skill produces a typed decision or artifact. An
+                  actionable skill declares required tools, preconditions,
+                  side-effect class, confirmation rule, and rollback behavior.
+                </p>
+              </div>
+              <div>
+                <h3>Tool/MCP: own an external capability</h3>
+                <p>
+                  Publish a strict schema, authorization scope, idempotency,
+                  latency and cost expectations, error semantics, observability,
+                  and whether calls may run speculatively.
+                </p>
+              </div>
+            </div>
+            <p>
+              Business Flow Markdown should compile into this runtime rather
+              than act as a long prompt. Each step needs an owner, typed inputs
+              and outputs, evidence requirements, deterministic gates, allowed
+              side effects, retries, timeout, human checkpoint, and terminal
+              state. RLM-style execution can then be one strategy for steps that
+              need large-context decomposition; a deterministic workflow remains
+              better for stable business rules.
+            </p>
+            <p>
+              Evaluate the smallest unit that can fail. Measure routing before
+              end-to-end quality, retrieval before answer fluency, tool
+              parameters before workflow success, and aggregation before swarm
+              scale. Add recursive workers only after a single-agent baseline
+              identifies a context, decomposition, or parallel-search
+              bottleneck.
+            </p>
+          </section>
+
+          <section id="chapters">
+            <p class="section-label">Video guide</p>
+            <h2>Jump to a specific part of the conversation</h2>
+            <ul class="chapter-list">
+              <li>
+                <a href="https://www.youtube.com/watch?v=kog7mwsDqnk&t=165s"
+                  ><time>02:45</time
+                  ><span>GPU Mode, KernelBench, and AI-written kernels</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=kog7mwsDqnk&t=574s"
+                  ><time>09:34</time
+                  ><span>Human expertise versus brute-force search</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=kog7mwsDqnk&t=916s"
+                  ><time>15:16</time
+                  ><span>Research taste and taking big bets</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=kog7mwsDqnk&t=1284s"
+                  ><time>21:24</time
+                  ><span>GEV and rethinking the language model</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=kog7mwsDqnk&t=1977s"
+                  ><time>32:57</time
+                  ><span>Why coding-agent harnesses look similar</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=kog7mwsDqnk&t=2318s"
+                  ><time>38:38</time
+                  ><span>Harnesses as compositional generalizers</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=kog7mwsDqnk&t=2780s"
+                  ><time>46:20</time
+                  ><span>Recursive Language Models explained</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=kog7mwsDqnk&t=3237s"
+                  ><time>53:57</time
+                  ><span>Prime Agent and persistent subagents</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=kog7mwsDqnk&t=3742s"
+                  ><time>01:02:22</time
+                  ><span
+                    >OpenAI swarms and the future of language models</span
+                  ></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=kog7mwsDqnk&t=4162s"
+                  ><time>01:09:22</time
+                  ><span>Open-endedness and Sakana AI</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=kog7mwsDqnk&t=4668s"
+                  ><time>01:17:48</time
+                  ><span>Kimi versus OpenAI agent swarms</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=kog7mwsDqnk&t=4922s"
+                  ><time>01:22:02</time
+                  ><span>Capability overhang and speculative tools</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=kog7mwsDqnk&t=5415s"
+                  ><time>01:30:15</time
+                  ><span
+                    >Neuralese, future research, and AI for science</span
+                  ></a
+                >
+              </li>
+            </ul>
+          </section>
+
+          <section id="sources">
+            <p class="section-label">Sources and limitations</p>
+            <h2>What this article is based on</h2>
+            <ul>
+              <li>
+                <a href="https://www.youtube.com/watch?v=kog7mwsDqnk"
+                  >Latent Space interview with Alex Zhang</a
+                >, summarized from the complete auto-generated English caption
+                track. Auto-captions can mishear names and technical terms.
+              </li>
+              <li>
+                <a href="https://arxiv.org/abs/2512.24601"
+                  >Recursive Language Models</a
+                >, the primary paper for the RLM mechanism and benchmark claims.
+              </li>
+              <li>
+                <a href="https://arxiv.org/abs/2502.10517">KernelBench</a>, the
+                primary paper for the benchmark design and reported baseline
+                results.
+              </li>
+              <li>
+                <a href="https://github.com/alexzhang13/rlm"
+                  >Official RLM implementation</a
+                >
+                and
+                <a
+                  href="https://github.com/PrimeIntellect-ai/prime-agent/blob/main/packages/coding-agent/docs/rlm-runtime.md"
+                  >Prime Agent RLM runtime documentation</a
+                >
+                for current execution details and safety caveats.
+              </li>
+              <li>
+                <a href="https://openai.com/index/navier-stokes-solution/"
+                  >OpenAI's Navier-Stokes report</a
+                >
+                for the official agent, message, token, and runtime figures.
+              </li>
+              <li>
+                <a
+                  href="https://github.com/MoonshotAI/kimi-help-center/blob/master/en-US/agent/swarm.md"
+                  >Kimi swarm documentation</a
+                >
+                and
+                <a
+                  href="https://github.com/MoonshotAI/kimi-code/blob/main/docs/en/customization/agents.md"
+                  >Kimi Code subagent documentation</a
+                >. Performance claims remain vendor-reported.
+              </li>
+              <li>
+                <a href="https://pub.sakana.ai/ai-scientist-v2/paper/paper.pdf"
+                  >AI Scientist v2 paper</a
+                >
+                for the automated-research example.
+              </li>
+              <li>
+                <a href="https://arxiv.org/abs/2604.13519">ToolSpec</a> and
+                <a href="https://arxiv.org/abs/2605.13360"
+                  >real-time speculative tool calling</a
+                >
+                for adjacent latency research.
+              </li>
+            </ul>
+            <p>
+              Screenshots are explanatory frames from the source video. This
+              article synthesizes the interview with primary technical sources;
+              it is not a transcript, independent reproduction of every result,
+              or endorsement of any product claim.
+            </p>
+          </section>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <p class="section-label">On this page</p>
+          <ol>
+            <li><a href="#summary">Executive summary</a></li>
+            <li><a href="#layers">Three system layers</a></li>
+            <li><a href="#kernels">Kernels and verification</a></li>
+            <li><a href="#taste">Research taste</a></li>
+            <li><a href="#harness">Harnesses as programs</a></li>
+            <li><a href="#rlm">RLM architecture</a></li>
+            <li><a href="#composition">Compositional generalization</a></li>
+            <li><a href="#prime">Prime Agent</a></li>
+            <li><a href="#swarms">Agent swarms</a></li>
+            <li><a href="#open-endedness">Open-ended research</a></li>
+            <li><a href="#speculation">Speculative tools</a></li>
+            <li><a href="#overhang">Capability overhang</a></li>
+            <li><a href="#neuralese">Neuralese</a></li>
+            <li><a href="#platform">Platform implications</a></li>
+            <li><a href="#chapters">Video guide</a></li>
+            <li><a href="#sources">Sources</a></li>
+          </ol>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>
