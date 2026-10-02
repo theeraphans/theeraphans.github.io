@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Applied virtual-memory-style paging to KV cache and combined it with continuous batching, greatly improving serving throughput under variable request lengths.">
+  <meta name="resource-file" content="2026-09-08-pagedattention-vllm-memory-management-en.html">
+  <title>PagedAttention and vLLM · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css">
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2309.06180">Read paper</a><a class="action-link" href="/reading/">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Efficient Attention and Inference · Paper 31 of 37</p>
+        <h1>Efficient Memory Management for Large Language Model Serving with PagedAttention</h1>
+        <p class="subtitle">Applied virtual-memory-style paging to KV cache and combined it with continuous batching, greatly improving serving throughput under variable request lengths.</p>
+        <div class="meta"><span><strong>Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody Hao Yu, Joseph E. Gonzalez, Hao Zhang, Ion Stoica</strong></span><span>2023</span><span>Advanced</span><span>15 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>PagedAttention and vLLM</h2><p>UC Berkeley</p><p><strong>Prerequisites:</strong> KV caching, GPU memory allocation, virtual memory, batching, and serving metrics.</p><a href="https://arxiv.org/abs/2309.06180">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Advanced</strong></div><div class="paper-fact"><span>Place in path</span><strong>31 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>LLM servers reserve contiguous KV-cache memory for uncertain maximum sequence lengths. Variable prompts and outputs create internal waste, external fragmentation, and expensive reallocation.</p>
+<p>Poor memory utilization reduces batch size and throughput even when compute is available. Sharing prefixes or beam-search cache is also awkward with contiguous buffers.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Divide each request’s KV cache into fixed-size logical blocks and map them to physical GPU blocks through a table, analogous to operating-system virtual memory pages.</p>
+<p>PagedAttention kernels follow the mapping while continuous batching admits, pauses, and completes requests at token boundaries. Copy-on-write enables safe sharing.</p><div class="equation">Logical KV blocks map through a block table to non-contiguous physical GPU blocks.</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Allocate physical blocks only as tokens fill logical blocks. Store mappings per sequence. During attention, fetch K/V through the table. Reclaim blocks immediately when a request ends.</p>
+<p>The scheduler mixes requests with different lengths and can swap or recompute state under pressure instead of reserving worst-case contiguous regions.</p><figure class="concept-flow" aria-label="Paged KV cache">
+    <div class="flow-step"><span>Request</span><strong>Logical tokens</strong><p>Grow one sequence over time.</p></div>
+<div class="flow-step"><span>Split</span><strong>Fixed-size blocks</strong><p>Fill bounded logical pages.</p></div>
+<div class="flow-step"><span>Map</span><strong>Block table</strong><p>Resolve logical to physical.</p></div>
+<div class="flow-step"><span>Attend</span><strong>Paged kernel</strong><p>Read scattered K/V blocks.</p></div>
+<div class="flow-step"><span>Reclaim</span><strong>Free immediately</strong><p>Return blocks when finished.</p></div>
+    <figcaption>A sequence sees contiguous logical blocks while physical blocks may be scattered and shared.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>Only the final block of a sequence has internal waste, bounded by block size. Non-contiguous storage requires a custom attention kernel and metadata lookup but avoids large memory copies.</p>
+<p>Block size trades metadata and kernel efficiency against waste. Prefix sharing uses reference counts and copy-on-write when sequences diverge.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>The vLLM paper reported two-to-four-times throughput improvements over tested FasterTransformer and Orca-style systems at comparable latency, with larger gains for long and variable sequences.</p>
+<p>Serving results are workload distributions, not model-only constants. Modern baselines and kernels have evolved, so current systems require fresh benchmarking.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>PagedAttention made KV memory management a central serving abstraction and vLLM became a widely used open inference engine.</p>
+<p>It enabled richer schedulers, prefix caching, distributed serving, and standardized OpenAI-compatible model endpoints.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Benchmark time to first token, inter-token latency, throughput, queue delay, and memory under the real prompt/output distribution. Average sequence length is insufficient.</p>
+<p>Tune block size and scheduler limits together. Add admission control so a few very long requests cannot evict or starve interactive traffic.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>Paging does not shrink the logical KV cache; it allocates it more efficiently. Extremely long contexts still consume large memory, and block lookup adds kernel complexity.</p>
+<p>Throughput optimization can harm tail latency without service-level objectives. Swap or recomputation policies introduce their own latency cliffs.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>MQA/GQA reduce cache bytes per token, while PagedAttention reduces allocation waste across requests. KV compression reduces precision or retained tokens; these methods can be combined.</p><div class="article-nav"><a href="2026-09-08-speculative-decoding-faster-llm-inference-en.html">← Speculative Decoding</a><a href="2026-09-08-kv-cache-compression-optimization-h2o-kivi-snapkv-en.html">KV Cache Compression and Optimization →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>Contiguous KV reservation wastes accelerator memory.</li><li>Logical blocks decouple sequence growth from physical placement.</li><li>Continuous batching improves utilization at token boundaries.</li><li>Copy-on-write supports shared prefixes safely.</li><li>Paging manages but does not eliminate KV growth.</li><li>Serving quality requires latency and throughput together.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2309.06180">Efficient Memory Management for Large Language Model Serving with PagedAttention</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>PagedAttention is both a kernel abstraction and a serving-system design. Its gain comes from reducing fragmentation and enabling flexible scheduling.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

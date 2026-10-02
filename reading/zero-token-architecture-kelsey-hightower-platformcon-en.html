@@ -1,0 +1,1192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Zero Token Architecture - Kelsey Hightower PlatformCon 2026 Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5b6870;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f5f7f1;
+      --line: #d8dfd8;
+      --teal: #16756d;
+      --blue: #2c6381;
+      --green: #557d54;
+      --gold: #a97725;
+      --coral: #bd503f;
+      --plum: #665987;
+      --charcoal: #223039;
+      --mint: #e3f0ec;
+      --sky: #e6eef6;
+      --leaf: #e9f1df;
+      --sand: #f7edd8;
+      --rose: #f5e5df;
+      --lavender: #ece8f2;
+      --shadow: 0 24px 68px rgb(23 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(22 117 109 / 6%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(44 99 129 / 5%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--green), var(--teal), var(--blue), var(--gold), var(--coral), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure, blockquote { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td, code { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 86%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.96fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.45rem, 5.6vw, 5rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      object-fit: contain;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+      gap: 24px;
+      margin: 28px 0;
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 7%);
+    }
+
+    .quick-summary h2,
+    .section h2,
+    .sidebar h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-weight: 760;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+    }
+
+    .quick-summary p,
+    .section p,
+    .section li {
+      color: #334047;
+      font-size: 1.01rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .summary-list li::marker { color: var(--coral); }
+
+    .stats-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-width: 0;
+      min-height: 84px;
+      padding: 14px;
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.4rem;
+      line-height: 1.05;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .content {
+      display: grid;
+      gap: 22px;
+      min-width: 0;
+    }
+
+    .section {
+      padding: 34px 0;
+      background: transparent;
+      border-top: 1px solid var(--line);
+    }
+
+    .section h2 {
+      margin-bottom: 14px;
+      font-size: clamp(1.85rem, 3.2vw, 2.65rem);
+    }
+
+    .section h3 {
+      margin-top: 24px;
+      margin-bottom: 8px;
+      color: var(--charcoal);
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .section p + p { margin-top: 12px; }
+    .section ul, .section ol { display: grid; gap: 9px; margin-top: 12px; padding-left: 20px; }
+    .section li::marker { color: var(--teal); }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .toc,
+    .source-box {
+      padding: 18px;
+      background: rgb(255 254 249 / 94%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 14px 36px rgb(23 33 38 / 6%);
+    }
+
+    .toc h2,
+    .source-box h2 {
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+    }
+
+    .toc nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .toc a {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 780;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .source-box p,
+    .source-box li {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .callout {
+      margin-top: 18px;
+      padding: 18px;
+      background: var(--mint);
+      border: 1px solid rgb(22 117 109 / 18%);
+      border-left: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .callout.rose {
+      background: var(--rose);
+      border-color: rgb(189 80 63 / 18%);
+      border-left-color: var(--coral);
+    }
+
+    .callout.gold {
+      background: var(--sand);
+      border-color: rgb(169 119 37 / 22%);
+      border-left-color: var(--gold);
+    }
+
+    .quote-box {
+      margin: 18px 0 2px;
+      padding: 18px 20px;
+      color: #2a383f;
+      background: var(--sky);
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.12rem;
+      line-height: 1.58;
+    }
+
+    .tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0 10px;
+      color: var(--charcoal);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 820;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .flow li,
+    .role-card,
+    .metric-card,
+    .template-card,
+    .evidence-item {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .flow li {
+      position: relative;
+      min-height: 142px;
+      padding: 14px;
+    }
+
+    .flow li:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 48%;
+      right: -9px;
+      z-index: 1;
+      width: 14px;
+      height: 14px;
+      border-top: 2px solid var(--teal);
+      border-right: 2px solid var(--teal);
+      transform: rotate(45deg);
+      background: var(--paper);
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      margin-bottom: 10px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 50%;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .flow strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+      line-height: 1.25;
+    }
+
+    .flow span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.45;
+    }
+
+    .role-grid,
+    .metric-grid,
+    .template-grid,
+    .evidence-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .role-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .metric-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .template-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .evidence-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .role-card,
+    .metric-card,
+    .template-card,
+    .evidence-item {
+      padding: 16px;
+    }
+
+    .role-card h3,
+    .metric-card h3,
+    .template-card h3,
+    .evidence-item h3 {
+      margin: 0 0 8px;
+      color: var(--ink);
+      font-size: 1rem;
+    }
+
+    .role-card p,
+    .metric-card p,
+    .template-card p,
+    .evidence-item p {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.94rem;
+    }
+
+    th {
+      color: var(--charcoal);
+      background: var(--leaf);
+      font-weight: 900;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+    td { color: #334047; }
+
+    .code-block {
+      overflow-x: auto;
+      margin-top: 16px;
+      padding: 18px;
+      color: #edf6f6;
+      background: #16242b;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      line-height: 1.62;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+      padding-left: 20px;
+    }
+
+    footer {
+      margin-top: 28px;
+      color: var(--quiet);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 1040px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        order: -1;
+      }
+
+      .flow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .flow li::after {
+        display: none;
+      }
+
+      .role-grid,
+      .metric-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .action-link {
+        flex: 1 1 auto;
+      }
+
+      .page {
+        padding: 0 16px 54px;
+      }
+
+      .hero {
+        gap: 24px;
+        padding: 32px 0 30px;
+      }
+
+      .quick-summary {
+        padding: 20px;
+      }
+
+      .section {
+        padding: 20px 0;
+      }
+
+      .stats-panel,
+      .flow,
+      .role-grid,
+      .metric-grid,
+      .template-grid,
+      .evidence-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">Video Notes Studio</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="./index.html">Library</a>
+      <a class="action-link" href="#templates">Templates</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=A7WFt2JQ5sg">Watch source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="kicker">PlatformCon 2026 summary</p>
+        <h1 id="page-title">Zero Token Architecture</h1>
+        <p class="subtitle">
+          Kelsey Hightower's PlatformCon talk is a sharp reminder that AI agents should not become an excuse to forget
+          engineering fundamentals. Use inference to discover, understand, and generate the first version. Then export the
+          repeatable part into code, scripts, libraries, pipelines, and platforms that run without inference.
+        </p>
+        <div class="meta">
+          <span><strong>Source:</strong> Platform Engineering</span>
+          <span><strong>Speaker:</strong> Kelsey Hightower</span>
+          <span><strong>Length:</strong> 29 minutes</span>
+          <span><strong>Transcript:</strong> 5.3k words</span>
+        </div>
+      </div>
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/A7WFt2JQ5sg/hqdefault.jpg" alt="YouTube thumbnail for ZTA: Zero Token Architecture - Kelsey Hightower">
+        <figcaption>
+          The talk was part of PlatformCon 2026 LiveDay NYC. PlatformCon's session page summarizes the idea as: fundamentals still matter and burning tokens is not required.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" id="takeaways">
+      <div>
+        <h2>Executive Summary</h2>
+        <p>
+          "Zero Token Architecture" is intentionally half-joke, half-warning. It is not a new product category. It is the
+          old engineering discipline of understanding the problem, doing the hard thing once, extracting the repeatable
+          logic, and running it cheaply without asking an LLM to rethink the same decision every time.
+        </p>
+        <ul class="summary-list">
+          <li>AI agents are useful, but repeated inference loops are often just expensive CI/CD, cron, codegen, or scripts with an LLM in the middle.</li>
+          <li>The core pattern is: infer once, export the result, then run without inference until the workflow changes.</li>
+          <li>If tokens disappearing means the team cannot work, the team has become operationally dependent on a tool it does not understand.</li>
+          <li>Fundamentals still matter because people with deep understanding create the next Docker, Kubernetes, or better abstraction.</li>
+          <li>For junior engineers, the advice is not "avoid AI." It is "learn the tool, but also learn how the work was done before the tool."</li>
+        </ul>
+      </div>
+      <aside class="stats-panel" aria-label="Summary stats">
+        <div class="stat"><strong>1</strong><span>core rule</span></div>
+        <div class="stat"><strong>5</strong><span>cost traps</span></div>
+        <div class="stat"><strong>30</strong><span>minute talk</span></div>
+        <div class="stat"><strong>0</strong><span>tokens after export</span></div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <article class="content">
+        <section class="section" id="thesis">
+          <h2>1. The Central Thesis</h2>
+          <p>
+            Hightower opens by saying Zero Token Architecture "isn't a thing." That is the point. It is a playful label
+            for a serious engineering principle: do not burn intelligence repeatedly for work that has already become
+            deterministic, understood, and repeatable.
+          </p>
+          <p>
+            The talk is not anti-AI. Hightower explicitly says there is merit in agentic systems. The critique is aimed at
+            teams that replace understanding with token burn, then discover the invoice and build more AI systems to reduce
+            the cost of the first AI system.
+          </p>
+          <blockquote class="quote-box">
+            My read: this is a cost-control talk, but underneath it is really a craft talk. If the team does not understand
+            the system, AI becomes a layer that hides confusion and charges rent.
+          </blockquote>
+          <div class="tag-grid" aria-label="Core concepts">
+            <span class="tag">zero token architecture</span>
+            <span class="tag">platform engineering</span>
+            <span class="tag">agent loops</span>
+            <span class="tag">automation</span>
+            <span class="tag">fundamentals</span>
+            <span class="tag">maintainability</span>
+          </div>
+        </section>
+
+        <section class="section" id="formula">
+          <h2>2. The ZTA Formula</h2>
+          <p>
+            The one-sentence version of the talk is compact enough to become an architecture review rule:
+            infer once, export, and run without inference. Use the LLM when ambiguity and discovery matter. Once the answer
+            becomes a known repeatable procedure, convert it into normal software.
+          </p>
+          <ol class="flow" aria-label="Zero Token Architecture flow">
+            <li>
+              <span class="step-number">1</span>
+              <strong>Understand</strong>
+              <span>Do the task manually enough to know inputs, outputs, decisions, and failure modes.</span>
+            </li>
+            <li>
+              <span class="step-number">2</span>
+              <strong>Infer</strong>
+              <span>Use an agent or LLM to explore, generate, explain, or prototype the first version.</span>
+            </li>
+            <li>
+              <span class="step-number">3</span>
+              <strong>Export</strong>
+              <span>Extract the repeatable logic into a script, API, function, pipeline, library, or platform feature.</span>
+            </li>
+            <li>
+              <span class="step-number">4</span>
+              <strong>Run</strong>
+              <span>Execute on ordinary compute without asking the model to reason again.</span>
+            </li>
+            <li>
+              <span class="step-number">5</span>
+              <strong>Re-infer</strong>
+              <span>Bring AI back only when the workflow changes, edge cases appear, or new design is needed.</span>
+            </li>
+          </ol>
+          <div class="callout">
+            <p>
+              Platform implication: every agentic workflow should have an "export path." If the agent repeats the same
+              reasoning over and over, the platform should ask whether that loop should become a deterministic skill,
+              script, template, policy, or MCP tool.
+            </p>
+          </div>
+        </section>
+
+        <section class="section" id="invoice">
+          <h2>3. The Invoice Is the Teacher</h2>
+          <p>
+            Hightower jokes that the magical technology people are discovering is the invoice. The first wave of AI usage
+            often feels cheap because individuals see a flat monthly subscription. At enterprise scale, repeated agent loops,
+            background tasks, and broad token burn become visible as real cost.
+          </p>
+          <p>
+            The trap is burning tokens to save tokens: building complex agentic cost-control systems while the underlying
+            workflow could have been exported to ordinary automation. In that sense, cost is not only a finance concern.
+            It reveals architecture quality.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Symptom</th>
+                  <th>Likely Problem</th>
+                  <th>ZTA Response</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Agent repeats the same steps daily</td>
+                  <td>Known workflow is still running as inference.</td>
+                  <td>Export to script, scheduled job, workflow engine, or service.</td>
+                </tr>
+                <tr>
+                  <td>Token spend grows with every user</td>
+                  <td>No shared reusable artifact from previous runs.</td>
+                  <td>Cache decisions, generate templates, and reuse deterministic code paths.</td>
+                </tr>
+                <tr>
+                  <td>Team cannot work without unlimited tokens</td>
+                  <td>Operational dependency without understanding.</td>
+                  <td>Document, train, and rebuild the manual path before automating again.</td>
+                </tr>
+                <tr>
+                  <td>Agent loop looks like CI/CD</td>
+                  <td>The LLM may be inserted into an already deterministic process.</td>
+                  <td>Use normal CI/CD unless ambiguity requires inference.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="dependency">
+          <h2>4. Tool Dependency Is Not Skill</h2>
+          <p>
+            The talk's track saw story sets up the core human problem. Watching fifty hours of woodworking videos did not
+            make Hightower a carpenter. Likewise, asking Claude Code to deploy Kubernetes does not automatically make
+            someone a platform engineer. The artifact may exist, but the operator may not understand it.
+          </p>
+          <p>
+            He compares token dependency to other dependencies teams already know: if GitHub goes down and work stops, that
+            dependency is visible. If tokens go away and a team cannot meet demand, the team may have outsourced too much
+            of its operating knowledge.
+          </p>
+          <div class="callout rose">
+            <p>
+              The strongest warning for an agentic AI platform: do not let "agent success" hide the fact that humans no
+              longer understand the workflow they are responsible for maintaining.
+            </p>
+          </div>
+        </section>
+
+        <section class="section" id="orm">
+          <h2>5. ORM, Database Tables, and Expensive Repetition</h2>
+          <p>
+            Hightower uses database tables and ORMs as an analogy for knowledge erosion. ORMs made many developers less
+            fluent in SQL and database design. DBAs often had to repair inefficient queries after the tool generated
+            something that technically worked but operationally hurt.
+          </p>
+          <p>
+            The same pattern can happen with agents. If the agent creates a database table through inference every time,
+            the team has created an expensive table generator. A better pattern is to use inference to design the table
+            generator once, then export that generator into a tool that can be reused without inference.
+          </p>
+          <div class="role-grid">
+            <div class="role-card">
+              <h3>Bad Loop</h3>
+              <p>Ask an agent to reason through the same table, pipeline, or deployment pattern every time.</p>
+            </div>
+            <div class="role-card">
+              <h3>Better Loop</h3>
+              <p>Use an agent to create the first high-quality implementation and capture the edge cases.</p>
+            </div>
+            <div class="role-card">
+              <h3>ZTA Loop</h3>
+              <p>Turn the result into reusable code, a library, platform API, template, or policy-backed tool.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="caching">
+          <h2>6. ZTA Is Old Computing Wisdom</h2>
+          <p>
+            In the Q&A, Hightower connects ZTA to caching. When a database query is expensive and repeated, teams put the
+            answer in Redis or another cache. CPUs, storage, databases, compilers, runtimes, and language ecosystems all
+            use the same principle: spend resources up front, then reuse the result cheaply.
+          </p>
+          <p>
+            Agents do not change that logic. If generated code is useful, put it in a library. If a pipeline is useful,
+            put it in the pipeline system. If a policy is useful, put it in the policy engine. Do not pay a model to
+            regenerate the same known artifact each time.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Classic Computing Pattern</th>
+                  <th>Agentic Equivalent</th>
+                  <th>Zero-Token Export</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Cache expensive query result</td>
+                  <td>Agent repeatedly reasons over the same context.</td>
+                  <td>Cache answer, decision, or retrieved context.</td>
+                </tr>
+                <tr>
+                  <td>Compile source to binary</td>
+                  <td>Agent generates a repeated workflow.</td>
+                  <td>Compile into script, service, or workflow definition.</td>
+                </tr>
+                <tr>
+                  <td>Extract shared code into library</td>
+                  <td>Agent repeats common implementation patterns.</td>
+                  <td>Create package, template, or platform primitive.</td>
+                </tr>
+                <tr>
+                  <td>Use CI/CD for deterministic checks</td>
+                  <td>Agent watches and reruns predictable checks.</td>
+                  <td>Move checks into normal pipelines and gates.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="complexity">
+          <h2>7. AI Should Not Hide Bad Infrastructure</h2>
+          <p>
+            A key Q&A question asks whether the real problem is that systems were never made legible. Hightower agrees in
+            spirit: enterprise infrastructure often grows organically through ad hoc decisions, conference-driven tool
+            adoption, employee churn, and unclear ownership.
+          </p>
+          <p>
+            AI is good at making sense of unstructured mess, especially now that infrastructure is increasingly expressed
+            as data through Kubernetes manifests, Terraform, and other declarative systems. But that does not mean AI is a
+            substitute for simplicity. If a company has three servers and a simple business, Kubernetes may be the wrong
+            answer even if an agent can install it.
+          </p>
+          <blockquote class="quote-box">
+            The hidden message for platform teams: context helps agents, but it may help humans even more. Give people the
+            system map before asking an agent to operate the system.
+          </blockquote>
+        </section>
+
+        <section class="section" id="blueprints">
+          <h2>8. Blueprints Beat Blind Automation</h2>
+          <p>
+            Hightower compares software to construction. A construction crew entering a building asks for diagrams because
+            electrical, plumbing, structure, and other trades must coordinate. Software teams too often bolt systems
+            together without updated architecture diagrams, decision records, or shared understanding.
+          </p>
+          <p>
+            The lesson for platform engineering is direct: before automating with agents, make the system legible. Draw the
+            data flow. Document ownership. Show where decisions came from. Explain how components fail. Once that context
+            exists, humans and agents can both operate better.
+          </p>
+          <div class="evidence-grid">
+            <div class="evidence-item">
+              <h3>System Map</h3>
+              <p>Services, data stores, queues, dependencies, APIs, and deployment boundaries.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Decision History</h3>
+              <p>Why Kafka, Kubernetes, Terraform, or another platform component entered the system.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Failure Model</h3>
+              <p>Known outages, bottlenecks, manual runbooks, retries, and operational limits.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Export Path</h3>
+              <p>Where repeated agent work becomes a durable tool, policy, template, or platform feature.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="maintenance">
+          <h2>9. Maintainability Is the Real Productivity Test</h2>
+          <p>
+            The talk questions the productivity narrative. If AI lets a team produce ten times more work, where does that
+            productivity show up? Does the customer-facing product improve? Does deployment speed improve? Or are teams
+            filling tickets faster and generating tests no one values?
+          </p>
+          <p>
+            The maintainability lens is stronger than raw output. A system built quickly but not understood may become a
+            future rewrite. This is similar to contractor-built systems: if the organization cannot maintain what was
+            created after the contractor leaves, it often rewrites the system. Agent-built software can create the same
+            pattern at higher speed.
+          </p>
+          <div class="callout gold">
+            <p>
+              Practical metric: do not only measure how quickly the agent built the thing. Measure whether the team can
+              explain it, operate it, debug it, and safely change it three months later.
+            </p>
+          </div>
+        </section>
+
+        <section class="section" id="innovation">
+          <h2>10. Fundamentals Create the Next Abstraction</h2>
+          <p>
+            One of the talk's strongest arguments is about innovation. Docker felt obvious after it appeared because many
+            operators had lived the pain of packaging and running software for years. That pain plus deep understanding
+            produced a better abstraction.
+          </p>
+          <p>
+            If engineers stop understanding the substrate and only guide agents over existing tools, the chance of new
+            abstractions may go down. Models are trained on the past. They can recombine the past impressively, but the next
+            platform breakthrough often comes from humans who intimately understand what hurts and decide to change the
+            abstraction.
+          </p>
+          <div class="role-grid">
+            <div class="role-card">
+              <h3>Past Pain</h3>
+              <p>RPMs, Debian packages, init scripts, systemd, Chef, Ansible, hand-rolled deployments.</p>
+            </div>
+            <div class="role-card">
+              <h3>New Abstraction</h3>
+              <p>Docker normalized packaging and runtime behavior into a simpler operational object.</p>
+            </div>
+            <div class="role-card">
+              <h3>Future Risk</h3>
+              <p>If everyone only prompts agents, fewer people may understand enough to create the next substrate.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="junior">
+          <h2>11. Advice for Junior Engineers</h2>
+          <p>
+            The final Q&A asks how juniors can gain this kind of judgment if they have not done the manual work before.
+            Hightower's answer is balanced: absolutely learn the new tools, but become a historian. Learn how people did
+            the work before the tool appeared.
+          </p>
+          <p>
+            His Kubernetes example is instructive. When Kubernetes appeared, he related it back to things he had done by
+            hand: starting processes, configuring servers, networking, packaging, logs, and operations. Kubernetes was new,
+            but the fundamentals underneath were familiar. That is the learning path: use the tool, then ask what it is
+            doing on the machine.
+          </p>
+          <ul>
+            <li>Use AI tools, but do not let them become your only path to completion.</li>
+            <li>Do the task manually at least once when the task is core to your role.</li>
+            <li>Study the older tools and abstractions the new tool replaced.</li>
+            <li>Ask what inputs go in, what outputs come out, what state changes, and what fails.</li>
+            <li>Once you understand the loop, outsourcing it to automation is healthy.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="platform">
+          <h2>12. What This Means for Your Agentic AI Platform</h2>
+          <p>
+            For your BA-side and multi-agent platform work, this talk is a strong argument for a workflow maturity model.
+            Not every capability should stay agentic forever. Some workflows should start as agent-assisted discovery, then
+            graduate into deterministic skills, tools, policies, or platform primitives.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Platform Stage</th>
+                  <th>How AI Helps</th>
+                  <th>Export Target</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Discovery</td>
+                  <td>Agent investigates unknown process, gathers context, proposes steps.</td>
+                  <td>Business Flow Markdown, decision log, system map.</td>
+                </tr>
+                <tr>
+                  <td>Prototype</td>
+                  <td>Agent generates candidate script, tool, validator, or SOP.</td>
+                  <td>Reviewed artifact with examples and edge cases.</td>
+                </tr>
+                <tr>
+                  <td>Stabilize</td>
+                  <td>Agent helps refine tests, runbooks, schemas, and failure handling.</td>
+                  <td>Skill spec, MCP tool, policy, deterministic validator.</td>
+                </tr>
+                <tr>
+                  <td>Operate</td>
+                  <td>Agent handles exceptions, new cases, and improvement suggestions.</td>
+                  <td>Normal automation for the happy path; agent only for ambiguity.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout">
+            <p>
+              Design rule for your platform: every Actionable Skill should declare whether it is "agentic runtime" or
+              "zero-token runtime." If it is repeated and deterministic, it should be compiled into a tool path.
+            </p>
+          </div>
+        </section>
+
+        <section class="section" id="templates">
+          <h2>13. Templates: Zero Token Review</h2>
+          <p>
+            Use this checklist when deciding whether a workflow should remain an agent loop or be exported into normal
+            automation.
+          </p>
+          <div class="template-grid">
+            <div class="template-card">
+              <h3>ZTA Review</h3>
+              <p>For architecture reviews, cost reviews, and agent workflow graduation.</p>
+            </div>
+            <div class="template-card">
+              <h3>Export Contract</h3>
+              <p>For converting repeatable agent work into deterministic tools or skills.</p>
+            </div>
+          </div>
+          <pre class="code-block"><code># Zero Token Architecture Review
+
+## Workflow
+- Name:
+- Owner:
+- Business goal:
+- Current agent loop:
+- Average runs per week:
+- Average token cost:
+
+## Is Inference Still Needed?
+- What is ambiguous?
+- What changes between runs?
+- What requires judgment?
+- What can be deterministic?
+
+## Understanding Check
+- Can the team explain the workflow manually?
+- Inputs:
+- Outputs:
+- State changes:
+- Failure modes:
+- Operational owner:
+
+## Export Decision
+- Keep agentic because:
+- Export because:
+- Export target:
+- Human review needed:
+- Re-infer only when:</code></pre>
+          <pre class="code-block"><code># Export Contract
+
+artifact:
+type: script | library | pipeline | MCP tool | policy | template | validator
+owner:
+version:
+
+## Inputs
+- required:
+- optional:
+- source systems:
+
+## Behavior
+- deterministic steps:
+- allowed side effects:
+- denied actions:
+- idempotency rule:
+
+## Verification
+- tests:
+- logs:
+- audit evidence:
+- rollback:
+
+## Agent Boundary
+- agent may call this when:
+- agent must not call this when:
+- escalate when:
+- re-generate only if:</code></pre>
+        </section>
+
+        <section class="section" id="sources">
+          <h2>14. Sources and Confidence</h2>
+          <p>
+            This page is based on the English YouTube transcript, source metadata, and the official PlatformCon session
+            page. The talk is paraphrased rather than quoted at length.
+          </p>
+          <ul class="source-list">
+            <li><a href="https://www.youtube.com/watch?v=A7WFt2JQ5sg">ZTA: Zero Token Architecture - Kelsey Hightower | PlatformCon 2026</a> - Platform Engineering on YouTube.</li>
+            <li><a href="https://platformcon.com/sessions/zta-zero-token-architecture-nyc">ZTA: Zero Token Architecture</a> - PlatformCon 2026 session page.</li>
+            <li>Video metadata fetched July 19, 2026. Transcript length: 867 rows, about 5,255 words.</li>
+          </ul>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="toc">
+          <h2>Read Map</h2>
+          <nav>
+            <a href="#takeaways">Executive summary</a>
+            <a href="#thesis">Central thesis</a>
+            <a href="#formula">ZTA formula</a>
+            <a href="#invoice">Invoice lesson</a>
+            <a href="#dependency">Tool dependency</a>
+            <a href="#orm">ORM example</a>
+            <a href="#caching">Caching</a>
+            <a href="#complexity">Bad infrastructure</a>
+            <a href="#blueprints">Blueprints</a>
+            <a href="#maintenance">Maintainability</a>
+            <a href="#innovation">Innovation</a>
+            <a href="#junior">Junior engineers</a>
+            <a href="#platform">Platform takeaways</a>
+            <a href="#templates">Templates</a>
+          </nav>
+        </div>
+        <div class="source-box">
+          <h2>Best Use</h2>
+          <p>
+            Use this as a cost and architecture review lens for agent loops, Actionable Skills, MCP tools, CI/CD automation,
+            and platform primitives.
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      Generated as a blog-style study note for the local Video Notes Studio resource library.
+    </footer>
+  </main>
+</body>
+</html>

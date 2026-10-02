@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Added head-specific linear distance penalties directly to attention scores, enabling models trained on shorter sequences to extrapolate to longer inputs.">
+  <meta name="resource-file" content="2026-09-08-alibi-attention-linear-biases-long-context-en.html">
+  <title>ALiBi · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css">
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2108.12409">Read paper</a><a class="action-link" href="/reading/">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Transformer Foundations · Paper 6 of 37</p>
+        <h1>Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation</h1>
+        <p class="subtitle">Added head-specific linear distance penalties directly to attention scores, enabling models trained on shorter sequences to extrapolate to longer inputs.</p>
+        <div class="meta"><span><strong>Ofir Press, Noah A. Smith, Mike Lewis</strong></span><span>2021</span><span>Intermediate</span><span>10 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>ALiBi</h2><p>University of Washington and Allen Institute for AI</p><p><strong>Prerequisites:</strong> Attention logits, causal masking, and sequence-length generalization.</p><a href="https://arxiv.org/abs/2108.12409">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Intermediate</strong></div><div class="paper-fact"><span>Place in path</span><strong>6 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Learned absolute positions cannot address unseen indices, and sinusoidal or relative methods do not automatically preserve quality when inference sequences exceed training length. Training at the maximum deployment length wastes compute.</p>
+<p>The paper looks for a position method that lets a model train on shorter subsequences and still handle longer ones without adding embeddings to token states.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Subtract a distance-proportional penalty from each causal attention logit. Every head receives a fixed slope, so some heads prefer very local evidence while others decay more slowly across distance.</p>
+<p>Because the bias formula can be evaluated at any index, there is no finite position table. Length extrapolation becomes a property of the score rule.</p><div class="equation">score(i, j, h) = qᵢᵀkⱼ + mₕ(j − i), for j ≤ i</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Compute ordinary query-key logits. Build the causal distance matrix. Multiply distance by a predefined head slope and add the negative bias before softmax.</p>
+<p>Steeper heads concentrate on recent context; shallow heads can attend farther back. The values and token embeddings remain unchanged, and no position parameters are learned.</p><figure class="concept-flow" aria-label="ALiBi score construction">
+    <div class="flow-step"><span>01</span><strong>Content score</strong><p>Compute query-key similarity.</p></div>
+<div class="flow-step"><span>02</span><strong>Causal distance</strong><p>Measure how far each key is behind.</p></div>
+<div class="flow-step"><span>03</span><strong>Head slope</strong><p>Choose a fixed decay rate per head.</p></div>
+<div class="flow-step"><span>04</span><strong>Add penalty</strong><p>Reduce distant logits before softmax.</p></div>
+<div class="flow-step"><span>05</span><strong>Aggregate</strong><p>Mix values with biased weights.</p></div>
+    <figcaption>Content similarity remains, but increasing causal distance receives a head-specific penalty.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>The bias is linear in relative distance and head-specific. The geometric slope schedule spreads recency scales across heads. Implementation can fuse the bias with causal masking and attention kernels.</p>
+<p>ALiBi does not reduce the number of score entries. It can improve the cost of training by allowing shorter sequences, but inference on a long sequence still pays dense attention compute and cache memory.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>The paper reported that models trained on length 1024 could match sinusoidal models trained on 2048 while evaluating at 2048, and showed extrapolation to substantially longer sequences in language modeling.</p>
+<p>Results depend on architecture, data, and evaluation. Later long-context models often prefer RoPE variants, showing that extrapolation quality is not settled by one benchmark.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>ALiBi demonstrated that a minimal inductive bias can outperform more elaborate positional representations for length extrapolation. It remains attractive in models that prioritize implementation simplicity and strong recency behavior.</p>
+<p>The work sharpened the distinction between supporting long index values and actually using distant evidence effectively.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Use the exact slope construction expected by the checkpoint; changing head order or count changes behavior. Verify fused kernels include the bias and preserve causal masking.</p>
+<p>Measure both perplexity and retrieval/task behavior at increasing distances. A model may remain numerically stable on long input while mostly ignoring important early tokens.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>The linear penalty imposes monotonic recency and may suppress distant dependencies. It supplies no periodic or content-adaptive position structure and does not solve attention complexity.</p>
+<p>Extrapolation from shorter training can degrade on tasks that require precise absolute location or long-distance retrieval. Context capability depends on data and training distribution as well as position math.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>RoPE rotates representations and ALiBi biases scores; comparing them reveals different position priors. FlashAttention later addresses the IO cost of computing dense attention regardless of positional method.</p><div class="article-nav"><a href="2026-09-08-rope-rotary-position-embedding-roformer-en.html">← RoPE</a><a href="2026-09-08-multi-query-attention-fast-transformer-decoding-en.html">Multi-Query Attention →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>ALiBi modifies attention scores instead of token embeddings.</li><li>Fixed slopes create several recency scales across heads.</li><li>The formula extends to unseen positions without a table.</li><li>Training on shorter sequences can reduce cost.</li><li>Long index support is not the same as long-range reasoning.</li><li>Dense attention complexity remains unchanged.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2108.12409">Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>ALiBi is a bias over distance rather than a position embedding. Its appeal is simplicity; its slope schedule also encodes a strong recency prior.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

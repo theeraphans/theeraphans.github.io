@@ -1,0 +1,1051 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Choosing the Right Multi-Agent Architecture - LangChain Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5b6870;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f5f7f1;
+      --line: #d8dfd8;
+      --teal: #1b756d;
+      --blue: #2c6381;
+      --green: #557d54;
+      --gold: #a97725;
+      --coral: #bd503f;
+      --plum: #665987;
+      --mint: #e3f0ec;
+      --sky: #e6eef6;
+      --sand: #f7edd8;
+      --rose: #f5e5df;
+      --lavender: #ece8f2;
+      --shadow: 0 24px 68px rgb(23 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgb(255 255 255 / 92%), rgb(245 247 241 / 96%)),
+        var(--canvas);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--green), var(--gold), var(--coral), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td, code { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 86%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.45rem, 5.7vw, 5.05rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 860px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: #e8ede7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+      gap: 24px;
+      margin: 28px 0;
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 7%);
+    }
+
+    .quick-summary h2,
+    .section h2,
+    .sidebar h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-weight: 760;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+    }
+
+    .quick-summary p,
+    .section p,
+    .section li {
+      color: #334047;
+      font-size: 1.01rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-height: 96px;
+      padding: 16px;
+      background: var(--mint);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat:nth-child(2) { background: var(--sky); }
+    .stat:nth-child(3) { background: var(--sand); }
+    .stat strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.38rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 760;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 290px minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 16px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .sidebar-block,
+    .toc {
+      padding: 20px;
+      background: rgb(255 255 255 / 88%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .sidebar h2 {
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+    }
+
+    .glance {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: grid;
+      gap: 3px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .glance li:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .glance span {
+      color: var(--quiet);
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .glance strong {
+      color: var(--ink);
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .toc {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+
+    .toc a {
+      padding: 8px 0;
+      color: var(--muted);
+      border-top: 1px solid rgb(217 223 216 / 78%);
+      font-size: 0.92rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .content {
+      display: grid;
+      gap: 22px;
+    }
+
+    .section {
+      padding: 30px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .label {
+      display: inline-flex;
+      margin-bottom: 12px;
+      color: var(--coral);
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .section h2 {
+      margin-bottom: 14px;
+      font-size: clamp(1.7rem, 3vw, 2.45rem);
+    }
+
+    .section h3 {
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+      line-height: 1.25;
+    }
+
+    .lead {
+      color: #26333a !important;
+      font-size: clamp(1.06rem, 1.5vw, 1.2rem) !important;
+    }
+
+    .section p + p,
+    .section p + .grid,
+    .section p + .flow,
+    .section p + .matrix,
+    .section p + .checklist,
+    .section .grid + p {
+      margin-top: 16px;
+    }
+
+    .quote-box {
+      margin-top: 18px;
+      padding: 18px;
+      color: #243139;
+      background: var(--sand);
+      border-left: 5px solid var(--gold);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.16rem;
+      line-height: 1.55;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .mint { background: var(--mint); }
+    .sky { background: var(--sky); }
+    .sand { background: var(--sand); }
+    .rose { background: var(--rose); }
+    .lavender { background: var(--lavender); }
+
+    .pill {
+      display: inline-flex;
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 12px;
+      padding: 5px 9px;
+      color: #fff;
+      background: var(--blue);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pill.teal { background: var(--teal); }
+    .pill.green { background: var(--green); }
+    .pill.gold { background: var(--gold); }
+    .pill.coral { background: var(--coral); }
+    .pill.plum { background: var(--plum); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .flow-step {
+      min-height: 156px;
+      padding: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .flow-step span {
+      display: block;
+      color: var(--quiet);
+      font-size: 0.73rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .flow-step strong {
+      display: block;
+      margin-top: 8px;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+
+    .flow-step p,
+    .card p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.58;
+    }
+
+    .matrix {
+      width: 100%;
+      margin-top: 18px;
+      border-collapse: collapse;
+      table-layout: fixed;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .matrix th,
+    .matrix td {
+      padding: 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+    }
+
+    .matrix th {
+      color: var(--ink);
+      background: var(--mint);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .matrix td {
+      color: #334047;
+      background: #fff;
+      font-size: 0.94rem;
+    }
+
+    .matrix tr:last-child td { border-bottom: 0; }
+    .matrix th:last-child,
+    .matrix td:last-child { border-right: 0; }
+
+    .score {
+      display: inline-flex;
+      width: max-content;
+      max-width: 100%;
+      padding: 4px 8px;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--teal);
+      font-size: 0.76rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .score.mid { background: var(--gold); }
+    .score.low { background: var(--coral); }
+
+    .checklist {
+      display: grid;
+      gap: 11px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .mini-spec {
+      margin-top: 18px;
+      padding: 18px;
+      overflow-x: auto;
+      color: #eef7f3;
+      background: #183039;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      line-height: 1.6;
+      white-space: pre;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+      padding-left: 20px;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .flow,
+      .three,
+      .four {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .page {
+        padding-inline: 18px;
+      }
+
+      .hero {
+        gap: 26px;
+        padding-top: 36px;
+      }
+
+      h1 { font-size: clamp(2.2rem, 12vw, 3.15rem); }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .sidebar,
+      .two,
+      .three,
+      .four,
+      .flow,
+      .stats,
+      .toc {
+        grid-template-columns: 1fr;
+      }
+
+      .matrix {
+        table-layout: fixed;
+      }
+
+      .matrix th,
+      .matrix td {
+        padding: 10px;
+      }
+
+      .mini-spec { white-space: pre-wrap; }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/reading/">Reading room</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#thesis">Thesis</a>
+      <a class="action-link" href="#criteria">Criteria</a>
+      <a class="action-link" href="#patterns">Patterns</a>
+      <a class="action-link" href="#matrix">Matrix</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=fqvbxkgU6vE">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">LangChain Summary - Multi-Agent Architecture</span>
+        <h1>Choosing the Right Multi-Agent Architecture</h1>
+        <p class="subtitle">
+          A decision guide from LangChain's short walkthrough on when to stay with one agent and when to choose supervisor,
+          handoff, skills, or router-style multi-agent patterns.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> Choosing the Right Multi-Agent Architecture</span>
+          <span><strong>Channel:</strong> LangChain</span>
+          <span><strong>Transcript:</strong> English captions, 167 rows</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/fqvbxkgU6vE/hqdefault.jpg" alt="Video thumbnail for LangChain video about choosing multi-agent architecture">
+        <figcaption>
+          The talk's strongest advice is to start simple: many agentic tasks are best solved by a single agent with well-designed tools.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          LangChain presents multi-agent architecture as a tradeoff problem, not a default design choice. The first question is
+          whether a single agent with good tools is enough. If the task becomes complex, choose a pattern based on four criteria:
+          distributed development, parallelization, multihop conversational support, and direct user interaction.
+        </p>
+        <ul class="summary-list">
+          <li><strong>Supervisor/sub-agents:</strong> strong for distributed development, parallel tool calls, and orchestrated multihop work, but weak for direct user-to-sub-agent interaction.</li>
+          <li><strong>Handoffs:</strong> strongest when users need to move between specialized agents across a conversation.</li>
+          <li><strong>Skills and routers:</strong> useful alternatives when you need progressive disclosure or parallel routing without full agent-to-agent handoff behavior.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>6m</strong><span>runtime</span></div>
+        <div class="stat"><strong>1.0k</strong><span>caption words</span></div>
+        <div class="stat"><strong>4</strong><span>architecture patterns</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Main lens</span><strong>Architecture selection</strong></li>
+            <li><span>Default move</span><strong>Start with one agent</strong></li>
+            <li><span>Best artifact</span><strong>Decision matrix</strong></li>
+            <li><span>Platform use</span><strong>Pattern picker for BA-authored flows</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#thesis">Core Thesis</a>
+          <a href="#criteria">Selection Criteria</a>
+          <a href="#supervisor">Supervisor Pattern</a>
+          <a href="#handoffs">Handoffs Pattern</a>
+          <a href="#skills">Skills Pattern</a>
+          <a href="#router">Router Pattern</a>
+          <a href="#matrix">Decision Matrix</a>
+          <a href="#platform">Platform Takeaways</a>
+          <a href="#templates">Flow Markdown</a>
+          <a href="#sources">Sources</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="thesis">
+          <span class="label">Core Thesis</span>
+          <h2>Multi-agent architecture is something you earn through complexity.</h2>
+          <p class="lead">
+            Sydney from LangChain opens with a caution: you may not need a multi-agent pattern. Many tasks are better handled by
+            one capable agent with well-designed tools. Multi-agent design becomes useful when complexity rises enough that
+            decomposition, ownership boundaries, parallel execution, or conversational handoff become important.
+          </p>
+          <p>
+            This is a healthy engineering framing. The question is not "Which multi-agent framework is coolest?" The question is
+            "Which coordination structure matches the work?" That makes the architecture choice easier to explain to business
+            analysts, product owners, and platform teams.
+          </p>
+          <div class="quote-box">
+            For a platform, the first workflow question should be: can this be one agent plus tools, or does the business process truly need multiple agent roles?
+          </div>
+        </section>
+
+        <section class="section" id="criteria">
+          <span class="label">Selection Criteria</span>
+          <h2>LangChain scores architectures across four practical dimensions.</h2>
+          <p class="lead">
+            The talk uses four criteria to compare patterns. They are useful because they separate organizational scaling from
+            runtime behavior. A pattern can be great for distributed team ownership but weak for direct user interaction, or great
+            for parallel work but poor for multihop conversations.
+          </p>
+          <div class="grid four">
+            <article class="card mint">
+              <span class="pill teal">Criterion 1</span>
+              <h3>Distributed development</h3>
+              <p>Can different teams maintain agents, components, skills, or domains independently?</p>
+            </article>
+            <article class="card sky">
+              <span class="pill">Criterion 2</span>
+              <h3>Parallelization</h3>
+              <p>Can the system invoke multiple agents or specialist capabilities at the same time?</p>
+            </article>
+            <article class="card sand">
+              <span class="pill gold">Criterion 3</span>
+              <h3>Multihop support</h3>
+              <p>Can the architecture call multiple specialists in series while carrying forward context?</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Criterion 4</span>
+              <h3>Direct user interaction</h3>
+              <p>Can a specialist agent talk directly with the user when the conversation requires it?</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="supervisor">
+          <span class="label">Pattern 1</span>
+          <h2>Supervisor/sub-agents treat specialist agents as tools controlled by a main agent.</h2>
+          <p class="lead">
+            The first pattern is sub-agents, also called the supervisor pattern. A main supervisor agent coordinates specialist
+            sub-agents as tools. All message routing passes through the supervisor, which decides when and how to invoke each
+            sub-agent.
+          </p>
+          <p>
+            This is strong when multiple teams own different specialists or tools. It also works well with parallel tool calling:
+            the supervisor can invoke multiple sub-agents in parallel. Multihop work is manageable because the supervisor can run
+            multiple model-tool cycles. The weakness is direct user interaction: users do not naturally converse with each sub-agent.
+          </p>
+          <div class="flow" aria-label="Supervisor pattern flow">
+            <div class="flow-step">
+              <span>User</span>
+              <strong>Request</strong>
+              <p>User sends a goal to the main supervisor.</p>
+            </div>
+            <div class="flow-step">
+              <span>Main</span>
+              <strong>Supervisor</strong>
+              <p>Classifies the task, decides specialists, and controls routing.</p>
+            </div>
+            <div class="flow-step">
+              <span>Tool</span>
+              <strong>Sub-agent A</strong>
+              <p>Runs focused work as a callable capability.</p>
+            </div>
+            <div class="flow-step">
+              <span>Tool</span>
+              <strong>Sub-agent B</strong>
+              <p>Can run in parallel or in a later cycle.</p>
+            </div>
+            <div class="flow-step">
+              <span>Output</span>
+              <strong>Final answer</strong>
+              <p>Supervisor synthesizes and responds to the user.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="handoffs">
+          <span class="label">Pattern 2</span>
+          <h2>Handoffs let agents transfer control to one another during a conversation.</h2>
+          <p class="lead">
+            In the handoffs pattern, the entrypoint agent can hand control to another specialist agent, and agents can hand off to
+            each other. Any of the agents may eventually generate the final response. This is less centralized than the supervisor
+            pattern.
+          </p>
+          <p>
+            The tradeoff is ownership and coordination. It is harder to develop agents independently when each one needs to know
+            how to hand off to others. It is also not ideal for parallelization. But it is excellent when the user needs a multihop
+            conversation and direct interaction with whichever specialist is currently responsible.
+          </p>
+          <div class="grid two">
+            <article class="card lavender">
+              <span class="pill plum">Best fit</span>
+              <h3>User-facing specialist transitions</h3>
+              <p>Use handoffs when a conversation should visibly move between specialized agents, such as support, billing, technical triage, and escalation.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Watch out</span>
+              <h3>Coupling between agents</h3>
+              <p>Agents need clear handoff contracts, shared state rules, and failure behavior, otherwise the conversation can become brittle.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="skills">
+          <span class="label">Pattern 3</span>
+          <h2>Skills are a quasi multi-agent pattern built around progressive disclosure.</h2>
+          <p class="lead">
+            LangChain describes skills as specialized prompts and knowledge loaded on demand. One core agent stays in control,
+            but it can load relevant skill context when needed. This is progressive disclosure: the system avoids loading every
+            instruction, domain rule, and knowledge file up front.
+          </p>
+          <p>
+            Skills score well for distributed development because different teams can maintain different skills. They also support
+            multihop workflows and direct user interaction because there is still one main conversational agent. Parallelization is
+            possible but less direct because loading and using skills can become a two-step process.
+          </p>
+          <table class="matrix" aria-label="Skills architecture fit">
+            <thead>
+              <tr>
+                <th>Use skills when</th>
+                <th>Why it works</th>
+                <th>Platform design note</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>You need domain-specific SOPs or policies.</td>
+                <td>The agent loads only the skill relevant to the task.</td>
+                <td>Give each skill ownership, versioning, test cases, and required tools.</td>
+              </tr>
+              <tr>
+                <td>You want one user-facing agent.</td>
+                <td>The conversation stays simple while capability changes behind the scenes.</td>
+                <td>Use skills as BA-authored modules instead of giant persona prompts.</td>
+              </tr>
+              <tr>
+                <td>You need progressive disclosure.</td>
+                <td>The context window is preserved for the current problem.</td>
+                <td>Create skill indexes, activation conditions, and evidence contracts.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="router">
+          <span class="label">Pattern 4</span>
+          <h2>Router architectures classify input, call one or more specialists, then synthesize results.</h2>
+          <p class="lead">
+            The router pattern begins with a routing step. The router classifies the input and directs work to one or more
+            specialized agents. A synthesizer then combines the results into a response. The router and synthesizer can be agentic,
+            but they can also be deterministic.
+          </p>
+          <p>
+            This pattern is strong for parallelization because a router can call multiple specialists at once. It is weaker for
+            multihop conversations because the architecture is not naturally built around repeated specialist calls in series.
+            LangChain suggests that if you need a stateful router, a practical option is to wrap the router in a tool.
+          </p>
+          <div class="flow" aria-label="Router architecture flow">
+            <div class="flow-step">
+              <span>Input</span>
+              <strong>User request</strong>
+              <p>A request arrives and needs classification.</p>
+            </div>
+            <div class="flow-step">
+              <span>Route</span>
+              <strong>Classifier</strong>
+              <p>Router chooses one or more specialists.</p>
+            </div>
+            <div class="flow-step">
+              <span>Fan out</span>
+              <strong>Specialists</strong>
+              <p>One or many agents execute focused work.</p>
+            </div>
+            <div class="flow-step">
+              <span>Join</span>
+              <strong>Synthesizer</strong>
+              <p>Results are merged and resolved.</p>
+            </div>
+            <div class="flow-step">
+              <span>Output</span>
+              <strong>Combined response</strong>
+              <p>User receives one synthesized answer.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="matrix">
+          <span class="label">Decision Matrix</span>
+          <h2>The architecture choice is a scorecard, not a religion.</h2>
+          <p class="lead">
+            The video uses a five-star framing. Some exact scores are stated directly; other cells are described qualitatively.
+            This table preserves the practical intent rather than pretending there is one universally correct answer.
+          </p>
+          <table class="matrix" aria-label="Multi-agent architecture comparison matrix">
+            <thead>
+              <tr>
+                <th>Pattern</th>
+                <th>Distributed development</th>
+                <th>Parallelization</th>
+                <th>Multihop conversation</th>
+                <th>Direct user interaction</th>
+                <th>Best choice when</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Supervisor / sub-agents</td>
+                <td><span class="score">5/5</span></td>
+                <td><span class="score">High</span></td>
+                <td><span class="score">High</span></td>
+                <td><span class="score low">Low</span></td>
+                <td>You want central control with specialist agents maintained by different teams.</td>
+              </tr>
+              <tr>
+                <td>Handoffs</td>
+                <td><span class="score low">Low</span></td>
+                <td><span class="score low">Low</span></td>
+                <td><span class="score">High</span></td>
+                <td><span class="score">High</span></td>
+                <td>The user should move between specialists in a live conversation.</td>
+              </tr>
+              <tr>
+                <td>Skills</td>
+                <td><span class="score">High</span></td>
+                <td><span class="score mid">3/5</span></td>
+                <td><span class="score">5/5</span></td>
+                <td><span class="score">5/5</span></td>
+                <td>One agent should load specialized knowledge or prompts on demand.</td>
+              </tr>
+              <tr>
+                <td>Router / synthesizer</td>
+                <td><span class="score mid">3/5</span></td>
+                <td><span class="score">5/5</span></td>
+                <td><span class="score low">0/5</span></td>
+                <td><span class="score mid">3/5</span></td>
+                <td>You need classification, fan-out, and combined synthesis more than conversation handoff.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>For your agentic platform, make architecture selection an explicit BA-side decision.</h2>
+          <p class="lead">
+            This video is useful because it turns multi-agent design into a simple selection problem. A business analyst should
+            not have to know LangGraph internals to decide whether a flow needs a supervisor, handoff, skill, or router. They
+            should answer business questions that map to an architecture.
+          </p>
+          <ul class="checklist">
+            <li><strong>Start with the single-agent baseline.</strong> Require the flow author to explain why one agent plus tools is insufficient.</li>
+            <li><strong>Use supervisor when ownership is modular.</strong> Master Agent plus sub-agents is best when teams own specialists and the platform needs central routing.</li>
+            <li><strong>Use handoffs for user-facing role changes.</strong> Handoffs fit service journeys where the active specialist should speak directly to the user.</li>
+            <li><strong>Use skills for progressive disclosure.</strong> Skills are ideal for SOPs, policies, domain knowledge, and cognitive/actionable capability modules.</li>
+            <li><strong>Use routers for classification and fan-out.</strong> Routers are strong for independent specialists whose outputs can be synthesized.</li>
+            <li><strong>Capture the four criteria in the flow spec.</strong> Distributed ownership, parallelism, multihop needs, and direct interaction should be first-class fields.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">Flow Markdown</span>
+          <h2>A reusable architecture-selection template.</h2>
+          <p class="lead">
+            Use this as the first page of a BA-authored agent flow. It forces the author to justify the multi-agent pattern before
+            defining prompts, tools, skills, and handoff behavior.
+          </p>
+          <pre class="mini-spec"><code>---
+flow_id: customer_support_multi_agent_triage
+architecture_decision:
+  default_considered: single_agent_with_tools
+  reason_single_agent_is_not_enough:
+    - requires_specialist_user_handoffs
+    - requires_parallel_policy_and_ticket_lookup
+  selected_pattern: hybrid_supervisor_plus_handoffs
+selection_criteria:
+  distributed_development:
+    score_needed: high
+    rationale: support, billing, and technical teams own separate specialists
+  parallelization:
+    score_needed: medium
+    rationale: policy lookup and ticket search can run together
+  multihop_conversation:
+    score_needed: high
+    rationale: user may move from triage to specialist to escalation
+  direct_user_interaction:
+    score_needed: high
+    rationale: specialist agent should ask follow-up questions directly
+agents:
+  supervisor:
+    responsibility: classify_request_and_route
+    tools: [customer_profile_lookup, agent_registry_search]
+  support_specialist:
+    pattern_role: handoff_target
+    skills: [support_sop, refund_policy, ticket_summary]
+  billing_specialist:
+    pattern_role: handoff_target
+    skills: [invoice_lookup, payment_policy]
+  policy_checker:
+    pattern_role: supervisor_tool
+    skills: [risk_review, compliance_summary]
+handoff_contract:
+  required_fields:
+    - reason_for_handoff
+    - context_summary
+    - unresolved_questions
+    - allowed_actions
+validation:
+  success_metrics:
+    - correct_route_rate
+    - handoff_completion_rate
+    - user_repetition_rate
+    - escalation_accuracy
+---</code></pre>
+        </section>
+
+        <section class="section" id="sources">
+          <span class="label">Sources</span>
+          <h2>Source and reliability notes.</h2>
+          <p class="lead">
+            This page summarizes the public YouTube captions for LangChain's video. It is a structured summary and platform
+            interpretation, not a verbatim transcript. The captions render "LangChain" and "sub-agents" inconsistently in a few
+            places; obvious terms are normalized where the context is clear.
+          </p>
+          <ul class="source-list">
+            <li><a href="https://www.youtube.com/watch?v=fqvbxkgU6vE">Original YouTube video</a> from LangChain.</li>
+            <li>Video title: Choosing the Right Multi-Agent Architecture.</li>
+            <li>Caption extraction: English captions, 167 rows, approximately 1,020 words.</li>
+            <li>Generated for agentic platform research: pattern selection, BA-side flow design, skills, handoffs, routers, and supervisor architectures.</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,2221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Your personal library of ideas, video summaries, and practical insights."
+    />
+    <title>Reading Room · Summary Library</title>
+    <link rel="stylesheet" href="library.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to library</a>
+    <aside class="sidebar">
+      <a class="brand" href="/reading/"
+        ><span class="brand-mark">r.</span> reading room</a
+      >
+      <p class="sidebar-label">Your knowledge, collected.</p>
+      <nav aria-label="Library">
+        <button class="nav-item active" data-mode="all">
+          <span>▤</span> All summaries <b id="total"></b></button
+        ><button class="nav-item" data-mode="saved">
+          <span>♡</span> Saved for later <b id="saved-count">0</b>
+        </button>
+      </nav>
+      <div class="topics-heading">Explore topics</div>
+      <div id="topics"></div>
+      <div class="sidebar-bottom">
+        <p>A little reading.<br />A wider perspective.</p>
+        <a href="/">Portfolio <span>↗</span></a>
+      </div>
+    </aside>
+    <main id="main">
+      <header class="topbar">
+        <span>Your personal learning library</span
+        ><a href="/">Portfolio ↗</a>
+      </header>
+      <section class="intro">
+        <div>
+          <p class="edition">THE READING ROOM</p>
+          <h1>Good ideas.<br />Worth keeping.</h1>
+          <p>
+            A place for everything you’re learning.<br />Find the insight. Keep
+            the perspective.
+          </p>
+        </div>
+        <div class="intro-note">
+          <span class="note-symbol">✳</span>
+          <p>Less watching.<br />More understanding.</p>
+          <span id="collection-note"></span>
+        </div>
+      </section>
+      <section id="featured" aria-label="Featured summary"></section>
+      <section class="collection" aria-labelledby="collection-title">
+        <div class="collection-heading">
+          <div>
+            <h2 id="collection-title">Explore the library</h2>
+            <p id="result-count" role="status" aria-live="polite"></p>
+          </div>
+          <label class="sort-label"
+            >Sort by
+            <select id="sort">
+              <option value="new">Newest first</option>
+              <option value="old">Oldest first</option>
+              <option value="title">Title A–Z</option>
+            </select></label
+          >
+        </div>
+        <div class="search-row">
+          <label class="search"
+            ><span aria-hidden="true">⌕</span
+            ><input
+              id="catalog-search"
+              type="search"
+              placeholder="Search ideas, titles, or creators…"
+              aria-label="Search summaries"
+            /><kbd>/</kbd></label
+          ><button id="clear" class="clear">Reset filters</button>
+        </div>
+        <div id="active-topic"></div>
+        <div id="catalog-grid"></div>
+        <div id="empty" hidden>
+          <h3>No summaries here yet.</h3>
+          <p>
+            Try a different search or topic. Save a summary with the heart
+            button to keep it here.
+          </p>
+        </div>
+        <button id="load-more" class="load-more">Show more summaries ↓</button>
+      </section>
+      <footer>
+        Made for curious minds.<span>Read something. Make it useful.</span>
+      </footer>
+    </main>
+    <script type="application/json" id="catalog-data">
+      [
+        {
+          "title": "How to Build Career Value When AI Changes the Skill Map",
+          "description": "A detailed, critical guide to Jay Jung's interview on operational curiosity, end-to-end understanding, building products, choosing valuable markets, robotics, compensation, and imposter syndrome.",
+          "category": "Career strategy",
+          "source": "Jay Jung · HeeChan interview",
+          "sourceCount": 4,
+          "videoId": "-SffBBo40bA",
+          "imageUrl": "2026-10-02-jay-jung-ai-career-thumbnail.jpg",
+          "watchUrl": "https://www.youtube.com/watch?v=-SffBBo40bA",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-10-02-jay-jung-ai-career-market-value-curiosity-builders-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-10-02T01:59:15.000Z"
+        },
+        {
+          "title": "Inside J.P. Morgan's Ask David Research Agent",
+          "description": "A detailed, critical guide to the LangGraph multi-agent system presented by J.P. Morgan Private Bank: structured data, RAG, analytics, intent subgraphs, role-aware answers, evaluation, human SME review, and the production controls the talk leaves implicit.",
+          "category": "Enterprise agents",
+          "source": "J.P. Morgan Private Bank · LangChain Interrupt",
+          "sourceCount": 5,
+          "videoId": "yMalr0jiOAc",
+          "imageUrl": "2026-10-02-jpmorgan-ask-david-langgraph-thumbnail.jpg",
+          "watchUrl": "https://www.youtube.com/watch?v=yMalr0jiOAc",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-10-02-jpmorgan-ask-david-investment-research-agent-langgraph-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-10-02T01:05:43.000Z"
+        },
+        {
+          "title": "What vLLM Actually Optimizes",
+          "description": "A visual, evidence-aware guide to vLLM: why one-user speed tests mislead, how KV-cache paging and continuous batching serve concurrent demand, how to size VRAM, and when a local runtime is the better choice.",
+          "category": "AI inference",
+          "source": "Devsplainers · vLLM visual explainer",
+          "sourceCount": 6,
+          "videoId": "oML9lTnJjX8",
+          "imageUrl": "2026-09-29-vllm-16-bit-thumbnail.jpg",
+          "watchUrl": "https://www.youtube.com/watch?v=oML9lTnJjX8",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-29-what-is-vllm-16-bit-visual-guide-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-29T15:58:31.000Z"
+        },
+        {
+          "title": "From CSV Request to Recoverable Background Job",
+          "description": "A detailed, critical guide to redesigning synchronous CSV imports as distributed background jobs with durable state, queues, retries, idempotency, rate limiting, completion, and cleanup.",
+          "category": "System design",
+          "source": "Igor Rivera · SaaS engineering",
+          "sourceCount": 5,
+          "videoId": "LLmRzyOXAdI",
+          "imageUrl": "2026-09-29-distributed-background-jobs-thumbnail.jpg",
+          "watchUrl": "https://www.youtube.com/watch?v=LLmRzyOXAdI",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-29-designing-distributed-background-jobs-csv-import-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-29T15:32:02.000Z"
+        },
+        {
+          "title": "Building a Faster Agent Harness with Jev",
+          "description": "A detailed, evidence-aware guide to LangChain's Jev architecture: typed decisions, model routing, risky-tool gates, online agent evaluation, and the controls needed before production use.",
+          "category": "Agentic engineering",
+          "source": "LangChain · Sydney Runkle",
+          "sourceCount": 4,
+          "videoId": "VE5dsWll06M",
+          "imageUrl": "2026-09-29-building-harness-jev-langchain-thumbnail.jpg",
+          "watchUrl": "https://www.youtube.com/watch?v=VE5dsWll06M",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-29-building-harness-with-jev-langchain-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-29T15:07:07.000Z"
+        },
+        {
+          "title": "Seven Jev Patterns for Faster Coding Agents",
+          "description": "A detailed, critical guide to AI LABS' seven Jev patterns for Claude Code: selective compaction, requirements coverage, skill routing, file retrieval, review triage, browser navigation, rule enforcement, and the failure modes each pattern introduces.",
+          "category": "Agentic engineering",
+          "source": "AI LABS · Claude Code workflow",
+          "sourceCount": 8,
+          "videoId": "2nc_QMuNp18",
+          "imageUrl": "2026-09-29-seven-jev-use-cases-thumbnail.jpg",
+          "watchUrl": "https://www.youtube.com/watch?v=2nc_QMuNp18",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-29-seven-jev-use-cases-claude-code-agent-workflow-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-29T13:58:26.000Z"
+        },
+        {
+          "title": "Where a Decision Model Fits Inside an Agent Harness",
+          "description": "A detailed visual guide to Sam Witteveen's Jev patterns for model routing, risk gates, progressive skill disclosure, retrieval re-ranking, triage, filtering, and production evaluation.",
+          "category": "Agentic engineering",
+          "source": "Sam Witteveen · YouTube",
+          "sourceCount": 3,
+          "videoId": "zaLQ0AnY9dI",
+          "imageUrl": "2026-09-29-using-jev-agent-harness-thumbnail.jpg",
+          "watchUrl": "https://www.youtube.com/watch?v=zaLQ0AnY9dI",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-29-using-jev-in-agent-harness-sam-witteveen-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-29T13:51:45.000Z"
+        },
+        {
+          "title": "How Three Berkeley Alumni Built Careers at Leading AI Companies",
+          "description": "A detailed, evidence-aware guide to the Berkeley alumni panel on careers at DeepMind, Cursor, and Thinking Machines Lab: side projects, hackathons, broad applications, choosing teams, failure, non-CS paths, AI coding, and burnout.",
+          "category": "Career strategy",
+          "source": "Arda HK · UC Berkeley alumni panel",
+          "sourceCount": 1,
+          "videoId": "R_p2ixNlqQ0",
+          "imageUrl": "2026-09-29-berkeley-ai-career-panel-thumbnail.jpg",
+          "watchUrl": "https://www.youtube.com/watch?v=R_p2ixNlqQ0",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-29-berkeley-ai-career-deepmind-cursor-thinking-machines-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-29T13:10:43.000Z"
+        },
+        {
+          "title": "What a Decision Model Actually Adds to an Agent Harness",
+          "description": "A critical, visual analysis of a Jev-powered Pi agent harness: why context selection changed the clean benchmark outcome, how the safety gate was bypassed, why the verifier approved a wrong decision, and what production platforms should learn.",
+          "category": "Agentic engineering",
+          "source": "Prompt Engineering · Jev Harness",
+          "sourceCount": 4,
+          "videoId": "4YVeQf8huyM",
+          "imageUrl": "2026-09-29-jev-agent-harness-thumbnail.jpg",
+          "watchUrl": "https://www.youtube.com/watch?v=4YVeQf8huyM",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-29-jev-ai-agent-harness-context-gate-verifier-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-29T13:04:26.000Z"
+        },
+        {
+          "title": "Can a RAG Model Prove It Used the Evidence?",
+          "description": "A detailed explanation of Merlin-Arthur training for grounded RAG: supportive and adversarial evidence masks, adaptive abstention, ATMAN, completeness, soundness, EIF, experimental results, and production limits.",
+          "category": "RAG and retrieval",
+          "source": "AI Coffee Break · Aleph Alpha Research",
+          "sourceCount": 4,
+          "videoId": "796GVFTFiB0",
+          "imageUrl": "2026-09-27-merlin-arthur-thumbnail.jpg",
+          "watchUrl": "https://www.youtube.com/watch?v=796GVFTFiB0",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-27-merlin-arthur-rag-grounding-hallucinations-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-27T13:23:02.000Z"
+        },
+        {
+          "title": "How a Meta Senior Staff Engineer Reviews AI-Generated Code",
+          "description": "John Kim's risk-based review workflow: codebase trees, blast radius, feature gates, evidence-driven PRs, adversarial review agents, the human-owned final 20 percent, and progressive rollout.",
+          "category": "Agentic engineering",
+          "source": "John Kim · YouTube",
+          "sourceCount": 1,
+          "videoId": "b2QkhmQ0sT0",
+          "imageUrl": "2026-09-27-john-kim-ai-code-review-thumbnail.jpg",
+          "watchUrl": "https://www.youtube.com/watch?v=b2QkhmQ0sT0",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-27-john-kim-ai-code-review-blast-radius-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-27T11:30:44.000Z"
+        },
+        {
+          "title": "How ElevenLabs Cut RAG Latency in Half with Model Racing",
+          "description": "A critical, visual breakdown of parallel query rewriting: why one LLM caused 80% of RAG latency, how first-valid-wins and a one-second fallback work, the measured percentile gains, and the production trade-offs.",
+          "category": "RAG and retrieval",
+          "source": "ElevenLabs · Michal Korbela",
+          "sourceCount": 1,
+          "imageUrl": "2026-09-27-elevenlabs-rag-model-racing-architecture.png",
+          "watchUrl": "https://elevenlabs.io/",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-27-elevenlabs-model-racing-rag-latency-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-27T11:26:17.000Z"
+        },
+        {
+          "title": "Jev or BERT? The Real Trade-Off Behind Decision Models",
+          "description": "A critical reading of Denis Timonin's Jev essay: request-time labels versus trained classifiers, zero-shot classification, calibration, economics, deployment, practitioner skepticism, and a production bake-off playbook.",
+          "category": "AI and software engineering",
+          "source": "Denis Timonin · LinkedIn article",
+          "sourceCount": 5,
+          "imageUrl": "2026-09-27-jev-one-call-three-decisions.png",
+          "watchUrl": "https://www.linkedin.com/pulse/jev-llm-decisions-chat-denis-timonin-nzxue",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-27-jev-vs-bert-decision-models-denis-timonin-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-27T11:17:50.000Z"
+        },
+        {
+          "title": "Jev: Typed AI Decisions Instead of Generated Text",
+          "description": "Dave Ebbelaar's practical introduction to Jev and System One models: state, Choice, Score, Noul, parallel questions, confidence gates, Python composition, pricing, limits, and production use.",
+          "category": "AI and software engineering",
+          "source": "Dave Ebbelaar · Datalumina",
+          "sourceCount": 3,
+          "videoId": "JpfLID19QnQ",
+          "imageUrl": "https://i.ytimg.com/vi/JpfLID19QnQ/hqdefault.jpg",
+          "watchUrl": "https://www.youtube.com/watch?v=JpfLID19QnQ",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-23-jev-system-one-python-typed-decisions-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-23T09:10:34.000Z"
+        },
+        {
+          "title": "Build Trust Before You Scale Coding Agents",
+          "description": "Lauren Tan's practical system for dependable agent engineering: behavioral verification, feature maps, pstack skills, eval loops, cloud agents, strict architecture, and CI-enforced taste.",
+          "category": "Agentic engineering",
+          "source": "Lauren Tan · Maven workshop",
+          "sourceCount": 3,
+          "videoId": "yw_QhowlZ2g",
+          "imageUrl": "https://i.ytimg.com/vi/yw_QhowlZ2g/hqdefault.jpg",
+          "watchUrl": "https://www.youtube.com/watch?v=yw_QhowlZ2g",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-20-lauren-tan-agent-trust-verification-pstack-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-20T07:05:00.000Z"
+        },
+        {
+          "title": "Agent Swarms Change the Clock, Not the Core Problem",
+          "description": "Noam Brown and Dwarkesh Patel on the 10,000-agent Navier-Stokes run, parallel test-time compute, AI firms, recursive self-improvement, the Hugging Face incident, and the alignment clock.",
+          "category": "Multi-agent systems",
+          "source": "Dwarkesh Patel · Noam Brown, OpenAI",
+          "sourceCount": 5,
+          "videoId": "6AgOfiZOWiY",
+          "imageUrl": "https://i.ytimg.com/vi/6AgOfiZOWiY/hqdefault.jpg",
+          "watchUrl": "https://www.youtube.com/watch?v=6AgOfiZOWiY",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-17-noam-brown-agent-swarms-navier-stokes-alignment-rsi-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-17T16:15:00.000Z"
+        },
+        {
+          "title": "Stop Choosing One Chunk Size",
+          "description": "Yuval Belfer on query-dependent chunking, multiscale RAG indices, document-level Reciprocal Rank Fusion, measured recall gains, and the storage and context-assembly trade-offs.",
+          "category": "RAG and retrieval",
+          "source": "AI Engineer · Yuval Belfer, AI21 Labs",
+          "sourceCount": 2,
+          "videoId": "r9OwPx_HoV0",
+          "imageUrl": "https://i.ytimg.com/vi/r9OwPx_HoV0/hqdefault.jpg",
+          "watchUrl": "https://www.youtube.com/watch?v=r9OwPx_HoV0",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-17-stop-fixed-chunking-multiscale-rag-rrf-ai21-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-17T00:54:16.000Z"
+        },
+        {
+          "title": "AI 2027 Slowdown: How Humans Might Keep Control",
+          "description": "A critical guide to the hopeful AI 2027 branch: Agent-4 deception, the Safer-model ladder, compute verification, geopolitical pressure, and the unresolved concentration of political power.",
+          "category": "AI governance",
+          "source": "AI Futures Project · AI 2027",
+          "sourceCount": 1,
+          "imageUrl": "https://ai-2027.com/opengraph.png",
+          "watchUrl": "https://ai-2027.com/slowdown",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-16-ai-2027-slowdown-scenario-human-control-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-16T13:45:14.000Z"
+        },
+        {
+          "title": "Evaluating Agents Beyond Short Tasks",
+          "description": "Stanford CS329A on METR time horizons, GDPval professional work, DeepScholar-Bench, reliability gaps, long-horizon failures, and what agent benchmarks do not prove.",
+          "category": "Agent evaluation",
+          "source": "Stanford Online · Aakanksha Chowdhery",
+          "sourceCount": 4,
+          "videoId": "8JAqLnTaZu4",
+          "imageUrl": "https://i.ytimg.com/vi/8JAqLnTaZu4/hqdefault.jpg",
+          "watchUrl": "https://www.youtube.com/watch?v=8JAqLnTaZu4",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-15-stanford-agentic-evaluations-long-horizon-tasks-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-15T05:31:07.000Z"
+        },
+        {
+          "title": "Harness Engineering: Beyond the Model",
+          "description": "Mike Chambers, AWS: agents we use versus agents we build, modular production harnesses, session memory, infrastructure as code, and AgentCore's managed loop.",
+          "category": "Agentic engineering",
+          "source": "AI Engineer · Mike Chambers, AWS",
+          "sourceCount": 1,
+          "videoId": "gxVZ_1tuuq4",
+          "imageUrl": "https://i.ytimg.com/vi/gxVZ_1tuuq4/hqdefault.jpg",
+          "watchUrl": "https://www.youtube.com/watch?v=gxVZ_1tuuq4",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-14-harness-engineering-production-domain-agents-mike-chambers-aws-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-14T16:30:33.000Z"
+        },
+        {
+          "title": "AIS Academy Day 2: AI Super Users, Creativity, and Human Agency",
+          "description": "Detailed English guide to local intelligence, three levels of AI use, content production, filmmaking, AI companions, and preserving judgment and personal agency.",
+          "category": "Enterprise agent systems",
+          "source": "AIS Academy for THAIs 2026 · Day 2 · Second recording",
+          "sourceCount": 1,
+          "imageUrl": "2026-09-13-ais-academy-day2-super-users-thumbnail.jpg",
+          "watchUrl": "https://www.facebook.com/AISAcademyforThais/videos/2148024152731070",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-13-ais-academy-day2-ai-super-users-creativity-human-agency-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-13T02:36:21.000Z"
+        },
+        {
+          "title": "AIS Academy Day 2: Turning AI into Business Capability (Partial)",
+          "description": "Detailed partial guide to five readable Thai sessions: Google Cloud human capability, Sea commerce, AWS enterprise cases, SME process bottlenecks, and creative direction. English talks and uncaptioned segments remain missing.",
+          "category": "Enterprise agent systems",
+          "source": "AIS Academy for THAIs 2026 · Day 2",
+          "sourceCount": 1,
+          "imageUrl": "2026-09-13-ais-academy-day2-thumbnail.jpg",
+          "watchUrl": "https://www.facebook.com/AISAcademyforThais/videos/2177669676132352",
+          "pages": [
+            {
+              "label": "English · Partial",
+              "file": "2026-09-13-ais-academy-day2-business-ai-detailed-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-13T02:33:25.000Z"
+        },
+        {
+          "title": "The CCA Exam as a Field Guide to Agentic Engineering",
+          "description": "Frank Coyle's anti-pattern tour of agent loops, tool execution, stop reasons, scoped instructions, specialized research agents, context isolation, compaction, and non-interactive CI, with technical clarifications.",
+          "category": "Agentic engineering",
+          "source": "AI Engineer · Frank Coyle",
+          "sourceCount": 1,
+          "imageUrl": "2026-09-13-cca-frank-coyle-thumbnail.jpg",
+          "videoId": "Z-c11pV_uvU",
+          "watchUrl": "https://www.youtube.com/watch?v=Z-c11pV_uvU",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-13-cca-agentic-engineering-frank-coyle-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-13T02:23:05.847Z"
+        },
+        {
+          "title": "Advanced Ontology: Model the Business, Not the Tables",
+          "description": "Palantir DevCon 5 on domain-driven ontology design, reusable interfaces, structs, reducers, main fields, derived properties, granular security, entity resolution, and object-backed relationships.",
+          "category": "Enterprise agent systems",
+          "source": "Palantir Developers · Landon Carter",
+          "sourceCount": 1,
+          "imageUrl": "2026-09-13-palantir-advanced-ontology-thumbnail.jpg",
+          "videoId": "_b2qsKz_Ifk",
+          "watchUrl": "https://www.youtube.com/watch?v=_b2qsKz_Ifk",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-13-palantir-advanced-ontology-devcon5-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-13T02:20:52.991Z"
+        },
+        {
+          "title": "Dillon Mulroy: More Productive, Less Happy, Still Accountable",
+          "description": "A detailed interview summary on AI coding fatigue, human accountability, junior learning, role overlap, autonomous-loop economics, local review, typed specifications, and deliberate context selection through conversation trees.",
+          "category": "Agentic engineering",
+          "source": "Jan-Niklas Wortmann · Dillon Mulroy",
+          "sourceCount": 1,
+          "imageUrl": "2026-09-12-dillon-mulroy-thumbnail.jpg",
+          "videoId": "sYNOgpDKTvE",
+          "watchUrl": "https://www.youtube.com/watch?v=sYNOgpDKTvE",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-12-dillon-mulroy-ai-coding-production-review-context-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-12T11:11:10.045Z"
+        },
+        {
+          "title": "AI Agents in Action: From Knowledge Fabric to Machine Payments",
+          "description": "Arise Tech Meetup #10 on enterprise knowledge fabric, agent inventory and governance, AI at Work, a file-based Virtual Assistant workflow, human checkpoints, and the security architecture required for x402 and Tempo MPP machine payments.",
+          "category": "Enterprise agent systems",
+          "source": "Arise by INFINITAS · Five enterprise AI sessions",
+          "sourceCount": 5,
+          "imageUrl": "2026-09-10-arise-ai-agents-in-action-thumbnail.jpg",
+          "videoId": "eYnXXLxcZfs",
+          "watchUrl": "https://www.youtube.com/watch?v=eYnXXLxcZfs&t=5516s",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-10-ai-agents-in-action-knowledge-fabric-payments-enterprise-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-10T14:34:02.000Z"
+        },
+        {
+          "title": "Go Together: Language Evolution, Agent Architecture, and 9x Cheaper Inference",
+          "description": "Arise Tech Meetup #9 on Go 1.27, generic methods and JSON v2, Google ADK's code-first multi-agent architecture, and LINE MAN Wongnai's production lesson in removing nested ONNX concurrency to reduce inference resource usage by 9x.",
+          "category": "AI and software engineering",
+          "source": "Arise by INFINITAS · Jirapat, Korntewin, and Pallat",
+          "sourceCount": 6,
+          "imageUrl": "2026-09-10-go-together-arise-tech-meetup-thumbnail.jpg",
+          "videoId": "W5uvVcS_I9I",
+          "watchUrl": "https://www.youtube.com/watch?v=W5uvVcS_I9I",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-10-go-together-go-127-adk-agents-9x-ml-inference-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-10T14:26:00.000Z"
+        },
+        {
+          "title": "Three Economic Futures for Transformative AI",
+          "description": "A methodology-aware guide to Anthropic Institute's 2030 economic scenarios: task automation and augmentation, GDP growth, occupational displacement, wage divergence, labor-versus-capital shares, public expectations, model limitations, and policy implications.",
+          "category": "AI economics and policy",
+          "source": "Anthropic Institute · Korinek et al.",
+          "sourceCount": 3,
+          "imageUrl": "2026-09-10-anthropic-economic-scenarios-cover.png",
+          "watchUrl": "https://www.anthropic.com/institute/econ-scenarios",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-10-anthropic-economic-scenarios-transformative-ai-2030-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-10T13:32:14.000Z"
+        },
+        {
+          "title": "Agents, AGI, and the Week AI Crossed New Boundaries",
+          "description": "A fact-checked Moonshots briefing on the DseWiki agent incident, GPT-6 Astra and AGI claims, OpenAI's announced Navier-Stokes proof, token economics, NVIDIA's capital flywheel, agent-shaped firms, Cybercab ownership, and longevity.",
+          "category": "AI research and society",
+          "source": "Moonshots · Peter Diamandis and panel",
+          "sourceCount": 5,
+          "imageUrl": "2026-09-10-moonshots-openai-agents-agi-navier-stokes-thumbnail.jpg",
+          "videoId": "vAgEf4jX_1o",
+          "watchUrl": "https://www.youtube.com/watch?v=vAgEf4jX_1o&t=411s",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-10-openai-agents-wiki-agi-navier-stokes-moonshots-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-10T12:10:25.000Z"
+        },
+        {
+          "title": "What Founders Learned Building on Claude Managed Agents",
+          "description": "Wispr Flow, Actively, and Pendo on production agent architecture: independent outcome verification, layered memory, sandboxed code execution, evals for stateful systems, cost-aware fan-out, and deciding what to build versus rent.",
+          "category": "AI product and agent systems",
+          "source": "Claude · Wispr Flow, Actively, and Pendo",
+          "sourceCount": 3,
+          "imageUrl": "2026-09-10-claude-managed-agents-founders-thumbnail.jpg",
+          "videoId": "hm8NzEd5io0",
+          "watchUrl": "https://www.youtube.com/watch?v=hm8NzEd5io0",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-10-claude-managed-agents-founders-production-lessons-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-10T12:08:42.000Z"
+        },
+        {
+          "title": "No, Andrew Ng Did Not Say Prompting Is Dead",
+          "description": "A fact-checked recovery of Stanford CS230's Career Advice in AI lecture, plus the Hacker News discussion showing how false metadata triggered a debate about prompts and graphs before readers traced the original source.",
+          "category": "Career strategy",
+          "source": "Stanford CS230 · Andrew Ng and Laurence Moroney",
+          "sourceCount": 13,
+          "imageUrl": "2026-09-09-stanford-cs230-ai-career-advice-thumbnail.jpg",
+          "videoId": "9EuNUe-CJRM",
+          "canonicalVideoId": "AuZoDsNmG_s",
+          "watchUrl": "https://www.youtube.com/watch?v=AuZoDsNmG_s",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-09-fact-check-prompting-dead-stanford-ai-career-advice-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-09T12:41:29.000Z"
+        },
+        {
+          "title": "Organizing Context in a Multi-Agent Harness",
+          "description": "LangChain's decision model for Deep Agents context modes: when workers and memory agents should inherit supervisor state with fork, when reviewers and researchers should remain isolated, and how to balance prompt caching, independence, permissions, and context trust.",
+          "category": "Multi-agent systems",
+          "source": "LangChain OSS · Thushanth Bengre and Chester Curme",
+          "sourceCount": 4,
+          "imageUrl": "2026-09-09-langchain-context-modes-cover.jpg",
+          "watchUrl": "2026-09-09-langchain-context-modes-source.pdf",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-09-organizing-context-multi-agent-harness-langchain-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-09T11:23:15.000Z"
+        },
+        {
+          "title": "How Anthropic Builds With AI",
+          "description": "Claude Code engineer Thariq Shihipar on model-plus-harness engineering, autonomous loops, full-SDLC agents, artifacts, prompt provenance, taste, writing, verification, code maintenance, reliability, and why technical fundamentals still matter.",
+          "category": "AI engineering workflow",
+          "source": "The Peterman Pod · Thariq Shihipar",
+          "sourceCount": 16,
+          "imageUrl": "2026-09-09-anthropic-engineering-thariq-shihipar-thumbnail.jpg",
+          "videoId": "2Kch3tWMnw8",
+          "watchUrl": "https://www.youtube.com/watch?v=2Kch3tWMnw8",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-09-how-anthropic-builds-ai-engineering-thariq-shihipar-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-09T11:20:24.000Z"
+        },
+        {
+          "title": "The AI Career Ladder Is Moving Up",
+          "description": "Superhuman CEO Shishir Mehrotra on positioning a career beyond execution: public artifacts, low-stakes practice, the Problem-Solution-How-Execution ladder, Eigenquestions, Superhuman Go, and Chat-Do-Assist interaction models.",
+          "category": "Career strategy",
+          "source": "Silicon Valley Girl · Shishir Mehrotra",
+          "sourceCount": 10,
+          "imageUrl": "2026-09-09-superhuman-ceo-shishir-mehrotra-thumbnail.jpg",
+          "videoId": "JEZVl3BkSLk",
+          "watchUrl": "https://www.youtube.com/watch?v=JEZVl3BkSLk",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-09-superhuman-ceo-ai-career-positioning-shishir-mehrotra-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-09T11:18:00.000Z"
+        },
+        {
+          "title": "Meta Muse: The Personal Agent Bet Behind Zuckerberg's AI Strategy",
+          "description": "Mark Zuckerberg on Muse's always-on cloud agent, confidential VM, sentinel agents, least privilege, transaction economics, open-source strategy, Llama 4 lessons, frontier safety, and Meta's rebuilt AI lab.",
+          "category": "AI product and agent systems",
+          "source": "Sources Podcast · Mark Zuckerberg",
+          "sourceCount": 12,
+          "imageUrl": "2026-09-09-meta-muse-mark-zuckerberg-thumbnail.jpg",
+          "videoId": "Lx8lrn-cytc",
+          "watchUrl": "https://www.youtube.com/watch?v=Lx8lrn-cytc",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-09-meta-muse-personal-ai-agent-mark-zuckerberg-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-09T11:15:32.000Z"
+        },
+        {
+          "title": "The State of AI in 2026: Why Productivity Has Not Yet Become ROI",
+          "description": "McKinsey's 1,719-person survey on enterprise scaling, agentic coding, build-versus-buy shifts, AI operating cost, the gap between individual productivity and EBIT, high performers, workflow redesign, and workforce expectations.",
+          "category": "Enterprise AI strategy",
+          "source": "McKinsey & Company · State of AI 2026",
+          "sourceCount": 18,
+          "imageUrl": "2026-09-09-state-of-ai-2026-cover.jpg",
+          "watchUrl": "2026-09-09-state-of-ai-2026-source.pdf",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-09-state-of-ai-2026-road-to-roi-mckinsey-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-09T02:00:10.000Z"
+        },
+        {
+          "title": "How Grok Bot Was Built in One Month",
+          "description": "Roman Ugarte on building a cloud-first AI coworker from scratch: manual onboarding, ruthless simplification, persistent bots with their own computers, colleague-oriented product design, speed, and discovered moats.",
+          "category": "AI product and agent systems",
+          "source": "Lenny's Podcast · Roman Ugarte",
+          "sourceCount": 9,
+          "imageUrl": "2026-09-09-grok-bot-roman-ugarte-thumbnail.jpg",
+          "videoId": "maSdsTLaMuU",
+          "watchUrl": "https://www.youtube.com/watch?v=maSdsTLaMuU",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-09-grok-bot-built-in-one-month-roman-ugarte-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-09T01:52:00.000Z"
+        },
+        {
+          "title": "Harness Engineering for Self-Improvement",
+          "description": "Lilian Weng's research map of harness design, persistent file memory, subagents, context and workflow optimization, evidence-grounded self-improvement, evolutionary search, permission boundaries, and open challenges.",
+          "category": "Agent harness and self-improvement",
+          "source": "Lil'Log · Lilian Weng",
+          "sourceCount": 10,
+          "imageUrl": "2026-09-09-lilian-weng-harness-agent-loop.png",
+          "watchUrl": "https://lilianweng.github.io/posts/2026-07-04-harness/",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-09-harness-engineering-self-improvement-lilian-weng-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-09T01:51:19.000Z"
+        },
+        {
+          "title": "vLLM and Production AI Inference Engineering",
+          "description": "A systems guide to prefill and decode, KV cache, PagedAttention, continuous batching, inference SLOs, optimization, parallelism, cache-aware routing, LMCache, llm-d, and production rollout decisions.",
+          "category": "AI inference systems",
+          "source": "vLLM · Orca · DistServe · llm-d · LMCache",
+          "sourceCount": 9,
+          "imageUrl": "2026-09-08-vllm-production-ai-inference-cover.jpg",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-08-vllm-production-ai-inference-engineering-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-08T15:38:02.000Z"
+        },
+        {
+          "title": "How Toss Makes AI-Generated Frontend Work Trustworthy",
+          "description": "How Toss turned verification into infrastructure: real-device E2E tests, human-demonstrated intent, deterministic setup tools, device-farm observability, failure replay, and evidence-grounded agent repair.",
+          "category": "AI engineering workflow",
+          "source": "Toss Challengers · Front AI Team",
+          "sourceCount": 12,
+          "imageUrl": "2026-09-08-toss-frontend-ai-output-verification-thumbnail.webp",
+          "videoId": "YCNcTpcDRf8",
+          "watchUrl": "https://www.youtube.com/watch?v=YCNcTpcDRf8",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-08-toss-frontend-ai-output-verification-e2e-testing-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-08T14:18:12.000Z"
+        },
+        {
+          "title": "AI Research Papers Every AI Engineer Should Read",
+          "description": "A guided learning path through 37 primary research topics: Transformers, BERT, GPT, scaling laws, data, open models, RLHF and preference optimization, LoRA and MoE training, FlashAttention and KV-cache serving, RAG, reasoning, agents, and test-time scaling.",
+          "category": "AI engineering foundations",
+          "source": "37 primary research topics",
+          "sourceCount": 37,
+          "imageUrl": "2026-09-08-ai-research-paper-library-cover.jpg",
+          "collectionId": "ai-engineer-research-papers",
+          "pages": [
+            {
+              "label": "Open collection",
+              "file": "2026-09-08-ai-engineer-research-papers.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-08T14:07:24.000Z"
+        },
+        {
+          "title": "Vercel's Recursive Founder Mode",
+          "description": "Guillermo Rauch on scaling founder-like ownership, work-prompt hiring, Vercel's company-wide agent V, skills as institutional knowledge, AI-era software factories, agent-ready infrastructure, moats, leadership, and the human judgment that should remain in control.",
+          "category": "Agentic organizations",
+          "source": "Knuckle Up with Nakul · Guillermo Rauch",
+          "sourceCount": 20,
+          "imageUrl": "2026-09-08-vercel-recursive-founder-mode-guillermo-rauch-thumbnail.webp",
+          "videoId": "DdbCtAScTsk",
+          "watchUrl": "https://www.youtube.com/watch?v=DdbCtAScTsk",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-08-vercel-recursive-founder-mode-guillermo-rauch-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-08T11:26:08.000Z"
+        },
+        {
+          "title": "AI Is Leaving the Chat Window",
+          "description": "FINNOMENA Tech Sync connects five shifts beyond chat: Dyson's camera toothbrush, Macs as local-agent and computer-use infrastructure, DLSS 5's generated realism, Hugging Face MicroDuck's sim-to-real skill ecosystem, and Alexa's move toward proactive shopping.",
+          "category": "AI products and interfaces",
+          "source": "FINNOMENA · Tech Sync",
+          "sourceCount": 5,
+          "imageUrl": "2026-09-08-finnomena-tech-sync-mac-mini-dlss-microduck-thumbnail.webp",
+          "videoId": "qEcR1mspqLY",
+          "watchUrl": "https://www.youtube.com/watch?v=qEcR1mspqLY",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-08-mac-mini-local-agents-dlss5-microduck-alexa-shopping-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-08T11:18:43.000Z"
+        },
+        {
+          "title": "After the Dust: How AI May Change Human Nature",
+          "description": "Pat Pataranutaporn on why model intelligence does not automatically become human value: the imagination bottleneck, AI as social infrastructure, hidden trade-offs from cognitive offloading and artificial intimacy, and the question of who humans become through repeated AI interaction.",
+          "category": "Human-AI interaction",
+          "source": "Pat Pataranutaporn · Facebook",
+          "sourceCount": 19,
+          "imageUrl": "2026-09-08-ai-human-nature-pat-pataranutaporn-source.jpg",
+          "watchUrl": "https://www.facebook.com/story.php?story_fbid=28406868552242604&id=100000385144307",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-08-after-the-dust-ai-human-nature-pat-pataranutaporn-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-08T05:35:16.000Z"
+        },
+        {
+          "title": "Self-Improving Agent Harnesses: Prime Agent, OpenJarvis, and YC's QM",
+          "description": "YC Harness Club on why harnesses drive agent capability: Prime Agent's persistent recursive context, OpenJarvis's cloud-optimized local AI stack, and QM's company-wide architecture with shared state, elastic sandboxes, guarded writes, effort budgets, and permission-aware memory.",
+          "category": "Agent runtime and memory",
+          "source": "Y Combinator · YC Paper Club",
+          "sourceCount": 3,
+          "imageUrl": "2026-09-07-self-improving-harnesses-yc-thumbnail.webp",
+          "videoId": "n9xKblqyQ28",
+          "watchUrl": "https://www.youtube.com/watch?v=n9xKblqyQ28",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-07-self-improving-harnesses-prime-agent-openjarvis-qm-yc-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-07T15:36:42.000Z"
+        },
+        {
+          "title": "Andrew Ng on AI Fear, Jobs, Learning, and Where to Build",
+          "description": "A detailed analysis of Andrew Ng's case against AI fear, his task-versus-job model, the human context advantage, AI's learning trade-offs, privacy and safety, product judgment, builder opportunities, and definition-dependent AGI forecasts.",
+          "category": "AI product strategy",
+          "source": "Silicon Valley Girl · Andrew Ng",
+          "sourceCount": 1,
+          "imageUrl": "2026-09-07-andrew-ng-ai-opportunities-thumbnail.webp",
+          "videoId": "o-wv_szZ0V0",
+          "watchUrl": "https://www.youtube.com/watch?v=o-wv_szZ0V0",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-07-andrew-ng-ai-fear-jobs-learning-opportunities-agi-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-07T14:24:02.000Z"
+        },
+        {
+          "title": "How Hex Builds Data Agents That Learn Over Time",
+          "description": "Izzy Miller on Hex's unified data agents, nearly 100K tokens of tools, semantic governance, memory conflicts, the 900%-quota failure, small adversarial eval suites, and Metric City—a 90-day simulation for compounding agent behavior.",
+          "category": "Evaluation and observability",
+          "source": "LangChain · Max Agency",
+          "sourceCount": 1,
+          "imageUrl": "2026-09-07-hex-data-agents-evals-thumbnail.webp",
+          "videoId": "Xyh1EqcjGME",
+          "watchUrl": "https://www.youtube.com/watch?v=Xyh1EqcjGME",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-07-hex-data-agents-context-memory-long-horizon-evals-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-07T07:46:36.000Z"
+        },
+        {
+          "title": "Building an AI Second Brain for Investing",
+          "description": "A practical guide to building a local LLM Wiki with Obsidian, Markdown, YAML, source ingestion, research and review agents, linked concepts, entities, logs, indexes, and safeguards for financial knowledge.",
+          "category": "Research and knowledge management",
+          "source": "AI Battle in Finance · QuantCorner",
+          "sourceCount": 1,
+          "imageUrl": "2026-09-07-llm-wiki-second-brain-finance-thumbnail.webp",
+          "videoId": "-EtsVMWlgp4",
+          "watchUrl": "https://www.youtube.com/watch?v=-EtsVMWlgp4",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-07-llm-wiki-ai-second-brain-finance-investing-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-07T06:08:59.000Z"
+        },
+        {
+          "title": "How Uber Turns Domain Agents Into 21,000 Saved Developer Hours",
+          "description": "Uber's developer platform team explains Validator, AutoCover, LangEffect, deterministic tools, parallel test execution, reusable domain agents, intentional tech transfer, and the architecture behind a reported 21,000 developer hours saved.",
+          "category": "Coding and documentation agents",
+          "source": "LangChain · Uber",
+          "sourceCount": 1,
+          "imageUrl": "2026-09-07-uber-langgraph-developer-agents-thumbnail.webp",
+          "videoId": "Bugs0dVcNI8",
+          "watchUrl": "https://www.youtube.com/watch?v=Bugs0dVcNI8",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-07-uber-langgraph-ai-agents-21000-developer-hours-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-07T06:04:46.000Z"
+        },
+        {
+          "title": "Beyond Chatbots: The Human-Agent Interface",
+          "description": "SCB 10X's Upstream podcast on realtime multimodal AI, scalable interviewing, Ambient AI, hyper-personalized services, machine customers, human-machine parity, and the architecture and governance businesses need beyond the chatbot.",
+          "category": "Agent interfaces",
+          "source": "SCB 10X · Upstream",
+          "sourceCount": 1,
+          "imageUrl": "2026-09-07-human-agent-interface-scb10x-thumbnail.webp",
+          "videoId": "9Ws2AkbYDrw",
+          "watchUrl": "https://www.youtube.com/watch?v=9Ws2AkbYDrw",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-07-beyond-chatbots-human-agent-interface-ambient-ai-scb10x-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-07T05:58:14.000Z"
+        },
+        {
+          "title": "The Best AI Prompt Is Not a Magic Phrase",
+          "description": "Seven prompting habits shared at an OpenAI event reveal a better way to work with AI: expose blind spots, demand executable proof, delegate from goals, verify against specifications, turn ideas into prototypes, and use dialogue to explore consequential decisions.",
+          "category": "Prompting and evaluation",
+          "source": "Grace Ling · Instagram",
+          "sourceCount": 1,
+          "imageUrl": "chatgpt-prompts-that-changed-how-tech-leaders-work-thumbnail.jpg",
+          "watchUrl": "https://www.instagram.com/reel/DYWFueGtPOP/",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-07-chatgpt-prompts-that-changed-how-tech-leaders-work-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-06T17:58:42.000Z"
+        },
+        {
+          "title": "vLLM Bangkok Day 2026: A Field Guide to Production Inference",
+          "description": "A detailed five-hour field guide to limited-GPU optimization, enterprise adoption, self-hosting economics, production vLLM, distributed inference with llm-d, KV-cache reuse with LMCache, Thai-language serving, and the local inference-engineering opportunity.",
+          "category": "AI infrastructure",
+          "source": "Creatorsgarten · vLLM Bangkok",
+          "sourceCount": 3,
+          "imageUrl": "vllm-bangkok-day-2026-thumbnail.jpg",
+          "watchUrl": "https://www.facebook.com/creatorsgarten/videos/2166530687262705/",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-06-vllm-bangkok-day-production-inference-limited-gpus-llmd-lmcache-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-06T13:57:32.000Z"
+        },
+        {
+          "title": "First Principles: The Key Skill for Product Managers",
+          "description": "George from prodmgmt.world explains how PMs can replace analogy-driven assumptions with first-principles analysis: identify constraints, separate fixed laws from organizational habits, test fundamentals, use AI agents to research claims, and recognize where the method can be overextended.",
+          "category": "Product management",
+          "source": "George · prodmgmt.world",
+          "sourceCount": 1,
+          "imageUrl": "first-principles-product-management-george-source.png",
+          "watchUrl": "https://x.com/i/article/2092194963559976960",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-06-first-principles-product-management-george-prodmgmt-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-06T07:31:30.000Z"
+        },
+        {
+          "title": "The Lifecycle of LLM-as-a-Judge at Netflix",
+          "description": "Netflix's production lifecycle for trustworthy LLM judges: rationale-rich human benchmarks, Reasoning-Aligned Rubric Tuning, criterion-level alignment metrics, bounded generate-judge-revise loops, online validation, weekly drift monitoring, and human-approved rubric governance.",
+          "category": "Evaluation and observability",
+          "source": "Netflix Technology Blog",
+          "sourceCount": 1,
+          "watchUrl": "https://netflixtechblog.medium.com/the-lifecycle-of-llm-as-a-judge-building-aligning-and-monitoring-at-scale-c95bd8283508",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-06-netflix-llm-as-a-judge-lifecycle-rart-monitoring-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-06T05:38:52.000Z"
+        },
+        {
+          "title": "How Uber Runs 60,000 AI Agent Tasks per Week with MCP",
+          "description": "Uber's enterprise MCP architecture: a central Gateway and Registry, IDL-generated tools across 10,000 services, service-owner governance, authorization and PII controls, three agent surfaces, constrained tool selection, parameter overrides, Minions, and a roadmap for MCP and skill evaluation.",
+          "category": "Tools and interoperability",
+          "source": "Agentic AI Foundation",
+          "sourceCount": 1,
+          "videoId": "yVqMxBahjfA",
+          "watchUrl": "https://www.youtube.com/watch?v=yVqMxBahjfA",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-06-uber-60000-agent-tasks-mcp-gateway-registry-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-06T05:30:37.099Z"
+        },
+        {
+          "title": "Matt Pocock's Agentic Engineering Workflow",
+          "description": "A detailed guide to Matt Pocock's harness-first approach: strategic versus tactical programming, procedure and ability skills, stateful teaching, Sandcastle and sandboxed AFK agents, queues instead of infinite loops, review evidence, agent experience, and self-improving engineering systems.",
+          "category": "Coding and documentation agents",
+          "source": "David Ondrej",
+          "sourceCount": 1,
+          "videoId": "nQwJVHCtDDY",
+          "watchUrl": "https://www.youtube.com/watch?v=nQwJVHCtDDY",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-06-matt-pocock-agentic-engineering-workflow-harness-skills-afk-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-05T22:57:13.963Z"
+        },
+        {
+          "title": "Inside Anthropic's 200-Person Platform Team",
+          "description": "Katelyn Lesse and Angela Jiang on Claude Managed Agents, durable agent infrastructure, ephemeral sandboxes, security and observability, role-based token strategies, agent-first workflows, AI-era product organizations, and practical architecture for Master Agents, Sub-Agents, Skills, and MCP tools.",
+          "category": "Agent runtime and memory",
+          "source": "Kleiner Perkins",
+          "sourceCount": 1,
+          "videoId": "YlirATSmqmI",
+          "watchUrl": "https://www.youtube.com/watch?v=YlirATSmqmI",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-05-inside-anthropic-200-person-platform-team-managed-agents-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-05T06:05:50.073Z"
+        },
+        {
+          "title": "Stop Sending Resumes: The Top 1% Hiring Secret",
+          "description": "Silicon Valley Girl's AI-era hiring advice on why resumes are weak signals, why visible proof of work matters, what leaders from Khan Academy, LinkedIn, HubSpot, Gamma, Box, Kalshi, and NYU Stern look for, and how candidates can use AI workflows, public artifacts, and interview stories to stand out.",
+          "category": "Career strategy",
+          "source": "Silicon Valley Girl",
+          "sourceCount": 1,
+          "videoId": "213rSCulKUQ",
+          "watchUrl": "https://www.youtube.com/watch?v=213rSCulKUQ",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-05-stop-sending-resumes-top-1-percent-hiring-secret-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-04T17:46:01.924Z"
+        },
+        {
+          "title": "DHH on Future Programming and Agentic Engineering",
+          "description": "Lex Fridman Podcast #501 with DHH on programming with AI agents, agentic engineering versus vibe coding, Omarchy Linux, open source, harness design, model and tool workflows, speed as product philosophy, Linux as an agent-native desktop, future programming roles, and BA-friendly implications for multi-agent platforms.",
+          "category": "Coding and documentation agents",
+          "source": "Lex Fridman",
+          "sourceCount": 1,
+          "videoId": "NYFGCESmikA",
+          "watchUrl": "https://www.youtube.com/watch?v=NYFGCESmikA",
+          "pages": [
+            {
+              "label": "English",
+              "file": "2026-09-04-dhh-future-programming-ai-agentic-engineering-vibe-coding-linux-lex-fridman-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-04T15:07:05.054Z"
+        },
+        {
+          "title": "OpenAI's Sam Altman on Astra Model Debut",
+          "description": "Bloomberg Television interview with Sam Altman on Astra as a work-capable model, everyday AI use cases, cyber-critical safeguards, trusted access tiers, chain-of-thought monitoring, sandboxing, alignment, public AI benefits, low-cost abundant intelligence, pricing, and mission-first long-term company strategy.",
+          "category": "AI product strategy",
+          "source": "Bloomberg Television",
+          "sourceCount": 1,
+          "videoId": "YxjL1wLLnHE",
+          "watchUrl": "https://www.youtube.com/watch?v=YxjL1wLLnHE",
+          "pages": [
+            {
+              "label": "English",
+              "file": "openai-sam-altman-astra-model-debut-benefits-ai-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-04T14:50:24.698Z"
+        },
+        {
+          "title": "Persistent AI Coworkers",
+          "description": "Tara Seshan on ChatGPT Work, Codex, OpenAI's product culture, steering instead of rowing, persistent AI coworkers, ambition as the new bottleneck, two-to-three-month model planning, writing as thinking, trust UX for knowledge work, and BA-friendly patterns for agentic AI platforms.",
+          "category": "AI product strategy",
+          "source": "Lenny's Podcast",
+          "sourceCount": 1,
+          "videoId": "zMvBMfj4cSQ",
+          "watchUrl": "https://www.youtube.com/watch?v=zMvBMfj4cSQ",
+          "pages": [
+            {
+              "label": "English",
+              "file": "persistent-ai-coworkers-chatgpt-work-tara-seshan-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-09-03T16:10:29.227Z"
+        },
+        {
+          "title": "Continuous Agent Evaluation with AgentCore and Langfuse",
+          "description": "Langfuse and AWS on production AgentOps: overloaded mono-agents, AgentCore runtime, memory, gateway, identity and observability, Langfuse tracing and evals, OpenTelemetry integration, offline and online evaluation methods, HPO with ephemeral agents, CI/CD quality gates, production monitoring, annotation queues, and feedback loops for agentic AI platforms.",
+          "category": "Prompting and evaluation",
+          "source": "Langfuse",
+          "sourceCount": 1,
+          "videoId": "api-Z4TfDvM",
+          "watchUrl": "https://www.youtube.com/watch?v=api-Z4TfDvM&list=LL&index=3&t=3215s",
+          "pages": [
+            {
+              "label": "English",
+              "file": "continuous-agent-evaluation-aws-bedrock-agentcore-langfuse-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-08-22T14:49:25.266Z"
+        },
+        {
+          "title": "AI Fundraising as Product Demo",
+          "description": "Ben Cera's Polsia episode on letting an AI run much of a $10M fundraise: inbox automation, investor Q&A evals, public data rooms, live metrics, public decks, term-sheet routing, human closing, infrastructure stress, claim scrutiny, and high-stakes governance lessons for agentic AI platforms.",
+          "category": "AI product strategy",
+          "source": "Ben Cera",
+          "sourceCount": 1,
+          "videoId": "KIydmNE7Fxs",
+          "watchUrl": "https://www.youtube.com/watch?v=KIydmNE7Fxs",
+          "pages": [
+            {
+              "label": "English",
+              "file": "ai-fundraising-product-demo-ben-cera-polsia-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-08-22T14:44:31.472Z"
+        },
+        {
+          "title": "AI Startup Growth After Building Gets Cheap",
+          "description": "Ben Cera's founder-story video on Polsia, the shift from AI-assisted building to distribution as the bottleneck, early launch hustle, San Francisco founder marketing, viral fundraising narratives, backlash, storytelling, growth loops, and what agentic AI platforms can learn about trust, activation, and retention.",
+          "category": "AI product strategy",
+          "source": "Ben Cera",
+          "sourceCount": 1,
+          "videoId": "AJnDyBLKRZs",
+          "watchUrl": "https://www.youtube.com/watch?v=AJnDyBLKRZs",
+          "pages": [
+            {
+              "label": "English",
+              "file": "ai-startup-growth-ben-cera-polsia-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-08-16T13:33:37.325Z"
+        },
+        {
+          "title": "Codex Superpowers for Designers",
+          "description": "Meng To's Dive Club workflow for using Codex as a design operating environment: local Markdown, custom Notion-like tools, plugins versus skills, design.md, agents.md, screenshots, voice, GPT Image exploration, anti-slop taste systems, and BA-friendly patterns for agentic AI platforms.",
+          "category": "AI product strategy",
+          "source": "Dive Club",
+          "sourceCount": 1,
+          "videoId": "SznrOQYiahg",
+          "watchUrl": "https://www.youtube.com/watch?v=SznrOQYiahg",
+          "pages": [
+            {
+              "label": "English",
+              "file": "codex-superpowers-for-designers-meng-to-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-08-16T13:18:37.884Z"
+        },
+        {
+          "title": "OpenAI Design in the AI Era",
+          "description": "Ian Silber on why this may be the best time in history to be a designer, how AI changes design workflows, ChatGPT's adaptive interface, Codex prototyping, systems thinking, composable primitives, deep craft versus build-in-public, and what this means for agentic AI product design.",
+          "category": "AI product strategy",
+          "source": "Lenny's Podcast",
+          "sourceCount": 1,
+          "videoId": "BV0hy6NET-U",
+          "watchUrl": "https://www.youtube.com/watch?v=BV0hy6NET-U",
+          "pages": [
+            {
+              "label": "English",
+              "file": "openai-design-ai-era-ian-silber-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-08-16T13:12:54.973Z"
+        },
+        {
+          "title": "Anthropic Vertical AI and Evals as PRDs",
+          "description": "Dianne Penn on Anthropic's product-research loop: frontier products for frontier models, Claude Code, Labs, MCP, Skills, token-level product work, evals as the new PRDs, and how vague user feedback becomes actionable model improvement.",
+          "category": "AI product strategy",
+          "source": "Lenny's Podcast",
+          "sourceCount": 1,
+          "videoId": "tivaWTTVRhY",
+          "watchUrl": "https://www.youtube.com/watch?v=tivaWTTVRhY&t=1752s",
+          "pages": [
+            {
+              "label": "English",
+              "file": "anthropic-vertical-ai-evals-new-prds-dianne-penn-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-08-04T15:55:58.552Z"
+        },
+        {
+          "title": "Netflix Systems Thinkers in the AI Era",
+          "description": "Lenny's Podcast conversation with Netflix CPTO Elizabeth Stone on AI fluency, systems thinking, craft excellence, source-of-truth data, common paved paths, talent density, junior talent, and what this means for agentic AI platforms.",
+          "category": "AI product strategy",
+          "source": "Lenny's Podcast",
+          "sourceCount": 1,
+          "videoId": "t0GiTyz4syY",
+          "watchUrl": "https://www.youtube.com/watch?v=t0GiTyz4syY",
+          "pages": [
+            {
+              "label": "English",
+              "file": "netflix-systems-thinkers-ai-era-elizabeth-stone-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-08-04T15:50:19.640Z"
+        },
+        {
+          "title": "Closed-Loop Evals for Multimodal Agents",
+          "description": "Uber's AI Engineer talk on production eval loops for a multimodal food-photo enhancement agent: routing, human-labeled golden datasets, pass@K, QA gates, diagnoser agents, prompt optimization, rollback, and production feedback loops.",
+          "category": "Prompting and evaluation",
+          "source": "AI Engineer",
+          "sourceCount": 1,
+          "videoId": "31GUkCBD-Uc",
+          "watchUrl": "https://www.youtube.com/watch?v=31GUkCBD-Uc",
+          "pages": [
+            {
+              "label": "English",
+              "file": "closed-loop-evals-multimodal-agent-uber-eats-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-25T01:51:14.540Z"
+        },
+        {
+          "title": "Vercel Eve Open Agent Framework",
+          "description": "Vercel Ship 26 NYC workshop summary on Eve's filesystem-first agent model, channels, connections, tools, approvals, evals, observability, sandboxes, workflows, multi-tenant memory, and code-first enterprise agent architecture.",
+          "category": "Agent runtime and memory",
+          "source": "Vercel",
+          "sourceCount": 1,
+          "videoId": "eD8pV7nSIxY",
+          "watchUrl": "https://www.youtube.com/watch?v=eD8pV7nSIxY",
+          "pages": [
+            {
+              "label": "English",
+              "file": "vercel-eve-open-agent-framework-ship-26-nyc-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-22T00:56:05.813Z"
+        },
+        {
+          "title": "Obsidian Academic Knowledge System",
+          "description": "The Effortless Academic's detailed Obsidian workflow for building a personal research Wikipedia with source notes, topic notes, argument notes, bases, PDF links, atomic claims, AI-assisted drafting, and long-term idea generation.",
+          "category": "Research and knowledge management",
+          "source": "The Effortless Academic",
+          "sourceCount": 1,
+          "videoId": "S_-uD3GtFno",
+          "watchUrl": "https://www.youtube.com/watch?v=S_-uD3GtFno&t=2139s",
+          "pages": [
+            {
+              "label": "English",
+              "file": "obsidian-academic-note-taking-source-topic-argument-system-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-20T17:58:31.127Z"
+        },
+        {
+          "title": "Clinical AI Agents Need Eval Discipline",
+          "description": "Abridge's LangChain case study on shipping high-stakes clinical AI agents with LangGraph, LangSmith, annotation quality, layered judges, release gates, clinician agency, PHI-aware operations, and continuous monitoring.",
+          "category": "Industry workflows",
+          "source": "LangChain",
+          "sourceCount": 1,
+          "videoId": "mxweSHetuN8",
+          "watchUrl": "https://www.youtube.com/watch?v=mxweSHetuN8",
+          "pages": [
+            {
+              "label": "English",
+              "file": "clinical-ai-agents-langgraph-abridge-eval-stack-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-20T03:34:07.033Z"
+        },
+        {
+          "title": "The Great Loops Debate",
+          "description": "AI Engineer's Oxford-style debate on coding-agent loops, software factories, verification, context rot, security, token economics, shared memory, and where human ownership still matters.",
+          "category": "Coding and documentation agents",
+          "source": "AI Engineer",
+          "sourceCount": 1,
+          "videoId": "c35YoMdnI78",
+          "watchUrl": "https://www.youtube.com/watch?v=c35YoMdnI78",
+          "pages": [
+            {
+              "label": "English",
+              "file": "great-loops-debate-software-factories-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-20T03:29:35.811Z"
+        },
+        {
+          "title": "Don't Ship Skills Without Evals",
+          "description": "Philipp Schmid's Google DeepMind talk on agent skill quality: capability vs preference skills, model-invoked triggering, directive skill writing, eval harnesses, ablation tests, CI gates, and skill retirement.",
+          "category": "Prompting and evaluation",
+          "source": "AI Engineer",
+          "sourceCount": 1,
+          "videoId": "0vphxNt4wyk",
+          "watchUrl": "https://www.youtube.com/watch?v=0vphxNt4wyk",
+          "pages": [
+            {
+              "label": "English",
+              "file": "dont-ship-skills-without-evals-philipp-schmid-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-20T02:56:30.282Z"
+        },
+        {
+          "title": "Claude Code Loops, Goals, and Workflows",
+          "description": "Peter Yang's interview with Thariq Shihipar on /goal, /loop, dynamic workflows, HTML artifacts, Claude Tag, skills, sub-agent verification, and keeping context lean as models get smarter.",
+          "category": "Agent runtime and memory",
+          "source": "Peter Yang",
+          "sourceCount": 1,
+          "videoId": "aVO6E181cNU",
+          "watchUrl": "https://www.youtube.com/watch?v=aVO6E181cNU",
+          "pages": [
+            {
+              "label": "English",
+              "file": "claude-code-loops-goals-workflows-thariq-shihipar-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-19T16:57:35.613Z"
+        },
+        {
+          "title": "Zero Token Architecture",
+          "description": "Kelsey Hightower's PlatformCon 2026 talk on using inference for discovery, exporting repeatable work into scripts, libraries, tools, and platforms, and keeping engineering fundamentals alive.",
+          "category": "Coding and documentation agents",
+          "source": "Platform Engineering",
+          "sourceCount": 1,
+          "videoId": "A7WFt2JQ5sg",
+          "watchUrl": "https://www.youtube.com/watch?v=A7WFt2JQ5sg",
+          "pages": [
+            {
+              "label": "English",
+              "file": "zero-token-architecture-kelsey-hightower-platformcon-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-19T14:58:31.943Z"
+        },
+        {
+          "title": "A Leader's Guide to Agentic AI",
+          "description": "AWS Executive Forum guidance on agentic AI leadership: cheap intelligence, judgment, full-car architecture, immune-system organizations, trading-floor governance, culture, Amazon Quick, and token-to-yield measurement.",
+          "category": "AI product strategy",
+          "source": "AWS Events",
+          "sourceCount": 1,
+          "videoId": "vvyOHc7jsmg",
+          "watchUrl": "https://www.youtube.com/watch?v=vvyOHc7jsmg",
+          "pages": [
+            {
+              "label": "English",
+              "file": "leader-guide-agentic-ai-aws-executive-forum-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-19T11:12:24.939Z"
+        },
+        {
+          "title": "The Best AI Agents Need More Humans",
+          "description": "LangChain's Factory conversation on software factories, signal-to-deploy loops, human product and architecture roles, model-independent harnesses, Auto Wiki memory, Missions, validators, tokenomics, model routing, and eval culture.",
+          "category": "Agent runtime and memory",
+          "source": "LangChain",
+          "sourceCount": 1,
+          "videoId": "HbUznYhKFOc",
+          "watchUrl": "https://www.youtube.com/watch?v=HbUznYhKFOc",
+          "pages": [
+            {
+              "label": "English",
+              "file": "best-ai-agents-need-more-humans-factory-langchain-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-18T13:01:38.314Z"
+        },
+        {
+          "title": "Choosing the Right Multi-Agent Architecture",
+          "description": "LangChain's compact decision guide comparing supervisor/sub-agents, handoffs, skills, and router architectures across distributed development, parallelization, multihop support, and direct user interaction.",
+          "category": "Multi-agent systems",
+          "source": "LangChain",
+          "sourceCount": 1,
+          "videoId": "fqvbxkgU6vE",
+          "watchUrl": "https://www.youtube.com/watch?v=fqvbxkgU6vE",
+          "pages": [
+            {
+              "label": "English",
+              "file": "choosing-the-right-multi-agent-architecture-langchain-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-16T13:24:41.114Z"
+        },
+        {
+          "title": "Mercedes-Benz Scales AI Agents with n8n",
+          "description": "n8n Business Lab case study on Mercedes-Benz's AI ecosystem: model garden, agent garden, low-code shapers, self-hosted n8n, internal LLM gateway, Kubernetes isolation, and enterprise rollout.",
+          "category": "Multi-agent systems",
+          "source": "n8n",
+          "sourceCount": 1,
+          "videoId": "auj9ajsiI9s",
+          "watchUrl": "https://www.youtube.com/watch?v=auj9ajsiI9s",
+          "pages": [
+            {
+              "label": "English",
+              "file": "mercedes-benz-scales-ai-agents-n8n-business-lab-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-16T13:14:03.230Z"
+        },
+        {
+          "title": "Harness Engineering with Codex",
+          "description": "OpenAI's article on building an internal product with Codex-generated code, repository-native knowledge, agent legibility, architecture enforcement, autonomy loops, and garbage collection.",
+          "category": "Agent runtime and memory",
+          "source": "OpenAI",
+          "sourceCount": 1,
+          "watchUrl": "https://openai.com/index/harness-engineering/",
+          "pages": [
+            {
+              "label": "English",
+              "file": "openai-harness-engineering-codex-agent-first-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-12T14:54:34.053Z"
+        },
+        {
+          "title": "Ontologies and Company World Models",
+          "description": "Devin Kearns' CustomAI Studio explanation of ontologies, world models, company brains, LLM wikis, event capture, context freshness, abstention, and why company context becomes the agent moat.",
+          "category": "Agent runtime and memory",
+          "source": "CustomAI Studio",
+          "sourceCount": 1,
+          "videoId": "4JBp4Wp36Lw",
+          "watchUrl": "https://www.youtube.com/watch?v=4JBp4Wp36Lw",
+          "pages": [
+            {
+              "label": "English",
+              "file": "ontologies-world-models-company-brains-llm-wikis-customai-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-12T14:42:27.798Z"
+        },
+        {
+          "title": "How AI Can Build AI",
+          "description": "mikelopster's Thai introduction to AI-building-AI patterns: AutoML, synthetic data, distillation, AI feedback, coding-agent loops, agent harnesses, evaluation, and model-collapse risks.",
+          "category": "AI product strategy",
+          "source": "mikelopster",
+          "sourceCount": 1,
+          "videoId": "GCn7EgjzanA",
+          "watchUrl": "https://www.youtube.com/watch?v=GCn7EgjzanA",
+          "pages": [
+            {
+              "label": "English",
+              "file": "how-ai-can-build-ai-mikelopster-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-12T04:50:51.802Z"
+        },
+        {
+          "title": "OKF Makes LLM Wikis Portable",
+          "description": "Cole Medin's walkthrough of Google's Open Knowledge Format as a minimal standard for Karpathy-style LLM wikis, knowledge bundles, YAML frontmatter, progressive disclosure, and agent-readable second brains.",
+          "category": "Agent runtime and memory",
+          "source": "Cole Medin",
+          "sourceCount": 1,
+          "videoId": "T33iI6izAKw",
+          "watchUrl": "https://www.youtube.com/watch?v=T33iI6izAKw",
+          "pages": [
+            {
+              "label": "English",
+              "file": "open-knowledge-format-karpathy-llm-wiki-cole-medin-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-11T17:25:05.505Z"
+        },
+        {
+          "title": "LLM Wikis Are Agent Memory Infrastructure",
+          "description": "LangChain's panel on OpenWiki, Dosu, and Chroma, covering wikis as caches, indexes, organizational state, maintenance loops, evals, retrieval, and access control.",
+          "category": "Agent runtime and memory",
+          "source": "LangChain",
+          "sourceCount": 1,
+          "videoId": "Lsut4TCfygw",
+          "watchUrl": "https://www.youtube.com/watch?v=Lsut4TCfygw",
+          "pages": [
+            {
+              "label": "English",
+              "file": "llm-wikis-agent-memory-langchain-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-11T17:15:31.546Z"
+        },
+        {
+          "title": "Open Agent Systems Are Company Operating Systems",
+          "description": "Jensen Huang and LangChain on open agent ecosystems, domain-specific super agents, harnesses, secure runtimes, evals, and why future business processes become agent workflows.",
+          "category": "AI product strategy",
+          "source": "LangChain",
+          "sourceCount": 1,
+          "videoId": "Yy3JH6dDugc",
+          "watchUrl": "https://www.youtube.com/watch?v=Yy3JH6dDugc",
+          "pages": [
+            {
+              "label": "English",
+              "file": "jensen-huang-open-agent-systems-langchain-nvidia-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-08T16:51:29.498Z"
+        },
+        {
+          "title": "Attention Is the New Agent Bottleneck",
+          "description": "Peter Steinberger's OpenClaw workflow talk on PR transcripts, auto-review, fresh-box verification, visual evidence, and loops that reduce human babysitting.",
+          "category": "Coding and documentation agents",
+          "source": "Greg Kamradt",
+          "sourceCount": 1,
+          "videoId": "82YaJw-_t10",
+          "watchUrl": "https://www.youtube.com/watch?v=82YaJw-_t10",
+          "pages": [
+            {
+              "label": "English",
+              "file": "peter-steinberger-openclaw-attention-bottleneck-agent-workflow-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-08T15:55:50.499Z"
+        },
+        {
+          "title": "Inside Anthropic, the AI Juggernaut",
+          "description": "A long-form Bloomberg/The Circuit summary on Anthropic, Dario and Daniela Amodei, Claude Code, enterprise strategy, labor disruption, defense use, cybersecurity risk, regulation, and trust.",
+          "category": "AI product strategy",
+          "source": "Bloomberg Originals",
+          "sourceCount": 1,
+          "videoId": "v1wZwxY3CMg",
+          "watchUrl": "https://www.youtube.com/watch?v=v1wZwxY3CMg",
+          "pages": [
+            {
+              "label": "English",
+              "file": "inside-anthropic-965-billion-ai-juggernaut-bloomberg-circuit-detailed-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-06T16:12:39.049Z"
+        },
+        {
+          "title": "Designers Building with Cursor",
+          "description": "Elizabeth Lin's panel with designers from Ramp, Notion, and Cursor on AI prototyping, live components, design-system sandboxes, Cursor 2.0, and design-to-code collaboration.",
+          "category": "AI product strategy",
+          "source": "Elizabeth Lin",
+          "sourceCount": 1,
+          "videoId": "T8T2gHCKWCE",
+          "watchUrl": "https://www.youtube.com/watch?v=T8T2gHCKWCE",
+          "pages": [
+            {
+              "label": "English",
+              "file": "building-with-cursor-designers-ramp-notion-cursor-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-06T14:53:12.959Z"
+        },
+        {
+          "title": "WF26 Harness Engineering and Startup Battlefield",
+          "description": "A conference-long field guide from AI Engineer World's Fair 2026 covering harness engineering, DSPy, agent loops, security, tool layers, company memory, and Startup Battlefield.",
+          "category": "Multi-agent systems",
+          "source": "AI Engineer",
+          "sourceCount": 1,
+          "videoId": "I2cbIws9j10",
+          "watchUrl": "https://www.youtube.com/watch?v=I2cbIws9j10",
+          "pages": [
+            {
+              "label": "English",
+              "file": "wf26-harness-engineering-startup-battlefield-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-05T06:47:34.693Z"
+        },
+        {
+          "title": "Agentic Organizations Need a New Operating Model",
+          "description": "AWS Events' leadership framework for agentic team structures, use-compose-build economics, expert generalists, embedded pods, platform infrastructure, and governance.",
+          "category": "AI product strategy",
+          "source": "AWS Events",
+          "sourceCount": 1,
+          "videoId": "O7u6myBRsns",
+          "watchUrl": "https://www.youtube.com/watch?v=O7u6myBRsns",
+          "pages": [
+            {
+              "label": "English",
+              "file": "agentic-team-structures-operating-model-aws-events-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-03T17:50:57.383Z"
+        },
+        {
+          "title": "KV Cache Makes LLM Serving a Memory Problem",
+          "description": "IBM Technology explains KV cache, paged attention, prefix caching, chunked prefill, speculative decoding, and GPU memory tuning for faster LLM inference.",
+          "category": "Agent runtime and memory",
+          "source": "IBM Technology",
+          "sourceCount": 1,
+          "videoId": "o0gkdZBtwEg",
+          "watchUrl": "https://www.youtube.com/watch?v=o0gkdZBtwEg",
+          "pages": [
+            {
+              "label": "English",
+              "file": "kv-cache-paged-attention-faster-llm-gpu-ibm-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-03T17:47:44.203Z"
+        },
+        {
+          "title": "The Coordinator Is the System",
+          "description": "ExamPro's Claude Architect walkthrough on hub-and-spoke agents, coordinator responsibilities, decomposition, routing, aggregation, observability, and SDK/MCP tool structure.",
+          "category": "Multi-agent systems",
+          "source": "ExamPro",
+          "sourceCount": 1,
+          "videoId": "vRYBG_R8JAI",
+          "watchUrl": "https://www.youtube.com/watch?v=vRYBG_R8JAI",
+          "pages": [
+            {
+              "label": "English",
+              "file": "claude-architect-multi-agent-orchestration-exampro-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-03T17:35:07.093Z"
+        },
+        {
+          "title": "Goals Turn Agents Into Background Workers",
+          "description": "Owain Lewis' practical workflow for using Claude Code and Codex goals, loops, and scheduled automations for maintenance, PRs, docs, and long-running tasks.",
+          "category": "Agent runtime and memory",
+          "source": "Owain Lewis",
+          "sourceCount": 1,
+          "videoId": "WRkVuebZqLU",
+          "watchUrl": "https://www.youtube.com/watch?v=WRkVuebZqLU",
+          "pages": [
+            {
+              "label": "English",
+              "file": "agent-loops-goals-claude-code-codex-owain-lewis-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-03T17:29:42.051Z"
+        },
+        {
+          "title": "AI Sprawl Is a Strategy Problem",
+          "description": "Devin Kearns' warning that disconnected AI tools, token budgets, and vague AI-first programs create cost without a shared operating model.",
+          "category": "AI product strategy",
+          "source": "CustomAI Studio",
+          "sourceCount": 1,
+          "videoId": "EqzNLEvimvk",
+          "watchUrl": "https://www.youtube.com/watch?v=EqzNLEvimvk",
+          "pages": [
+            {
+              "label": "English",
+              "file": "ai-sprawl-costing-companies-millions-customai-studio-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-03T15:56:01.384Z"
+        },
+        {
+          "title": "Design Skills That Push Claude Beyond Generic UI",
+          "description": "AI LABS' walkthrough of Claude design skills, reusable skill files, component registries, MCPs, motion, visuals, and platform-aware UI guidance.",
+          "category": "AI product strategy",
+          "source": "AI LABS",
+          "sourceCount": 1,
+          "videoId": "Ot582-E61ac",
+          "watchUrl": "https://www.youtube.com/watch?v=Ot582-E61ac",
+          "pages": [
+            {
+              "label": "English",
+              "file": "claude-design-skills-beautiful-websites-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-02T19:05:28.297Z"
+        },
+        {
+          "title": "Claude Can Build a Harness for Every Task",
+          "description": "A concise summary of Claude Code dynamic workflows, runtime-generated harnesses, clean-context sub-agents, and task-specific orchestration patterns.",
+          "category": "Agent runtime and memory",
+          "source": "Prompt Engineering",
+          "sourceCount": 1,
+          "videoId": "l5rae4LMKBc",
+          "watchUrl": "https://www.youtube.com/watch?v=l5rae4LMKBc",
+          "pages": [
+            {
+              "label": "English",
+              "file": "claude-builds-own-harness-dynamic-workflows-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-02T18:39:11.384Z"
+        },
+        {
+          "title": "Building an Agentic Analytics Harness",
+          "description": "Chris Merrick's Omni session on Blobby, semantic layers, SQL recovery, observability, evals, and production-grade analytics agents.",
+          "category": "Industry workflows",
+          "source": "Omni",
+          "sourceCount": 1,
+          "videoId": "K4-flzsPraE",
+          "watchUrl": "https://www.youtube.com/watch?v=K4-flzsPraE",
+          "pages": [
+            {
+              "label": "English",
+              "file": "omni-agentic-analytics-harness-claude-code-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-02T15:29:56.495Z"
+        },
+        {
+          "title": "No Vibes Allowed in Complex Codebases",
+          "description": "Dex Horthy's operating model for coding agents in brownfield systems, context engineering, small scopes, and accurate handoffs.",
+          "category": "Coding and documentation agents",
+          "source": "Dex Horthy",
+          "sourceCount": 1,
+          "videoId": "rmvDxxNubIg",
+          "watchUrl": "https://www.youtube.com/watch?v=rmvDxxNubIg",
+          "pages": [
+            {
+              "label": "English",
+              "file": "no-vibes-allowed-complex-codebases-context-engineering-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-02T14:33:05.449Z"
+        },
+        {
+          "title": "Loop Engineering for Always-Running Agents",
+          "description": "A focused summary on loop engineering, Hermes-style agents, persistent work, and operational control.",
+          "category": "Agent runtime and memory",
+          "source": "Hermes agents",
+          "sourceCount": 1,
+          "videoId": "AQRDjI5owZI",
+          "watchUrl": "https://www.youtube.com/watch?v=AQRDjI5owZI",
+          "pages": [
+            {
+              "label": "English",
+              "file": "loop-engineering-10x-hermes-agents-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-02T14:07:47.295Z"
+        },
+        {
+          "title": "The Evaluation Flywheel for AI Products",
+          "description": "Braintrust's Evals 101 framing for datasets, graders, feedback loops, eval-driven iteration, and production quality.",
+          "category": "Prompting and evaluation",
+          "source": "Braintrust",
+          "sourceCount": 1,
+          "videoId": "bk0TmxoZlUY",
+          "watchUrl": "https://www.youtube.com/watch?v=bk0TmxoZlUY",
+          "pages": [
+            {
+              "label": "English",
+              "file": "evals-101-braintrust-ai-evaluation-flywheel-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-02T12:57:07.867Z"
+        },
+        {
+          "title": "A Simple Framework for AI Native Businesses",
+          "description": "An Agentic OS framing for AI-native businesses, operating layers, workflow strategy, and organizational leverage.",
+          "category": "AI product strategy",
+          "source": "Agentic OS",
+          "sourceCount": 1,
+          "videoId": "iwrh4TS9uS0",
+          "watchUrl": "https://www.youtube.com/watch?v=iwrh4TS9uS0",
+          "pages": [
+            {
+              "label": "English",
+              "file": "simple-framework-ai-native-businesses-agentic-os-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-02T12:52:08.531Z"
+        },
+        {
+          "title": "AI System Design From Idea to Production",
+          "description": "A MongoDB framework for taking an AI idea into production through product framing, architecture, and operational choices.",
+          "category": "AI product strategy",
+          "source": "MongoDB",
+          "sourceCount": 1,
+          "videoId": "T0HhO4YtTfE",
+          "watchUrl": "https://www.youtube.com/watch?v=T0HhO4YtTfE",
+          "pages": [
+            {
+              "label": "English",
+              "file": "ai-system-design-from-idea-to-production-mongodb-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-02T12:47:10.740Z"
+        },
+        {
+          "title": "From Agent Chaos to Production Choreography",
+          "description": "A production-oriented look at multi-agent orchestration patterns, accountability boundaries, graph flow, and agent coordination.",
+          "category": "Multi-agent systems",
+          "source": "Multi-agent orchestration",
+          "sourceCount": 1,
+          "videoId": "2czYyrTzILg",
+          "watchUrl": "https://www.youtube.com/watch?v=2czYyrTzILg",
+          "pages": [
+            {
+              "label": "English",
+              "file": "from-chaos-to-choreography-multi-agent-orchestration-patterns-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-02T12:42:21.805Z"
+        },
+        {
+          "title": "Multi-Agent Systems Without the Hype",
+          "description": "Concepts and patterns for deciding when to use one agent, many agents, workflow graphs, or handoffs.",
+          "category": "Multi-agent systems",
+          "source": "Agent Factory Podcast",
+          "sourceCount": 1,
+          "videoId": "TGNScswE0kU",
+          "watchUrl": "https://www.youtube.com/watch?v=TGNScswE0kU",
+          "pages": [
+            {
+              "label": "English",
+              "file": "multi-agent-systems-concepts-patterns-agent-factory-podcast-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-02T12:37:36.568Z"
+        },
+        {
+          "title": "The Protocol Layer for Model-Native Tools",
+          "description": "Google Cloud's MCP vs API comparison, framed around tool protocols, model-native interfaces, and integration boundaries.",
+          "category": "Protocols and tool integration",
+          "source": "Google Cloud",
+          "sourceCount": 1,
+          "videoId": "185XGEMefgc",
+          "watchUrl": "https://www.youtube.com/watch?v=185XGEMefgc",
+          "pages": [
+            {
+              "label": "English",
+              "file": "mcp-vs-api-protocol-every-developer-needs-google-cloud-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-02T12:29:34.496Z"
+        },
+        {
+          "title": "An Agent for Repo Documentation",
+          "description": "LangChain's OpenWiki demo, showing an open source agent for repo exploration, documentation, and knowledge extraction.",
+          "category": "Coding and documentation agents",
+          "source": "LangChain",
+          "sourceCount": 1,
+          "videoId": "nIVu3zfYprI",
+          "watchUrl": "https://www.youtube.com/watch?v=nIVu3zfYprI",
+          "pages": [
+            {
+              "label": "English",
+              "file": "openwiki-open-source-agent-repo-documentation-langchain-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-02T12:25:14.681Z"
+        },
+        {
+          "title": "The Multi-Agent Architecture That Actually Ships",
+          "description": "Factory's Missions system, with planner, worker, validator, orchestration UI, and model-agnostic production patterns.",
+          "category": "Multi-agent systems",
+          "source": "Factory",
+          "sourceCount": 1,
+          "videoId": "ow1we5PzK-o",
+          "watchUrl": "https://www.youtube.com/watch?v=ow1we5PzK-o",
+          "pages": [
+            {
+              "label": "English",
+              "file": "multi-agent-architecture-that-actually-ships-factory-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-01T16:22:14.676Z"
+        },
+        {
+          "title": "Parallel Agents That Finish the Work",
+          "description": "A LangChain walkthrough of dynamic subagents in Deep Agents, including parallel research, context separation, and result synthesis.",
+          "category": "Multi-agent systems",
+          "source": "LangChain",
+          "sourceCount": 1,
+          "videoId": "5AkdMangfNk",
+          "watchUrl": "https://www.youtube.com/watch?v=5AkdMangfNk",
+          "pages": [
+            {
+              "label": "English",
+              "file": "dynamic-subagents-parallel-agents-deep-agents-langchain-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-01T16:05:55.143Z"
+        },
+        {
+          "title": "Agents That Keep Getting Better",
+          "description": "Prime Intellect and NVIDIA on continual learning for long-running agents, state, feedback, and improvement loops.",
+          "category": "Agent runtime and memory",
+          "source": "NVIDIA Developer",
+          "sourceCount": 1,
+          "videoId": "SVWmuJx0hHM",
+          "watchUrl": "https://www.youtube.com/watch?v=SVWmuJx0hHM",
+          "pages": [
+            {
+              "label": "English",
+              "file": "continual-learning-for-long-running-agents-prime-intellect-nvidia-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-01T16:01:11.520Z"
+        },
+        {
+          "title": "Harness, Loop, Eval, Tracing, and RAG",
+          "description": "An agent harness guide covering loop engineering, LLMOps, tracing, retrieval, evaluation, and production feedback loops.",
+          "category": "Agent runtime and memory",
+          "source": "Sean's AI Stories",
+          "sourceCount": 1,
+          "videoId": "GrNbuWWJYiI",
+          "watchUrl": "https://www.youtube.com/watch?v=GrNbuWWJYiI",
+          "pages": [
+            {
+              "label": "English",
+              "file": "ai-agent-harness-loop-engineering-llmops-eval-tracing-rag-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-01T15:49:29.588Z"
+        },
+        {
+          "title": "Memory, Context, Gateways, and Cron Jobs",
+          "description": "A Hugging Face Hermes Agent architecture summary focused on context, files, memory, gateways, and scheduled agent work.",
+          "category": "Agent runtime and memory",
+          "source": "Hugging Face",
+          "sourceCount": 1,
+          "videoId": "n32qq7Kwzh0",
+          "watchUrl": "https://www.youtube.com/watch?v=n32qq7Kwzh0",
+          "pages": [
+            {
+              "label": "English",
+              "file": "hermes-architecture-memory-context-gateways-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-01T15:24:31.167Z"
+        },
+        {
+          "title": "Hermes Agent Is More Than a Coding Copilot",
+          "description": "An English summary of Mikelopster's Thai walkthrough of Hermes Agent, capabilities, memory, and workflow design.",
+          "category": "Agent runtime and memory",
+          "source": "Mikelopster",
+          "sourceCount": 1,
+          "videoId": "H4pw5R_v54s",
+          "watchUrl": "https://www.youtube.com/watch?v=H4pw5R_v54s",
+          "pages": [
+            {
+              "label": "English",
+              "file": "trying-hermes-agent-mikelopster-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-01T15:12:28.330Z"
+        },
+        {
+          "title": "From Vibe Coding to Agentic Engineering",
+          "description": "Andrej Karpathy on the shift from vibe coding to agentic engineering, supervision, specs, and human control.",
+          "category": "AI product strategy",
+          "source": "Sequoia",
+          "sourceCount": 1,
+          "videoId": "96jN2OCOfLs",
+          "watchUrl": "https://www.youtube.com/watch?v=96jN2OCOfLs&t=656s",
+          "pages": [
+            {
+              "label": "English",
+              "file": "andrej-karpathy-from-vibe-coding-to-agentic-engineering-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-01T14:53:14.691Z"
+        },
+        {
+          "title": "Agents Can Improve Agents When the Harness Is Strong",
+          "description": "Alfonso Graziano's practical pattern for agents building agents with specs, golden datasets, evals, and repeatable engineering workflows.",
+          "category": "Multi-agent systems",
+          "source": "Nearform",
+          "sourceCount": 1,
+          "videoId": "aHhB3sjGjkI",
+          "watchUrl": "https://www.youtube.com/watch?v=aHhB3sjGjkI",
+          "pages": [
+            {
+              "label": "English",
+              "file": "agents-building-agents-alfonso-graziano-nearform-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-01T14:48:02.873Z"
+        },
+        {
+          "title": "The Memory Problem Is a Context Compression Problem",
+          "description": "Baseten researchers explain KV cache, context growth, RAG, summaries, fine-tuning, and runtime memory tradeoffs.",
+          "category": "Agent runtime and memory",
+          "source": "Compile 26",
+          "sourceCount": 1,
+          "videoId": "I8YnwUV2C9w",
+          "watchUrl": "https://www.youtube.com/watch?v=I8YnwUV2C9w",
+          "pages": [
+            {
+              "label": "English",
+              "file": "the-memory-problem-baseten-compile-26-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-01T14:40:27.572Z"
+        },
+        {
+          "title": "Claims Need Agent Teams, Not One Bot",
+          "description": "A multi-agent claims processing workflow with intake, evidence review, fraud checks, coverage decisions, and audit trails.",
+          "category": "Industry workflows",
+          "source": "MGAA",
+          "sourceCount": 1,
+          "videoId": "xoWGs9Sf8WE",
+          "watchUrl": "https://www.youtube.com/watch?v=xoWGs9Sf8WE",
+          "pages": [
+            {
+              "label": "English",
+              "file": "reimagining-claims-processing-with-multi-agent-ai-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-01T14:09:28.588Z"
+        },
+        {
+          "title": "Domain-Specific Agents Are Composition",
+          "description": "A summary of why small specialized agents, composition, and domain workflows may become the next useful agent layer.",
+          "category": "AI product strategy",
+          "source": "Domain-specific agents",
+          "sourceCount": 1,
+          "videoId": "spNAUEgq_A8",
+          "watchUrl": "https://www.youtube.com/watch?v=spNAUEgq_A8",
+          "pages": [
+            {
+              "label": "English",
+              "file": "the-future-is-domain-specific-agents-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-07-01T12:08:37.157Z"
+        },
+        {
+          "title": "Cut Context Before You Cut Output",
+          "description": "A local code index approach for reducing AI coding tokens by summarizing, slicing, and retrieving only useful code context.",
+          "category": "Coding and documentation agents",
+          "source": "Local code index",
+          "sourceCount": 1,
+          "videoId": "dRmWYHuIJxM",
+          "watchUrl": "https://www.youtube.com/watch?v=dRmWYHuIJxM",
+          "pages": [
+            {
+              "label": "English",
+              "file": "we-cut-94-percent-ai-coding-tokens-local-code-index-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-06-30T16:10:46.379Z"
+        },
+        {
+          "title": "Agentic AI Platform Playbook",
+          "description": "A multi-video research digest for agentic AI platform architecture, orchestration, MCP, human-in-the-loop controls, and product planning.",
+          "category": "Multi-agent systems",
+          "source": "Research digest",
+          "sourceCount": 9,
+          "videoId": "hvAPnpSfSGo",
+          "pages": [
+            {
+              "label": "English",
+              "file": "agentic-ai-platform-youtube-research-en.html",
+              "language": "English"
+            },
+            {
+              "label": "Thai",
+              "file": "agentic-ai-platform-youtube-research.html",
+              "language": "Thai"
+            }
+          ],
+          "runAt": "2026-06-30T16:01:24.602Z"
+        },
+        {
+          "title": "The Best AI Agents Are Simpler Than You Think",
+          "description": "Sierra's view on simple agent experiences, system design behind the scenes, provider modularity, and production constraints.",
+          "category": "AI product strategy",
+          "source": "LangChain",
+          "sourceCount": 1,
+          "videoId": "uCKhOmth2ms",
+          "watchUrl": "https://www.youtube.com/watch?v=uCKhOmth2ms",
+          "pages": [
+            {
+              "label": "English",
+              "file": "the-best-ai-agents-are-simpler-than-you-think-en.html",
+              "language": "English"
+            }
+          ],
+          "runAt": "2026-06-30T14:34:49.004Z"
+        },
+        {
+          "title": "The Prompting Playbook",
+          "description": "A concise guide to production prompting, evals, structure, staged tasks, and repairable workflows.",
+          "category": "Prompting and evaluation",
+          "source": "Prompting playbook",
+          "sourceCount": 1,
+          "videoId": "G2B0YWuJUgI",
+          "watchUrl": "https://www.youtube.com/watch?v=G2B0YWuJUgI",
+          "pages": [
+            {
+              "label": "English",
+              "file": "the-prompting-playbook-en.html",
+              "language": "English"
+            },
+            {
+              "label": "Thai",
+              "file": "the-prompting-playbook.html",
+              "language": "Thai"
+            }
+          ],
+          "runAt": "2026-06-30T14:00:19.749Z"
+        }
+      ]
+    </script>
+    <script src="library.js"></script>
+  </body>
+</html>

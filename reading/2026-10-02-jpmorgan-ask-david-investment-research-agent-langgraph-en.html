@@ -1,0 +1,913 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>Inside J.P. Morgan's Ask David Research Agent</title>
+    <meta
+      name="description"
+      content="A detailed, evidence-aware guide to Ask David, the multi-agent investment research system presented by J.P. Morgan Private Bank at LangChain Interrupt."
+    />
+    <link rel="stylesheet" href="article-theme.css" />
+    <style>
+      .visual {
+        margin: 1.6rem 0 2rem;
+      }
+      .visual img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: #101010;
+      }
+      .visual figcaption {
+        margin-top: 0.65rem;
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.5;
+      }
+      .visual figcaption strong {
+        color: var(--ink);
+      }
+      .agent-grid,
+      .principle-grid,
+      .risk-grid {
+        display: grid;
+        gap: 1px;
+        margin: 1.5rem 0;
+        background: var(--line);
+        border: 1px solid var(--line);
+      }
+      .agent-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .principle-grid,
+      .risk-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .agent-grid > div,
+      .principle-grid > div,
+      .risk-grid > div {
+        padding: 1rem;
+        background: var(--paper);
+      }
+      .agent-grid h3,
+      .principle-grid h3,
+      .risk-grid h3 {
+        margin: 0 0 0.45rem;
+        font-size: 1.03rem;
+      }
+      .agent-grid p,
+      .principle-grid p,
+      .risk-grid p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.89rem;
+        line-height: 1.5;
+      }
+      .callout {
+        margin: 1.45rem 0;
+        padding: 1rem !important;
+        border-left: 3px solid var(--green) !important;
+        background: var(--surface) !important;
+      }
+      .callout.warning {
+        border-left-color: #8a6417 !important;
+      }
+      .callout p:last-child {
+        margin-bottom: 0;
+      }
+      .pipeline {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 0.45rem;
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background: var(--surface);
+        border: 1px solid var(--line);
+      }
+      .pipeline > div {
+        min-height: 6.3rem;
+        padding: 0.7rem;
+        background: var(--paper);
+        border: 1px solid var(--line);
+      }
+      .pipeline .human {
+        background: #e8f2ec;
+        border-color: #8eb09c;
+      }
+      .pipeline strong,
+      .pipeline small {
+        display: block;
+      }
+      .pipeline strong {
+        margin-bottom: 0.3rem;
+        font-weight: 600;
+      }
+      .pipeline small {
+        color: var(--muted);
+        line-height: 1.4;
+      }
+      .assessment-table {
+        width: 100%;
+        min-width: 0 !important;
+        margin: 1.4rem 0;
+        table-layout: fixed;
+        border-collapse: collapse;
+      }
+      .assessment-table th,
+      .assessment-table td {
+        padding: 0.75rem 0.5rem;
+        text-align: left;
+        vertical-align: top;
+        overflow-wrap: anywhere;
+        border-bottom: 1px solid var(--line);
+      }
+      .assessment-table th {
+        font-weight: 600;
+      }
+      .chapter-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin: 1.25rem 0;
+        padding: 0;
+        border-top: 1px solid var(--line);
+        list-style: none;
+      }
+      .chapter-list li {
+        border-bottom: 1px solid var(--line);
+      }
+      .chapter-list a {
+        display: flex;
+        gap: 0.7rem;
+        min-height: 100%;
+        padding: 0.8rem 0.45rem;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      .chapter-list time {
+        flex: 0 0 3.25rem;
+        color: var(--green);
+        font-variant-numeric: tabular-nums;
+      }
+      @media (max-width: 850px) {
+        .agent-grid,
+        .pipeline {
+          grid-template-columns: 1fr;
+        }
+        .pipeline > div {
+          min-height: auto;
+        }
+      }
+      @media (max-width: 750px) {
+        .principle-grid,
+        .risk-grid,
+        .chapter-list {
+          grid-template-columns: 1fr;
+        }
+        .assessment-table {
+          font-size: 0.84rem;
+        }
+        .assessment-table thead {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip: rect(0 0 0 0);
+        }
+        .assessment-table,
+        .assessment-table tbody,
+        .assessment-table tr,
+        .assessment-table td {
+          display: block;
+          width: 100%;
+        }
+        .assessment-table tr {
+          padding: 0.55rem 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .assessment-table td {
+          display: grid;
+          grid-template-columns: 6.8rem minmax(0, 1fr);
+          gap: 0.65rem;
+          padding: 0.32rem 0.2rem;
+          border: 0;
+        }
+        .assessment-table td::before {
+          color: var(--muted);
+          font-weight: 600;
+        }
+        .assessment-table td:nth-child(1)::before {
+          content: "Layer";
+        }
+        .assessment-table td:nth-child(2)::before {
+          content: "Presented";
+        }
+        .assessment-table td:nth-child(3)::before {
+          content: "Production control";
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="/reading/">Reading room</a>
+      <div class="top-actions">
+        <a
+          class="action-link"
+          href="https://www.youtube.com/watch?v=yMalr0jiOAc"
+          >Watch video</a
+        >
+      </div>
+    </nav>
+
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Enterprise agents · Investment research</p>
+          <h1>Inside J.P. Morgan's Ask David Research Agent</h1>
+          <p class="subtitle">
+            A domain-specific multi-agent system that joins structured records,
+            documents, proprietary analytics, role-aware answers, evaluation,
+            and human expertise around a high-stakes research workflow.
+          </p>
+          <div class="meta">
+            <span>14:11 video</span><span>Auto-generated English captions</span
+            ><span>Published May 29, 2025</span
+            ><span>Summary run: October 02, 2026 · 08:05 ICT</span>
+          </div>
+        </div>
+        <figure class="hero-card">
+          <img
+            src="2026-10-02-jpmorgan-ask-david-langgraph-thumbnail.jpg"
+            alt="J.P. Morgan Ask David investment research agent presentation thumbnail"
+          />
+          <figcaption>
+            The important product idea is not a general financial chatbot. It is
+            a governed research interface over known data, tools, workflows, and
+            subject-matter experts.
+          </figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="section-label">Executive summary</p>
+            <h2>
+              The agent organizes research work; it does not replace
+              accountability
+            </h2>
+            <p>
+              J.P. Morgan Private Bank's investment research team manages lists
+              containing thousands of products backed by years of structured
+              records, documents, and proprietary analytics. Answering a
+              seemingly simple product question can require searching several
+              systems, reconstructing historical context, running analysis, and
+              tailoring the explanation for a particular user. “Ask David” is
+              presented as a way to coordinate that work through one
+              conversational entry point.
+            </p>
+            <p>
+              Its architecture uses a supervisor to interpret the request and
+              route work to specialized agents for structured data, unstructured
+              documents, and analytics. Separate subgraphs handle general
+              questions and product-specific questions. Retrieved evidence is
+              personalized by user role, checked through a reflection step,
+              summarized, and stored as conversational memory. Human
+              subject-matter experts remain available for difficult or
+              consequential cases.
+            </p>
+            <ul class="summary-list">
+              <li>
+                <strong>Domain boundaries make the system useful.</strong> The
+                agents operate over curated investment data, approved document
+                stores, and existing analytical capabilities rather than an
+                unrestricted knowledge space.
+              </li>
+              <li>
+                <strong
+                  >Different evidence requires different execution.</strong
+                >
+                SQL/API access, document retrieval, and analytical code are not
+                interchangeable tools and need separate controls and metrics.
+              </li>
+              <li>
+                <strong>The graph encodes product policy.</strong> Routing,
+                personalization, reflection, summarization, and escalation are
+                explicit stages that can be traced and evaluated.
+              </li>
+              <li>
+                <strong>Evaluation is part of development.</strong> The team
+                recommends evaluating each sub-agent independently as well as
+                the full workflow, using metrics suited to the agent's job.
+              </li>
+              <li>
+                <strong>Human review is a risk control.</strong> LLM judging can
+                reduce review load, but the talk still assigns the hardest last
+                mile to human SMEs.
+              </li>
+            </ul>
+            <div class="callout warning">
+              <strong>Evidence boundary</strong>
+              <p>
+                This is a conference presentation of the team's approach and
+                lessons, not an independently audited case study. The talk does
+                not disclose production traffic, exact model versions, complete
+                evaluation datasets, security architecture, or measured business
+                outcomes. Percentage ranges shown near the end are presenter
+                heuristics from their experience, not a universal accuracy curve
+                for enterprise agents.
+              </p>
+            </div>
+          </section>
+
+          <section id="problem">
+            <p class="section-label">Business problem</p>
+            <h2>
+              One answer may span records, documents, analysis, and judgment
+            </h2>
+            <p>
+              The team describes three information families. Structured data
+              includes long-running product systems and status histories.
+              Unstructured sources include emails, meeting notes, presentations,
+              audio, and video. Proprietary models and analytics produce
+              performance, attribution, exposure, and visualization that
+              previously required hands-on expert work.
+            </p>
+            <p>
+              The motivating example is “Why was this fund terminated?” A good
+              response may need the status-change history, committee commentary,
+              performance context, similar products, and an explanation suited
+              to the audience. The acronym DAVID captures the intended scope:
+              <strong
+                >Data, Analytics, Visualization, Insights, and Decision-making
+                assistant</strong
+              >.
+            </p>
+            <div class="callout">
+              <strong>Product framing</strong>
+              <p>
+                The assistant supports research and decision preparation. The
+                presentation does not establish that it autonomously makes
+                investment decisions or removes human responsibility for advice.
+              </p>
+            </div>
+          </section>
+
+          <section id="architecture">
+            <p class="section-label">System architecture</p>
+            <h2>A supervisor coordinates three evidence-specialized agents</h2>
+            <figure class="visual">
+              <img
+                src="2026-10-02-jpmorgan-ask-david-architecture-hd.jpg"
+                alt="J.P. Morgan Ask David architecture with supervisor, memory, data agents, sources, and analytics tools"
+              />
+              <figcaption>
+                <strong>Source frame, about 05:10.</strong> The supervisor is
+                the interaction and orchestration boundary. It routes questions,
+                combines results, accesses memory, invokes reflection, and can
+                request human feedback.
+              </figcaption>
+            </figure>
+            <div class="agent-grid">
+              <div>
+                <h3>Structured-data agent</h3>
+                <p>
+                  Converts natural language into SQL queries or approved API
+                  calls, then uses an LLM to explain returned records. The
+                  depicted sources include a fund universe and status history.
+                </p>
+              </div>
+              <div>
+                <h3>Unstructured-data agent</h3>
+                <p>
+                  Searches preprocessed, chunked, indexed, and embedded
+                  documents through a RAG path. Examples include meeting notes
+                  and product one-pagers.
+                </p>
+              </div>
+              <div>
+                <h3>Analytics agent</h3>
+                <p>
+                  Calls existing APIs or libraries for simple tasks. More
+                  complex analysis can use text-to-code generation under human
+                  supervision.
+                </p>
+              </div>
+            </div>
+            <p>
+              This specialization is valuable because each path has different
+              correctness criteria. A SQL agent needs schema grounding,
+              authorization, read-only execution, and result validation. A RAG
+              agent needs retrieval relevance, evidence coverage, freshness, and
+              citations. An analytics agent needs parameter validation,
+              deterministic calculation checks, and a sandbox for generated
+              code. One generic “accuracy” score cannot diagnose all three.
+            </p>
+          </section>
+
+          <section id="workflow">
+            <p class="section-label">Graph design</p>
+            <h2>Route intent first, then run a bounded subgraph</h2>
+            <p>
+              The end-to-end graph begins with planning. A general investment
+              question enters one subgraph; a question about a specific fund
+              enters another. Each subgraph has its own supervisor and relevant
+              specialized agents. The answers converge on personalization,
+              reflection, and conversation summarization.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-02-jpmorgan-ask-david-workflow-hd.jpg"
+                alt="Ask David LangGraph workflow with general and specific fund subgraphs"
+              />
+              <figcaption>
+                <strong>Source frame, about 06:40.</strong> Explicit subgraphs
+                isolate general QA from product-specific research. Tool-call
+                confirmation nodes show that human interaction is represented
+                inside the workflow rather than added after the fact.
+              </figcaption>
+            </figure>
+            <div
+              class="pipeline"
+              role="img"
+              aria-label="Ask David research flow"
+            >
+              <div>
+                <strong>Plan</strong
+                ><small>Classify intent and required evidence.</small>
+              </div>
+              <div>
+                <strong>Route</strong
+                ><small>Select general or specific-product subgraph.</small>
+              </div>
+              <div>
+                <strong>Retrieve</strong
+                ><small>Query records, documents, and analytical tools.</small>
+              </div>
+              <div>
+                <strong>Personalize</strong
+                ><small>Adapt depth and language to the user's role.</small>
+              </div>
+              <div>
+                <strong>Reflect</strong
+                ><small
+                  >Check relevance and apparent correctness; retry when
+                  needed.</small
+                >
+              </div>
+              <div class="human">
+                <strong>Return or escalate</strong
+                ><small
+                  >Summarize, update memory, or involve a human SME.</small
+                >
+              </div>
+            </div>
+            <p>
+              A graph makes the sequence observable, but a visible node is not
+              automatically a control. “Reflection” needs a defined rubric,
+              evidence access, failure threshold, retry limit, and escalation
+              rule. “Human confirmation” needs an identity, decision payload,
+              timeout, and durable resume point. LangGraph's current guidance
+              similarly couples interrupts with checkpointed state so execution
+              can pause and resume reliably.
+            </p>
+          </section>
+
+          <section id="example">
+            <p class="section-label">Worked example</p>
+            <h2>
+              “Why was this fund terminated?” becomes a traceable research path
+            </h2>
+            <figure class="visual">
+              <img
+                src="2026-10-02-jpmorgan-ask-david-example-hd.jpg"
+                alt="Ask David worked example showing planning, specific fund routing, document search, personalization, reflection, and summarization"
+              />
+              <figcaption>
+                <strong>Source frame, about 07:35.</strong> Planning identifies
+                a product-specific question, the specific-fund supervisor
+                chooses document search, MongoDB returns relevant material, and
+                the final answer includes a reference link.
+              </figcaption>
+            </figure>
+            <p>
+              The same evidence is then rendered differently according to user
+              role. A due-diligence specialist may need the detailed reasoning,
+              supporting history, and caveats; an advisor may need a concise
+              explanation for a client conversation. This is more than changing
+              tone. Role-aware answers should also enforce what data the user
+              may see, how much detail may be disclosed, and which actions or
+              conclusions require review.
+            </p>
+            <p>
+              The example's reference link is essential. In a high-stakes
+              workflow, the answer should carry source identity, effective date,
+              retrieval timestamp, quoted evidence or stable location, and the
+              transformations applied by analytical tools. The reviewer must be
+              able to reconstruct why the system produced the answer.
+            </p>
+          </section>
+
+          <section id="evolution">
+            <p class="section-label">Lesson one</p>
+            <h2>Start with one agent, earn complexity through evidence</h2>
+            <p>
+              The final diagram was not the starting architecture. The team
+              describes a progression from a plain ReAct-style loop, to a
+              customized RAG agent, to a supervisor integrating specialized
+              agents, and finally to intent-specific subgraphs. They expanded
+              the graph only after becoming comfortable with the component's
+              performance.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-02-jpmorgan-ask-david-evolution-hd.jpg"
+                alt="Four-stage evolution from one agent to specialized and intent-specific LangGraph workflows"
+              />
+              <figcaption>
+                <strong>Source frame, about 09:50.</strong> Complexity follows
+                observed needs: tool use, retrieval, supervision, reflection,
+                confirmation, and finally separate flows for different intents.
+              </figcaption>
+            </figure>
+            <p>
+              This is the strongest reusable lesson in the talk. A multi-agent
+              architecture should be the result of failure analysis, ownership
+              boundaries, context isolation, or different evaluation needs. If
+              one well-scoped agent plus deterministic workflow steps can solve
+              the task, additional supervisors and handoffs create more routes
+              to test without necessarily improving the answer.
+            </p>
+          </section>
+
+          <section id="evaluation">
+            <p class="section-label">Lesson two</p>
+            <h2>Evaluate components and the full graph separately</h2>
+            <p>
+              The team recommends evaluation-driven development from the first
+              iterations. A main-flow score can hide the weak component that
+              needs work, so each sub-agent should also be measured
+              independently. Metrics should match the job: answer accuracy and
+              groundedness for QA, retrieval quality for RAG, trajectory or
+              tool-selection correctness for agents, and concision for
+              summarization.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-02-jpmorgan-ask-david-evaluation-hd.jpg"
+                alt="J.P. Morgan slide on evaluation-driven development for Ask David"
+              />
+              <figcaption>
+                <strong>Source frame, about 10:55.</strong> The slide separates
+                main-flow metrics from a sub-agent's metrics and recommends
+                LLM-as-judge evaluation combined with human SME review.
+              </figcaption>
+            </figure>
+            <div class="principle-grid">
+              <div>
+                <h3>Offline evaluation</h3>
+                <p>
+                  Curated cases, historical questions, reference answers,
+                  expected evidence, expected tools, and adversarial scenarios
+                  compare versions before release.
+                </p>
+              </div>
+              <div>
+                <h3>Online evaluation</h3>
+                <p>
+                  Production traces monitor failures, unusual routes,
+                  unsupported answers, cost, latency, and escalation. Useful
+                  failures become future offline test cases.
+                </p>
+              </div>
+              <div>
+                <h3>Deterministic checks</h3>
+                <p>
+                  Validate citations, schema, permissions, SQL shape, numeric
+                  reconciliation, tool arguments, and required disclosures with
+                  code where possible.
+                </p>
+              </div>
+              <div>
+                <h3>Judgment checks</h3>
+                <p>
+                  Use calibrated human or LLM reviewers for relevance, clarity,
+                  completeness, and faithfulness that cannot be reduced to a
+                  simple rule.
+                </p>
+              </div>
+            </div>
+            <div class="callout warning">
+              <strong>An LLM judge is not independent assurance</strong>
+              <p>
+                It can share blind spots with the generating model and may be
+                sensitive to prompt wording, answer length, or ordering.
+                Calibrate it against blinded SME labels, monitor disagreement,
+                and retain deterministic checks for facts and controls that can
+                be verified directly.
+              </p>
+            </div>
+          </section>
+
+          <section id="human-loop">
+            <p class="section-label">Lesson three</p>
+            <h2>Human expertise owns the uncertain last mile</h2>
+            <p>
+              The final lesson frames quality as a progression: direct use of a
+              general model performs poorly in a specialized domain; retrieval,
+              chunking, search, and prompt improvements produce a large early
+              gain; workflow and subgraph design improve specific question
+              classes; the remaining gap is the hardest and may not be fully
+              automatable.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-02-jpmorgan-ask-david-human-loop-hd.jpg"
+                alt="J.P. Morgan slide showing human SME involvement in the final accuracy mile"
+              />
+              <figcaption>
+                <strong>Source frame, about 13:20.</strong> The percentages are
+                a conceptual lesson from the presenters, not published benchmark
+                results. The durable principle is that higher-stakes uncertainty
+                should trigger human review rather than confident automation.
+              </figcaption>
+            </figure>
+            <p>
+              A production escalation policy should be mechanical enough to
+              audit. Signals may include missing or conflicting evidence, stale
+              data, low retrieval confidence, failed reconciliation, generated
+              code, unusual tool sequences, privileged data, or a request that
+              could influence a client-facing recommendation. The review screen
+              should show the question, proposed answer, citations, tool trace,
+              uncertainty signals, and editable decision, not only an approve
+              button.
+            </p>
+          </section>
+
+          <section id="production">
+            <p class="section-label">Production assessment</p>
+            <h2>
+              What the talk shows and what a financial deployment must add
+            </h2>
+            <table class="assessment-table">
+              <thead>
+                <tr>
+                  <th>Layer</th>
+                  <th>Presented design</th>
+                  <th>Required production control</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Identity</td>
+                  <td>Personalization based on user role</td>
+                  <td>
+                    Authenticated identity, entitlement filtering, tenant and
+                    field-level access
+                  </td>
+                </tr>
+                <tr>
+                  <td>Structured data</td>
+                  <td>Natural language to SQL or API</td>
+                  <td>
+                    Read-only credentials, allowlisted schemas, query limits,
+                    result validation
+                  </td>
+                </tr>
+                <tr>
+                  <td>Documents</td>
+                  <td>Chunk, embed, index, and retrieve</td>
+                  <td>
+                    Freshness, document ACL propagation, provenance, versioning,
+                    citation coverage
+                  </td>
+                </tr>
+                <tr>
+                  <td>Analytics</td>
+                  <td>APIs, libraries, and supervised text-to-code</td>
+                  <td>
+                    Sandboxing, package and network restrictions, input
+                    validation, numeric reconciliation
+                  </td>
+                </tr>
+                <tr>
+                  <td>Reflection</td>
+                  <td>LLM judge retries an answer that does not make sense</td>
+                  <td>
+                    Calibrated rubric, retry cap, independent checks, escalation
+                    threshold
+                  </td>
+                </tr>
+                <tr>
+                  <td>Memory</td>
+                  <td>Short- and long-term memory personalize interactions</td>
+                  <td>
+                    Purpose limitation, retention, correction, deletion,
+                    permission-aware retrieval
+                  </td>
+                </tr>
+                <tr>
+                  <td>Human review</td>
+                  <td>SME consultation when needed</td>
+                  <td>
+                    Risk-based routing, durable pause/resume, reviewer identity,
+                    reason, SLA, override log
+                  </td>
+                </tr>
+                <tr>
+                  <td>Evaluation</td>
+                  <td>Sub-agent and end-to-end metrics</td>
+                  <td>
+                    Representative datasets, slices, change gates, online drift,
+                    incident feedback loop
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="takeaways">
+            <p class="section-label">Reusable takeaways</p>
+            <h2>A practical blueprint for domain-specific enterprise agents</h2>
+            <ol>
+              <li>
+                Start from a costly, repeated decision-support workflow and map
+                its evidence sources, expert judgments, and failure costs.
+              </li>
+              <li>
+                Build one bounded agent or deterministic graph first. Add
+                specialized agents only when their data, tools, context, owners,
+                or evaluators differ materially.
+              </li>
+              <li>
+                Make intent routing, evidence retrieval, personalization,
+                verification, and escalation explicit nodes with typed state.
+              </li>
+              <li>
+                Treat citations, permissions, freshness, and tool traces as part
+                of the answer contract, not optional observability metadata.
+              </li>
+              <li>
+                Evaluate each component and the end-to-end task. Use code checks
+                for deterministic invariants and calibrated judgment for
+                semantic qualities.
+              </li>
+              <li>
+                Define the human review policy before deployment: which signals
+                pause the graph, who can approve, what evidence they receive,
+                and how the decision becomes future evaluation data.
+              </li>
+            </ol>
+            <p>
+              The presentation's closing summary remains useful:
+              <strong
+                >iterate fast, evaluate early, and keep human SMEs in the
+                loop</strong
+              >. The production version adds one more clause: preserve enough
+              evidence and state to prove what happened.
+            </p>
+          </section>
+
+          <section id="chapters">
+            <p class="section-label">Video guide</p>
+            <h2>Jump to each part of the presentation</h2>
+            <ul class="chapter-list">
+              <li>
+                <a href="https://www.youtube.com/watch?v=yMalr0jiOAc&t=9s"
+                  ><time>00:09</time><span>The research-team problem</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=yMalr0jiOAc&t=87s"
+                  ><time>01:27</time><span>Ask David's product vision</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=yMalr0jiOAc&t=154s"
+                  ><time>02:34</time
+                  ><span
+                    >Structured, unstructured, and analytical knowledge</span
+                  ></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=yMalr0jiOAc&t=240s"
+                  ><time>04:00</time
+                  ><span>The fund-termination question</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=yMalr0jiOAc&t=297s"
+                  ><time>04:57</time
+                  ><span>Supervisor and specialized agents</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=yMalr0jiOAc&t=400s"
+                  ><time>06:40</time
+                  ><span>General and specific-fund subgraphs</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=yMalr0jiOAc&t=447s"
+                  ><time>07:27</time><span>Worked research example</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=yMalr0jiOAc&t=553s"
+                  ><time>09:13</time><span>Start simple and refactor</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=yMalr0jiOAc&t=619s"
+                  ><time>10:19</time
+                  ><span>Evaluation-driven development</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=yMalr0jiOAc&t=768s"
+                  ><time>12:48</time
+                  ><span>Human SMEs and the last mile</span></a
+                >
+              </li>
+            </ul>
+          </section>
+
+          <section id="sources">
+            <p class="section-label">Sources and limitations</p>
+            <h2>What this article is based on</h2>
+            <ul>
+              <li>
+                <a href="https://www.youtube.com/watch?v=yMalr0jiOAc"
+                  >LangChain Interrupt: How J.P. Morgan Built an AI Agent for
+                  Investment Research with LangGraph</a
+                >
+                — architecture, demonstration, lessons, and auto-generated
+                English captions.
+              </li>
+              <li>
+                <a
+                  href="https://docs.langchain.com/oss/javascript/langgraph/thinking-in-langgraph"
+                  >LangGraph: Thinking in LangGraph</a
+                >
+                — state, subgraphs, checkpointed interrupts, retries, and
+                human-in-the-loop workflow design.
+              </li>
+              <li>
+                <a href="https://docs.langchain.com/langsmith/evaluation-types"
+                  >LangSmith: Evaluation types</a
+                >
+                — offline and online evaluation, deterministic and judgment
+                evaluators, and the production feedback loop.
+              </li>
+              <li>
+                <a
+                  href="https://docs.langchain.com/langsmith/online-evaluations-llm-as-judge"
+                  >LangSmith: LLM-as-a-judge online evaluators</a
+                >
+                — scalable judgment evaluation and production-trace sampling.
+              </li>
+              <li>
+                <a href="https://docs.langchain.com/oss/python/learn"
+                  >LangChain and LangGraph learning guides</a
+                >
+                — current multi-agent, RAG, SQL, memory, and graph patterns.
+              </li>
+            </ul>
+            <p>
+              Captions are automatically generated and contain transcription
+              errors, including “fund” being rendered as “font” in places. The
+              article corrects these where context is unambiguous. Screenshots
+              are direct 1920×1080 source frames. No private J.P. Morgan data,
+              code, evaluation set, system prompt, or deployment was available;
+              no investment claim or system-performance claim was independently
+              reproduced.
+            </p>
+          </section>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <p>On this page</p>
+          <a href="#summary">Executive summary</a>
+          <a href="#problem">Business problem</a>
+          <a href="#architecture">Architecture</a>
+          <a href="#workflow">Workflow</a>
+          <a href="#example">Worked example</a>
+          <a href="#evolution">Evolution</a>
+          <a href="#evaluation">Evaluation</a>
+          <a href="#human-loop">Human SME loop</a>
+          <a href="#production">Production controls</a>
+          <a href="#takeaways">Takeaways</a>
+          <a href="#chapters">Video guide</a>
+          <a href="#sources">Sources</a>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>

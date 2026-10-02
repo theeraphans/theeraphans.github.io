@@ -1,0 +1,1033 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AI Agent Harness and Loop Engineering - LLMOps, Eval, Tracing, RAG - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #182126;
+      --muted: #5f6c72;
+      --paper: #fffefa;
+      --canvas: #f3f6f2;
+      --line: #d7ded8;
+      --teal: #12716b;
+      --blue: #315f86;
+      --coral: #be4d3f;
+      --gold: #9e7521;
+      --violet: #675885;
+      --charcoal: #253038;
+      --soft-teal: #e4f0ed;
+      --soft-gold: #f7efd9;
+      --soft-violet: #eeeaf4;
+      --shadow: 0 24px 62px rgb(24 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(18 113 107 / 7%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(49 95 134 / 6%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--coral), var(--teal), var(--blue), var(--gold), var(--violet));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 84%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.04fr) minmax(300px, 0.96fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.9rem, 6.6vw, 5.75rem);
+      font-weight: 760;
+      line-height: 0.96;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      margin-top: 24px;
+      color: #303b41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2.05vw, 1.48rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e6ece7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 86%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: rgb(255 255 255 / 88%);
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .stat {
+      padding: 14px;
+      color: var(--ink);
+      background: #fff;
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--coral);
+      font-size: 1.65rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 238px minmax(0, 1fr);
+      gap: 40px;
+      align-items: start;
+      margin-top: 38px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 6px;
+      padding: 16px;
+      background: rgb(255 255 255 / 80%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .toc span {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 750;
+      text-decoration: none;
+      border-top: 1px solid rgb(215 222 216 / 76%);
+    }
+
+    .content {
+      display: grid;
+      gap: 28px;
+      min-width: 0;
+    }
+
+    .section {
+      min-width: 0;
+      padding: 34px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; padding-top: 0; }
+
+    .label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      max-width: 900px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.9rem, 4vw, 3.35rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      max-width: 920px;
+      margin-top: 14px;
+      color: #303b41;
+      font-size: 1.08rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      margin-bottom: 12px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .flow-step {
+      min-width: 0;
+      padding: 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 30px rgb(24 33 38 / 6%);
+    }
+
+    .flow-step b {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--coral);
+      font-size: 0.8rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .stack-row {
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .stack-label {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      color: #fff;
+      background: var(--blue);
+      border-radius: 8px;
+      font-weight: 900;
+    }
+
+    .stack-body {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .node {
+      min-height: 96px;
+      padding: 14px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .node strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.98rem;
+    }
+
+    .node span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .table-wrap {
+      min-width: 0;
+      margin-top: 24px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: #fff;
+      background: var(--blue);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    td {
+      color: #344047;
+      font-size: 0.95rem;
+    }
+
+    .quote {
+      margin-top: 24px;
+      padding: 22px;
+      color: #fff;
+      background: var(--violet);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.22rem, 2.4vw, 1.78rem);
+      line-height: 1.35;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 14px 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .checklist strong { color: var(--coral); }
+
+    .memory-lanes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .lane {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .lane:nth-child(1) { background: var(--soft-teal); }
+    .lane:nth-child(2) { background: var(--soft-gold); }
+    .lane:nth-child(3) { background: var(--soft-violet); }
+
+    .lane h3 {
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 1.08rem;
+    }
+
+    .lane p {
+      color: #42505a;
+      font-size: 0.96rem;
+    }
+
+    .trace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .trace-box {
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .trace-box h3 {
+      margin-bottom: 12px;
+      color: var(--blue);
+    }
+
+    .trace-box ul {
+      display: grid;
+      gap: 8px;
+      padding-left: 18px;
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 46px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .layout,
+      .stack-row {
+        grid-template-columns: 1fr;
+      }
+
+      .toc { position: static; }
+
+      .grid,
+      .two,
+      .tldr,
+      .stack-body,
+      .memory-lanes,
+      .trace {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .page { padding-inline: 16px; }
+
+      .hero {
+        padding-top: 36px;
+        gap: 28px;
+      }
+
+      h1 {
+        max-width: 10ch;
+        font-size: clamp(2.55rem, 13vw, 4.15rem);
+      }
+
+      .quick-summary { padding: 22px; }
+
+      .grid,
+      .two,
+      .tldr,
+      .stack-body,
+      .memory-lanes,
+      .trace {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        min-width: 0;
+        table-layout: fixed;
+      }
+
+      th, td {
+        padding: 11px 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/reading/">Reading room</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#harness">Harness</a>
+      <a class="action-link" href="#loop">Loop</a>
+      <a class="action-link" href="#llmops">LLMOps</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=GrNbuWWJYiI">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Agent Harness</span>
+        <h1>Harness, Loop, Eval, Tracing, and RAG</h1>
+        <p class="subtitle">
+          A readable architecture summary of Sean's AI Stories' walkthrough on AI agent harnesses.
+          The video explains how a basic LLM call becomes a controllable agent system by adding memory,
+          tools, loop guardrails, traces, evaluation, diagnostics, and LLMOps feedback.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> You Can Learn AI Agent Harness & Loop Engineering In 19 Min</span>
+          <span><strong>Creator:</strong> Sean's AI Stories</span>
+          <span><strong>Transcript:</strong> 4,138 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/GrNbuWWJYiI/hqdefault.jpg" alt="Video thumbnail for AI Agent Harness and Loop Engineering">
+        <figcaption>
+          Source video focused on agent harnesses, memory, loop engineering, tracing, evaluation, RAG, and LLMOps.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="quick-summary-title">
+      <div>
+        <h2 id="quick-summary-title">The Short Version</h2>
+        <p>
+          The video's central point is that an LLM alone is not an agent platform.
+          An agent platform needs a harness around the model: memory, skills, tools, loop controls, trace capture,
+          evaluation, and a repair cycle. These pieces are simple individually, but together they create a system
+          that can run tasks more consistently and improve over time.
+        </p>
+        <ul class="tldr">
+          <li>Harness means the control layer that steers an LLM so it behaves with less randomness.</li>
+          <li>Loop engineering is mainly about tool-call cycles and knowing when the task is done.</li>
+          <li>LLMOps starts when every run is traced, evaluated, diagnosed, and fed back into better prompts or configs.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>19m</strong><span>runtime</span></div>
+        <div class="stat"><strong>603</strong><span>caption rows</span></div>
+        <div class="stat"><strong>4.1k</strong><span>transcript words</span></div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Table of contents">
+        <span>Read</span>
+        <a href="#run">Agent run</a>
+        <a href="#harness">Harness</a>
+        <a href="#memory">Memory system</a>
+        <a href="#rag">RAG and retrieval</a>
+        <a href="#loop">Loop engineering</a>
+        <a href="#llmops">LLMOps</a>
+        <a href="#platform">Platform takeaways</a>
+        <a href="#templates">BA templates</a>
+      </nav>
+
+      <article class="content">
+        <section class="section" id="run">
+          <span class="label">Agent Run</span>
+          <h2>The base unit is still simple: input, context, model, response</h2>
+          <p class="lead">
+            The talk starts with the simplest agent run. A user sends a prompt, the current chat history and system prompt
+            are assembled into working memory, the LLM produces a response, and the user receives an answer. This basic loop
+            is useful, but it is ephemeral. It only knows the current conversation and whatever the model already learned during training.
+          </p>
+
+          <div class="flow" aria-label="Simple agent run">
+            <div class="flow-step"><b>Prompt</b><span>User asks a question or gives a task.</span></div>
+            <div class="flow-step"><b>History</b><span>Recent conversation and system prompt are attached.</span></div>
+            <div class="flow-step"><b>Context RAM</b><span>The runtime builds a temporary working memory.</span></div>
+            <div class="flow-step"><b>LLM</b><span>The model predicts the next useful response or action.</span></div>
+            <div class="flow-step"><b>Reply</b><span>The user receives the answer.</span></div>
+          </div>
+
+          <p class="quote">
+            The speaker's practical framing: the LLM is powerful, but it does not automatically know the user, the business process, or the desired operating rules.
+          </p>
+        </section>
+
+        <section class="section" id="harness">
+          <span class="label">Harness</span>
+          <h2>An agent harness is the control system around the model</h2>
+          <p class="lead">
+            The harness metaphor is the main idea of the video. A large language model has broad capability and probabilistic behavior.
+            The harness adds the structure needed to steer that capability: memory, tools, skills, databases, retrieval rules,
+            model settings, prompts, and loop boundaries.
+          </p>
+
+          <div class="stack" aria-label="Agent harness architecture">
+            <div class="stack-row">
+              <div class="stack-label">Inputs</div>
+              <div class="stack-body">
+                <div class="node"><strong>User prompt</strong><span>The immediate request or business task.</span></div>
+                <div class="node"><strong>Current chat</strong><span>Recent conversation turns.</span></div>
+                <div class="node"><strong>System prompt</strong><span>Baseline instructions and boundaries.</span></div>
+                <div class="node"><strong>Trigger</strong><span>Manual request, event, or workflow step.</span></div>
+              </div>
+            </div>
+            <div class="stack-row">
+              <div class="stack-label">Harness</div>
+              <div class="stack-body">
+                <div class="node"><strong>Memory</strong><span>Procedural, semantic, and episodic context.</span></div>
+                <div class="node"><strong>Skills</strong><span>Reusable instructions stored as text or markdown.</span></div>
+                <div class="node"><strong>Tools</strong><span>CRM, calendar, payment, search, database, or MCP calls.</span></div>
+                <div class="node"><strong>Loop guardrails</strong><span>Stop rules, approvals, and completion criteria.</span></div>
+              </div>
+            </div>
+            <div class="stack-row">
+              <div class="stack-label">Operations</div>
+              <div class="stack-body">
+                <div class="node"><strong>Trace</strong><span>Record what happened in the run.</span></div>
+                <div class="node"><strong>Eval</strong><span>Judge quality, success, latency, and cost.</span></div>
+                <div class="node"><strong>Diagnose</strong><span>Find prompt, tool, retrieval, or config problems.</span></div>
+                <div class="node"><strong>Improve</strong><span>Ship better prompts, settings, tools, or retrieval policies.</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="memory">
+          <span class="label">Memory System</span>
+          <h2>The harness needs more than chat history</h2>
+          <p class="lead">
+            The video revisits three memory types because they explain why a platform cannot rely on the LLM alone.
+            The agent needs procedural instructions, durable business facts, and historical episodes. It also needs a way
+            to update those memories instead of treating them as static documents.
+          </p>
+
+          <div class="memory-lanes" aria-label="Three memory types">
+            <article class="lane">
+              <h3>Procedural Memory</h3>
+              <p>
+                Instructions for how the agent should act. In platform terms, this maps well to skills, SOP steps,
+                prompt snippets, role rules, and tool-use recipes.
+              </p>
+            </article>
+            <article class="lane">
+              <h3>Semantic Memory</h3>
+              <p>
+                Durable facts about users, customers, products, processes, and business context. These are distilled
+                from conversation or entered directly by a human.
+              </p>
+            </article>
+            <article class="lane">
+              <h3>Episodic Memory</h3>
+              <p>
+                Time-series records of past conversations, events, and triggers. This is useful for audit, continuity,
+                and questions about what happened previously.
+              </p>
+            </article>
+          </div>
+
+          <div class="flow" aria-label="Memory update lifecycle">
+            <div class="flow-step"><b>Run</b><span>The agent handles a user task.</span></div>
+            <div class="flow-step"><b>Store</b><span>Messages, tool calls, and outcomes are saved to a database.</span></div>
+            <div class="flow-step"><b>Gate</b><span>The system decides whether enough signal exists to consolidate.</span></div>
+            <div class="flow-step"><b>Summarize</b><span>A cheaper or specialized summarizer distills facts and lessons.</span></div>
+            <div class="flow-step"><b>Retrieve</b><span>Relevant memories are brought back into future context.</span></div>
+          </div>
+        </section>
+
+        <section class="section" id="rag">
+          <span class="label">RAG</span>
+          <h2>Retrieval is different for facts, events, and hybrid questions</h2>
+          <p class="lead">
+            The talk makes a useful distinction. Semantic memory is often retrieved with RAG because it is fact-like text.
+            Episodic memory may need ordinary database queries when the user asks for recent events, but it may also need
+            semantic search when the user asks for meaning across many conversations.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Question type</th>
+                  <th>Likely retrieval method</th>
+                  <th>Why</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Known business fact</td>
+                  <td>RAG over semantic memory</td>
+                  <td>Facts can be embedded, ranked, and added to the working context.</td>
+                </tr>
+                <tr>
+                  <td>Recent customer conversation</td>
+                  <td>SQL or event query over episodic memory</td>
+                  <td>The platform needs timestamp, customer ID, channel, and recency filters.</td>
+                </tr>
+                <tr>
+                  <td>Complaint patterns across many chats</td>
+                  <td>SQL plus semantic search</td>
+                  <td>The system needs both structured filters and meaning-based matching.</td>
+                </tr>
+                <tr>
+                  <td>Simple general-knowledge question</td>
+                  <td>Maybe no retrieval</td>
+                  <td>Over-retrieval adds latency and cost when the model already has enough knowledge.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="loop">
+          <span class="label">Loop Engineering</span>
+          <h2>Loop engineering is the discipline of tool-use cycles and stop rules</h2>
+          <p class="lead">
+            The video defines loop engineering through practical examples. An agent may need to call a CRM, inspect complaints,
+            check reimbursements, schedule follow-ups, or trigger a payment tool. The loop is the repeated cycle of reasoning,
+            tool calls, tool results, and next decisions. The most important design question is when the loop should stop.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Tool Choice</span>
+              <h3>Which tool is relevant?</h3>
+              <p>The model needs tool descriptions and context so it can choose CRM, calendar, payment, retrieval, or database actions.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Progress</span>
+              <h3>Is the task advancing?</h3>
+              <p>A good loop tracks whether each call moves toward the goal or repeats work without new information.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Stop Rule</span>
+              <h3>When is it good enough?</h3>
+              <p>Completion criteria, max steps, user confirmation, approval gates, and escalation rules stop runaway autonomy.</p>
+            </article>
+          </div>
+
+          <ul class="checklist">
+            <li><strong>Clarify the ending state.</strong> The agent may need to ask whether the user wants a list of customers, a scheduled follow-up, or an actual reimbursement action.</li>
+            <li><strong>Separate recommendation from execution.</strong> Some business actions should stop for approval before the tool mutates external systems.</li>
+            <li><strong>Notify when blocked.</strong> Permission prompts and approval waits should create notifications so long-running loops do not silently stall.</li>
+            <li><strong>Make loops visible.</strong> The platform should show the current goal, completed tool calls, remaining steps, blockers, and next action.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="llmops">
+          <span class="label">LLMOps</span>
+          <h2>LLMOps turns agent runs into a measurable improvement loop</h2>
+          <p class="lead">
+            The second half of the video explains why tracing, eval, and diagnostics matter. Once an agent has memory and tools,
+            a developer or platform owner needs to know whether it worked, whether it was healthy, and what should be changed.
+            That operating loop is LLMOps.
+          </p>
+
+          <div class="trace">
+            <article class="trace-box">
+              <h3>Trace Every Run</h3>
+              <ul>
+                <li>User input and final response</li>
+                <li>Retrieved context and memories</li>
+                <li>Tool calls, tool results, and failures</li>
+                <li>Latency, token usage, and model configuration</li>
+                <li>Decision points and stop reasons</li>
+              </ul>
+            </article>
+            <article class="trace-box">
+              <h3>Evaluate and Diagnose</h3>
+              <ul>
+                <li>Did the task actually succeed?</li>
+                <li>Was the response quality acceptable?</li>
+                <li>Was cost or latency too high?</li>
+                <li>Was retrieval useful or unnecessary?</li>
+                <li>Should prompt, tool, model, or retrieval settings change?</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="flow" aria-label="LLMOps feedback loop">
+            <div class="flow-step"><b>Run</b><span>User request produces an agent run.</span></div>
+            <div class="flow-step"><b>Trace</b><span>Collect tree-like events and metrics.</span></div>
+            <div class="flow-step"><b>Evaluate</b><span>Score success, health, quality, latency, and cost.</span></div>
+            <div class="flow-step"><b>Diagnose</b><span>Find the broken prompt, retrieval, model, or tool behavior.</span></div>
+            <div class="flow-step"><b>Fix</b><span>Update prompt, config, tool logic, or retrieval policy.</span></div>
+            <div class="flow-step"><b>Rerun</b><span>Replay or test again before shipping the new version.</span></div>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your agentic AI platform</h2>
+          <p class="lead">
+            For your Master Agent, Sub-Agent, Skill, Tool MCP, and Flow Markdown design, this video is basically saying:
+            do not let BAs author random prompts only. Let them assemble an agent harness from understandable platform objects.
+          </p>
+
+          <ul class="checklist">
+            <li><strong>Make harness a first-class blueprint.</strong> Each agent should have role, memory policy, skills, tools, loop rules, eval rules, and trace settings.</li>
+            <li><strong>Treat skills as procedural memory.</strong> A skill is not only a prompt. It is an instruction package with purpose, trigger, inputs, output contract, allowed tools, and stop conditions.</li>
+            <li><strong>Split cognitive and actionable skills.</strong> Cognitive skills transform context and reasoning. Actionable skills require tools, permissions, side-effect policy, and audit traces.</li>
+            <li><strong>Compile Flow Markdown into runtime context.</strong> The BA flow should become task goal, step state, required tools, branch rules, escalation points, and eval criteria.</li>
+            <li><strong>Put memory update behind gates.</strong> Not every message should become semantic memory. Use rules, confidence, frequency, ownership, and approval before writing durable facts.</li>
+            <li><strong>Use traces as the platform truth.</strong> Debugging should start from the run trace: what context was built, what memory was retrieved, what tool was called, and why the loop stopped.</li>
+            <li><strong>Expose LLMOps knobs without exposing chaos.</strong> BAs can choose model tier, retrieval policy, approval policy, and eval checklist, while engineers keep low-level configs guarded.</li>
+            <li><strong>Design replay and evaluation early.</strong> A platform cannot improve safely unless every business flow can be replayed against test cases and evaluated before release.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">BA Templates</span>
+          <h2>Useful templates to turn the video into product design</h2>
+          <p class="lead">
+            The concepts in the talk can become simple artifacts that a business analyst can fill in. The platform can then compile
+            those artifacts into prompts, context builders, tool manifests, MCP permissions, run traces, and eval jobs.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Artifact</th>
+                  <th>What BA defines</th>
+                  <th>What platform compiles</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Agent Harness Card</td>
+                  <td>Business role, goal, boundaries, owner, escalation channel, and allowed autonomy level.</td>
+                  <td>System prompt, runtime policy, permissions, trace labels, and default eval checklist.</td>
+                </tr>
+                <tr>
+                  <td>Skill Card</td>
+                  <td>When to use the skill, required inputs, reasoning steps, expected output, and stop criteria.</td>
+                  <td>Procedural memory markdown plus validation schema and optional tool requirements.</td>
+                </tr>
+                <tr>
+                  <td>Tool MCP Contract</td>
+                  <td>Business action name, allowed users, risk level, approval requirement, and success signal.</td>
+                  <td>MCP tool manifest, policy checks, audit fields, retry rules, and side-effect guardrails.</td>
+                </tr>
+                <tr>
+                  <td>Memory Policy</td>
+                  <td>What facts can be remembered, who owns them, when to update, and when approval is needed.</td>
+                  <td>Write gates, retrieval filters, retention rules, semantic indexes, and memory review workflow.</td>
+                </tr>
+                <tr>
+                  <td>Loop Policy</td>
+                  <td>Maximum steps, completion definition, approval gates, timeout behavior, and blocked-state notification.</td>
+                  <td>Loop controller, interruption rules, step budget, human-in-the-loop checkpoints, and stop reasons.</td>
+                </tr>
+                <tr>
+                  <td>Eval Suite</td>
+                  <td>Example cases, pass criteria, forbidden outcomes, latency target, cost target, and required evidence.</td>
+                  <td>Automated eval jobs, LLM-as-judge prompts, deterministic checks, dashboards, and release gates.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="quote">
+            Strong opinion: a BA-facing agent platform should feel like designing a controlled operating system, not writing one giant prompt.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>You Can Learn AI Agent Harness & Loop Engineering In 19 Min | LLM Ops, Eval, Tracing, RAG</strong>.
+    Source: Sean's AI Stories. Video ID: GrNbuWWJYiI.
+  </footer>
+</body>
+</html>

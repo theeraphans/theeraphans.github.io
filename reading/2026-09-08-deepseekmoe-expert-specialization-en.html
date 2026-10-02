@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Improved MoE specialization through finer-grained routed experts plus always-active shared experts that capture common knowledge.">
+  <meta name="resource-file" content="2026-09-08-deepseekmoe-expert-specialization-en.html">
+  <title>DeepSeekMoE · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css">
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2401.06066">Read paper</a><a class="action-link" href="/reading/">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Efficient Adaptation and Training · Paper 26 of 37</p>
+        <h1>DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models</h1>
+        <p class="subtitle">Improved MoE specialization through finer-grained routed experts plus always-active shared experts that capture common knowledge.</p>
+        <div class="meta"><span><strong>Damai Dai, Chengqi Deng, Chenggang Zhao, R. X. Xu, Huazuo Gao, Deli Chen, Jiashi Li, Wangding Zeng, Xingkai Yu, Y. Wu, Zhenda Xie, Y. K. Li, Panpan Huang, Fuli Luo, Chong Ruan, Zhifang Sui, Wenfeng Liang</strong></span><span>2024</span><span>Advanced</span><span>13 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>DeepSeekMoE</h2><p>DeepSeek-AI</p><p><strong>Prerequisites:</strong> Switch Transformer, top-k routing, expert parallelism, and capacity planning.</p><a href="https://arxiv.org/abs/2401.06066">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Advanced</strong></div><div class="paper-fact"><span>Place in path</span><strong>26 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Conventional MoE experts may each contain mixed knowledge because their feed-forward blocks are large, while several experts redundantly learn common patterns. That weakens specialization and wastes routed capacity.</p>
+<p>The paper seeks more combinations of smaller experts while reserving shared computation for knowledge useful to every token.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Split standard experts into smaller units and activate more of them so the same active parameter budget can form many combinations. Add shared experts that process every token and absorb common knowledge.</p>
+<p>A device-limited routing strategy and load balancing support distributed execution.</p><div class="equation">output = shared experts(x) + Σ selected fine-grained routed experts(x).</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Every token passes through shared experts. The router scores many fine-grained experts, selects a top-k subset, dispatches token representations, and sums weighted outputs.</p>
+<p>Training jointly learns shared and specialized paths. Auxiliary routing terms and infrastructure keep expert traffic balanced.</p><figure class="concept-flow" aria-label="DeepSeekMoE knowledge paths">
+    <div class="flow-step"><span>Input</span><strong>Token state</strong><p>Enter the MoE block.</p></div>
+<div class="flow-step"><span>Shared</span><strong>Common experts</strong><p>Process every token.</p></div>
+<div class="flow-step"><span>Router</span><strong>Score specialists</strong><p>Select a fine-grained top-k.</p></div>
+<div class="flow-step"><span>Routed</span><strong>Specialist mixture</strong><p>Compute selected expert outputs.</p></div>
+<div class="flow-step"><span>Merge</span><strong>Combine paths</strong><p>Add shared and routed knowledge.</p></div>
+    <figcaption>Every token receives common processing and a selected combination of specialized experts.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>Fine-grained segmentation increases combinatorial specialization without necessarily increasing active parameters. Shared experts reduce pressure for every routed expert to relearn universal features.</p>
+<p>More selected experts can increase dispatch complexity. Physical placement, network topology, and batch size determine whether theoretical sparsity produces throughput.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>The paper reported that DeepSeekMoE models achieved quality comparable to denser or larger baselines with fewer active parameters and extended the design to a 145B model.</p>
+<p>Ablations support shared experts and segmentation in the tested setup, but cross-family comparisons depend on data, tokens, and optimization.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>The architecture influenced subsequent DeepSeek models and the broader move toward explicit shared-versus-routed knowledge paths.</p>
+<p>It reinforced active parameter count as a more useful inference measure than total parameter count, though still incomplete.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Log shared and routed contribution, expert occupancy, route stability by domain, and cross-device bytes. Route visualizations can reveal collapse or accidental domain silos.</p>
+<p>Capacity-plan for the busiest expert and failure mode, not average activation. Serving may need expert replication for hot routes.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>Shared experts can become a dense bottleneck, while fine-grained routing adds coordination cost. Expert specialization is difficult to interpret and may shift during adaptation.</p>
+<p>The design still needs large total storage and specialized distributed software. Sparse architecture does not remove data or alignment problems.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>DeepSeekMoE extends Switch Transformer’s sparse capacity. GRPO later appears in DeepSeekMath for post-training rather than pretraining architecture.</p><div class="article-nav"><a href="2026-09-08-switch-transformer-mixture-of-experts-en.html">← Switch Transformer</a><a href="2026-09-08-muon-optimizer-scalable-llm-training-en.html">Muon Optimizer →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>Smaller experts create more routing combinations.</li><li>Shared experts capture common knowledge.</li><li>Active and total parameters must be reported separately.</li><li>Routing quality and network traffic are coupled.</li><li>Expert heat maps are essential observability.</li><li>Sparse models still need full alignment and data governance.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2401.06066">DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>DeepSeekMoE changes expert granularity and knowledge allocation. Compare active parameters and training compute, not only total model size.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

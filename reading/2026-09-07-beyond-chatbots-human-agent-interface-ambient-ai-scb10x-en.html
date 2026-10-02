@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="A detailed editorial summary of SCB 10X Upstream EP.4 on realtime multimodal AI, AI-assisted hiring, Ambient AI, hyper-personalization, machine customers, and human-machine parity.">
+  <title>Beyond Chatbots: The Human-Agent Interface</title>
+  <link rel="stylesheet" href="article-theme.css">
+  <style>
+    .source-note { margin-top: 1rem; padding-left: 1rem; border-left: 3px solid var(--green); }
+    .thesis { margin: 1.2rem 0; padding: 1rem; background: var(--surface); border-left: 3px solid var(--ink); }
+    .thesis strong { display: block; margin-bottom: 0.35rem; font-weight: 600; }
+    .chapter-list, .idea-list, .risk-list { margin-top: 1rem; border-top: 1px solid var(--line-strong); }
+    .chapter, .idea, .risk { display: grid; grid-template-columns: minmax(8rem, .78fr) minmax(0, 2.22fr); gap: 1.25rem; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+    .chapter-label span, .idea-label span, .risk-label span { display: block; margin-bottom: .25rem; color: var(--green); font-size: .78rem; font-weight: 600; }
+    .chapter-label strong, .idea-label strong, .risk-label strong { font-weight: 500; }
+    .chapter-body p, .idea-body p, .risk-body p { margin: 0 !important; }
+    .chapter-body p + p, .idea-body p + p, .risk-body p + p { margin-top: .7rem !important; }
+    .process-flow { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin: 1.25rem 0; border: 1px solid var(--line-strong); }
+    .flow-step { min-width: 0; padding: .85rem; border-right: 1px solid var(--line); }
+    .flow-step:last-child { border-right: 0; }
+    .flow-step span { display: block; margin-bottom: .35rem; color: var(--green); font-size: .75rem; font-weight: 600; }
+    .flow-step strong { display: block; font-size: .9rem; font-weight: 500; overflow-wrap: anywhere; }
+    .comparison { width: 100%; margin: 1.25rem 0; border-collapse: collapse; }
+    .comparison th, .comparison td { padding: .8rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+    .comparison th { border-top: 1px solid var(--line-strong); font-weight: 500; }
+    .comparison th:first-child, .comparison td:first-child { width: 24%; }
+    .quote-pull { margin: 1.4rem 0; padding: 1.1rem 0; border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); font-size: 1.2rem; font-weight: 300; line-height: 1.45; }
+    .source-links { display: grid; gap: .65rem; padding-left: 1.2rem; }
+    @media (max-width: 760px) {
+      .process-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .flow-step { border-bottom: 1px solid var(--line); }
+      .flow-step:nth-child(2n) { border-right: 0; }
+      .flow-step:nth-last-child(-n+2) { border-bottom: 0; }
+    }
+    @media (max-width: 640px) {
+      .chapter, .idea, .risk { grid-template-columns: 1fr; gap: .4rem; }
+      .comparison, .comparison tbody, .comparison tr, .comparison th, .comparison td { display: block; width: 100% !important; min-width: 0 !important; }
+      .comparison thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+      .comparison tr { padding: .75rem 0; border-bottom: 1px solid var(--line); }
+      .comparison td { padding: .28rem 0; border: 0; }
+      .comparison td::before { content: attr(data-label); display: block; color: var(--green); font-size: .75rem; font-weight: 600; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation">
+    <a class="brand" href="/reading/">Reading room</a>
+    <div class="top-actions">
+      <a class="action-link" href="https://www.youtube.com/watch?v=9Ws2AkbYDrw">Watch source</a>
+      <a class="action-link" href="/">Portfolio</a>
+    </div>
+  </nav>
+
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Agent interfaces · Ambient AI · Product strategy</p>
+        <h1>Beyond Chatbots: The Human-Agent Interface</h1>
+        <p class="subtitle">SCB 10X's Upstream podcast argues that AI is rediscovering the user interface—from text boxes to realtime voice and video, then toward agents that observe, plan, and act. The deeper consequence is a world where every service must work for both people and machines.</p>
+        <div class="meta">
+          <span><strong>Asst. Prof. Dr. Tanwa Arpornthip &amp; Dr. Narong Burijindagoon</strong></span>
+          <span>SCB 10X · Upstream EP.4</span>
+          <span>28m 11s</span>
+          <span>Summary run September 7, 2026 · 12:58 ICT</span>
+        </div>
+        <p class="source-note">This page is an English editorial paraphrase of the complete Thai-language episode. Claims made by the speakers are described as their argument; the critical assessment and platform implications are additional analysis.</p>
+      </div>
+      <figure class="hero-card">
+        <a href="https://www.youtube.com/watch?v=9Ws2AkbYDrw" aria-label="Watch the original SCB 10X episode">
+          <img src="2026-09-07-human-agent-interface-scb10x-thumbnail.webp" alt="SCB 10X Upstream episode 4 cover featuring Tanwa Arpornthip and Narong Burijindagoon">
+        </a>
+        <figcaption>Upstream EP.4 asks what comes after the chatbot—and what businesses must rebuild when AI becomes a participant rather than a page visitor.</figcaption>
+      </figure>
+    </header>
+
+    <div class="layout">
+      <article class="content">
+        <section id="summary">
+          <p class="section-label">Executive summary</p>
+          <h2>The interface is becoming a relationship, not a screen</h2>
+          <p>The episode begins with a familiar progression. Websites gave companies a one-way channel for publishing information. Email, live chat, and call centers made communication two-way, but operating those channels required people. First-generation AI copied the same surfaces: text chatbots replaced chat operators, while automated phone trees sat between callers and service staff.</p>
+          <p>That model is now expanding. Models can accept natural speech, observe images or video, and respond with low enough latency to sustain a conversation. The speakers argue that realtime multimodality does more than make chat feel natural. It removes capacity constraints, changes what information can be evaluated, and creates services that adapt while an interaction is happening.</p>
+          <p>The most consequential shift comes after multimodality: <strong>Ambient AI</strong>. Instead of waiting for an explicit prompt, an agent continuously observes authorized signals, recognizes a situation, proposes or performs work, and learns from the outcome. That creates a genuinely two-way relationship: humans tell AI what they want, while AI interprets what humans and organizations are doing and responds to it.</p>
+          <p>For businesses, the end state is what the episode calls <strong>human-machine parity</strong>. A product must remain understandable and usable by a person, while also exposing structured information and actions that an AI agent can discover and operate. A beautiful website without machine access loses agent-mediated customers; an API without a good human experience loses people who still want to inspect, compare, and decide.</p>
+          <div class="thesis"><strong>Central thesis</strong><p>The next human-agent interface is not simply a better chatbot. It combines natural multimodal conversation, portable user context, proactive observation, and machine-operable services—under rules that preserve consent, fairness, security, and human authority.</p></div>
+        </section>
+
+        <section id="foundation">
+          <p class="section-label">Series foundation</p>
+          <h2>Memory, action, payment—and now interaction</h2>
+          <p>The hosts position this episode as the fourth layer of an agent stack. Earlier episodes covered memory, the action space available to an agent, and payment. Those layers explain what the system knows, what it can do, and how it can complete economic activity. The interface layer determines how a human expresses intent and how the agent returns information, requests decisions, or acts on changing conditions.</p>
+          <div class="process-flow" role="figure" aria-label="Six-layer human-agent interaction loop">
+            <div class="flow-step"><span>01</span><strong>Human context</strong></div>
+            <div class="flow-step"><span>02</span><strong>Multimodal input</strong></div>
+            <div class="flow-step"><span>03</span><strong>Memory</strong></div>
+            <div class="flow-step"><span>04</span><strong>Planning</strong></div>
+            <div class="flow-step"><span>05</span><strong>Tools &amp; payment</strong></div>
+            <div class="flow-step"><span>06</span><strong>Feedback</strong></div>
+          </div>
+          <p>This sequence is circular rather than linear. Every response or action becomes new context. The design challenge is deciding which observations may enter memory, which changes require human approval, and which outcomes should alter future behavior.</p>
+        </section>
+
+        <section id="chapters">
+          <p class="section-label">Detailed walkthrough</p>
+          <h2>How the argument develops</h2>
+          <div class="chapter-list">
+            <div class="chapter"><div class="chapter-label"><span>01:38</span><strong>Episodes 1–3, connected</strong></div><div class="chapter-body"><p>An agent needs memory to maintain continuity, capabilities to affect the world, and payment infrastructure to transact. Episode 4 adds the interaction surface through which people direct, inspect, and collaborate with that system.</p></div></div>
+            <div class="chapter"><div class="chapter-label"><span>03:32</span><strong>UI evolution repeats itself</strong></div><div class="chapter-body"><p>Digital services progressed from static websites to email, chat, staffed call centers, and automation. AI followed the same arc: typed prompts, voice dictation converted into text, native two-way voice, and now visual interaction. The key change is not the media format alone, but the declining friction between intention and response.</p></div></div>
+            <div class="chapter"><div class="chapter-label"><span>05:32</span><strong>Realtime video becomes practical</strong></div><div class="chapter-body"><p>Generated marketing video is usually one-way and delayed: write a prompt, wait, then watch a fixed result. A realtime visual agent instead observes an evolving scene and responds during the interaction—for example, noticing that a person has swapped a white teacup for a water glass without receiving a new uploaded image.</p><p>The distinction is latency plus continuity. Image recognition alone is not a conversational interface; the system must maintain shared context as the environment changes.</p></div></div>
+            <div class="chapter"><div class="chapter-label"><span>06:24</span><strong>Hiring beyond the résumé bottleneck</strong></div><div class="chapter-body"><p>A hiring manager may speak with only five or ten candidates a day, forcing organizations to eliminate many applicants from résumés before observing how they reason or communicate. A scalable AI interviewer could give every applicant an initial conversation, adding a richer signal before the final human rounds.</p><p>The proposal is not to remove humans entirely. The hosts imagine AI expanding the top of the evaluation funnel while people remain involved in later, consequential decisions. This could surface candidates whose résumés are modest but whose analytical ability is strong—and expose the reverse case as well.</p></div></div>
+            <div class="chapter"><div class="chapter-label"><span>10:20</span><strong>AI bias becomes contestable</strong></div><div class="chapter-body"><p>Hiring is sensitive precisely because an AI rejection can be challenged: was the prompt discriminatory, did the training data encode an unfair preference, or did speech recognition disadvantage an accent or mixed-language speaker? The speakers note that bias need not look like explicit racism or sexism. A model that understands American-accented English better than Thai-accented or bilingual speech can systematically produce unequal evidence.</p><p>Scaling interviews therefore also scales the responsibility to validate transcription quality, evaluation criteria, consistency, appeal routes, and human review.</p></div></div>
+            <div class="chapter"><div class="chapter-label"><span>12:30</span><strong>Knowledge work stops being the fixed constraint</strong></div><div class="chapter-body"><p>Many corporate best practices optimize scarce human capacity. Standardized policies and an obsession with efficiency make sense when every additional translation, analysis, or planning task requires another knowledge worker. If an organization can create AI capacity on demand, that assumption weakens.</p><p>The hosts use vacation policy as an example of a broader question: should every team follow one fixed rule when workloads have different cycles? AI may allow more contextual management, but the important claim is larger—organizations should revisit policies built around constraints that agents materially change.</p></div></div>
+            <div class="chapter"><div class="chapter-label"><span>14:44</span><strong>Ambient AI does not wait</strong></div><div class="chapter-body"><p>Today's dominant pattern is prompt-driven: the system remains idle until a person asks. Ambient AI is always available within an authorized environment, continuously collecting relevant signals, analyzing them, and adapting. The episode imagines an agent observing office attendance and preparing next year's workspace budget rather than waiting for a manager to assemble the question.</p><p>It also describes an experimental feedback loop in which agents attempt work against company data, failures are analyzed, and both prompts and data structures are improved to raise the success rate. The deeper pattern is reciprocal adaptation: people change the AI, while evidence from AI activity changes the surrounding system.</p></div></div>
+            <div class="chapter"><div class="chapter-label"><span>17:46</span><strong>Navigation becomes conversation</strong></div><div class="chapter-body"><p>Instead of visiting an automotive site, clicking through categories, filtering range and color, then comparing pages, a visitor could tell an avatar agent: find a blue electric vehicle with roughly 400 kilometers of range. The interface assembles the relevant options directly.</p><p>This disrupts familiar analytics. Scroll depth, cursor hover time, and page funnels reveal less when a conversational layer retrieves the answer—or when the customer's own agent never loads the site. Businesses will need intent-level and outcome-level measures rather than relying only on page behavior.</p></div></div>
+            <div class="chapter"><div class="chapter-label"><span>20:00</span><strong>Hyper-personalization changes the content itself</strong></div><div class="chapter-body"><p>A context-aware browser might know that a user has children, needs room for a child seat, prioritizes safety, and prefers or rejects electric vehicles. A travel site could foreground outdoor routes for someone who dislikes shopping. A news site could compress a familiar technical topic while expanding the background for an unfamiliar sport.</p><p>This is not merely ranking the same list. The length, explanation, sequence, and emphasis of the experience can change for each person.</p></div></div>
+            <div class="chapter"><div class="chapter-label"><span>22:12</span><strong>Personal planning becomes delegated</strong></div><div class="chapter-body"><p>One speaker describes delegating travel sequencing to AI: provide the non-negotiable places and hotel, then ask the system to arrange the days and reconcile outdoor activities with the weather forecast. The human supplies goals and constraints; the agent performs the coordination work that connects multiple information sources.</p><p>User context is the differentiator. Traditional call-center interactions often restart with identity questions, while CRM quality depends on what staff recorded. A personal agent could selectively provide richer, current context—such as traveling with a small child and needing high chairs—if the user controls what is shared.</p></div></div>
+            <div class="chapter"><div class="chapter-label"><span>24:50</span><strong>Machines become customers</strong></div><div class="chapter-body"><p>Human-to-machine interaction occurs when a person converses with a merchant's agent. Machine-to-machine interaction occurs when the person's agent discovers products, reads constraints, compares offers, and perhaps buys on the person's behalf. Merchants must prepare for both paths because the agent may do the research even when the person still wants to inspect a costly item before purchasing.</p></div></div>
+            <div class="chapter"><div class="chapter-label"><span>26:00</span><strong>Human-machine parity</strong></div><div class="chapter-body"><p>The hosts' closing principle is that future products need two compatible consumption modes. People need legible layouts, strong audio, understandable choices, and reassuring interaction. Machines need accurate transcripts, speaker and timestamp labels, structured product data, stable APIs, and executable actions.</p><p>Failing either side can cost the market: agent-only infrastructure neglects human trust and judgment, while human-only presentation becomes invisible or unusable to the systems increasingly acting for customers.</p></div></div>
+          </div>
+        </section>
+
+        <section id="interface-model">
+          <p class="section-label">Interface model</p>
+          <h2>Five transitions hidden inside “beyond chatbots”</h2>
+          <table class="comparison">
+            <thead><tr><th>Transition</th><th>Old interaction</th><th>Agent-era interaction</th></tr></thead>
+            <tbody>
+              <tr><td data-label="Transition">Modality</td><td data-label="Old interaction">Typed commands or uploaded media</td><td data-label="Agent-era interaction">Continuous text, voice, vision, and video</td></tr>
+              <tr><td data-label="Transition">Timing</td><td data-label="Old interaction">Request, wait, receive</td><td data-label="Agent-era interaction">Low-latency dialogue with shared state</td></tr>
+              <tr><td data-label="Transition">Initiative</td><td data-label="Old interaction">AI waits for a prompt</td><td data-label="Agent-era interaction">Authorized events can trigger analysis or action</td></tr>
+              <tr><td data-label="Transition">Context</td><td data-label="Old interaction">Identity and preferences reconstructed each time</td><td data-label="Agent-era interaction">Portable, selective, user-controlled context</td></tr>
+              <tr><td data-label="Transition">Consumer</td><td data-label="Old interaction">A person visits and navigates</td><td data-label="Agent-era interaction">A person or agent discovers and operates the service</td></tr>
+            </tbody>
+          </table>
+          <p class="quote-pull">The design unit is no longer a page or a chat turn. It is a governed loop connecting context, conversation, action, evidence, and feedback.</p>
+        </section>
+
+        <section id="business">
+          <p class="section-label">Business implications</p>
+          <h2>What organizations would actually need to change</h2>
+          <div class="idea-list">
+            <div class="idea"><div class="idea-label"><span>Discovery</span><strong>Publish machine-readable offers</strong></div><div class="idea-body"><p>Product attributes, availability, eligibility, price, policies, and provenance must be structured consistently enough for agents to compare. Marketing copy alone is insufficient.</p></div></div>
+            <div class="idea"><div class="idea-label"><span>Action</span><strong>Expose safe transactional capabilities</strong></div><div class="idea-body"><p>An agent needs more than information. It needs explicit operations—quote, reserve, purchase, cancel, or escalate—with identity, authorization, limits, idempotency, and receipts.</p></div></div>
+            <div class="idea"><div class="idea-label"><span>Experience</span><strong>Preserve the human inspection path</strong></div><div class="idea-body"><p>For consequential or expensive decisions, people will still want to see the car, understand the loan, compare the itinerary, or speak with a person. Agent convenience should lead into a coherent human experience rather than replacing it.</p></div></div>
+            <div class="idea"><div class="idea-label"><span>Measurement</span><strong>Move from clicks to outcomes</strong></div><div class="idea-body"><p>Analytics should capture expressed intent, recommendation quality, completion, correction, escalation, satisfaction, and downstream outcomes. An agent-mediated customer journey may contain few or no page views.</p></div></div>
+            <div class="idea"><div class="idea-label"><span>Operations</span><strong>Learn from agent failure</strong></div><div class="idea-body"><p>Trace which data, instruction, tool, or policy caused a failed task. Improvements may belong in the prompt, ontology, API, source data, permission rule, or user experience—not necessarily in the model.</p></div></div>
+          </div>
+        </section>
+
+        <section id="platform">
+          <p class="section-label">Agentic platform implications</p>
+          <h2>A practical architecture for a BA-composable platform</h2>
+          <p>The episode's ideas imply a platform in which Business Analysts assemble governed capabilities rather than write one giant persona prompt. The interface should make the boundaries visible.</p>
+          <div class="process-flow" role="figure" aria-label="Agentic platform execution path">
+            <div class="flow-step"><span>01</span><strong>Event or request</strong></div>
+            <div class="flow-step"><span>02</span><strong>Context policy</strong></div>
+            <div class="flow-step"><span>03</span><strong>Agent &amp; skill</strong></div>
+            <div class="flow-step"><span>04</span><strong>Tool gateway</strong></div>
+            <div class="flow-step"><span>05</span><strong>Approval</strong></div>
+            <div class="flow-step"><span>06</span><strong>Trace &amp; learn</strong></div>
+          </div>
+          <div class="idea-list">
+            <div class="idea"><div class="idea-label"><span>Identity</span><strong>Separate human, agent, and organization</strong></div><div class="idea-body"><p>Every request should retain who owns the goal, which agent is acting, whose credentials are used, and who is accountable for the result.</p></div></div>
+            <div class="idea"><div class="idea-label"><span>Context</span><strong>Make memory scoped and revocable</strong></div><div class="idea-body"><p>Represent preferences, business facts, live observations, and inferred attributes separately. Add provenance, freshness, access scope, consent, and deletion controls.</p></div></div>
+            <div class="idea"><div class="idea-label"><span>Skills</span><strong>Define evidence and boundaries</strong></div><div class="idea-body"><p>A cognitive skill can analyze or recommend without changing an external system. An actionable skill declares its required tools, permissions, inputs, side effects, approval points, success evidence, and compensation path.</p></div></div>
+            <div class="idea"><div class="idea-label"><span>Ambient triggers</span><strong>Use events, not unrestricted surveillance</strong></div><div class="idea-body"><p>Let a BA connect approved events—occupancy threshold crossed, SLA at risk, inventory changed—to a workflow. Show exactly what data is observed, retention duration, action budget, and stop condition.</p></div></div>
+            <div class="idea"><div class="idea-label"><span>Human control</span><strong>Approve at the action boundary</strong></div><div class="idea-body"><p>Risky communication, payment, hiring decisions, and irreversible changes should pause at the tool gateway. The approval screen should show the proposed action, target, source evidence, impact, and alternatives.</p></div></div>
+            <div class="idea"><div class="idea-label"><span>Evaluation</span><strong>Measure the complete loop</strong></div><div class="idea-body"><p>Test transcription across languages and accents, recommendation relevance, tool success, policy compliance, escalation quality, latency, and user correction—not only whether the final prose sounds good.</p></div></div>
+          </div>
+        </section>
+
+        <section id="risks">
+          <p class="section-label">Critical assessment</p>
+          <h2>The opportunity is real; the hardest parts are governance</h2>
+          <div class="risk-list">
+            <div class="risk"><div class="risk-label"><span>01</span><strong>Ambient can become surveillance</strong></div><div class="risk-body"><p>Continuous observation maximizes context but also maximizes collection. A trustworthy system needs visible sensing states, purpose limits, selective memory, short retention by default, and a way to pause or inspect what the agent knows.</p></div></div>
+            <div class="risk"><div class="risk-label"><span>02</span><strong>Hiring automation can scale injustice</strong></div><div class="risk-body"><p>More interviews do not automatically mean fairer hiring. Accent recognition, disability accommodation, evaluation rubrics, proxy variables, and appeals must be tested with affected groups. AI should expand evidence for human judgment, not quietly manufacture a rejection score.</p></div></div>
+            <div class="risk"><div class="risk-label"><span>03</span><strong>Personalization can become manipulation</strong></div><div class="risk-body"><p>A service that knows a user's preferences can reduce noise, but it can also hide alternatives or optimize the seller's margin while appearing personal. Recommendations need explainable constraints and a way to broaden or reset the view.</p></div></div>
+            <div class="risk"><div class="risk-label"><span>04</span><strong>Machine access enlarges the attack surface</strong></div><div class="risk-body"><p>Agent-friendly APIs can be exploited through prompt injection, confused identity, excessive permissions, or automated abuse. Structured access must come with authentication, authorization, transaction limits, audit trails, and verified receipts.</p></div></div>
+            <div class="risk"><div class="risk-label"><span>05</span><strong>Proactivity must remain interruptible</strong></div><div class="risk-body"><p>An agent that constantly acts can create noise, cost, and cascading errors. Good Ambient AI has confidence thresholds, budgets, cooldowns, stop controls, and clear rules for when to observe, suggest, ask, or execute.</p></div></div>
+          </div>
+          <div class="thesis"><strong>My assessment</strong><p>The speakers are directionally right: multimodal conversation is only the visible edge of a deeper transition toward context-aware, proactive, agent-mediated services. The durable competitive advantage will not be the most human-looking avatar. It will be the cleanest combination of trustworthy context, machine-operable capabilities, strong human experience, and governance that users can understand.</p></div>
+        </section>
+
+        <section id="takeaways">
+          <p class="section-label">Takeaways</p>
+          <h2>What to carry forward</h2>
+          <ol class="summary-list">
+            <li>Realtime multimodality matters because it preserves shared context, not because video is visually impressive.</li>
+            <li>AI can remove a capacity bottleneck, as in first-round interviews, while creating a new requirement for fairness and appeal.</li>
+            <li>Ambient AI changes the interaction from explicit prompting to authorized sensing, reasoning, and event-driven work.</li>
+            <li>Hyper-personalization will alter explanation depth, content order, and choices—not merely recommend another item.</li>
+            <li>Traditional web analytics weaken when conversations or personal agents mediate the customer journey.</li>
+            <li>Products need human-machine parity: excellent human presentation plus structured, secure, machine-operable interfaces.</li>
+            <li>For agent platforms, the core design object is a governed loop of context, skill, tool, approval, evidence, and feedback.</li>
+          </ol>
+        </section>
+
+        <section id="source">
+          <p class="section-label">Source and method</p>
+          <h2>What this summary is based on</h2>
+          <ul class="source-links">
+            <li><a href="https://www.youtube.com/watch?v=9Ws2AkbYDrw">UPSTREAM EP.4 | HUMAN-AGENT INTERFACE</a> by SCB 10X on YouTube.</li>
+          </ul>
+          <p>The complete Thai auto-caption transcript—711 timed segments covering the episode through its closing remarks—was read alongside the creator's official chapter list and video metadata. The summary follows the speakers' sequence while consolidating repetition. The architecture, business recommendations, and risk analysis are editorial interpretation rather than direct claims from SCB 10X.</p>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Article contents">
+        <nav class="toc" aria-labelledby="toc-title">
+          <h2 id="toc-title">On this page</h2>
+          <ul>
+            <li><a href="#summary">Executive summary</a></li>
+            <li><a href="#foundation">Series foundation</a></li>
+            <li><a href="#chapters">Detailed walkthrough</a></li>
+            <li><a href="#interface-model">Interface model</a></li>
+            <li><a href="#business">Business implications</a></li>
+            <li><a href="#platform">Platform implications</a></li>
+            <li><a href="#risks">Critical assessment</a></li>
+            <li><a href="#takeaways">Takeaways</a></li>
+            <li><a href="#source">Source</a></li>
+          </ul>
+        </nav>
+        <div class="note-card">
+          <h2>Source scope</h2>
+          <p>One 28-minute Thai-language podcast episode with complete timed captions. Summary prepared September 7, 2026.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer-note">Editorial paraphrase for study. The original SCB 10X episode remains the authoritative source.</footer>
+</body>
+</html>

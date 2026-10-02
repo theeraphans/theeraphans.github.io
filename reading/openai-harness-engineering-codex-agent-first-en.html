@@ -1,0 +1,1084 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Harness Engineering with Codex - OpenAI Article Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5b6870;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f5f7f1;
+      --line: #d8dfd8;
+      --teal: #1b756d;
+      --blue: #2c6381;
+      --green: #557d54;
+      --gold: #a97725;
+      --coral: #bd503f;
+      --plum: #665987;
+      --mint: #e3f0ec;
+      --sky: #e6eef6;
+      --sand: #f7edd8;
+      --rose: #f5e5df;
+      --lavender: #ece8f2;
+      --shadow: 0 24px 68px rgb(23 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(27 117 109 / 6%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(44 99 129 / 5%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--green), var(--gold), var(--coral), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td, code { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 86%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 0.98fr) minmax(320px, 1.02fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.45rem, 5.6vw, 5rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 860px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img,
+    .figure-card img {
+      width: 100%;
+      object-fit: contain;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption,
+    .figure-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+      gap: 24px;
+      margin: 28px 0;
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 7%);
+    }
+
+    .quick-summary h2,
+    .section h2,
+    .sidebar h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-weight: 760;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+    }
+
+    .quick-summary p,
+    .section p,
+    .section li {
+      color: #334047;
+      font-size: 1.01rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-height: 96px;
+      padding: 16px;
+      background: var(--mint);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat:nth-child(2) { background: var(--sky); }
+    .stat:nth-child(3) { background: var(--sand); }
+    .stat strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.38rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 760;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 290px minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 16px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .sidebar-block,
+    .toc {
+      padding: 20px;
+      background: rgb(255 255 255 / 88%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .sidebar h2 {
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+    }
+
+    .glance {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: grid;
+      gap: 3px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .glance li:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .glance span {
+      color: var(--quiet);
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .glance strong {
+      color: var(--ink);
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .toc {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+
+    .toc a {
+      padding: 8px 0;
+      color: var(--muted);
+      border-top: 1px solid rgb(217 223 216 / 78%);
+      font-size: 0.92rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .content {
+      display: grid;
+      gap: 22px;
+    }
+
+    .section {
+      padding: 30px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .label {
+      display: inline-flex;
+      margin-bottom: 12px;
+      color: var(--coral);
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .section h2 {
+      margin-bottom: 14px;
+      font-size: clamp(1.7rem, 3vw, 2.45rem);
+    }
+
+    .section h3 {
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+      line-height: 1.25;
+    }
+
+    .lead {
+      color: #26333a !important;
+      font-size: clamp(1.06rem, 1.5vw, 1.2rem) !important;
+    }
+
+    .section p + p,
+    .section p + .grid,
+    .section p + .flow,
+    .section p + .matrix,
+    .section p + .checklist,
+    .section .grid + p,
+    .figure-card + p {
+      margin-top: 16px;
+    }
+
+    .quote-box {
+      margin-top: 18px;
+      padding: 18px;
+      color: #243139;
+      background: var(--sand);
+      border-left: 5px solid var(--gold);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.16rem;
+      line-height: 1.55;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .mint { background: var(--mint); }
+    .sky { background: var(--sky); }
+    .sand { background: var(--sand); }
+    .rose { background: var(--rose); }
+    .lavender { background: var(--lavender); }
+
+    .pill {
+      display: inline-flex;
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 12px;
+      padding: 5px 9px;
+      color: #fff;
+      background: var(--blue);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pill.teal { background: var(--teal); }
+    .pill.green { background: var(--green); }
+    .pill.gold { background: var(--gold); }
+    .pill.coral { background: var(--coral); }
+    .pill.plum { background: var(--plum); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .flow-step {
+      min-height: 156px;
+      padding: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .flow-step span {
+      display: block;
+      color: var(--quiet);
+      font-size: 0.73rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .flow-step strong {
+      display: block;
+      margin-top: 8px;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+
+    .flow-step p,
+    .card p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.58;
+    }
+
+    .matrix {
+      width: 100%;
+      margin-top: 18px;
+      border-collapse: collapse;
+      table-layout: fixed;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .matrix th,
+    .matrix td {
+      padding: 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+    }
+
+    .matrix th {
+      color: var(--ink);
+      background: var(--mint);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .matrix td {
+      color: #334047;
+      background: #fff;
+      font-size: 0.94rem;
+    }
+
+    .matrix tr:last-child td { border-bottom: 0; }
+    .matrix th:last-child,
+    .matrix td:last-child { border-right: 0; }
+
+    .checklist {
+      display: grid;
+      gap: 11px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .mini-spec {
+      margin-top: 18px;
+      padding: 18px;
+      overflow-x: auto;
+      color: #eef7f3;
+      background: #183039;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      line-height: 1.6;
+      white-space: pre;
+    }
+
+    .figure-card {
+      display: grid;
+      gap: 12px;
+      margin: 18px 0 0;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+      padding-left: 20px;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .flow,
+      .three {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .page {
+        padding-inline: 18px;
+      }
+
+      .hero {
+        gap: 26px;
+        padding-top: 36px;
+      }
+
+      h1 { font-size: clamp(2.25rem, 12vw, 3.15rem); }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .sidebar,
+      .two,
+      .three,
+      .flow,
+      .stats,
+      .toc {
+        grid-template-columns: 1fr;
+      }
+
+      .matrix {
+        table-layout: fixed;
+      }
+
+      .matrix th,
+      .matrix td {
+        padding: 10px;
+      }
+
+      .mini-spec { white-space: pre-wrap; }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/reading/">Reading room</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#thesis">Thesis</a>
+      <a class="action-link" href="#role">Engineer Role</a>
+      <a class="action-link" href="#legibility">Legibility</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link" href="#templates">Template</a>
+      <a class="action-link primary" href="https://openai.com/index/harness-engineering/">Read Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">OpenAI Article Summary - Harness Engineering</span>
+        <h1>Harness Engineering with Codex</h1>
+        <p class="subtitle">
+          A structured field guide to OpenAI's article about building a real internal product with Codex agents,
+          zero manually written code, repository-native knowledge, mechanical architecture, and feedback loops that let agents work reliably.
+        </p>
+        <div class="meta">
+          <span><strong>Article:</strong> Harness engineering: leveraging Codex in an agent-first world</span>
+          <span><strong>Author:</strong> Ryan Lopopolo, OpenAI</span>
+          <span><strong>Published:</strong> February 11, 2026</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://images.ctfassets.net/kftzwdyauwt9/1Gu58eNlqDEuITmbqJDmq9/1e2e62f7e15fb16d2da0da5407240564/fig_1__codex_drives_the_app_.png?fm=webp&amp;q=90&amp;w=1600" alt="OpenAI diagram showing Codex driving an app with Chrome DevTools MCP to validate work">
+        <figcaption>
+          OpenAI's article shows Codex using browser state, runtime events, screenshots, fixes, restarts, and validation loops as part of the engineering harness.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          Harness engineering is the discipline of designing the environment around coding agents so they can produce,
+          test, review, and maintain software with far less human handholding. The key move is not "write better prompts."
+          It is to make the repository, application, tools, observability, architecture rules, and cleanup loops legible and enforceable for agents.
+        </p>
+        <ul class="summary-list">
+          <li><strong>Humans steer, agents execute:</strong> engineers specify goals, acceptance criteria, constraints, and feedback loops.</li>
+          <li><strong>Repository knowledge becomes the system of record:</strong> `AGENTS.md` is a map, while structured docs and plans carry the real context.</li>
+          <li><strong>Autonomy requires guardrails:</strong> architecture, taste, logs, tests, browser validation, reviews, and garbage collection are encoded into the harness.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Article facts">
+        <div class="stat"><strong>0</strong><span>manual code lines</span></div>
+        <div class="stat"><strong>1M</strong><span>approximate codebase size</span></div>
+        <div class="stat"><strong>1,500</strong><span>PRs in five months</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Main lens</span><strong>Agent-first software engineering</strong></li>
+            <li><span>Scarce resource</span><strong>Human time and attention</strong></li>
+            <li><span>Core artifact</span><strong>Repository-native harness</strong></li>
+            <li><span>Platform lesson</span><strong>Make work legible, bounded, testable, and self-cleaning</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#thesis">Core Thesis</a>
+          <a href="#experiment">The Experiment</a>
+          <a href="#role">Engineer Role</a>
+          <a href="#legibility">Application Legibility</a>
+          <a href="#repo">Repository Knowledge</a>
+          <a href="#architecture">Architecture and Taste</a>
+          <a href="#throughput">Merge Philosophy</a>
+          <a href="#autonomy">Autonomy Levels</a>
+          <a href="#garbage">Garbage Collection</a>
+          <a href="#platform">Platform Takeaways</a>
+          <a href="#templates">Harness Spec Template</a>
+          <a href="#sources">Sources</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="thesis">
+          <span class="label">Core Thesis</span>
+          <h2>Harness engineering moves human effort from writing code to designing the system that lets agents write code safely.</h2>
+          <p class="lead">
+            The article describes a shift in the software engineer's job. When Codex can write application logic, tests, CI,
+            documentation, observability, and tools, the bottleneck moves to the surrounding environment: how the agent gets context,
+            how it validates output, how it receives feedback, how architecture is enforced, and how the codebase resists entropy.
+          </p>
+          <p>
+            The most useful framing is that the agent is not the whole product-development system. The harness is the system:
+            prompts, repo knowledge, plans, tooling, tests, browser automation, logs, metrics, traces, linters, architecture rules,
+            review loops, and recurring cleanup tasks. Better models help, but the compounding advantage comes from an environment
+            that makes correct work easy and incorrect work mechanically visible.
+          </p>
+          <div class="quote-box">
+            For an agentic platform, this is the same pattern as Master Agent plus Sub-Agent plus Skills plus Tools: the value is in the operating loop around the model.
+          </div>
+        </section>
+
+        <section class="section" id="experiment">
+          <span class="label">The Experiment</span>
+          <h2>OpenAI built an internal beta from an empty repository with Codex writing every line.</h2>
+          <p class="lead">
+            The team began with an empty repository in late August 2025. Codex CLI using GPT-5 generated the initial scaffold:
+            repository structure, CI, formatting, package manager setup, application framework, and even the first `AGENTS.md`.
+          </p>
+          <p>
+            Five months later, the repository was around a million lines across product code, infrastructure, tooling, docs,
+            observability, and internal developer utilities. Roughly 1,500 pull requests were opened and merged. The early team
+            was three engineers driving Codex, with reported throughput around 3.5 PRs per engineer per day, and the product had
+            hundreds of internal users plus external alpha testers.
+          </p>
+          <div class="grid three">
+            <article class="card mint">
+              <span class="pill teal">Constraint</span>
+              <h3>No manually written code</h3>
+              <p>The team kept the constraint intentionally so every missing capability had to become part of the agent environment.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill">Scale</span>
+              <h3>Agent-generated repo</h3>
+              <p>Application code, tests, CI, docs, observability, internal tooling, and dashboards were all generated by Codex.</p>
+            </article>
+            <article class="card sand">
+              <span class="pill gold">Outcome</span>
+              <h3>Software that ships</h3>
+              <p>The product deployed, broke, got fixed, and served real internal users, which kept the experiment grounded in reality.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="role">
+          <span class="label">Engineer Role</span>
+          <h2>The engineer becomes a harness designer, not a code typist.</h2>
+          <p class="lead">
+            The article says early work felt slower than expected because the environment was underspecified. Codex was not blocked
+            by raw intelligence as much as by missing tools, missing abstractions, weak feedback loops, and unclear internal structure.
+            So the engineer's job became finding the missing capability and making it legible and enforceable for the agent.
+          </p>
+          <p>
+            In practice, engineers break large goals into smaller building blocks, prompt Codex to create them, and then use the
+            created artifacts to unlock more complex work. A pull request can go through local self-review, additional agent reviews,
+            human feedback when needed, response loops, and repeated iteration until reviewers are satisfied.
+          </p>
+          <table class="matrix" aria-label="Human role shift in harness engineering">
+            <thead>
+              <tr>
+                <th>Old center of gravity</th>
+                <th>New center of gravity</th>
+                <th>What the platform must support</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Write implementation code.</td>
+                <td>Specify intent, constraints, and acceptance criteria.</td>
+                <td>Structured task specs, planning artifacts, and measurable done definitions.</td>
+              </tr>
+              <tr>
+                <td>Manually inspect most behavior.</td>
+                <td>Give agents direct access to UI, logs, traces, tests, and reviews.</td>
+                <td>Tool access, sandboxed runs, browser inspection, observability APIs, and screenshots.</td>
+              </tr>
+              <tr>
+                <td>Fix bad output by rewriting it.</td>
+                <td>Ask what capability, rule, or feedback path was missing.</td>
+                <td>Reusable skills, custom lint messages, validation loops, and doc updates.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="legibility">
+          <span class="label">Application Legibility</span>
+          <h2>Codex needs to see and operate the app, not only edit files.</h2>
+          <p class="lead">
+            As code throughput rose, human QA became the bottleneck. OpenAI responded by making the running application directly
+            legible to Codex. Each git worktree could boot its own isolated app instance. Browser state became accessible through
+            Chrome DevTools Protocol. The agent could use DOM snapshots, screenshots, navigation, runtime events, and console state
+            to reproduce bugs and validate fixes.
+          </p>
+          <p>
+            The same pattern applied to observability. Logs, metrics, and traces were exposed through a local ephemeral stack for
+            each worktree. Codex could query logs and metrics, correlate failures, restart the app, run journeys, and loop until
+            the observed behavior matched the target.
+          </p>
+          <figure class="figure-card">
+            <img src="https://images.ctfassets.net/kftzwdyauwt9/7uWHsJIC6o3uQPsnQ2Avz9/8be3e321892054bd215afb2b250a176a/OAI_Harness_engineering_The_limits_of_agent_knowledge_desktop-light.png?fm=webp&amp;q=90&amp;w=1600" alt="OpenAI diagram showing that knowledge outside Codex must be encoded into the codebase as markdown">
+            <figcaption>
+              OpenAI's agent-legibility diagram: knowledge outside the codebase is effectively invisible unless encoded into repo-local artifacts.
+            </figcaption>
+          </figure>
+        </section>
+
+        <section class="section" id="repo">
+          <span class="label">Repository Knowledge</span>
+          <h2>`AGENTS.md` should be a map, not a 1,000-page manual.</h2>
+          <p class="lead">
+            The team tried a giant instruction file and found the predictable failure modes: it consumed context, made everything
+            feel equally important, rotted quickly, and was hard to verify. The better approach was a short `AGENTS.md` that points
+            to a structured `docs/` directory treated as the system of record.
+          </p>
+          <p>
+            This is progressive disclosure for agents. The initial file gives the agent a stable map. Deeper docs carry architecture,
+            design docs, product specs, execution plans, generated schema references, quality scores, reliability rules, security
+            notes, and technical debt. Dedicated linters and CI jobs validate that the knowledge base is current, cross-linked,
+            and structured. A recurring doc-gardening agent opens fix-up PRs when docs drift from code behavior.
+          </p>
+          <pre class="mini-spec"><code>AGENTS.md                  # short table of contents
+ARCHITECTURE.md            # top-level domain and package map
+docs/
+  design-docs/             # verified design docs and core beliefs
+  exec-plans/              # active, completed, and debt-linked plans
+  generated/               # generated schemas and system references
+  product-specs/           # product behavior and user-facing rules
+  references/              # LLM-readable references and tool docs
+  DESIGN.md
+  FRONTEND.md
+  PLANS.md
+  PRODUCT_SENSE.md
+  QUALITY_SCORE.md
+  RELIABILITY.md
+  SECURITY.md</code></pre>
+        </section>
+
+        <section class="section" id="architecture">
+          <span class="label">Architecture and Taste</span>
+          <h2>Agents move fast only when boundaries are strict and mechanically checked.</h2>
+          <p class="lead">
+            Documentation alone does not keep an agent-generated codebase coherent. OpenAI enforced architecture through custom
+            linters and structural tests. Business domains had fixed layers and validated dependency directions. Cross-cutting
+            concerns entered through explicit provider interfaces instead of arbitrary edges.
+          </p>
+          <p>
+            The article's practical lesson is to enforce invariants, not micromanage every implementation. The team cared deeply
+            about boundaries, correctness, reproducibility, structured logging, naming conventions, file sizes, schema/type rules,
+            and reliability requirements. Inside those constraints, agents had room to choose the local implementation.
+          </p>
+          <figure class="figure-card">
+            <img src="https://images.ctfassets.net/kftzwdyauwt9/4Rlip1H3T9apPlSmWs7Wr8/7708c176bfbe11951e06ad8e2b83bf01/OAI_Harness_engineering_Layered_domain_architecture_with_explicit_cross-cutting_boundries_desktop-light.png?fm=webp&amp;q=90&amp;w=1600" alt="OpenAI diagram of layered domain architecture with explicit cross-cutting boundaries">
+            <figcaption>
+              The harness encodes architecture as something the agent can test against, not only read about.
+            </figcaption>
+          </figure>
+        </section>
+
+        <section class="section" id="throughput">
+          <span class="label">Merge Philosophy</span>
+          <h2>When correction is cheap and waiting is expensive, merge gates change.</h2>
+          <p class="lead">
+            The article notes that high agent throughput makes some traditional engineering norms counterproductive. Pull requests
+            are short-lived. Merge gates are lighter. Test flakes may be addressed in follow-up runs instead of blocking indefinitely.
+          </p>
+          <p>
+            This is not a universal recommendation for every team. The article explicitly frames it as a tradeoff that depends on
+            throughput and environment quality. In a low-throughput or weakly validated system, it would be risky. In a harnessed
+            system where agents can cheaply detect and remediate issues, waiting can become the bigger cost.
+          </p>
+          <div class="grid two">
+            <article class="card rose">
+              <span class="pill coral">Risky without harness</span>
+              <h3>Fast merges amplify chaos</h3>
+              <p>If tests, docs, architecture checks, observability, and cleanup loops are weak, agent speed can compound drift quickly.</p>
+            </article>
+            <article class="card lavender">
+              <span class="pill plum">Useful with harness</span>
+              <h3>Fast correction enables flow</h3>
+              <p>If the system can detect, validate, review, and repair cheaply, shorter PR cycles can preserve momentum.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="autonomy">
+          <span class="label">Autonomy Levels</span>
+          <h2>End-to-end autonomy emerged only after the loop was encoded into the repository.</h2>
+          <p class="lead">
+            OpenAI says Codex can now drive a new feature end to end in that repository: validate current state, reproduce a bug,
+            record failure evidence, implement a fix, validate the fix, record resolution evidence, open a PR, respond to feedback,
+            detect build failures, remediate them, escalate when judgment is required, and merge.
+          </p>
+          <p>
+            The important caveat is that this behavior depends heavily on the repository's specific tooling and structure. It should
+            not be assumed to generalize to a random codebase without similar investment. That caveat is the heart of harness
+            engineering: agent autonomy is not just a model property; it is a system property.
+          </p>
+          <div class="flow" aria-label="Autonomous feature loop">
+            <div class="flow-step">
+              <span>Observe</span>
+              <strong>Validate current state</strong>
+              <p>Run tests, inspect UI, query logs, gather existing behavior, and reproduce the issue.</p>
+            </div>
+            <div class="flow-step">
+              <span>Change</span>
+              <strong>Implement fix</strong>
+              <p>Edit code, docs, tests, and tooling while respecting architecture and repo conventions.</p>
+            </div>
+            <div class="flow-step">
+              <span>Prove</span>
+              <strong>Record evidence</strong>
+              <p>Capture screenshots, videos, traces, and test output showing failure and resolution.</p>
+            </div>
+            <div class="flow-step">
+              <span>Review</span>
+              <strong>Loop on feedback</strong>
+              <p>Use agent reviewers, human feedback, CI failures, and local checks to iterate.</p>
+            </div>
+            <div class="flow-step">
+              <span>Ship</span>
+              <strong>Merge or escalate</strong>
+              <p>Merge when the loop is satisfied, or ask a human where judgment is required.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="garbage">
+          <span class="label">Entropy and Garbage Collection</span>
+          <h2>Agent-generated systems need continuous cleanup, not occasional heroic cleanup sprints.</h2>
+          <p class="lead">
+            Full agent autonomy creates a new maintenance problem: Codex replicates patterns already present in the repository,
+            including uneven or suboptimal ones. At first, the team spent a weekly cleanup block on this. That did not scale.
+          </p>
+          <p>
+            The better answer was to encode "golden principles" into the repository and run background cleanup tasks. These tasks
+            scan for deviations, update quality grades, open targeted refactoring PRs, and keep technical debt from compounding.
+            This makes human taste reusable: encode it once, enforce it continuously.
+          </p>
+          <table class="matrix" aria-label="Garbage collection principles">
+            <thead>
+              <tr>
+                <th>Entropy source</th>
+                <th>Harness response</th>
+                <th>Platform implication</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Bad pattern copied repeatedly</td>
+                <td>Promote the correction into a lint, test, doc, or skill.</td>
+                <td>Every review finding should ask whether it belongs in policy or automation.</td>
+              </tr>
+              <tr>
+                <td>Stale documentation</td>
+                <td>Run doc-gardening agents and CI checks for freshness and links.</td>
+                <td>Knowledge memory needs lifecycle management, not just storage.</td>
+              </tr>
+              <tr>
+                <td>Technical debt accumulation</td>
+                <td>Open small recurring refactor PRs instead of large cleanup bursts.</td>
+                <td>Background maintenance agents are part of the production system.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Agentic Platform Takeaways</span>
+          <h2>This article is almost a blueprint for Master Agent, Sub-Agent, Skill, Tool, SOP, and Flow Markdown design.</h2>
+          <p class="lead">
+            For your platform, the most important lesson is to avoid putting the whole business process into a giant persona prompt.
+            Instead, treat the agent prompt as a map to structured, versioned, testable, permissioned knowledge and workflows.
+          </p>
+          <p>
+            BA-side users should author flow specs, domain docs, SOPs, acceptance criteria, and business rules in a format agents
+            can progressively discover. Engineers should provide the harness: runtime isolation, tool contracts, permission checks,
+            logging, evaluation, review, cleanup, and escalation. The model sits inside that system; it does not replace it.
+          </p>
+          <ul class="checklist">
+            <li><strong>Master Agent:</strong> routes events, chooses flow specs, assembles context, spawns sub-agents, and owns escalation.</li>
+            <li><strong>Sub-Agent:</strong> performs bounded cognitive or actionable work with a clear memory contract and output schema.</li>
+            <li><strong>Cognitive Skill:</strong> reads, classifies, compares, summarizes, plans, critiques, or extracts evidence without side effects.</li>
+            <li><strong>Actionable Skill:</strong> uses tools and must declare permissions, inputs, write-back behavior, rollback, and audit evidence.</li>
+            <li><strong>Tool/MCP Contract:</strong> exposes capabilities in a small, typed, observable interface that agents can call directly.</li>
+            <li><strong>Flow Markdown:</strong> stores SOP, entity model, task steps, required context, validation, review, and abstention rules.</li>
+            <li><strong>Garbage Collection:</strong> turns recurring mistakes into rules, docs, evals, or cleanup agents.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">Harness Spec Template</span>
+          <h2>A reusable Flow Markdown skeleton for harness engineering.</h2>
+          <p class="lead">
+            This template adapts the OpenAI article into a platform artifact. It gives BA users a place to define the business flow
+            while giving engineers the mechanical hooks needed for validation, observability, review, and cleanup.
+          </p>
+          <pre class="mini-spec"><code>---
+harness_id: customer_follow_up_agent_harness
+owner: customer_operations_platform
+entrypoint:
+  master_agent: customer_ops_router
+  trigger_events:
+    - email.received
+    - ticket.updated
+    - meeting.completed
+repo_knowledge:
+  agent_map: AGENTS.md
+  system_of_record:
+    - docs/product-specs/customer-follow-up.md
+    - docs/domain/customer-account.md
+    - docs/policies/customer-risk.md
+    - docs/quality/customer-ops-score.md
+progressive_disclosure:
+  load_first:
+    - AGENTS.md
+    - docs/domain/index.md
+    - docs/product-specs/index.md
+  load_on_demand:
+    - active_execution_plan
+    - account_summary
+    - policy_exception_register
+sub_agents:
+  context_researcher:
+    skill_type: cognitive
+    output_schema: evidence_pack
+  response_drafter:
+    skill_type: actionable
+    required_tools: [email_draft_tool]
+    output_schema: draft_response
+  policy_reviewer:
+    skill_type: cognitive
+    output_schema: risk_decision
+tool_contracts:
+  email_draft_tool:
+    side_effect: draft_only
+    audit_required: true
+    human_approval_required_if:
+      - legal_topic
+      - price_change
+      - high_risk_customer
+validation_loop:
+  preflight:
+    - verify_context_freshness
+    - run_policy_checks
+  execution:
+    - produce_plan
+    - run_agent_review
+    - run_human_review_if_required
+  evidence:
+    - cite_sources
+    - log_tool_calls
+    - store_before_after_state
+garbage_collection:
+  recurring_tasks:
+    - stale_doc_scan
+    - repeated_failure_pattern_scan
+    - flow_quality_grade_update
+  promote_to_rule_when:
+    - same_review_comment_count_gte: 3
+    - unsafe_action_attempt_count_gte: 1
+---</code></pre>
+        </section>
+
+        <section class="section" id="sources">
+          <span class="label">Sources</span>
+          <h2>Source and reliability notes.</h2>
+          <p class="lead">
+            This page summarizes OpenAI's official article and adapts the lessons for agentic platform design. It is not a verbatim copy.
+            The article's strongest caveat is preserved: the level of autonomy described depends on the repository's specific structure,
+            tooling, and feedback loops, and should not be assumed to generalize without similar harness investment.
+          </p>
+          <ul class="source-list">
+            <li><a href="https://openai.com/index/harness-engineering/">OpenAI: Harness engineering: leveraging Codex in an agent-first world</a>.</li>
+            <li>Author listed by OpenAI: Ryan Lopopolo, Member of the Technical Staff.</li>
+            <li>Published by OpenAI on February 11, 2026.</li>
+            <li>Images embedded from OpenAI's article assets for the Chrome DevTools validation loop, agent knowledge limits, and layered architecture diagrams.</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

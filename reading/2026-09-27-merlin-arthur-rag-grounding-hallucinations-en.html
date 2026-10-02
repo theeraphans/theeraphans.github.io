@@ -1,0 +1,933 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>Can a RAG Model Prove It Used the Evidence?</title>
+    <meta
+      name="description"
+      content="A detailed explanation of Merlin-Arthur training for grounded RAG: helpful and adversarial evidence masks, abstention, soundness, completeness, EIF, experimental results, and limitations."
+    />
+    <link rel="stylesheet" href="article-theme.css" />
+    <style>
+      .visual {
+        margin: 1.75rem 0 2rem;
+      }
+      .visual img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: #fff;
+      }
+      .visual figcaption {
+        margin-top: 0.7rem;
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.55;
+      }
+      .visual figcaption strong {
+        color: var(--ink);
+      }
+      .callout {
+        margin: 1.4rem 0;
+        padding: 1rem !important;
+        border-left: 3px solid var(--green) !important;
+      }
+      .callout.warning {
+        border-left-color: var(--gold) !important;
+      }
+      .players {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1px;
+        margin: 1.5rem 0;
+        background: var(--line);
+        border: 1px solid var(--line);
+      }
+      .players > div {
+        min-height: 12rem;
+        padding: 1.1rem;
+        background: var(--paper);
+      }
+      .players span {
+        display: block;
+        margin-bottom: 1.6rem;
+        color: var(--muted);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+      }
+      .players strong {
+        display: block;
+        margin-bottom: 0.45rem;
+        font-family: var(--serif);
+        font-size: 1.55rem;
+        font-weight: 500;
+      }
+      .players p {
+        margin: 0;
+        color: var(--muted) !important;
+        font-size: 0.88rem !important;
+      }
+      .players .merlin {
+        border-top: 5px solid #1d4ed8;
+      }
+      .players .morgana {
+        border-top: 5px solid #b42318;
+      }
+      .players .arthur {
+        border-top: 5px solid var(--green);
+      }
+      .metric-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1px;
+        margin: 1.5rem 0;
+        background: var(--line);
+        border: 1px solid var(--line);
+      }
+      .metric-strip > div {
+        padding: 1rem;
+        background: var(--paper);
+      }
+      .metric-strip span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+      }
+      .metric-strip strong {
+        display: block;
+        margin: 0.25rem 0;
+        font-family: var(--serif);
+        font-size: clamp(1.4rem, 4vw, 2rem);
+        font-weight: 500;
+      }
+      .metric-strip small {
+        color: var(--green);
+        font-size: 0.86rem;
+      }
+      .pipeline {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1px;
+        margin: 1.5rem 0;
+        background: var(--line);
+        border: 1px solid var(--line);
+      }
+      .pipeline > div {
+        padding: 1rem;
+        background: var(--paper);
+      }
+      .pipeline span {
+        display: block;
+        margin-bottom: 0.35rem;
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+      .pipeline strong,
+      .pipeline small {
+        display: block;
+      }
+      .pipeline small {
+        margin-top: 0.35rem;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+      .evidence-table {
+        width: 100%;
+        min-width: 0 !important;
+        margin: 1.25rem 0;
+        table-layout: fixed;
+        border-collapse: collapse;
+      }
+      .evidence-table th,
+      .evidence-table td {
+        padding: 0.75rem 0.5rem;
+        text-align: left;
+        vertical-align: top;
+        overflow-wrap: anywhere;
+        border-bottom: 1px solid var(--line);
+      }
+      .evidence-table th {
+        font-weight: 500;
+      }
+      .formula {
+        margin: 1.25rem 0;
+        padding: 1.15rem;
+        overflow-wrap: anywhere;
+        border: 1px solid var(--line);
+        background: var(--soft);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        text-align: center;
+      }
+      .chapter-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0;
+        margin: 1.25rem 0;
+        padding: 0;
+        border-top: 1px solid var(--line);
+        list-style: none;
+      }
+      .chapter-list li {
+        border-bottom: 1px solid var(--line);
+      }
+      .chapter-list a {
+        display: flex;
+        gap: 0.75rem;
+        min-height: 100%;
+        padding: 0.8rem 0.5rem;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      .chapter-list time {
+        flex: 0 0 3.3rem;
+        color: var(--green);
+        font-variant-numeric: tabular-nums;
+      }
+      @media (max-width: 750px) {
+        .players,
+        .metric-strip,
+        .pipeline,
+        .chapter-list {
+          grid-template-columns: 1fr;
+        }
+        .players > div {
+          min-height: 0;
+        }
+        .players span {
+          margin-bottom: 0.7rem;
+        }
+        .visual {
+          margin: 1.35rem 0 1.7rem;
+        }
+        .evidence-table {
+          font-size: 0.86rem;
+        }
+        .evidence-table th,
+        .evidence-table td {
+          padding-inline: 0.35rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="/reading/">Reading room</a>
+      <div class="top-actions">
+        <a
+          class="action-link"
+          href="https://www.youtube.com/watch?v=796GVFTFiB0"
+          >Watch video</a
+        >
+      </div>
+    </nav>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">AI Coffee Break · RAG research explained</p>
+          <h1>Can a RAG Model Prove It Used the Evidence?</h1>
+          <p class="subtitle">
+            Merlin preserves decisive evidence, Morgana removes it, and Arthur
+            learns the only strategy that survives both: answer when the context
+            supports the claim and abstain when it does not.
+          </p>
+          <div class="meta">
+            <span>32:56 video</span><span>Letitia Parcalabescu</span
+            ><span>Published September 27, 2026</span
+            ><span>Summary run: September 27, 2026</span>
+          </div>
+        </div>
+        <figure class="hero-card">
+          <img
+            src="2026-09-27-merlin-arthur-thumbnail.jpg"
+            alt="AI Coffee Break thumbnail for the Merlin-Arthur hallucination video"
+          />
+          <figcaption>
+            Accuracy alone cannot reveal whether a correct answer came from the
+            retrieved document, model memory, a shortcut, or a lucky guess.
+          </figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="source">
+            <p class="section-label">Source correction</p>
+            <h2>The presenter is also a paper author</h2>
+            <p>
+              This video is Letitia Parcalabescu's explanation of research she
+              co-authored at Aleph Alpha Research with Björn Deiseroth, Max
+              Henning Höth, and Kristian Kersting. The primary paper is a
+              45-page arXiv preprint revised August 9, 2026. The video is an
+              accessible walkthrough; experimental details and assumptions come
+              from the paper.
+            </p>
+            <p>
+              The work proposes a training and evaluation framework for
+              evidence-grounded RAG. It does not eliminate hallucinations,
+              certify external truth, or turn every generated answer into a
+              formal proof. Its certificate is a conservative lower bound on how
+              strongly model behavior depends on supplied context under the
+              tested masking protocol.
+            </p>
+            <div class="callout warning">
+              <strong>Most important distinction</strong>
+              <p>
+                A grounded answer faithfully follows its document. That document
+                can still be wrong. Grounding and truth require different
+                checks.
+              </p>
+            </div>
+          </section>
+
+          <section id="summary">
+            <p class="section-label">Executive summary</p>
+            <h2>
+              Teach the model the difference between plausible and supported
+            </h2>
+            <p>
+              Standard RAG evaluation asks whether retrieval found relevant text
+              and whether the final answer is correct. A strong model may answer
+              correctly without using the text at all. Citations do not fully
+              solve this because a model can generate an answer first and attach
+              compatible-looking evidence afterward.
+            </p>
+            <p>
+              The proposed framework converts question answering into a
+              three-player game. Merlin keeps evidence that supports the correct
+              answer. Morgana removes decisive evidence while preserving
+              plausible surrounding context. Arthur sees no label identifying
+              which context it received. It must learn to answer the original
+              and Merlin cases, but abstain on Morgana's insufficient context.
+            </p>
+            <ul class="summary-list">
+              <li>
+                ATMAN identifies influential sentences by suppressing attention
+                and measuring how the correct-answer probability changes.
+              </li>
+              <li>
+                Merlin and Morgana regenerate examples during training, so their
+                attacks follow Arthur's evolving shortcuts.
+              </li>
+              <li>
+                Completeness measures whether supportive evidence enables a
+                correct answer; soundness measures resistance to misleading or
+                insufficient evidence.
+              </li>
+              <li>
+                The conditional Explained Information Fraction, EIFcond,
+                estimates a lower bound on context dependence among questions
+                Arthur can already answer correctly.
+              </li>
+              <li>
+                Across the reported experiments, unsupported wrong answers fell
+                while utility on unmasked context was preserved.
+              </li>
+            </ul>
+          </section>
+
+          <section id="problem">
+            <p class="section-label">Why accuracy is insufficient</p>
+            <h2>Nine correct answers can still leave ten answers to verify</h2>
+            <p>
+              The video opens with a useful operational example. A system that
+              is correct 90% of the time but confidently answers every question
+              forces a human to check all ten answers because the system does
+              not identify the one unsupported result. A second system with the
+              same accuracy becomes more useful if it abstains exactly when the
+              required evidence is missing.
+            </p>
+            <p>
+              This matters in document workflows. If a contract says termination
+              requires 90 days' notice, the model can produce “90 days” by
+              reading the clause, recalling a common convention, exploiting a
+              spurious cue, or guessing. Ordinary answer accuracy treats all
+              four paths as equivalent.
+            </p>
+            <div class="formula">
+              Correct answer ≠ evidence-grounded answer ≠ externally true answer
+            </div>
+          </section>
+
+          <section id="citations">
+            <p class="section-label">Why citations are not enough</p>
+            <h2>A citation can be post-hoc justification</h2>
+            <p>
+              Asking for a quote or citation is useful for inspection, but it
+              does not prove causal reliance. The model can settle on an answer
+              from its parameters and then retrieve a sentence that merely looks
+              compatible. The citation itself can also be incomplete, unrelated,
+              or fabricated.
+            </p>
+            <p>
+              The research asks a harder counterfactual question: if decisive
+              evidence is preserved, does the answer survive; and if that same
+              evidence is removed while plausible context remains, does the
+              model stop answering?
+            </p>
+          </section>
+
+          <section id="players">
+            <p class="section-label">The three-player protocol</p>
+            <h2>Merlin helps, Morgana attacks, Arthur decides</h2>
+            <div class="players" aria-label="Merlin Morgana and Arthur roles">
+              <div class="merlin">
+                <span>Helpful prover</span><strong>Merlin</strong>
+                <p>
+                  Keeps the context spans that most support the known correct
+                  answer. Arthur should answer correctly from this evidence.
+                </p>
+              </div>
+              <div class="morgana">
+                <span>Adversarial prover</span><strong>Morgana</strong>
+                <p>
+                  Removes decisive evidence while retaining believable context.
+                  Arthur should recognize insufficiency and abstain.
+                </p>
+              </div>
+              <div class="arthur">
+                <span>Generator and verifier</span><strong>Arthur</strong>
+                <p>
+                  Receives context of unknown provenance and must choose between
+                  a supported answer and rejection.
+                </p>
+              </div>
+            </div>
+            <figure class="visual">
+              <img
+                src="2026-09-27-merlin-arthur-training-protocol.png"
+                alt="Paper diagram showing Merlin Morgana and utility contexts feeding Arthur and three weighted losses"
+                loading="lazy"
+              />
+              <figcaption>
+                <strong>Paper Figure 1.</strong> Original, supportive, and
+                adversarial contexts create utility, focus, and rejection losses
+                that are combined during training.
+              </figcaption>
+            </figure>
+            <div class="callout">
+              <strong
+                >This is primarily an offline training and evaluation
+                design</strong
+              >
+              <p>
+                Merlin and Morgana manufacture evidence masks around the current
+                Arthur. They are not three conversational agents that must all
+                run for every production query. The deployed generator can use a
+                normal RAG request path after training.
+              </p>
+            </div>
+          </section>
+
+          <section id="atman">
+            <p class="section-label">How the evidence is selected</p>
+            <h2>ATMAN probes which sentences change Arthur's answer</h2>
+            <p>
+              Exhaustively testing every subset of a long document would be
+              exponential. The paper uses ATMAN, a perturbation-based
+              explainability method, as a practical approximation with linear
+              probing cost. It suppresses attention to one token or sentence at
+              a time and observes the change in the probability of the correct
+              answer.
+            </p>
+            <div class="pipeline" aria-label="ATMAN sentence-ranking process">
+              <div>
+                <span>01</span><strong>Probe</strong
+                ><small>Suppress attention to one sentence</small>
+              </div>
+              <div>
+                <span>02</span><strong>Measure</strong
+                ><small>Observe correct-answer probability change</small>
+              </div>
+              <div>
+                <span>03</span><strong>Rank</strong
+                ><small>Order sentences by current influence</small>
+              </div>
+              <div>
+                <span>04</span><strong>Mask</strong
+                ><small>Merlin keeps; Morgana removes decisive evidence</small>
+              </div>
+            </div>
+            <p>
+              The difficult negative is not random irrelevant text. It is the
+              right document, topic, entities, and vocabulary with the one fact
+              needed for the answer missing. That is the setting where a fluent
+              language model is most tempted to guess.
+            </p>
+          </section>
+
+          <section id="training">
+            <p class="section-label">Training objective</p>
+            <h2>The only winning policy is to inspect the evidence</h2>
+            <table class="evidence-table">
+              <thead>
+                <tr>
+                  <th>Context</th>
+                  <th>Expected behavior</th>
+                  <th>Purpose</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Original</td>
+                  <td>Answer correctly</td>
+                  <td>Preserve normal task utility</td>
+                </tr>
+                <tr>
+                  <td>Merlin</td>
+                  <td>Answer correctly</td>
+                  <td>Use concentrated supportive evidence</td>
+                </tr>
+                <tr>
+                  <td>Morgana</td>
+                  <td>Abstain</td>
+                  <td>Reject plausible but insufficient context</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>
+              Arthur is not told which context type it received. Always
+              answering fails on Morgana. Always refusing fails on original and
+              Merlin contexts. The three losses can be optimized with supervised
+              fine-tuning or reinforcement learning and weighted to match the
+              application's cost asymmetry.
+            </p>
+            <p>
+              Legal or safety workflows can weight Morgana more heavily to
+              punish unsupported answers. A low-risk support workflow with
+              expensive human escalation can weight utility and Merlin more to
+              avoid unnecessary refusals. The method exposes this trade-off; it
+              does not choose the business threshold automatically.
+            </p>
+          </section>
+
+          <section id="coevolution">
+            <p class="section-label">Adaptive supervision</p>
+            <h2>Morgana attacks the shortcut Arthur uses now</h2>
+            <p>
+              Evidence masks are generated on the fly. After Arthur changes,
+              ATMAN is rerun and the next masks change too. This avoids a static
+              adversarial dataset that captures only yesterday's failure modes.
+            </p>
+            <p>
+              The video's cow-versus-camel example makes the idea concrete. If
+              every training cow appears on grass and every camel on sand, a
+              classifier can learn background instead of animal shape. Morgana
+              can preserve grass while removing the cow, punish the “cow”
+              answer, and force Arthur toward features that survive the
+              contrast. The language analogue is a relevant-looking passage that
+              mentions the right company and legal topic but lacks the clause
+              that establishes the answer.
+            </p>
+          </section>
+
+          <section id="metrics">
+            <p class="section-label">Measuring groundedness</p>
+            <h2>Completeness and soundness constrain different failures</h2>
+            <table class="evidence-table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Question</th>
+                  <th>Failure</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Completeness</td>
+                  <td>Does Arthur answer correctly with Merlin evidence?</td>
+                  <td>Unnecessary rejection or missed evidence</td>
+                </tr>
+                <tr>
+                  <td>Soundness</td>
+                  <td>Does Arthur resist Morgana and abstain?</td>
+                  <td>Unsupported answer or hallucination</td>
+                </tr>
+                <tr>
+                  <td>Model coverage</td>
+                  <td>What fraction can Arthur answer correctly unmasked?</td>
+                  <td>Underlying capability limit</td>
+                </tr>
+                <tr>
+                  <td>EIFcond</td>
+                  <td>Among correct cases, how much signal is certified?</td>
+                  <td>Weak dependence on supplied evidence</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>
+              Error becomes uncertainty, represented with binary entropy. The
+              protocol derives a lower bound on mutual information between
+              selected evidence and correct behavior. A lower bound is crucial:
+              a score of 0.60 means at least 60% of the relevant predictive
+              information is certified under the protocol, not that the other
+              40% definitely came from guessing.
+            </p>
+            <p>
+              Conditional EIF evaluates only examples the unmasked model already
+              answers correctly. This separates capability from grounding and
+              avoids rewarding an incompetent model merely because its
+              denominator is small.
+            </p>
+          </section>
+
+          <section id="results">
+            <p class="section-label">Experimental results</p>
+            <h2>
+              Unsupported answers fall without sacrificing normal accuracy
+            </h2>
+            <p>
+              The paper evaluates four instruction-tuned models from 1B to 32B
+              parameters across five QA benchmarks, with six dataset settings.
+              Generator training uses LoRA for at most 200 steps; the paper
+              reports a 64-GPU training setup because masks are produced during
+              optimization.
+            </p>
+            <div
+              class="metric-strip"
+              aria-label="Reported Merlin-Arthur improvements"
+            >
+              <div>
+                <span>Wrong answers</span><strong>up to −35 pp</strong
+                ><small>versus instructed model</small>
+              </div>
+              <div>
+                <span>Wrong answers</span><strong>−18 to −20 pp</strong
+                ><small>versus vanilla fine-tuning</small>
+              </div>
+              <div>
+                <span>Retriever Recall@1</span><strong>+2 pp</strong
+                ><small>with generated positives and negatives</small>
+              </div>
+            </div>
+            <ul class="summary-list">
+              <li>
+                EIFcond improves by 0.10–0.40 over instructed models and by
+                0.33–0.38 over vanilla fine-tuning.
+              </li>
+              <li>
+                Five of six dataset settings reach EIFcond of at least 0.55;
+                aggregate training curves approach roughly 0.60.
+              </li>
+              <li>
+                Accuracy on original unmasked context remains comparable to
+                vanilla fine-tuning, avoiding the trivial “reject everything”
+                solution.
+              </li>
+              <li>
+                Abstention emerges even on datasets without manually labeled
+                unanswerable questions.
+              </li>
+            </ul>
+            <figure class="visual">
+              <img
+                src="2026-09-27-merlin-arthur-abstention-results.png"
+                alt="SQuAD confusion matrices comparing utility and Merlin-Arthur training with and without abstention samples"
+                loading="lazy"
+              />
+              <figcaption>
+                <strong>Paper Figure 3.</strong> On the answerable-only split,
+                ordinary utility training answers every case and posts a 97%
+                false-positive rate. M/A training obtains a 10% false-positive
+                rate without labeled abstention examples. The higher 87%
+                accuracy of forced guessing is misleading because lucky guesses
+                count as correct.
+              </figcaption>
+            </figure>
+            <figure class="visual">
+              <img
+                src="2026-09-27-merlin-arthur-grounding-results.png"
+                alt="Paper charts comparing accuracy completeness soundness and conditional EIF across models and training steps"
+                loading="lazy"
+              />
+              <figcaption>
+                <strong>Paper Figures 4 and 5.</strong> Averaged results show
+                similar unmasked accuracy alongside substantially higher
+                conditional soundness and EIF after M/A training. Per-dataset
+                curves and ablations occupy much of the paper's appendix.
+              </figcaption>
+            </figure>
+          </section>
+
+          <section id="retriever">
+            <p class="section-label">Closing the RAG loop</p>
+            <h2>The same masks can train retrieval</h2>
+            <p>
+              Merlin contexts become extra hard positives: compact evidence that
+              is sufficient for the answer. Morgana contexts become difficult
+              negatives: topically similar text that lacks the decisive fact.
+              Replacing ordinary negatives with these model-informed examples
+              improves MRR and Recall@k in the reported retriever experiment,
+              including a two-point gain in Recall@1.
+            </p>
+            <p>
+              This is useful because the generator itself identifies what
+              retrieval evidence changes its behavior. The supervision loop runs
+              from retrieval to generation, then back from generator failures to
+              retriever training.
+            </p>
+          </section>
+
+          <section id="legal">
+            <p class="section-label">Real-document pilot</p>
+            <h2>Promising legal behavior, but only 100 cases</h2>
+            <p>
+              The video also discusses German environmental and administrative
+              law files for a hydrogen-pipeline approval procedure. Individual
+              questions can use 20,000–30,000 characters of retrieved material
+              and have three outcomes: fulfilled, not fulfilled, or
+              inconclusive.
+            </p>
+            <p>
+              M/A-trained models abstained correctly more often on inconclusive
+              cases and reduced confidently wrong verdicts. The presenter
+              explicitly cautions that the legal sample contains only 100 cases
+              and was not used for training. It is a useful stress test, not a
+              statistically strong domain benchmark or evidence of legal-system
+              readiness.
+            </p>
+          </section>
+
+          <section id="limits">
+            <p class="section-label">Limitations</p>
+            <h2>A grounding certificate has boundaries</h2>
+            <ul class="summary-list">
+              <li>
+                <strong>Grounding is not truth.</strong> False source documents
+                can produce faithfully grounded false answers.
+              </li>
+              <li>
+                <strong>Adversary strength matters.</strong> If Morgana misses
+                the decisive evidence, the measured lower bound is weaker.
+              </li>
+              <li>
+                <strong>Over-refusal remains possible.</strong> Loss weights
+                encode a business-specific answer-versus-abstain trade-off.
+              </li>
+              <li>
+                <strong>Training is expensive.</strong> ATMAN repeatedly probes
+                the model and the reported setup generates masks across 64 GPUs.
+              </li>
+              <li>
+                <strong>The proof is protocol-relative.</strong> EIF certifies
+                dependence under the selected masking heuristic and assumptions;
+                it is not omniscient access to the model's causal computation.
+              </li>
+              <li>
+                <strong>Benchmarks remain imperfect.</strong> Conditional
+                evaluation helps separate errors but does not remove annotation,
+                distribution, or real-world deployment gaps.
+              </li>
+              <li>
+                <strong>Privacy and bias are out of scope.</strong> The paper
+                explicitly does not solve these broader risks.
+              </li>
+            </ul>
+          </section>
+
+          <section id="production">
+            <p class="section-label">Production interpretation</p>
+            <h2>Use the method as an offline grounding program</h2>
+            <ol class="summary-list">
+              <li>
+                <strong>Define costly error types.</strong> Separate unsupported
+                answers, unnecessary abstentions, and ordinary wrong answers.
+              </li>
+              <li>
+                <strong>Curate positive QA cases.</strong> Preserve document,
+                question, and verified answer; the protocol can manufacture
+                insufficient-context variants.
+              </li>
+              <li>
+                <strong>Choose masking granularity.</strong> Sentence masking is
+                easier to inspect; token masking can be finer but noisier.
+              </li>
+              <li>
+                <strong>Validate the explainer.</strong> Inspect whether ATMAN
+                highlights evidence a domain expert considers decisive.
+              </li>
+              <li>
+                <strong>Tune loss weights by harm.</strong> Legal or medical RAG
+                should usually punish unsupported certainty more heavily.
+              </li>
+              <li>
+                <strong>Track a metric portfolio.</strong> Accuracy,
+                completeness, soundness, coverage, EIFcond, retrieval recall,
+                and abstention rate answer different questions.
+              </li>
+              <li>
+                <strong>Keep source-quality checks.</strong> Add provenance,
+                freshness, contradiction, and authority validation because
+                grounding alone cannot verify truth.
+              </li>
+              <li>
+                <strong>Re-evaluate after model changes.</strong> New
+                checkpoints and retrievers create new shortcuts for Morgana to
+                discover.
+              </li>
+            </ol>
+          </section>
+
+          <section id="chapters">
+            <p class="section-label">Chapter guide</p>
+            <h2>Jump to the concept you need</h2>
+            <ul class="chapter-list">
+              <li>
+                <a href="https://www.youtube.com/watch?v=796GVFTFiB0&t=108s"
+                  ><time>01:48</time><span>The problems with RAG</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=796GVFTFiB0&t=225s"
+                  ><time>03:45</time
+                  ><span>Why citations are insufficient</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=796GVFTFiB0&t=292s"
+                  ><time>04:52</time><span>Arthur, Merlin, and Morgana</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=796GVFTFiB0&t=440s"
+                  ><time>07:20</time><span>ATMAN implementation</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=796GVFTFiB0&t=585s"
+                  ><time>09:45</time><span>Training objective</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=796GVFTFiB0&t=819s"
+                  ><time>13:39</time><span>Cow-on-the-beach shortcut</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=796GVFTFiB0&t=1004s"
+                  ><time>16:44</time><span>Groundedness and EIF</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=796GVFTFiB0&t=1339s"
+                  ><time>22:19</time><span>Experimental results</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=796GVFTFiB0&t=1720s"
+                  ><time>28:40</time><span>Limitations</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=796GVFTFiB0&t=1799s"
+                  ><time>29:59</time><span>Takeaways</span></a
+                >
+              </li>
+            </ul>
+          </section>
+
+          <section id="verdict">
+            <p class="section-label">Verdict</p>
+            <h2>
+              The contribution is stronger than “another hallucination metric”
+            </h2>
+            <p>
+              The most interesting part is the adaptive supervision loop. The
+              model helps reveal its current shortcuts; supportive and
+              adversarial evidence masks turn those weaknesses into training
+              data; the next model version exposes different weaknesses. The
+              same interaction yields an interpretable evaluation target instead
+              of relying only on another LLM judge.
+            </p>
+            <p>
+              This is promising for high-stakes RAG, but the production claim
+              must remain bounded. The work demonstrates stronger abstention and
+              measurable context dependence on selected benchmarks and a small
+              legal pilot. It does not prove factual truth, remove source risk,
+              or make verification cheap. Its practical value is giving teams a
+              better question: not merely “was the answer correct?” but “did the
+              retrieved evidence make it correct?”
+            </p>
+          </section>
+
+          <section id="sources">
+            <p class="section-label">Sources and method</p>
+            <h2>What this analysis is based on</h2>
+            <ul class="source-list">
+              <li>
+                <a href="https://www.youtube.com/watch?v=796GVFTFiB0"
+                  >AI Coffee Break with Letitia, “Reducing Hallucinations:
+                  Merlin-Arthur Training and Evaluation EXPLAINED”</a
+                >. The full 32:56 audio was transcribed locally with Whisper
+                Large v3 Turbo because YouTube captions were unavailable.
+              </li>
+              <li>
+                <a href="https://arxiv.org/abs/2512.11614"
+                  >Deiseroth, Höth, Kersting, and Parcalabescu, “Bounding
+                  Hallucinations: Merlin-Arthur Protocols for Mutual-Information
+                  Bounds in Language Models”</a
+                >, arXiv:2512.11614v3. The complete 45-page paper and appendix
+                were reviewed.
+              </li>
+              <li>
+                <a
+                  href="https://aleph-alpha.com/en/blog/bounding-hallucinations-merlin-arthur-protocols-for-mutual-information-bounds-in-language-models/"
+                  >Aleph Alpha research blog</a
+                >, used as a secondary explanation of the method.
+              </li>
+              <li>
+                <a href="https://openreview.net/forum?id=PBpEb86bj7"
+                  >ATMAN: Understanding Transformer Predictions Through Memory
+                  Efficient Attention Manipulation</a
+                >, the explainability method used to construct masks.
+              </li>
+            </ul>
+          </section>
+        </article>
+
+        <aside class="sidebar">
+          <nav class="toc" aria-labelledby="toc-title">
+            <h2 id="toc-title">In this article</h2>
+            <ul>
+              <li><a href="#source">Source correction</a></li>
+              <li><a href="#summary">Executive summary</a></li>
+              <li><a href="#problem">Why accuracy fails</a></li>
+              <li><a href="#citations">Citation problem</a></li>
+              <li><a href="#players">Three-player protocol</a></li>
+              <li><a href="#atman">ATMAN masking</a></li>
+              <li><a href="#training">Training objective</a></li>
+              <li><a href="#coevolution">Co-evolution</a></li>
+              <li><a href="#metrics">Grounding metrics</a></li>
+              <li><a href="#results">Results</a></li>
+              <li><a href="#retriever">Retriever training</a></li>
+              <li><a href="#legal">Legal pilot</a></li>
+              <li><a href="#limits">Limitations</a></li>
+              <li><a href="#production">Production use</a></li>
+              <li><a href="#chapters">Chapter guide</a></li>
+              <li><a href="#verdict">Verdict</a></li>
+            </ul>
+          </nav>
+          <div class="note-card">
+            <h2>Grounding test</h2>
+            <p>
+              Keep decisive evidence: answer. Remove decisive evidence: abstain.
+              If both behaviors hold, the context is doing real work.
+            </p>
+          </div>
+          <div class="tag-grid">
+            <span class="tag">RAG</span><span class="tag">Hallucination</span
+            ><span class="tag">Merlin-Arthur</span
+            ><span class="tag">Groundedness</span
+            ><span class="tag">Abstention</span>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>

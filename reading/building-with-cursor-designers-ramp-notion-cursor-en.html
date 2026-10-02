@@ -1,0 +1,1120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Building with Cursor for Designers - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5d6970;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f4f7f2;
+      --line: #d7ded6;
+      --charcoal: #24323a;
+      --teal: #166f68;
+      --blue: #315f86;
+      --coral: #bd503f;
+      --gold: #9e711e;
+      --violet: #665987;
+      --mint: #e2f0ec;
+      --sky: #e7eef6;
+      --sand: #f7eed8;
+      --rose: #f5e5df;
+      --shadow: 0 24px 62px rgb(23 33 38 / 11%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(22 111 104 / 7%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(49 95 134 / 6%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 46px 46px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--coral), var(--gold), var(--violet));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 84%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.55rem, 6vw, 5.1rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2.05vw, 1.48rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e6ece7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 86%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: #f8fbf8;
+      background: rgb(255 255 255 / 9%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-height: 86px;
+      padding: 14px;
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: rgb(255 255 255 / 72%);
+      font-size: 0.84rem;
+      font-weight: 760;
+      text-transform: uppercase;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      gap: 42px;
+      align-items: start;
+      margin-top: 36px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 22px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .sidebar-block {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+    }
+
+    .sidebar-block h2,
+    .toc h2 {
+      margin-bottom: 12px;
+      color: var(--quiet);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .glance {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .glance strong {
+      color: var(--ink);
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .toc {
+      padding-left: 18px;
+      border-left: 4px solid var(--gold);
+    }
+
+    .toc a {
+      display: block;
+      padding: 7px 0;
+      color: var(--ink);
+      font-size: 0.94rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .content {
+      min-width: 0;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 8%);
+    }
+
+    .section {
+      padding: 34px 42px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; }
+
+    .label {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .section h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 3.3vw, 3.1rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .section h3 {
+      margin-top: 20px;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      margin-top: 16px;
+      color: #313d44;
+      font-size: 1.08rem;
+    }
+
+    .section p + p { margin-top: 14px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card.mint { background: var(--mint); }
+    .card.sky { background: var(--sky); }
+    .card.sand { background: var(--sand); }
+    .card.rose { background: var(--rose); }
+
+    .card h3 {
+      margin-top: 8px;
+      font-size: 1.02rem;
+    }
+
+    .card p {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.62;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pill.blue { background: var(--blue); }
+    .pill.coral { background: var(--coral); }
+    .pill.gold { background: var(--gold); }
+    .pill.violet { background: var(--violet); }
+
+    .note {
+      margin-top: 22px;
+      padding: 18px 20px;
+      background: #f8f3e6;
+      border-left: 5px solid var(--gold);
+      border-radius: 8px;
+      color: #3b3424;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(130px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+      align-items: stretch;
+    }
+
+    .flow-step {
+      min-height: 150px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .flow-step:nth-child(2) { border-top-color: var(--blue); }
+    .flow-step:nth-child(3) { border-top-color: var(--coral); }
+    .flow-step:nth-child(4) { border-top-color: var(--gold); }
+
+    .flow-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .pipeline-step {
+      min-height: 144px;
+      padding: 14px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .pipeline-step:nth-child(2) { background: var(--teal); }
+    .pipeline-step:nth-child(3) { background: var(--blue); }
+    .pipeline-step:nth-child(4) { background: var(--coral); }
+    .pipeline-step:nth-child(5) { background: var(--violet); }
+
+    .pipeline-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.92rem;
+      line-height: 1.3;
+    }
+
+    .pipeline-step span {
+      color: rgb(255 255 255 / 82%);
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    .compare {
+      width: 100%;
+      margin-top: 22px;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .compare th,
+    .compare td {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .compare th {
+      color: #fff;
+      background: var(--charcoal);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .compare td { background: #fff; }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+      color: #303b42;
+    }
+
+    .checklist li:nth-child(2n) { border-left-color: var(--blue); }
+    .checklist li:nth-child(3n) { border-left-color: var(--coral); }
+    .checklist strong { color: var(--ink); }
+
+    .quote-strip {
+      margin-top: 24px;
+      padding: 24px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      border-radius: 8px;
+    }
+
+    .quote-strip p {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.28rem, 2.8vw, 2.15rem);
+      line-height: 1.28;
+    }
+
+    .mini-spec {
+      margin-top: 22px;
+      padding: 18px;
+      color: #f8fbf8;
+      background: #1d2b32;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.9rem;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1000px) {
+      .flow,
+      .pipeline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .grid,
+      .two {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .page {
+        padding-inline: 16px;
+      }
+
+      .hero {
+        gap: 28px;
+        padding-top: 38px;
+      }
+
+      h1 {
+        font-size: clamp(2.25rem, 13vw, 3.25rem);
+      }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .tldr,
+      .sidebar,
+      .flow,
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+
+      .compare {
+        table-layout: fixed;
+      }
+
+      .compare th,
+      .compare td {
+        padding: 11px 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/reading/">Reading room</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#ramp">Ramp</a>
+      <a class="action-link" href="#notion">Notion</a>
+      <a class="action-link" href="#cursor">Cursor</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=T8T2gHCKWCE">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Designers Building with Cursor</span>
+        <h1>Building with Cursor Across Ramp, Notion, and Cursor</h1>
+        <p class="subtitle">
+          A blog-style summary of Elizabeth Lin's panel with Catherine Wang, Jin Park, and Ryo Lu on how designers are using
+          Cursor, AI prototyping, live components, production repos, and agent-first workflows to get closer to real software.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> Building with Cursor ft Designers from Cursor, Notion, and Ramp</span>
+          <span><strong>Creator:</strong> Elizabeth Lin</span>
+          <span><strong>Transcript:</strong> 12,092 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/T8T2gHCKWCE/hqdefault.jpg" alt="Video thumbnail for Building with Cursor featuring designers from Cursor, Notion, and Ramp">
+        <figcaption>
+          The event shows designers moving from static artifacts toward browser-native prototypes, shared component systems,
+          and code-backed collaboration with engineers and PMs.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          The panel's strongest point is that the question is not "should designers code?"
+          The better question is whether designers should adapt to a world where code-backed prototypes are cheaper,
+          more realistic, and closer to the material of software. Cursor becomes useful when it lets designers test real
+          interactions, use real components, speak more concretely with engineers, and ship small improvements safely.
+        </p>
+        <ul class="tldr">
+          <li>Ramp shows a maturity ladder: rough vibe prototype, design-system sandbox, then real repo with real data and PRs.</li>
+          <li>Notion shows that AI prototyping helps teams explore live interactions, animation, model behavior, and Figma-to-code workflows.</li>
+          <li>Cursor shows a future where the code editor becomes agent-first, visual, plan-driven, and usable by more software makers.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>71m</strong><span>runtime</span></div>
+        <div class="stat"><strong>1,737</strong><span>caption rows</span></div>
+        <div class="stat"><strong>4</strong><span>main segments</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Main lens</span><strong>Designers as builders</strong></li>
+            <li><span>Best pattern</span><strong>Prototype ladder</strong></li>
+            <li><span>Core tool</span><strong>Cursor</strong></li>
+            <li><span>Platform use</span><strong>Design flow specs</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#thesis">Thesis</a>
+          <a href="#ramp">Ramp</a>
+          <a href="#notion">Notion</a>
+          <a href="#cursor">Cursor</a>
+          <a href="#panel">Panel</a>
+          <a href="#ladder">Prototype Ladder</a>
+          <a href="#setup">Setup</a>
+          <a href="#iterations">Iterations</a>
+          <a href="#platform">Platform</a>
+          <a href="#templates">Flow Markdown</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="thesis">
+          <span class="label">Core Thesis</span>
+          <h2>The design artifact is moving closer to the product itself.</h2>
+          <p class="lead">
+            Elizabeth Lin frames the event as a look at how designers use Cursor and AI tools inside real design teams.
+            Across the demos, the same shift appears again and again: designers are no longer limited to describing an idea
+            through static frames. They can now build enough of the thing to test the interaction, data behavior, motion,
+            and edge cases directly in a browser.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Old center</span>
+              <h3>Static design artifact</h3>
+              <p>Figma remains useful, but it can struggle to express non-deterministic AI interactions, real data, and complex state.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">New center</span>
+              <h3>Code-backed prototype</h3>
+              <p>Cursor makes it faster to create working prototypes that teams can click, deploy, critique, and sometimes ship.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Team effect</span>
+              <h3>Shared language</h3>
+              <p>Designers, engineers, and PMs can talk about components, props, margins, states, and behavior instead of only visual intent.</p>
+            </article>
+          </div>
+          <p class="note">
+            The panel does not say every designer must become a full engineer. It argues that designers should become more fluent
+            with the material of software so they can prototype, critique, and collaborate at higher fidelity.
+          </p>
+        </section>
+
+        <section class="section" id="ramp">
+          <span class="label">Catherine Wang - Ramp</span>
+          <h2>Ramp's story is about moving from curiosity to production-adjacent practice.</h2>
+          <p class="lead">
+            Catherine Wang describes how AI prototyping spread inside Ramp after one teammate showed that he could create most
+            of a working prototype in minutes. The first reaction was fear that AI might replace jobs, but the practical result
+            was a wave of experimentation across tools such as Cursor, v0, Magic Patterns, and Figma Make.
+          </p>
+          <div class="flow" aria-label="Ramp workflow ladder">
+            <div class="flow-step">
+              <strong>Personal play</strong>
+              <span>A designer uses Cursor to test a rough idea in an evening, even if the result is visually imperfect.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Customer-facing prototype</strong>
+              <span>Teams connect prototypes to personas, workflows, or live-feeling AI output to stress test ideas.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Design-system sandbox</strong>
+              <span>Ramp's Sakura sandbox gives designers templates and real Ryu components for higher-fidelity work.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Production repo</strong>
+              <span>When real data and real behavior matter, designers can prototype inside the web repo and open PRs.</span>
+            </div>
+          </div>
+          <p class="note">
+            The most important Ramp pattern is support infrastructure. A design engineering lead created guides, onboarding,
+            and a sandbox so designers could start safely instead of each person fighting the dev environment alone.
+          </p>
+        </section>
+
+        <section class="section" id="notion">
+          <span class="label">Jin Park - Notion</span>
+          <h2>Notion uses prototypes to explore interaction, tone, animation, and prompt craft.</h2>
+          <p class="lead">
+            Jin Park shows Notion's prototype playground: a local or hosted environment where designers and PMs can clone,
+            remix, and critique each other's experiments. The examples include model comparison, chat behavior, conference
+            modals, center-aligned chat concepts, and live-coded animations that remain editable and internationalization-friendly.
+          </p>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Pattern</th>
+                <th>What It Enables</th>
+                <th>Lesson</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Prototype playground</strong></td>
+                <td>Designers can start from templates, duplicate projects, and riff on each other's work.</td>
+                <td>AI prototyping scales better when the team has a shared place to play.</td>
+              </tr>
+              <tr>
+                <td><strong>Live code over static mock</strong></td>
+                <td>Animations, inputs, draggable objects, and chat states can be tested in the browser.</td>
+                <td>Interaction quality is hard to judge from static frames alone.</td>
+              </tr>
+              <tr>
+                <td><strong>Figma MCP to Cursor</strong></td>
+                <td>A Figma link can become a first-pass static implementation that designers then tune.</td>
+                <td>The first pass is not final. Colors, icons, spacing, and motion still need craft.</td>
+              </tr>
+              <tr>
+                <td><strong>Prompt flavor</strong></td>
+                <td>Jin describes prompt patterns that identify subject, technology, and instruction.</td>
+                <td>Prompting is becoming part of design craft, especially for targeting changes and preserving intent.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="note">
+            Jin's strongest advice is cultural: let curiosity drive learning. Coding can be intimidating, but the panel frames
+            it as play, exploration, and a way to learn new technologies quickly.
+          </p>
+        </section>
+
+        <section class="section" id="cursor">
+          <span class="label">Ryo Lu - Cursor</span>
+          <h2>Cursor 2.0 is presented as an agent-first interface for software makers.</h2>
+          <p class="lead">
+            Ryo Lu contrasts the older VS Code-like interface with a newer Cursor experience that starts from the agent.
+            Designers can type or point at a live browser preview, ask the agent to adjust UI, use plan mode, review generated
+            changes, and work without staring at code unless they want to.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Point and revise</span>
+              <h3>Design feedback becomes direct</h3>
+              <p>Instead of describing a screenshot in another tool, the designer can point at the running page and ask for a specific adjustment.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Baby Cursor</span>
+              <h3>Prototype the product outside the full codebase</h3>
+              <p>Ryo describes building a smaller Cursor-like playground where ideas can be tested quickly before flowing back into the main product.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Plan mode</span>
+              <h3>Research first, build second</h3>
+              <p>The agent can inspect context, ask clarifying questions, produce an editable plan, and then build from that plan.</p>
+            </article>
+          </div>
+          <div class="quote-strip">
+            <p>Cursor's design direction is not only a smarter editor. It is a workspace where different kinds of software makers can enter through the mode that feels natural to them.</p>
+          </div>
+        </section>
+
+        <section class="section" id="panel">
+          <span class="label">Panel Discussion</span>
+          <h2>The panel reframes coding as shared material, not role replacement.</h2>
+          <p class="lead">
+            In the panel, the speakers describe how Cursor changes collaboration. Designers can use production components,
+            understand implementation language, and make requests that are more concrete than "this feels off."
+            Engineers still matter, but the handoff becomes less abstract.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Empathy</span>
+              <h3>Designers learn engineering constraints</h3>
+              <p>Knowing terms like props, margins, components, and states helps designers communicate with less ambiguity.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Material</span>
+              <h3>Code is the medium of software</h3>
+              <p>Ryo argues that designers lost direct contact with the material of software when disciplines split into separate tools.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Craft</span>
+              <h3>AI still needs taste and direction</h3>
+              <p>The model can generate a clump of working software, but designers still guide visual quality, cohesion, detail, and product feeling.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="ladder">
+          <span class="label">Prototype Ladder</span>
+          <h2>The useful pattern is a ladder of fidelity, not one universal workflow.</h2>
+          <p class="lead">
+            A mature design team should not force every idea straight into the production repo. The video shows a more practical
+            ladder: start cheap, move toward real components, then enter production code only when the question requires it.
+          </p>
+          <div class="pipeline" aria-label="Prototype fidelity ladder">
+            <div class="pipeline-step">
+              <strong>Vibe sketch</strong>
+              <span>Quick prototype for idea shape, motion, interaction, or technical feasibility.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Design-system sandbox</strong>
+              <span>Use real tokens, components, templates, and example routes without full app complexity.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Data-backed demo</strong>
+              <span>Connect to realistic personas, content, state, or non-deterministic AI output.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Production repo</strong>
+              <span>Use the actual app when real constraints, real data, or real components are the question.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>PR and review</strong>
+              <span>Small copy, UI, and polish changes can become reviewed contributions.</span>
+            </div>
+          </div>
+          <p class="note">
+            This ladder is a strong pattern for any AI product platform: match the runtime to the risk and purpose of the work,
+            instead of treating every prompt as either a toy or a production change.
+          </p>
+        </section>
+
+        <section class="section" id="setup">
+          <span class="label">Onboarding</span>
+          <h2>The biggest blocker is often the development environment.</h2>
+          <p class="lead">
+            An audience question focuses on setup friction. The answers are practical: create lightweight prototyping environments,
+            document setup clearly, let agents help run commands, and have design engineers or engineers onboard the team together.
+          </p>
+          <ul class="checklist">
+            <li><strong>Create a shared playground.</strong> Give designers a small, reusable environment with components and templates.</li>
+            <li><strong>Use a lightweight stack where possible.</strong> Jin mentions Astro, Tailwind variables that match Figma tokens, and AlpineJS for simple interactivity.</li>
+            <li><strong>Ask the agent to run the app.</strong> For simple setups, the designer can ask Cursor to run the server and explain errors.</li>
+            <li><strong>Make engineers document the hard parts.</strong> Better setup docs help everyone, not only designers.</li>
+            <li><strong>Onboard as a group.</strong> Ramp found that a focused in-person setup session helped people debug IT and environment issues together.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="iterations">
+          <span class="label">Iteration Memory</span>
+          <h2>AI design work needs a history, not just a final PR.</h2>
+          <p class="lead">
+            The final audience question asks how to preserve iterations when a designer drafts a PR, an engineer changes it,
+            and the design process disappears. Elizabeth's low-tech answer is to capture screenshots and prompts in a FigJam
+            file. It is not scalable, but it reveals the real need: design teams need a visible process memory for AI work.
+          </p>
+          <div class="grid two">
+            <article class="card sand">
+              <span class="pill gold">Today</span>
+              <h3>Manual process capture</h3>
+              <p>Take screenshots after major prompts, preserve before and after states, and keep the design reasoning visible.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Platform opportunity</span>
+              <h3>Automatic iteration timeline</h3>
+              <p>A serious AI design platform should store prompts, screenshots, diffs, decisions, comments, and PR links automatically.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your agentic design and product platform</h2>
+          <p class="lead">
+            This video is useful beyond Cursor because it shows the operating model for non-engineers using code agents.
+            The best platform will not simply expose a chat box. It will provide safe environments, reusable skills, design-system
+            context, tool permissions, review workflows, and memory of the design process.
+          </p>
+          <ul class="checklist">
+            <li><strong>Separate prototype modes.</strong> Offer vibe sketch, sandbox, data-backed demo, and production-repo modes with different permissions.</li>
+            <li><strong>Make design-system context first-class.</strong> Components, tokens, icons, and usage rules should be packaged as skills or MCP-accessible registries.</li>
+            <li><strong>Give BAs and designers business-language entry points.</strong> They should select goal, fidelity, risk, audience, and review path without writing low-level prompts.</li>
+            <li><strong>Pair every actionable skill with verification.</strong> Figma-to-code, animation, data connection, and PR creation need checks for accuracy, tokens, layout, and ownership.</li>
+            <li><strong>Build a shared process memory.</strong> Store prompts, screenshots, diffs, comments, evals, and final decisions so design learning does not vanish after merge.</li>
+            <li><strong>Use design engineers as platform enablers.</strong> The role becomes critical for onboarding, sandbox design, component mapping, and safe production contribution.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">Flow Markdown</span>
+          <h2>A BA-friendly design build flow should compile intent into the right prototype mode.</h2>
+          <p class="lead">
+            The Flow Markdown below turns the video's lesson into a reusable spec for design-to-code work.
+            It lets a designer or BA describe the desired experiment while the platform chooses tools, agents,
+            permissions, and review gates.
+          </p>
+          <pre class="mini-spec"># Design Build Flow: Cursor-Style Prototype
+
+goal: Convert a product idea into the right level of code-backed prototype.
+owner: Product Designer
+runtime_owner: Design Build Master Agent
+flow_type: design_to_code_prototype
+
+input:
+  product_area: expense_policy_editor
+  audience: finance_admin
+  prototype_question: Can admins edit complex policy rules more confidently?
+  desired_fidelity: data_backed_demo
+  risk_level: medium
+
+prototype_mode:
+  options:
+    - vibe_sketch
+    - design_system_sandbox
+    - data_backed_demo
+    - production_repo_pr
+  selected: data_backed_demo
+
+context:
+  design_sources:
+    - figma_link
+    - design_system_tokens
+    - component_usage_rules
+  product_sources:
+    - admin_personas
+    - policy_examples
+    - edge_cases
+
+agents:
+  master_agent:
+    job: choose_mode_route_work_and_request_review
+  sub_agents:
+    - id: design_system_mapper
+      job: map_figma_components_to_code_components
+      allowed_tools: [figma_mcp, component_registry_mcp]
+    - id: prototype_builder
+      job: create_working_browser_prototype
+      allowed_tools: [local_repo, package_manager]
+    - id: interaction_reviewer
+      job: check_flow_states_motion_and_edge_cases
+      allowed_tools: []
+
+skills:
+  cognitive:
+    - interaction_design_review
+    - design_system_judgment
+    - product_edge_case_analysis
+  actionable:
+    - figma_to_code:
+        required_tools: [figma_mcp]
+        verification: visual_comparison_required
+    - component_registry_lookup:
+        required_tools: [component_registry_mcp]
+        verification: component_usage_matches_rules
+    - prototype_build:
+        required_tools: [local_repo, package_manager]
+        verification: browser_preview_no_console_errors
+
+permissions:
+  production_write_access: disabled_by_default
+  pr_creation: human_approval_required
+  data_access: use_synthetic_or_approved_test_data
+  designer_can_run_local: true
+
+review_gates:
+  - design_system_accuracy
+  - responsive_layout
+  - interaction_states
+  - accessibility_basics
+  - engineering_owner_review
+  - product_owner_feedback
+
+iteration_memory:
+  capture:
+    - prompts
+    - screenshots
+    - browser_preview_urls
+    - diffs
+    - comments
+    - final_decisions
+  write_to:
+    - design_history
+    - reusable_examples
+    - updated_skill_notes</pre>
+          <div class="grid two">
+            <article class="card sand">
+              <span class="pill gold">Designer view</span>
+              <h3>Pick the experiment</h3>
+              <p>The designer chooses the problem, fidelity level, audience, and review path. The platform handles the build machinery.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Runtime view</span>
+              <h3>Assemble the workflow</h3>
+              <p>The system attaches Figma context, component registries, prototype agents, sandbox rules, and verification checks.</p>
+            </article>
+          </div>
+          <p class="note">
+            Summary generated from public YouTube captions for this video. Validate any product or tooling decision against
+            your team's actual codebase, design system, security model, and review process.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>Building with Cursor ft Designers from Cursor (Ryo Lu), Notion (Jin Park), and Ramp (Catherine Wang)</strong>.
+    Source: Elizabeth Lin. Video ID: T8T2gHCKWCE.
+  </footer>
+</body>
+</html>

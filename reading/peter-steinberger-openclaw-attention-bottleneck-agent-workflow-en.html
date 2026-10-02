@@ -1,0 +1,1171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Peter Steinberger on OpenClaw and Agent Workflow - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5d6970;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f4f7f2;
+      --line: #d7ded6;
+      --charcoal: #24323a;
+      --teal: #166f68;
+      --blue: #315f86;
+      --coral: #bd503f;
+      --gold: #9e711e;
+      --violet: #665987;
+      --mint: #e2f0ec;
+      --sky: #e7eef6;
+      --sand: #f7eed8;
+      --rose: #f5e5df;
+      --shadow: 0 24px 62px rgb(23 33 38 / 11%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(22 111 104 / 7%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(49 95 134 / 6%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 46px 46px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--coral), var(--gold), var(--violet));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 84%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.55rem, 5.95vw, 5.15rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2.05vw, 1.48rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e6ece7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 86%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: #f8fbf8;
+      background: rgb(255 255 255 / 9%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-height: 86px;
+      padding: 14px;
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: rgb(255 255 255 / 72%);
+      font-size: 0.84rem;
+      font-weight: 760;
+      text-transform: uppercase;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      gap: 42px;
+      align-items: start;
+      margin-top: 36px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 22px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .sidebar-block {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+    }
+
+    .sidebar-block h2,
+    .toc h2 {
+      margin-bottom: 12px;
+      color: var(--quiet);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .glance {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .glance strong {
+      color: var(--ink);
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .toc {
+      padding-left: 18px;
+      border-left: 4px solid var(--gold);
+    }
+
+    .toc a {
+      display: block;
+      padding: 7px 0;
+      color: var(--ink);
+      font-size: 0.94rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .content {
+      min-width: 0;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 8%);
+    }
+
+    .section {
+      padding: 34px 42px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; }
+
+    .label {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .section h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 3.3vw, 3.1rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .section h3 {
+      margin-top: 20px;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      margin-top: 16px;
+      color: #313d44;
+      font-size: 1.08rem;
+    }
+
+    .section p + p { margin-top: 14px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card.mint { background: var(--mint); }
+    .card.sky { background: var(--sky); }
+    .card.sand { background: var(--sand); }
+    .card.rose { background: var(--rose); }
+
+    .card h3 {
+      margin-top: 8px;
+      font-size: 1.02rem;
+    }
+
+    .card p {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.62;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pill.blue { background: var(--blue); }
+    .pill.coral { background: var(--coral); }
+    .pill.gold { background: var(--gold); }
+    .pill.violet { background: var(--violet); }
+
+    .note {
+      margin-top: 22px;
+      padding: 18px 20px;
+      background: #f8f3e6;
+      border-left: 5px solid var(--gold);
+      border-radius: 8px;
+      color: #3b3424;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(130px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+      align-items: stretch;
+    }
+
+    .flow-step {
+      min-height: 150px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .flow-step:nth-child(2) { border-top-color: var(--blue); }
+    .flow-step:nth-child(3) { border-top-color: var(--coral); }
+    .flow-step:nth-child(4) { border-top-color: var(--gold); }
+
+    .flow-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .pipeline-step {
+      min-height: 144px;
+      padding: 14px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .pipeline-step:nth-child(2) { background: var(--teal); }
+    .pipeline-step:nth-child(3) { background: var(--blue); }
+    .pipeline-step:nth-child(4) { background: var(--coral); }
+    .pipeline-step:nth-child(5) { background: var(--violet); }
+
+    .pipeline-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.92rem;
+      line-height: 1.3;
+    }
+
+    .pipeline-step span {
+      color: rgb(255 255 255 / 82%);
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    .compare {
+      width: 100%;
+      margin-top: 22px;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .compare th,
+    .compare td {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .compare th {
+      color: #fff;
+      background: var(--charcoal);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .compare td { background: #fff; }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+      color: #303b42;
+    }
+
+    .checklist li:nth-child(2n) { border-left-color: var(--blue); }
+    .checklist li:nth-child(3n) { border-left-color: var(--coral); }
+    .checklist strong { color: var(--ink); }
+
+    .quote-strip {
+      margin-top: 24px;
+      padding: 24px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      border-radius: 8px;
+    }
+
+    .quote-strip p {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.28rem, 2.8vw, 2.15rem);
+      line-height: 1.28;
+    }
+
+    .mini-spec {
+      margin-top: 22px;
+      padding: 18px;
+      color: #f8fbf8;
+      background: #1d2b32;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.9rem;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1000px) {
+      .flow,
+      .pipeline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .grid,
+      .two {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .page {
+        padding-inline: 16px;
+      }
+
+      .hero {
+        gap: 28px;
+        padding-top: 38px;
+      }
+
+      h1 {
+        font-size: clamp(2.25rem, 13vw, 3.25rem);
+      }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .tldr,
+      .sidebar,
+      .flow,
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+
+      .compare {
+        table-layout: fixed;
+      }
+
+      .compare th,
+      .compare td {
+        padding: 11px 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/reading/">Reading room</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#attention">Attention</a>
+      <a class="action-link" href="#transcripts">Transcripts</a>
+      <a class="action-link" href="#review">Auto Review</a>
+      <a class="action-link" href="#sandbox">Fresh Box</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=82YaJw-_t10">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Agentic Engineering - OpenClaw Workflow</span>
+        <h1>Peter Steinberger on Attention as the New Agent Bottleneck</h1>
+        <p class="subtitle">
+          A practical summary of Peter Steinberger's short talk on OpenClaw-era agent workflows:
+          why attention matters more than tokens, how transcript context improves PR review,
+          how auto-review should return to the original coding session, and why fresh-machine verification
+          is becoming a core primitive for agentic software work.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> Peter Steinberger | OpenClaw Creator</span>
+          <span><strong>Creator:</strong> Greg Kamradt</span>
+          <span><strong>Transcript:</strong> 3,197 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/82YaJw-_t10/hqdefault.jpg" alt="Video thumbnail for Peter Steinberger OpenClaw Creator">
+        <figcaption>
+          The talk is less about OpenClaw as a product and more about the operating system around coding agents:
+          context, review, remote execution, visual verification, and reduced human babysitting.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          Peter's core point is that the bottleneck has moved. Earlier agentic coding was constrained by tokens, then by local CPU,
+          but once those constraints loosen, the real scarce resource is human attention. The best agent workflow is therefore
+          the one that lets the agent do more of the boring context gathering, review, testing, setup, and visual verification
+          before the human has to look.
+        </p>
+        <ul class="tldr">
+          <li>Attach sanitized agent transcripts to PRs and issues so reviewers can see how the work happened, not only the final diff.</li>
+          <li>Run auto-review inside the active coding session, because the original session has the most context to accept, reject, or document feedback.</li>
+          <li>Use fresh remote boxes with screenshots and clicking so agents can verify setup and UI behavior without burning local CPU or relying on a polluted dev machine.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>20m</strong><span>runtime</span></div>
+        <div class="stat"><strong>472</strong><span>caption rows</span></div>
+        <div class="stat"><strong>3</strong><span>workflow primitives</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Main lens</span><strong>Attention bottleneck</strong></li>
+            <li><span>Speaker</span><strong>Peter Steinberger</strong></li>
+            <li><span>Project</span><strong>OpenClaw</strong></li>
+            <li><span>Best artifact</span><strong>Agent workflow spec</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#attention">Attention</a>
+          <a href="#openclaw">OpenClaw</a>
+          <a href="#transcripts">Transcript Context</a>
+          <a href="#review">Auto Review</a>
+          <a href="#sandbox">Fresh Box</a>
+          <a href="#visual">Visual Verification</a>
+          <a href="#loops">Loops</a>
+          <a href="#limits">Limits</a>
+          <a href="#platform">Platform Takeaways</a>
+          <a href="#templates">Flow Markdown</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="attention">
+          <span class="label">Core Thesis</span>
+          <h2>Attention, not raw model capability, is becoming the scarce resource.</h2>
+          <p class="lead">
+            Peter opens by describing a sequence of bottlenecks. First he felt constrained by tokens. Then, after joining OpenAI,
+            that constraint loosened. Next he felt constrained by compute and local CPU. Once remote execution becomes available,
+            the remaining bottleneck is attention: how often the human must stop, inspect, decide, and unblock the agent.
+          </p>
+          <p>
+            The practical objective is to expand the range of work an agent can do between human checkpoints. A valuable coding
+            agent should not only write code from a prompt. It should gather context, preserve its reasoning trail, review its
+            own output through another model, run tests remotely, set up a fresh system, produce visual evidence, and package
+            the result so the human can make a faster final decision.
+          </p>
+          <div class="flow" aria-label="Agent bottleneck evolution">
+            <div class="flow-step">
+              <strong>Token bottleneck</strong>
+              <span>Early workflows were limited by context windows, token budget, and how much state an agent could carry.</span>
+            </div>
+            <div class="flow-step">
+              <strong>CPU bottleneck</strong>
+              <span>Parallel agent sessions, tests, installs, and builds can make the local machine slow or unusable.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Attention bottleneck</strong>
+              <span>The human still has to decide what is worth reviewing, merging, or rejecting.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Workflow bottleneck</strong>
+              <span>The next gains come from better loops, evidence, review routing, and verification primitives.</span>
+            </div>
+          </div>
+          <p class="note">
+            The talk is useful because it moves past "agent writes code" and asks a sharper question:
+            how do you reduce the number of times a human must babysit the agent while still keeping quality and intent intact?
+          </p>
+        </section>
+
+        <section class="section" id="openclaw">
+          <span class="label">OpenClaw Context</span>
+          <h2>OpenClaw's PR volume forced Peter to redesign the review workflow.</h2>
+          <p class="lead">
+            Peter says OpenClaw receives a lot of pull requests. Some are serious, but some are created with almost no human
+            effort: someone tells a coding agent to fix an issue number, the agent generates a large diff, and the maintainer
+            receives a massive PR with little sense of whether the contributor understood the change.
+          </p>
+          <p>
+            This creates a trust problem. A 4,000-line PR might be valuable, but it also might be low-effort agent output that
+            consumes reviewer time. The maintainer needs more than the final diff. They need context about how the work was done,
+            what the agent tried, where the human intervened, and whether the contributor cared enough to inspect the result.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Old artifact</span>
+              <h3>Diff only</h3>
+              <p>A PR shows what changed, but not how the contributor or agent arrived there.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">New artifact</span>
+              <h3>Diff plus transcript</h3>
+              <p>The reviewer can inspect the work trail and judge whether the change was thoughtful or careless.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Maintainer goal</span>
+              <h3>Spend attention wisely</h3>
+              <p>The workflow should help maintainers focus on PRs that are likely worth reviewing deeply.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="transcripts">
+          <span class="label">Primitive 1</span>
+          <h2>Transcript context turns PRs into inspectable work sessions.</h2>
+          <p class="lead">
+            Peter's first workflow improvement is an agent transcript skill. After a PR is created, the agent asks whether the
+            contributor wants to upload a sanitized version of the coding-session transcript. The explicit incentive is simple:
+            PRs with useful transcripts are more likely to get reviewed.
+          </p>
+          <p>
+            The value is not that transcript length proves correctness. The value is that the reviewer gets another signal.
+            A longer, richer transcript can show that the contributor explored the problem, asked the agent to revise, noticed
+            issues, and understood some of the constraints. A tiny transcript can reveal a near-zero-effort change.
+          </p>
+          <p>
+            Peter says he initially overthought the implementation, wondering whether he needed hooks or a more complicated
+            system. The final solution was just a skill. The skill explains to the agent how to find the transcript, load the
+            underlying JSON, sanitize it as best it can, and attach the useful context to the PR or issue. Because he controls
+            the repository defaults, he made this skill load automatically when someone creates a PR or issue.
+          </p>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Transcript Signal</th>
+                <th>What It Helps With</th>
+                <th>Remaining Risk</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Prompt trail</strong></td>
+                <td>Shows what the human asked, corrected, and accepted.</td>
+                <td>It can still be incomplete, sanitized poorly, or edited dishonestly.</td>
+              </tr>
+              <tr>
+                <td><strong>Agent exploration</strong></td>
+                <td>Shows attempted fixes, failures, tests, and reasoning paths.</td>
+                <td>Transcript volume does not guarantee quality.</td>
+              </tr>
+              <tr>
+                <td><strong>Reviewer triage</strong></td>
+                <td>Helps maintainers decide whether a PR deserves attention.</td>
+                <td>Reviewers still need diffs, tests, and product judgment.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="note">
+            For enterprise agent platforms, this is a strong pattern: every agentic change should carry a process artifact,
+            not only an output artifact.
+          </p>
+        </section>
+
+        <section class="section" id="review">
+          <span class="label">Primitive 2</span>
+          <h2>Auto-review is most useful when feedback returns to the original coding session.</h2>
+          <p class="lead">
+            Peter's second workflow improvement is an auto-review skill. When an agent creates a PR or commit, the skill calls
+            whatever review CLI is available in the environment, such as Codex, Claude, or other coding tools. It asks that
+            reviewer to inspect the current work and return feedback.
+          </p>
+          <p>
+            The key design decision is where the review feedback goes. Peter argues it should go back into the original coding
+            session, because that session has the most task context. A detached reviewer can find plausible issues but may not
+            understand the product constraints or why a weird-looking choice was intentional. If the feedback returns to the
+            active coding session, the original agent can decide whether the feedback is valid, reject it with explanation, or
+            update the PR description so the next human reviewer does not repeat the same naive critique.
+          </p>
+          <div class="pipeline" aria-label="Auto-review loop">
+            <div class="pipeline-step">
+              <strong>Agent changes code</strong>
+              <span>The active session has the task history, constraints, and decisions.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Skill invokes reviewer</strong>
+              <span>A review CLI inspects the diff and returns concerns or suggestions.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Feedback returns</strong>
+              <span>The original session receives the critique instead of leaving it detached.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Session decides</strong>
+              <span>The agent fixes true issues and documents intentional tradeoffs.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>PR improves</strong>
+              <span>The human reviewer sees both the diff and the recorded review decisions.</span>
+            </div>
+          </div>
+          <p class="note">
+            This is a subtle but important pattern: review is not just another model call. Review must be routed to the place
+            that has enough context to act on it intelligently.
+          </p>
+        </section>
+
+        <section class="section" id="sandbox">
+          <span class="label">Primitive 3</span>
+          <h2>A fresh remote box gives agents a clean place to build, test, and verify.</h2>
+          <p class="lead">
+            Peter's third workflow improvement is remote execution in a fresh box. The problem starts locally: if you run many
+            long coding sessions, test suites, builds, and installs at once, your laptop becomes the bottleneck. He tried using
+            multiple machines, but that was awkward. The better primitive is a disposable or remote environment that can sync
+            repo changes and run expensive work elsewhere.
+          </p>
+          <p>
+            The fresh-box idea matters for more than performance. Local machines are polluted with hidden state: installed
+            packages, old config, cached credentials, working-directory leftovers, system preferences, and environment quirks.
+            If a feature only works on the developer's machine, that is not reliable verification. A clean machine gives more
+            confidence that the install instructions, tests, setup, and UI behavior actually work.
+          </p>
+          <p>
+            Peter describes adding Linux, macOS, and Windows support so the agent can install and verify OpenClaw across real
+            operating-system conditions. This is especially useful for platform bugs, setup flows, launch issues, and anything
+            that depends on the operating system rather than only application logic.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Compute offload</span>
+              <h3>Keep local machines usable</h3>
+              <p>Builds, tests, installs, and long agent runs move away from the developer laptop.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Clean state</span>
+              <h3>Verify from a fresh system</h3>
+              <p>The agent proves the setup works without relying on hidden local configuration.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Cross-platform</span>
+              <h3>Catch OS-specific issues</h3>
+              <p>Linux, macOS, and Windows environments expose bugs that a single developer machine hides.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="visual">
+          <span class="label">Eyes For Agents</span>
+          <h2>Visual verification lets the agent prove UI work instead of merely claiming it.</h2>
+          <p class="lead">
+            Peter then adds a visual layer: screenshots and clicking. The agent can open a browser inside the fresh box, set up
+            the system, click through UI, capture screens, and show the result. This is like a lightweight computer-use loop
+            without fighting the user's real mouse focus or desktop state.
+          </p>
+          <p>
+            This creates a powerful review artifact. Instead of asking the human to read a diff and imagine whether the UI is
+            fixed, the agent can produce before-and-after evidence. For visual bugs, setup flows, and product demos, that can
+            compress review time dramatically.
+          </p>
+          <p>
+            Peter also points out that these sessions can be shareable. Someone in a feedback channel can ask for a feature,
+            an agent can implement a rough version, and the requester can click through a live remote session to discover
+            whether the idea is good, bad, or needs adjustment. That reduces the number of low-value ideas that maintainers
+            or engineers must personally inspect.
+          </p>
+          <div class="quote-strip">
+            <p>The best agent output is not just a patch. It is a patch plus enough evidence that a human can decide faster.</p>
+          </div>
+        </section>
+
+        <section class="section" id="loops">
+          <span class="label">Loops</span>
+          <h2>Peter treats loops as workflows that reduce human babysitting.</h2>
+          <p class="lead">
+            In the Q&A, Peter says "loops" is a fancy name for workflow. His example is an open-source issue pipeline:
+            when someone creates an issue, an agent checks whether it fits the project's direction, using a vision document.
+            If the agent thinks the idea is worth pursuing, it can create a PR. Another agent reviews the PR, another repairs
+            it, and the final result is prepared for the maintainer.
+          </p>
+          <p>
+            The purpose is not to remove the maintainer. The purpose is to turn a raw stream of issues and agent diffs into a
+            smaller queue of higher-quality candidates. When Peter has time to look at the project, more work is already bundled
+            with context, review, repair, and evidence.
+          </p>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Loop Stage</th>
+                <th>Agent Job</th>
+                <th>Human Job</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Issue intake</strong></td>
+                <td>Compare the request against the project vision and decide whether it is promising.</td>
+                <td>Maintain the vision document and reject bad direction when needed.</td>
+              </tr>
+              <tr>
+                <td><strong>PR creation</strong></td>
+                <td>Implement a candidate change with transcript context.</td>
+                <td>Judge whether the candidate is strategically worth merging.</td>
+              </tr>
+              <tr>
+                <td><strong>Auto-review</strong></td>
+                <td>Find issues, return feedback to the original session, repair, and document decisions.</td>
+                <td>Check whether the final reasoning and evidence are convincing.</td>
+              </tr>
+              <tr>
+                <td><strong>Visual proof</strong></td>
+                <td>Run in a clean box, capture before and after states, and share an interactive session.</td>
+                <td>Use the evidence to make a faster yes, no, or revise decision.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="limits">
+          <span class="label">Limits And Risks</span>
+          <h2>The workflow helps, but it does not remove product judgment.</h2>
+          <p class="lead">
+            Peter is clear that attention is not fully solved. Agents need less babysitting when they have better tools, but
+            they still struggle with whether a change fits the big picture. They can focus intensely on the local task and miss
+            how it affects architecture, product feel, project direction, or long-term maintainability.
+          </p>
+          <ul class="checklist">
+            <li><strong>Transcript artifacts can be gamed.</strong> Peter notes that people can manually edit PR descriptions or scores, so process evidence still needs trust and verification.</li>
+            <li><strong>Auto-review can go too far.</strong> Review agents may optimize for worst-case concerns unless project invariants and assumptions are defined clearly.</li>
+            <li><strong>Fresh boxes do not prove product fit.</strong> They prove setup, tests, and UI behavior. They do not decide whether the feature belongs.</li>
+            <li><strong>More code creates more coordination.</strong> Agents can produce more work, which means humans must think harder about system coherence.</li>
+          </ul>
+          <p class="note">
+            The final bottleneck is not whether the agent can make a change. It is whether the change is the right one for the project.
+          </p>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your agentic AI platform</h2>
+          <p class="lead">
+            This talk maps directly to a platform for Master Agents, Sub-Agents, Skills, and MCP tools. Peter is essentially
+            describing the missing workflow layer around coding agents: context capture, review routing, remote verification,
+            visual evidence, and human attention management.
+          </p>
+          <ul class="checklist">
+            <li><strong>Make attention a first-class metric.</strong> Track how often a human must intervene, how long review takes, and how many agent outputs are worth reviewing.</li>
+            <li><strong>Require process artifacts for agent work.</strong> Attach sanitized transcripts, decision logs, test output, screenshots, and review responses to PRs or business-flow outputs.</li>
+            <li><strong>Route review feedback into the owning session.</strong> A detached reviewer is useful, but the session with context should decide how to apply or document the feedback.</li>
+            <li><strong>Give agents clean execution environments.</strong> Fresh boxes should be a standard primitive for install, test, cross-platform, and UI verification.</li>
+            <li><strong>Separate verification from product judgment.</strong> Agents can prove behavior, but humans still own whether the idea fits the project vision.</li>
+            <li><strong>Use vision documents as routing policy.</strong> A `vision.md`-style artifact can help agents triage issues and reject work that does not fit strategy.</li>
+            <li><strong>Make evidence shareable to non-coders.</strong> Remote UI sessions and before-after GIFs let PMs, BAs, and users validate ideas before engineers spend attention.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">Flow Markdown</span>
+          <h2>A practical agent workflow spec for attention-efficient coding</h2>
+          <p class="lead">
+            This template turns the talk into an executable operating pattern. It is designed for a coding-agent platform where
+            a Master Agent coordinates implementation, review, fresh-box verification, and final human decision.
+          </p>
+          <pre class="mini-spec"># Agentic Coding Flow: Attention-Efficient PR
+
+goal: Produce a reviewable PR with context, auto-review, fresh-machine verification, and visual evidence.
+owner: Engineering Maintainer
+runtime_owner: Coding Master Agent
+flow_type: agentic_pr_workflow
+
+input:
+  request_source: issue_or_feedback_channel
+  project_vision: vision.md
+  target_repo: open_source_or_internal_repo
+  human_attention_budget: low
+
+intake:
+  agent: issue_triage_agent
+  checks:
+    - fits_project_vision
+    - has_clear_user_value
+    - has_enough_reproduction_context
+  outcomes:
+    - reject_with_reason
+    - ask_for_clarification
+    - create_candidate_pr
+
+implementation:
+  agent: coding_agent
+  required_artifacts:
+    - sanitized_agent_transcript
+    - changed_files_summary
+    - test_plan
+    - known_tradeoffs
+  skill_triggers:
+    - load_transcript_skill_when_creating_pr
+    - load_auto_review_skill_when_committing
+
+auto_review:
+  reviewer_tools:
+    - codex_cli
+    - claude_cli
+    - open_code_cli
+  routing_rule: return_feedback_to_original_coding_session
+  coding_session_responsibilities:
+    - fix_valid_findings
+    - reject_invalid_findings_with_reason
+    - update_pr_description_with_decisions
+
+fresh_box_verification:
+  environments:
+    - linux
+    - macos
+    - windows
+  tasks:
+    - clean_install
+    - run_tests
+    - run_app
+    - capture_screenshots
+    - create_before_after_evidence
+  pass_conditions:
+    - tests_pass
+    - install_steps_reproduce
+    - no_obvious_ui_breakage
+    - evidence_link_is_shareable
+
+human_review:
+  maintainer_sees:
+    - diff
+    - transcript_summary
+    - auto_review_decisions
+    - fresh_box_results
+    - screenshots_or_gif
+  human_decision:
+    - merge
+    - request_revision
+    - close_as_not_aligned
+
+metrics:
+  - human_review_minutes
+  - percent_prs_with_transcript
+  - auto_review_findings_resolved
+  - fresh_box_failure_rate
+  - accepted_agent_pr_rate
+  - attention_saved_per_merged_change</pre>
+          <div class="grid two">
+            <article class="card sand">
+              <span class="pill gold">Maintainer view</span>
+              <h3>Review evidence, not raw agent noise</h3>
+              <p>The maintainer receives a compact package of transcript, review decisions, tests, and visual proof.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Runtime view</span>
+              <h3>Compose skills and environments</h3>
+              <p>The platform triggers transcript capture, auto-review, fresh-box verification, screenshots, and PR description updates.</p>
+            </article>
+          </div>
+          <p class="note">
+            Summary generated from public YouTube captions for this video. Product names and tool names should be checked
+            against the speaker's repository or slides if you need exact implementation details.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>Peter Steinberger | OpenClaw Creator</strong>.
+    Source: Greg Kamradt. Video ID: 82YaJw-_t10.
+  </footer>
+</body>
+</html>

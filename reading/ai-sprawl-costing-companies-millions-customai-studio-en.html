@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AI Sprawl Is Costing Companies Millions - CustomAI Studio Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202522;
+      --muted: #626b67;
+      --quiet: #7a8580;
+      --line: #d9dfd8;
+      --paper: #ffffff;
+      --canvas: #f6f8f2;
+      --soft: #edf4ea;
+      --accent: #c74435;
+      --accent-dark: #9e3128;
+      --blue: #276176;
+      --green: #557d54;
+      --gold: #ad7928;
+      --shadow: 0 22px 60px rgb(32 37 34 / 11%);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgb(255 255 255 / 92%), rgb(246 248 242 / 96%)),
+        var(--canvas);
+      font-family:
+        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 6px;
+      background: linear-gradient(90deg, var(--accent), var(--blue), var(--green), var(--gold));
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    h1,
+    h2,
+    h3,
+    p,
+    figure {
+      margin: 0;
+    }
+
+    p,
+    li,
+    td,
+    th {
+      line-height: 1.7;
+    }
+
+    .site-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 22px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.82rem;
+      font-weight: 850;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 0 12px;
+      color: var(--blue);
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 22px 72px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 430px);
+      gap: 40px;
+      align-items: end;
+      padding: 48px 0 42px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      display: inline-flex;
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--accent-dark);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 11ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 8vw, 6.3rem);
+      font-weight: 760;
+      line-height: 0.92;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 760px;
+      margin-top: 24px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2vw, 1.45rem);
+      line-height: 1.62;
+      color: #313a36;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .meta strong {
+      color: var(--ink);
+    }
+
+    .hero-card {
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.84rem;
+    }
+
+    .nav-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 18px 0 0;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 48px;
+      align-items: start;
+      padding-top: 34px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .stat-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .stat {
+      display: grid;
+      min-height: 72px;
+      padding: 12px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      font-size: 1.35rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .note-card {
+      padding: 14px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .article {
+      display: grid;
+      gap: 28px;
+    }
+
+    .section {
+      padding: 26px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 14px 38px rgb(32 37 34 / 7%);
+    }
+
+    .section h2 {
+      max-width: 780px;
+      font-size: clamp(1.55rem, 3vw, 2.4rem);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .section h3 {
+      margin-top: 18px;
+      font-size: 1.02rem;
+      line-height: 1.3;
+    }
+
+    .section p {
+      margin-top: 14px;
+      color: var(--muted);
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, 310px);
+      gap: 22px;
+      align-items: start;
+      background: #fffaf2;
+      border-color: rgb(173 121 40 / 24%);
+    }
+
+    .tldr,
+    .check-list {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 18px 0 0;
+      list-style: none;
+    }
+
+    .tldr li,
+    .check-list li {
+      padding: 12px;
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .tldr strong,
+    .check-list strong {
+      color: var(--ink);
+    }
+
+    .mini-stats {
+      display: grid;
+      gap: 10px;
+    }
+
+    .mini-stat {
+      padding: 13px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .mini-stat strong {
+      display: block;
+      color: var(--accent-dark);
+      font-size: 1.2rem;
+    }
+
+    .mini-stat span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .comparison {
+      width: 100%;
+      margin-top: 18px;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .comparison th,
+    .comparison td {
+      padding: 12px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .comparison th {
+      color: var(--ink);
+      background: var(--soft);
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .comparison tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .flow-step {
+      min-height: 118px;
+      padding: 14px;
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .flow-step b {
+      display: block;
+      color: var(--blue);
+      font-size: 0.92rem;
+    }
+
+    .flow-step span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .map {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .node {
+      min-height: 112px;
+      padding: 14px;
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .node strong {
+      display: block;
+      color: var(--green);
+    }
+
+    .node span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .callout {
+      margin-top: 18px;
+      padding: 16px;
+      color: #26322d;
+      background: rgb(39 97 118 / 8%);
+      border: 1px solid rgb(39 97 118 / 22%);
+      border-radius: 8px;
+    }
+
+    .footer-note {
+      margin-top: 28px;
+      color: var(--quiet);
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .content-grid,
+      .quick-summary {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        max-width: 13ch;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .stat-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .flow,
+      .map {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .site-bar {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 14px;
+      }
+
+      .page {
+        padding: 0 12px 48px;
+      }
+
+      .hero {
+        gap: 22px;
+        padding: 34px 0 28px;
+      }
+
+      h1 {
+        font-size: clamp(2.55rem, 15vw, 4rem);
+      }
+
+      .nav-strip {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .action-link {
+        width: 100%;
+      }
+
+      .section {
+        padding: 18px;
+      }
+
+      .stat-grid,
+      .flow,
+      .map {
+        grid-template-columns: 1fr;
+      }
+
+      .comparison {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="site-bar">
+    <a class="brand" href="index.html">Summary Library</a>
+    <a class="action-link primary" href="https://www.youtube.com/watch?v=EqzNLEvimvk">Watch Source</a>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">CustomAI Studio - AI Strategy</span>
+        <h1>AI Sprawl Is a Strategy Problem</h1>
+        <p class="subtitle">
+          A readable summary of Devin Kearns' warning that companies are overspending on disconnected AI tools,
+          subscriptions, and token usage because they are treating AI as another SaaS buying cycle instead of a business architecture shift.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> THIS mistake is costing companies MILLIONS of dollars</span>
+          <span><strong>Channel:</strong> Devin Kearns | CustomAI Studio</span>
+          <span><strong>Transcript:</strong> 3,377 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/EqzNLEvimvk/hqdefault.jpg" alt="Video thumbnail for THIS mistake is costing companies MILLIONS of dollars">
+        <figcaption>
+          The video argues that AI sprawl is not just a tooling bill problem. It is a signal that the company lacks a coherent operating model for AI-native work.
+        </figcaption>
+      </figure>
+    </section>
+
+    <nav class="nav-strip" aria-label="Page sections">
+      <a class="action-link" href="#short-version">Short Version</a>
+      <a class="action-link" href="#mistake">Mistake</a>
+      <a class="action-link" href="#architecture">Architecture</a>
+      <a class="action-link" href="#build-buy">Build vs Buy</a>
+      <a class="action-link" href="#platform">Platform Notes</a>
+      <a class="action-link" href="#checklist">Checklist</a>
+    </nav>
+
+    <div class="content-grid">
+      <aside class="sidebar" aria-label="Summary metadata">
+        <div class="stat-grid">
+          <div class="stat"><strong>15m 47s</strong><span>runtime</span></div>
+          <div class="stat"><strong>3.4k</strong><span>transcript words</span></div>
+          <div class="stat"><strong>AI strategy</strong><span>category</span></div>
+        </div>
+        <div class="note-card">
+          This page is a synthesis of the public YouTube captions. It is a structured summary, not a verbatim transcript.
+        </div>
+      </aside>
+
+      <article class="article">
+        <section class="section quick-summary" id="short-version">
+          <div>
+            <h2>The Short Version</h2>
+            <p>
+              The talk says many companies created AI sprawl by giving departments budget to experiment independently.
+              That worked as exploration, but it now creates duplicated subscriptions, uncontrolled token usage, weak security oversight,
+              unclear ROI, and workflows that do not compound into a shared system.
+            </p>
+            <ul class="tldr">
+              <li><strong>The mistake:</strong> treating AI like a collection of bolt-on SaaS tools instead of a new operating layer.</li>
+              <li><strong>The symptom:</strong> every team has separate tools, separate prompts, separate data access, and separate cost behavior.</li>
+              <li><strong>The fix:</strong> design a shared AI architecture with a data layer, permissioning, business logic, agents, and measurable outcomes.</li>
+            </ul>
+          </div>
+          <div class="mini-stats">
+            <div class="mini-stat"><strong>20+</strong><span>tools can appear after decentralized buying</span></div>
+            <div class="mini-stat"><strong>ROI</strong><span>must replace anecdotal adoption stories</span></div>
+            <div class="mini-stat"><strong>Data</strong><span>is the foundation for agentic systems</span></div>
+          </div>
+        </section>
+
+        <section class="section" id="mistake">
+          <h2>The expensive mistake is decentralized AI buying without an operating model</h2>
+          <p>
+            The pattern starts innocently. Leadership wants to become AI-first, so every department gets budget to try tools,
+            build workflows, hire vendors, or experiment with vertical AI products. That creates activity, but it does not automatically create strategy.
+          </p>
+          <p>
+            After a year or two, finance sees rising subscriptions and usage bills. IT sees fragmented access, unclear data security,
+            and duplicated functionality. Executives see lots of adoption stories but little evidence that capacity, margin, or cycle time improved.
+          </p>
+          <div class="callout">
+            The core critique: a tool can make one person faster, but a disconnected tool portfolio can make the company less coherent.
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Cost control is necessary, but it is not the real solution</h2>
+          <p>
+            The video distinguishes firefighting from architecture. A monthly usage cap can stop budget overruns, but it does not answer
+            what the company should automate, which data agents can use, which workflows deserve investment, or how to measure the output.
+          </p>
+          <table class="comparison">
+            <thead>
+              <tr>
+                <th>Quick reaction</th>
+                <th>Why it is incomplete</th>
+                <th>Better question</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Limit token spend per employee.</td>
+                <td>Controls the bill but may reduce useful work and still leave duplication.</td>
+                <td>Which workflows produce measurable leverage per dollar?</td>
+              </tr>
+              <tr>
+                <td>Approve or reject tools one by one.</td>
+                <td>Still treats AI as isolated procurement instead of shared capability.</td>
+                <td>Which capabilities should be platform-level services?</td>
+              </tr>
+              <tr>
+                <td>Run AI-readiness presentations.</td>
+                <td>Can sound polished while avoiding architecture, data, and workflow ownership.</td>
+                <td>Who can translate business logic into working systems?</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="architecture">
+          <h2>The real solve is a shared business architecture for AI</h2>
+          <p>
+            Kearns argues that companies need a holistic system: a world model, an ontology layer, a master data layer,
+            and an agent ecosystem that can grow over time. The wording is less important than the architecture principle:
+            AI needs navigable business context, not just access to generic tools.
+          </p>
+          <div class="map">
+            <div class="node"><strong>Business ontology</strong><span>Common definitions for customers, products, deals, claims, assets, policies, and workflows.</span></div>
+            <div class="node"><strong>Data layer</strong><span>Clean, permissioned sources that agents can retrieve from without guessing across messy systems.</span></div>
+            <div class="node"><strong>Workflow logic</strong><span>The company-specific rules, handoffs, exceptions, and judgment that make work valuable.</span></div>
+            <div class="node"><strong>Agent layer</strong><span>Agents and automations that operate against shared context instead of isolated prompts.</span></div>
+            <div class="node"><strong>Observability</strong><span>Usage, cost, output quality, security, and ROI measured at workflow level.</span></div>
+            <div class="node"><strong>Governance</strong><span>Procurement, permissions, risk, and ownership tied to architecture rather than ad hoc adoption.</span></div>
+          </div>
+        </section>
+
+        <section class="section" id="build-buy">
+          <h2>The build-vs-buy question changes in the AI-native era</h2>
+          <p>
+            In the cloud SaaS era, buying an off-the-shelf workflow tool often made sense. The vendor specialized, the customer avoided maintenance,
+            and the business could adopt a standardized process. The video argues AI changes that calculus because the highest-leverage workflows
+            depend on context that is deeply specific to the business.
+          </p>
+          <p>
+            This does not mean every company should custom-build every product. It means the comparison should not be "build an existing tool or buy it."
+            The better comparison is whether the company is building the operating system for its own AI-native business.
+          </p>
+          <div class="flow">
+            <div class="flow-step"><b>Map the work</b><span>Identify workflows where business logic, context, and judgment create leverage.</span></div>
+            <div class="flow-step"><b>Own the context</b><span>Build a data and ontology layer that agents can safely navigate.</span></div>
+            <div class="flow-step"><b>Automate the flow</b><span>Use agents where they can do work, not only where humans can chat with tools.</span></div>
+            <div class="flow-step"><b>Measure output</b><span>Track cost, cycle time, quality, capacity, and revenue outcomes.</span></div>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <h2>What this implies for an agentic AI platform</h2>
+          <p>
+            For a platform builder, the useful takeaway is that customers do not only need another AI interface.
+            They need a way to turn business logic into durable, observable, permissioned workflows.
+          </p>
+          <ul class="check-list">
+            <li><strong>Inventory AI sprawl first.</strong> Show existing tools, owners, use cases, costs, duplicated capabilities, and data access risk.</li>
+            <li><strong>Create a shared domain layer.</strong> Let business users define entities, rules, SOPs, policies, and evidence sources in a form agents can use.</li>
+            <li><strong>Make ROI visible.</strong> Track output metrics by workflow, not only adoption, token usage, or seat count.</li>
+            <li><strong>Support build plus buy.</strong> Integrate external tools where useful, but keep orchestration, data context, and governance as platform primitives.</li>
+            <li><strong>Design for automation, not only augmentation.</strong> The platform should expose which parts of work still require humans and which parts agents can own.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="checklist">
+          <h2>A practical executive checklist</h2>
+          <table class="comparison">
+            <thead>
+              <tr>
+                <th>Question</th>
+                <th>Why it matters</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Which AI tools are already in use, and who owns each one?</td>
+                <td>Sprawl cannot be governed until it is visible.</td>
+              </tr>
+              <tr>
+                <td>Which workflows have measurable cost, revenue, risk, or cycle-time impact?</td>
+                <td>AI investment should move business outcomes, not only create demos.</td>
+              </tr>
+              <tr>
+                <td>Where does business logic live today?</td>
+                <td>Agents need access to the actual operating rules, not vague instructions.</td>
+              </tr>
+              <tr>
+                <td>Can agents find the right data without guessing?</td>
+                <td>Good data infrastructure and permissioning determine whether automation scales.</td>
+              </tr>
+              <tr>
+                <td>Are we buying tools, or building an AI-native operating model?</td>
+                <td>This is the strategic distinction the video keeps returning to.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="footer-note">
+            Generated from public YouTube captions for product and architecture planning. This page summarizes the argument of the video and should be validated against your own operating model, data estate, and budget.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>Jev: Typed AI Decisions Instead of Generated Text</title>
+    <meta
+      name="description"
+      content="A practical guide to Jev and System One models: state, typed questions, Choice, Score, Noul, parallel evaluation, confidence gates, costs, limits, and Python integration."
+    />
+    <link rel="stylesheet" href="article-theme.css" />
+    <style>
+      .visual {
+        margin: 1.75rem 0 2rem;
+      }
+      .visual img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+      }
+      .visual figcaption {
+        margin-top: 0.7rem;
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.55;
+      }
+      .visual figcaption strong {
+        color: var(--ink);
+      }
+      .primitive-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1px;
+        margin: 1.5rem 0;
+        background: var(--line);
+      }
+      .primitive-grid > div {
+        padding: 1rem;
+        background: var(--paper);
+      }
+      .primitive-grid strong,
+      .decision-flow strong {
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+      .primitive-grid p {
+        margin: 0;
+        color: var(--muted) !important;
+        font-size: 0.9rem !important;
+      }
+      .decision-flow {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1px;
+        margin: 1.5rem 0;
+        background: var(--line);
+      }
+      .decision-flow > div {
+        padding: 0.9rem;
+        background: var(--paper);
+      }
+      .decision-flow span {
+        color: var(--muted);
+        font-size: 0.84rem;
+      }
+      .comparison {
+        width: 100%;
+        min-width: 0 !important;
+        margin: 1.2rem 0;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+      .comparison th,
+      .comparison td {
+        padding: 0.75rem 0.55rem;
+        text-align: left;
+        vertical-align: top;
+        border-bottom: 1px solid var(--line);
+      }
+      .comparison th {
+        font-weight: 500;
+      }
+      pre {
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .callout {
+        margin: 1.4rem 0;
+        padding: 1rem !important;
+        border-left: 3px solid var(--green) !important;
+      }
+      .callout.warning {
+        border-left-color: var(--gold) !important;
+      }
+      @media (max-width: 750px) {
+        .primitive-grid,
+        .decision-flow {
+          grid-template-columns: 1fr;
+        }
+        .visual {
+          margin: 1.35rem 0 1.7rem;
+        }
+        .comparison {
+          display: table;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="/reading/">Reading room</a>
+      <div class="top-actions">
+        <a class="action-link" href="https://youtu.be/JpfLID19QnQ"
+          >Watch source</a
+        >
+      </div>
+    </nav>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Dave Ebbelaar · Datalumina</p>
+          <h1>Jev: Typed AI Decisions Instead of Generated Text</h1>
+          <p class="subtitle">
+            A practical look at System One models for classification, scoring,
+            routing, and confidence-aware decisions inside ordinary Python.
+          </p>
+          <div class="meta">
+            <span>Video: 16:50</span><span>English deep dive</span
+            ><span>Summary run: September 23, 2026</span>
+          </div>
+        </div>
+        <figure class="hero-card">
+          <a href="https://youtu.be/JpfLID19QnQ"
+            ><img
+              src="https://i.ytimg.com/vi/JpfLID19QnQ/hqdefault.jpg"
+              alt="Jev Explained for Python Developers by Dave Ebbelaar"
+          /></a>
+          <figcaption>Jev Explained for Python Developers.</figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="section-label">Executive summary</p>
+            <h2>The model is a judgment primitive, not a prose generator</h2>
+            <p>
+              Dave Ebbelaar's central argument is that many application tasks do
+              not need a general-purpose model to write text. They need a fast,
+              bounded judgment that software can consume: which team owns a
+              ticket, how severe a complaint appears, or whether a refund was
+              explicitly requested. TypeSafe's Jev model is designed for this
+              narrower job.
+            </p>
+            <p>
+              The programming model is simple. Send a
+              <strong>state</strong> containing the text or structured record to
+              inspect, then attach one or more typed <strong>questions</strong>.
+              Jev returns fixed values and probability distributions rather than
+              free-form prose. Your Python code applies thresholds, business
+              rules, tool calls, and side effects.
+            </p>
+            <div class="callout">
+              <strong>The useful mental model</strong>
+              <p>
+                Let the model perform fuzzy perception. Keep policy, arithmetic,
+                orchestration, and irreversible actions in deterministic code.
+              </p>
+            </div>
+            <ul class="summary-list">
+              <li>
+                <strong>Choice</strong> selects one label from options you
+                define.
+              </li>
+              <li>
+                <strong>Score</strong> places the state on an ordered rubric and
+                may return a value between levels.
+              </li>
+              <li>
+                <strong>Noul</strong> returns the probability that a yes-or-no
+                statement is true.
+              </li>
+              <li>
+                Independent questions can share one state and run together in a
+                single request.
+              </li>
+              <li>
+                Typed output prevents schema drift, but it does not guarantee a
+                semantically correct judgment.
+              </li>
+            </ul>
+          </section>
+
+          <section id="contract">
+            <p class="section-label">The contract</p>
+            <h2>State in, typed questions in, decisions out</h2>
+            <p>
+              A normal language model is optimized to continue text. Even when
+              prompted for JSON, the application is still asking a generator to
+              imitate a software interface. Jev reverses the emphasis: the API
+              itself is a decision interface. The caller defines the available
+              answer shape before inference begins.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-09-23-jev-system-one-contract.jpg"
+                alt="TypeSafe documentation showing state and questions flowing through a System One model into typed answers and application code"
+              />
+              <figcaption>
+                <strong>The complete contract.</strong> One request carries
+                state and typed questions. Each question is evaluated
+                independently; code then branches, sorts, or routes on the typed
+                answers. Frame captured at 00:30.
+              </figcaption>
+            </figure>
+            <div class="decision-flow" aria-label="Jev application flow">
+              <div>
+                <strong>1. State</strong
+                ><span>Ticket, record, policy, or structured JSON</span>
+              </div>
+              <div>
+                <strong>2. Questions</strong
+                ><span>Atomic judgments with explicit criteria</span>
+              </div>
+              <div>
+                <strong>3. Answers</strong
+                ><span>Typed values, distributions, and confidence</span>
+              </div>
+              <div>
+                <strong>4. Code</strong
+                ><span>Threshold, route, fetch evidence, or escalate</span>
+              </div>
+            </div>
+            <p>
+              This separation is more important than the SDK syntax. A model
+              should not be asked to both infer what happened and invent the
+              company's policy. It can classify the ticket; code decides whether
+              that classification is confident enough to trigger an automated
+              path.
+            </p>
+          </section>
+
+          <section id="primitives">
+            <p class="section-label">Three primitives</p>
+            <h2>Match the question type to the answer your code needs</h2>
+            <div class="primitive-grid">
+              <div>
+                <strong>Choice</strong>
+                <p>
+                  Which option? Returns a selected label, probabilities, and
+                  confidence.
+                </p>
+              </div>
+              <div>
+                <strong>Score</strong>
+                <p>
+                  Where on a rubric? Returns a numeric position, legend,
+                  distribution, and confidence.
+                </p>
+              </div>
+              <div>
+                <strong>Noul</strong>
+                <p>
+                  Is this true? Returns a probability from 0 to 1, with no
+                  separate confidence field.
+                </p>
+              </div>
+            </div>
+
+            <h3>Choice: route to a known branch</h3>
+            <p>
+              A Choice question supplies every legal option and a description of
+              what each means. In the demo, Jev routes a duplicate-charge ticket
+              to <code>billing</code>, <code>technical</code>, or
+              <code>other</code>. The response cannot invent a fourth team. This
+              makes Choice a natural fit for queues, document types, languages,
+              workflow states, and tool selection.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-09-23-jev-choice-python.jpg"
+                alt="Python Choice example selecting a support team from billing, technical, and other"
+              />
+              <figcaption>
+                <strong>Choice in Python.</strong> The criteria are part of the
+                contract, not labels the model is expected to invent. The output
+                includes the selected team, a distribution across all options,
+                and confidence. Frame captured at 06:30.
+              </figcaption>
+            </figure>
+
+            <h3>Score: evaluate an ordered spectrum</h3>
+            <p>
+              Score is for concepts that have meaningful order: frustration,
+              urgency, severity, or skill. Developers define descriptive levels,
+              and the result can sit between them. That is different from
+              Choice, whose labels are categorical and unordered.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-09-23-jev-score-python.jpg"
+                alt="Python Score example rating customer frustration on a three-level rubric"
+              />
+              <figcaption>
+                <strong>Score in the demo.</strong> The ticket is rated 1.0 on a
+                rubric from calm to abusive, with the full probability
+                distribution visible. A production rubric should be validated
+                against labeled examples, not accepted from one successful run.
+                Frame captured at 08:30.
+              </figcaption>
+            </figure>
+
+            <h3>Noul: treat yes/no as a probability</h3>
+            <p>
+              Noul answers a binary proposition such as “Does the customer
+              explicitly request money back?” A value near 1 is strong support,
+              near 0 is strong rejection, and near 0.5 is uncertainty. It is not
+              a severity scale. If the business question is “how angry?”, use
+              Score; if it is “does this contain an explicit threat?”, Noul is a
+              better match.
+            </p>
+          </section>
+
+          <section id="python">
+            <p class="section-label">Python pattern</p>
+            <h2>Compose judgments in one request, then branch in code</h2>
+            <p>
+              Questions that inspect the same state can be sent together. In the
+              ticket example, routing, frustration, and refund intent are
+              independent judgments. Jev evaluates them in parallel and returns
+              each answer under the ID chosen by the developer.
+            </p>
+            <pre><code>questions = {
+    "team": Choice(
+        instructions="Which team should handle this ticket?",
+        criteria={"billing": "Charges or refunds", "technical": "Bugs"},
+    ),
+    "frustration": Score(
+        instructions="How frustrated is the customer?",
+        criteria=["Calm", "Frustrated", "Abusive"],
+    ),
+    "refund_requested": Noul(
+        instructions="Does the customer explicitly request money back?",
+    ),
+}
+
+response = client.system_one(state=ticket, questions=questions)
+
+team = response.choices["team"]
+queue = team.choice if team.confidence &gt;= 0.8 else "human_review"</code></pre>
+            <figure class="visual">
+              <img
+                src="2026-09-23-jev-combined-questions.jpg"
+                alt="Python triage example combining Choice, Score, and Noul in one request"
+              />
+              <figcaption>
+                <strong>One state, three independent questions.</strong> The
+                application reads typed fields and applies its own threshold.
+                Adding or removing one question does not make its answer hidden
+                context for another. Frame captured at 12:40.
+              </figcaption>
+            </figure>
+            <p>
+              Parallel does not mean dependent. If the second judgment requires
+              evidence discovered by the first, use two calls: classify the
+              required lookup, fetch the evidence in Python, then send an
+              enriched state for the follow-up judgment. That keeps tool
+              execution and data dependencies visible in ordinary code.
+            </p>
+          </section>
+
+          <section id="confidence">
+            <p class="section-label">Confidence and control</p>
+            <h2>A confidence value is a routing signal, not a certificate</h2>
+            <p>
+              Choice and Score expose both a distribution and a summarized
+              confidence value. This gives the application more options than a
+              hard label: auto-route highly confident tickets, send ambiguous
+              ones to human review, and log the uncertain band for later evals.
+            </p>
+            <p>
+              The essential caveat is calibration. A calibrated model should be
+              right roughly 80 percent of the time across a sufficiently large
+              set of predictions made at 0.8 confidence. That does not mean a
+              particular 0.8 answer is guaranteed to be correct. Thresholds must
+              be tuned on representative, labeled business data and reconsidered
+              whenever the model version or input distribution changes.
+            </p>
+            <div class="callout warning">
+              <strong>Typed does not mean true.</strong>
+              <p>
+                Jev can always return a value that matches the schema and still
+                misunderstand the ticket. Structural reliability removes parsing
+                failures; it does not remove semantic errors.
+              </p>
+            </div>
+          </section>
+
+          <section id="performance">
+            <p class="section-label">Speed and price</p>
+            <h2>The demo is promising, but it is not a benchmark</h2>
+            <p>
+              Ebbelaar runs the same small ticket-routing task three times
+              through Jev and several Claude models. In this recording, Jev
+              averages 596 ms, Haiku 676 ms, Opus 1,691 ms, and Fable 3,032 ms.
+              Those are end-to-end request times from one machine for one task,
+              including the first connection. There are no warm-up runs,
+              statistical error bars, retries, or broad task suite.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-09-23-jev-latency-demo.jpg"
+                alt="Three-run latency comparison between Jev and Claude models in the video"
+              />
+              <figcaption>
+                <strong>What the video actually measured.</strong> Three runs of
+                one short routing task. It demonstrates the testing method and
+                the result observed in the recording, not a general speed
+                ranking. Frame captured at 10:50.
+              </figcaption>
+            </figure>
+            <p>
+              The pricing example is easier to reproduce. TypeSafe's model page
+              lists Jev 1.13 at $0.042 per million input tokens with free output
+              tokens. At exactly 100,000 requests and 500 input tokens each,
+              that arithmetic is $2.10. The video's rounded “about $2 versus $50
+              for Haiku” illustrates a large difference for this input-only
+              workload, but it is not a universal per-task saving. Tokenization,
+              output length, caching, quality requirements, and alternative
+              models all change the comparison.
+            </p>
+          </section>
+
+          <section id="limits">
+            <p class="section-label">Where it fits</p>
+            <h2>Use Jev for narrow perception, not open-ended cognition</h2>
+            <table class="comparison">
+              <thead>
+                <tr>
+                  <th>Good fit</th>
+                  <th>Poor fit</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Routing and intent classification</td>
+                  <td>Writing an email or explanation</td>
+                </tr>
+                <tr>
+                  <td>Scoring against a clear rubric</td>
+                  <td>Long, multi-step reasoning</td>
+                </tr>
+                <tr>
+                  <td>Binary policy checks with explicit wording</td>
+                  <td>Precise arithmetic or date comparison</td>
+                </tr>
+                <tr>
+                  <td>Ranking and confidence-gated automation</td>
+                  <td>Image, audio, or video input</td>
+                </tr>
+                <tr>
+                  <td>Many independent judgments on one state</td>
+                  <td>Tasks with hidden or changing answer options</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>
+              TypeSafe's own jaggedness notes are unusually useful here. Jev
+              1.13 may read instructions literally, struggle with arithmetic and
+              date comparisons, lose accuracy when the state is full of
+              irrelevant material, and fail on adversarial content or multiple
+              levels of indirection. The remedies are architectural: reduce the
+              state, point directly to the relevant fields, ask atomic
+              questions, and enforce calculations and invariants in code.
+            </p>
+            <p>
+              Jev is also text-only, with English as its strongest language.
+              Non-English workloads need their own evaluation set. The direct
+              API is a hosted dependency; Ebbelaar's hope for small self-hosted
+              models is a future possibility, not a deployment option
+              demonstrated in this video.
+            </p>
+          </section>
+
+          <section id="playbook">
+            <p class="section-label">Implementation playbook</p>
+            <h2>How to introduce a typed decision model safely</h2>
+            <ol class="summary-list">
+              <li>
+                <strong>Choose one bounded judgment.</strong> Start with a
+                route, rubric, or yes/no condition whose business meaning is
+                already understood.
+              </li>
+              <li>
+                <strong>Define the output before the prompt.</strong> Write the
+                legal Choice options, Score levels, or Noul condition and
+                include boundary cases.
+              </li>
+              <li>
+                <strong>Build a labeled test set.</strong> Include ordinary
+                cases, ambiguity, negation, adversarial wording, and examples
+                near every automation threshold.
+              </li>
+              <li>
+                <strong>Log distributions and model versions.</strong> A label
+                alone hides uncertainty and makes regressions harder to
+                diagnose.
+              </li>
+              <li>
+                <strong>Gate actions by risk.</strong> A low-risk tag can use a
+                lower threshold than a refund, account suspension, or external
+                side effect.
+              </li>
+              <li>
+                <strong>Keep deterministic work deterministic.</strong> Fetch
+                records, compare dates, calculate money, and enforce policy in
+                code.
+              </li>
+              <li>
+                <strong>Re-evaluate after change.</strong> Pin the model version
+                when thresholds matter, then rerun the dataset before upgrading.
+              </li>
+            </ol>
+          </section>
+
+          <section id="verdict">
+            <p class="section-label">Verdict</p>
+            <h2>The compelling idea is the boundary, not the model name</h2>
+            <p>
+              Jev offers a clean answer to a common design mistake: using a
+              generative model for every intelligent decision. Its typed
+              primitives make application intent explicit, expose uncertainty,
+              and encourage developers to compose decisions in code. That is a
+              healthier architecture than burying routing, policy, and action in
+              one large prompt.
+            </p>
+            <p>
+              The trade-off is specialization. Jev is useful precisely because
+              it cannot do everything. Teams still need generative models for
+              writing and deep reasoning, deterministic systems for exact rules,
+              and humans for uncertain or high-consequence cases. The strongest
+              production design is not Jev instead of those components. It is
+              Jev placed deliberately between them as a fast, inspectable
+              decision layer.
+            </p>
+          </section>
+
+          <section id="timeline">
+            <p class="section-label">Video map</p>
+            <h2>Timeline</h2>
+            <div class="timeline">
+              <div class="time-item">
+                <time>00:00</time>
+                <div>
+                  <h3>Jev and the first Python request</h3>
+                  <p>Why typed decisions differ from generated text.</p>
+                </div>
+              </div>
+              <div class="time-item">
+                <time>06:00</time>
+                <div>
+                  <h3>Choice, Score, and Noul</h3>
+                  <p>The three primitives and their response shapes.</p>
+                </div>
+              </div>
+              <div class="time-item">
+                <time>10:13</time>
+                <div>
+                  <h3>Speed and cost</h3>
+                  <p>A small latency demo and a pricing illustration.</p>
+                </div>
+              </div>
+              <div class="time-item">
+                <time>11:56</time>
+                <div>
+                  <h3>One request, many questions</h3>
+                  <p>Combining independent judgments over shared state.</p>
+                </div>
+              </div>
+              <div class="time-item">
+                <time>14:33</time>
+                <div>
+                  <h3>Verdict and deployment outlook</h3>
+                  <p>
+                    Where specialized decision models may fit in agent systems.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="sources">
+            <p class="section-label">Sources and method</p>
+            <h2>What this article is based on</h2>
+            <ul class="source-list">
+              <li>
+                <a href="https://youtu.be/JpfLID19QnQ"
+                  >Dave Ebbelaar, Jev Explained for Python Developers</a
+                >. Complete caption track checked against the 16:50 video;
+                frames captured from the source.
+              </li>
+              <li>
+                <a href="https://docs.typesafe.ai/introduction"
+                  >TypeSafe Introduction</a
+                >, <a href="https://docs.typesafe.ai/primitives">Primitives</a>,
+                <a href="https://docs.typesafe.ai/models">Models and pricing</a
+                >, and
+                <a href="https://docs.typesafe.ai/model-jaggedness/jev-1.13"
+                  >Jev 1.13 jaggedness</a
+                >. Official documentation checked September 23, 2026.
+              </li>
+              <li>
+                <a
+                  href="https://github.com/daveebbelaar/ai-cookbook/tree/main/models/jev"
+                  >Dave Ebbelaar's Jev examples</a
+                >. Python examples for Choice, Score, Noul, combined triage,
+                dependent workflows, and the latency demo.
+              </li>
+            </ul>
+            <p>
+              Product behavior, pricing, and limits can change. Vendor claims
+              are identified as such; the architecture guidance and production
+              cautions are editorial synthesis based on the cited sources.
+            </p>
+          </section>
+        </article>
+
+        <aside class="sidebar">
+          <nav class="toc" aria-labelledby="toc-title">
+            <h2 id="toc-title">In this article</h2>
+            <ul>
+              <li><a href="#summary">Executive summary</a></li>
+              <li><a href="#contract">The contract</a></li>
+              <li><a href="#primitives">Three primitives</a></li>
+              <li><a href="#python">Python pattern</a></li>
+              <li><a href="#confidence">Confidence</a></li>
+              <li><a href="#performance">Speed and price</a></li>
+              <li><a href="#limits">Where it fits</a></li>
+              <li><a href="#playbook">Implementation playbook</a></li>
+              <li><a href="#verdict">Verdict</a></li>
+              <li><a href="#timeline">Timeline</a></li>
+            </ul>
+          </nav>
+          <div class="note-card">
+            <h2>Core idea</h2>
+            <p>
+              Model perception; code policy. Typed output controls shape, while
+              evals control trust.
+            </p>
+          </div>
+          <div class="tag-grid">
+            <span class="tag">Jev</span><span class="tag">System One</span
+            ><span class="tag">Python</span
+            ><span class="tag">Classification</span
+            ><span class="tag">Confidence</span>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>

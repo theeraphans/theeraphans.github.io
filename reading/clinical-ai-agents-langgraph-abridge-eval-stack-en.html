@@ -1,0 +1,1095 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Clinical AI Agents with LangGraph - Abridge Eval Stack Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5c6870;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f5f7f1;
+      --line: #d8dfd8;
+      --teal: #14756e;
+      --blue: #2f6382;
+      --green: #52784b;
+      --gold: #a87924;
+      --coral: #bd503f;
+      --plum: #635987;
+      --charcoal: #24313a;
+      --mint: #e2f0ec;
+      --sky: #e6eef6;
+      --leaf: #e9f1df;
+      --sand: #f7edd8;
+      --rose: #f5e5df;
+      --shadow: 0 24px 68px rgb(23 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(20 117 110 / 6%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(47 99 130 / 5%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--green), var(--teal), var(--blue), var(--gold), var(--coral), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure, blockquote, pre { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td, code { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 86%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.96fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.5rem, 5.7vw, 5.15rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      object-fit: contain;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+      gap: 24px;
+      margin: 28px 0;
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 7%);
+    }
+
+    .quick-summary h2,
+    .section h2,
+    .sidebar h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-weight: 760;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+    }
+
+    .quick-summary p,
+    .section p,
+    .section li {
+      color: #334047;
+      font-size: 1.01rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .summary-list li::marker { color: var(--coral); }
+
+    .stats-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-width: 0;
+      min-height: 84px;
+      padding: 14px;
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.35rem;
+      line-height: 1.05;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .content {
+      display: grid;
+      gap: 22px;
+      min-width: 0;
+    }
+
+    .section {
+      padding: 34px 0;
+      background: transparent;
+      border-top: 1px solid var(--line);
+    }
+
+    .section h2 {
+      margin-bottom: 14px;
+      font-size: clamp(1.85rem, 3.2vw, 2.65rem);
+    }
+
+    .section h3 {
+      margin-top: 24px;
+      margin-bottom: 8px;
+      color: var(--charcoal);
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .section p + p { margin-top: 12px; }
+    .section ul, .section ol { display: grid; gap: 9px; margin-top: 12px; padding-left: 20px; }
+    .section li::marker { color: var(--teal); }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .toc,
+    .source-box {
+      padding: 18px;
+      background: rgb(255 254 249 / 94%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 14px 36px rgb(23 33 38 / 6%);
+    }
+
+    .toc h2,
+    .source-box h2 {
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+    }
+
+    .toc nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .toc a {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 780;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .source-box p,
+    .source-box li {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .callout {
+      margin-top: 18px;
+      padding: 18px;
+      background: var(--mint);
+      border: 1px solid rgb(20 117 110 / 18%);
+      border-left: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .callout.rose {
+      background: var(--rose);
+      border-color: rgb(189 80 63 / 18%);
+      border-left-color: var(--coral);
+    }
+
+    .callout.gold {
+      background: var(--sand);
+      border-color: rgb(168 121 36 / 22%);
+      border-left-color: var(--gold);
+    }
+
+    .quote-box {
+      margin: 18px 0 2px;
+      padding: 18px 20px;
+      color: #2a383f;
+      background: var(--sky);
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.12rem;
+      line-height: 1.58;
+    }
+
+    .tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0 10px;
+      color: var(--charcoal);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 820;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .flow li,
+    .role-card,
+    .metric-card,
+    .template-card,
+    .evidence-item {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .flow li {
+      position: relative;
+      min-height: 150px;
+      padding: 14px;
+    }
+
+    .flow li:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 48%;
+      right: -9px;
+      z-index: 1;
+      width: 14px;
+      height: 14px;
+      border-top: 2px solid var(--teal);
+      border-right: 2px solid var(--teal);
+      transform: rotate(45deg);
+      background: var(--paper);
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      margin-bottom: 10px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 50%;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .flow strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+      line-height: 1.25;
+    }
+
+    .flow span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.45;
+    }
+
+    .role-grid,
+    .metric-grid,
+    .template-grid,
+    .evidence-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .role-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .template-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .evidence-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .role-card,
+    .metric-card,
+    .template-card,
+    .evidence-item {
+      padding: 16px;
+    }
+
+    .role-card h3,
+    .metric-card h3,
+    .template-card h3,
+    .evidence-item h3 {
+      margin: 0 0 8px;
+      color: var(--ink);
+      font-size: 1rem;
+    }
+
+    .role-card p,
+    .metric-card p,
+    .template-card p,
+    .evidence-item p {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      min-width: 780px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.94rem;
+    }
+
+    th {
+      color: var(--charcoal);
+      background: var(--leaf);
+      font-weight: 880;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    pre {
+      overflow-x: auto;
+      margin-top: 16px;
+      padding: 18px;
+      color: #102027;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.87rem;
+      line-height: 1.62;
+    }
+
+    .verdict {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+      padding: 20px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .verdict p { color: rgb(255 255 255 / 88%); }
+
+    .footer-note {
+      padding: 34px 0 0;
+      color: var(--quiet);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 940px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar { position: static; }
+      h1 { max-width: 14ch; }
+      .flow { grid-template-columns: 1fr; }
+      .flow li:not(:last-child)::after { display: none; }
+      .metric-grid,
+      .evidence-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .action-link {
+        flex: 1 1 auto;
+      }
+
+      .page {
+        padding: 0 18px 56px;
+      }
+
+      .hero {
+        padding: 36px 0 34px;
+      }
+
+      .quick-summary {
+        padding: 20px;
+      }
+
+      .stats-panel,
+      .role-grid,
+      .metric-grid,
+      .template-grid,
+      .evidence-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">Video Notes Library</a>
+    <div class="top-actions">
+      <a class="action-link" href="./index.html">All summaries</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=mxweSHetuN8">Watch source</a>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="kicker">Healthcare AI agent case study</p>
+        <h1 id="page-title">Clinical AI Agents With Eval Discipline</h1>
+        <p class="subtitle">A detailed summary of Janie Lee's LangChain talk on how Abridge ships clinical AI and agent systems in a high-stakes healthcare environment without treating velocity and quality as opposites.</p>
+        <div class="meta">
+          <span><strong>Source:</strong> LangChain</span>
+          <span><strong>Speaker:</strong> Janie Lee, VP of Product at Abridge</span>
+          <span><strong>Length:</strong> about 18 minutes</span>
+          <span><strong>Transcript:</strong> 451 caption rows, about 2,816 words</span>
+        </div>
+      </div>
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/mxweSHetuN8/hqdefault.jpg" alt="YouTube thumbnail for Building Clinical AI Agents with LangGraph">
+        <figcaption>Source video thumbnail. Notes generated from the public captions and supplemented with official Abridge and LangChain context.</figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" id="executive-summary">
+      <div>
+        <h2>Executive Summary</h2>
+        <p>The talk is a compact production case study: Abridge started with clinical note generation, built a trusted data and evaluation layer around patient-clinician conversations, then expanded into a unified clinical assistant that can search context, edit notes, support orders, and provide evidence-backed decision support.</p>
+        <ul class="summary-list">
+          <li><strong>The operating constraint:</strong> in healthcare, speed cannot come at the expense of clinical quality, patient safety, HIPAA discipline, or customer trust.</li>
+          <li><strong>The core platform move:</strong> unify datasets, annotation, tracing, evaluations, access control, and auditability so product teams can release in days instead of one to two months.</li>
+          <li><strong>The eval lesson:</strong> high-stakes AI needs layered judges, high-quality human labels, explicit expertise levels, offline backtests, controlled releases, A/B signal, and continuous monitoring.</li>
+          <li><strong>The agent lesson:</strong> an agent should feel like background infrastructure, preserve clinician agency, respond to feedback, and choose tools only inside tested boundaries.</li>
+        </ul>
+      </div>
+      <div class="stats-panel" aria-label="Summary stats">
+        <div class="stat"><strong>2 cases</strong><span>Notes and agents</span></div>
+        <div class="stat"><strong>4 pillars</strong><span>Quality evals</span></div>
+        <div class="stat"><strong>Days</strong><span>Release signal</span></div>
+        <div class="stat"><strong>1 rule</strong><span>Trust first</span></div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <article class="content">
+        <section class="section" id="context">
+          <h2>Abridge Context</h2>
+          <p>Abridge describes itself as a clinical intelligence platform. The company began with a wedge that matters deeply in healthcare: the patient-clinician conversation. In the talk, Janie says there are more than two billion such conversations in the US each year, and that downstream workflows like notes, billing codes, claims, prior authorization, medications, and clinical records often derive from that conversation.</p>
+          <p>The first product turns a consented patient-clinician conversation into a clinically useful chart note that can be submitted into the electronic health record. That matters because doctors spend after-hours "pajama time" on documentation, and because the note is not merely a summary. It becomes part of billing, compliance, longitudinal care, and patient safety.</p>
+          <div class="callout">
+            <p><strong>Scale note:</strong> the talk frames Abridge as deployed across 250 of the largest health systems and more than 100 million annual platform conversations. Abridge's current public site describes a broader 300+ health-system footprint and 100M+ conversations powered each year.</p>
+          </div>
+        </section>
+
+        <section class="section" id="high-stakes">
+          <h2>Why Healthcare Changes The Build Bar</h2>
+          <p>The most important framing is that high-stakes AI changes every product, business, and technical decision. A generic AI feature can sometimes tolerate a rough release. Clinical AI cannot. If a model mislabels a medication, fabricates a prescription, assigns a symptom to the wrong person, or changes dosage, the harm is not just product dissatisfaction. It can become patient safety risk, medical liability, billing error, or loss of institutional trust.</p>
+          <div class="evidence-grid">
+            <div class="evidence-item">
+              <h3>Clinical quality</h3>
+              <p>The note must be accurate, complete, specialty-aware, and grounded in the conversation.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Compliance</h3>
+              <p>PHI handling, HIPAA obligations, access control, auditability, and data rights shape the product architecture.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Trust</h3>
+              <p>Enterprise healthcare buyers choose partners based on security and reliability before they evaluate advanced features.</p>
+            </div>
+          </div>
+          <div class="quote-box">The practical message: in regulated domains, evals are not QA after the build. Evals are the operating system for shipping.</div>
+        </section>
+
+        <section class="section" id="notes-product">
+          <h2>Case Study 1: Clinical Notes</h2>
+          <p>The notes product takes a recorded, consented clinical conversation and produces a draft clinical note. This looks simple from the outside, but the talk emphasizes that it is more difficult than summarizing a meeting. The note has multiple audiences: clinicians, billing teams, compliance workflows, downstream care teams, and future medical record readers.</p>
+          <p>Two failure modes receive special attention. Misattribution means the note assigns a statement, decision, diagnosis, or symptom to the wrong person. That matters because a patient reporting a symptom is different from a clinician diagnosing it. Confabulation means the system adds something that was not actually said or ordered, such as an incorrect medication or dosage.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Failure type</th>
+                  <th>Why it matters</th>
+                  <th>Eval implication</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Misattribution</td>
+                  <td>Can confuse patient statements with clinician diagnoses or decisions.</td>
+                  <td>Judges need speaker/source grounding and clinical role awareness.</td>
+                </tr>
+                <tr>
+                  <td>Confabulation</td>
+                  <td>Can create orders, diagnoses, or dosages that were not in the encounter.</td>
+                  <td>Judges must compare note claims back to source conversation evidence.</td>
+                </tr>
+                <tr>
+                  <td>Incomplete notes</td>
+                  <td>Missing details can affect care continuity and billing specificity.</td>
+                  <td>Evals need completeness rubrics by specialty and note section.</td>
+                </tr>
+                <tr>
+                  <td>Wrong style or structure</td>
+                  <td>Even accurate content can fail adoption if it does not match clinical workflow.</td>
+                  <td>Measure usability, editing burden, and clinician preference patterns.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="eval-stack">
+          <h2>The Eval Stack</h2>
+          <p>Abridge's earlier release process was slow: clinicians annotated data, third-party labelers contributed labels, custom tools did not talk to each other, and releases could take one to two months. The platform shift was to unify the evaluation and debugging surface so teams could move faster with more confidence.</p>
+          <p>The talk names LangGraph and LangSmith as important parts of that platform direction. LangSmith's official materials describe evaluation across LangGraph, custom Python, and other frameworks, production traces as a starting point for datasets, LLM-as-judge bootstrapping, and human annotation refinement. Its observability materials emphasize tracing, online evals, cost tracking, tool trajectory monitoring, and self-hosting options for enterprise environments.</p>
+          <ol class="flow" aria-label="Eval stack flow">
+            <li><span class="step-number">1</span><strong>Collect feedback</strong><span>Use clinician edits, ratings, product feedback, and out-of-product reports.</span></li>
+            <li><span class="step-number">2</span><strong>Prioritize issues</strong><span>Rank by prevalence and severity, not by novelty.</span></li>
+            <li><span class="step-number">3</span><strong>Create pillars</strong><span>Group model issues into accuracy, compliance, style, and completeness.</span></li>
+            <li><span class="step-number">4</span><strong>Build judges</strong><span>Use annotation guides, labeled encounters, and calibrated evaluator prompts.</span></li>
+            <li><span class="step-number">5</span><strong>Release safely</strong><span>Run offline evals, backtests, trusted A/Bs, and online monitoring.</span></li>
+          </ol>
+        </section>
+
+        <section class="section" id="data-quality">
+          <h2>Data Quality Is The Base Layer</h2>
+          <p>Janie says the thing that keeps her up at night is whether the underlying data is correct and high quality. That is exactly the right anxiety. If labels are sloppy, judges will be sloppy. If annotation guides are vague, automated evaluators will learn the wrong boundary. If labelers click through without attention, the whole release process becomes false confidence.</p>
+          <ul>
+            <li>Check that annotations match the expected outputs of LLM judges.</li>
+            <li>Collect free-text explanations from annotators to debug inconsistencies and detect low-attention labeling.</li>
+            <li>Define up front what expertise is required: general clinician, board-certified physician, or specialist.</li>
+            <li>Use subject-matter experts to write the annotation guides before automating judge generation.</li>
+            <li>Make label quality a release dependency, not an optional cleanup step.</li>
+          </ul>
+          <div class="callout gold">
+            <p><strong>For agentic platforms:</strong> eval infrastructure is not only model testing. It is also data operations, expertise routing, annotation governance, and trace review.</p>
+          </div>
+        </section>
+
+        <section class="section" id="judge-design">
+          <h2>Reference-Free And Reference-Based Judges</h2>
+          <p>The talk draws a useful distinction between two evaluator styles. Reference-free judges can look at the conversation and note directly without a gold-standard note. That makes them flexible enough for broad offline and online monitoring. The tradeoff is that clinical notes can be subjective and encounter-specific.</p>
+          <p>Reference-based judges use gold references and can be more precise, sometimes down to the specialty level. Abridge uses the two together because neither is enough alone.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Judge type</th>
+                  <th>Best for</th>
+                  <th>Limit</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Reference-free</td>
+                  <td>Always-on monitoring, broad quality scoring, fast regression detection.</td>
+                  <td>Can miss encounter-specific nuance or specialty conventions.</td>
+                </tr>
+                <tr>
+                  <td>Reference-based</td>
+                  <td>Specialty-level grading, calibrated test sets, precise regressions.</td>
+                  <td>Requires high-quality gold data and expert labeling work.</td>
+                </tr>
+                <tr>
+                  <td>Human review</td>
+                  <td>High-risk edge cases, calibration, disputed labels, release approval.</td>
+                  <td>Expensive and slower, so it must be routed deliberately.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="release-ladder">
+          <h2>The Release Ladder</h2>
+          <p>The talk's release model is a nice pattern for any high-stakes agent platform. Abridge does not jump from offline evals straight to production. It ladders confidence through several surfaces.</p>
+          <div class="role-grid">
+            <div class="role-card">
+              <h3>Offline evals</h3>
+              <p>Run the model or agent against curated datasets that represent known risk categories and quality pillars.</p>
+            </div>
+            <div class="role-card">
+              <h3>Backtests</h3>
+              <p>Compare behavior against historical encounters to see whether fixes create regressions on real prior cases.</p>
+            </div>
+            <div class="role-card">
+              <h3>Trusted A/B release</h3>
+              <p>Use explicit partner buy-in for silent releases to a small innovation group, then watch edit rates, ratings, and feedback.</p>
+            </div>
+            <div class="role-card">
+              <h3>Online monitoring</h3>
+              <p>Keep monitoring quality after release because clinical behavior, model behavior, and user behavior can drift.</p>
+            </div>
+          </div>
+          <div class="callout">
+            <p><strong>Result in the talk:</strong> the process moved release confidence from one to two months down to days while preserving the high bar needed for healthcare.</p>
+          </div>
+        </section>
+
+        <section class="section" id="agent-system">
+          <h2>Case Study 2: The Unified Clinical Agent</h2>
+          <p>After notes, Abridge built a more general assistant that persists across clinician workflows: before the visit, during the visit, and after the visit. The motivation is adoption. Clinicians are busy, often moving through 15-minute appointments, and fragmented tools fail when they demand extra attention.</p>
+          <p>The unified agent folds several capabilities into one coherent experience. It can search patient context across multiple systems of record, edit notes, help place clinical actions like medication or imaging orders, and support clinical decision-making by searching validated medical evidence.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Workflow moment</th>
+                  <th>Agent job</th>
+                  <th>Platform lesson</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Before the visit</td>
+                  <td>Surface patient history, open gaps, and relevant context.</td>
+                  <td>Agents should reduce chart review, not add a new portal.</td>
+                </tr>
+                <tr>
+                  <td>During the visit</td>
+                  <td>Listen in the background, capture notes, surface support only when useful.</td>
+                  <td>The agent should stay quiet unless it has high-value signal.</td>
+                </tr>
+                <tr>
+                  <td>After the visit</td>
+                  <td>Prepare the note, support coding specificity, orders, summaries, and follow-up.</td>
+                  <td>Outputs need clinician review, billing readiness, and audit evidence.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="ux-principles">
+          <h2>Agent UX Principles</h2>
+          <p>Abridge's product principles are unusually useful for agent design because they reject a common failure mode: making the agent too visible, too chatty, or too controlling.</p>
+          <div class="evidence-grid">
+            <div class="evidence-item">
+              <h3>Be like air conditioning</h3>
+              <p>The system should run in the background and make the environment better without demanding constant attention.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Preserve agency</h3>
+              <p>Clinicians must know they are in control. The agent can suggest, but the clinician decides.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Be responsive</h3>
+              <p>Explicit feedback and implicit edits should improve future behavior quickly and safely.</p>
+            </div>
+          </div>
+          <div class="quote-box">For enterprise agents, the best UX is often not a louder chatbot. It is a trusted workflow layer that appears only at the right moment.</div>
+        </section>
+
+        <section class="section" id="agent-evals">
+          <h2>How Agent Evals Get Harder</h2>
+          <p>Moving from single-step note generation to a multi-capability agent raises evaluation complexity by an order of magnitude. Now the system must evaluate not only the final answer but also the agent's boundaries, tool choices, action safety, and timing.</p>
+          <div class="metric-grid">
+            <div class="metric-card">
+              <h3>Clinical quality</h3>
+              <p>Is the output accurate, relevant, grounded, and clinically useful?</p>
+            </div>
+            <div class="metric-card">
+              <h3>Safety</h3>
+              <p>Could the recommendation harm the patient or create unsafe care?</p>
+            </div>
+            <div class="metric-card">
+              <h3>Boundary tests</h3>
+              <p>Does the agent refuse or escalate when the request is outside scope?</p>
+            </div>
+            <div class="metric-card">
+              <h3>Tool selection</h3>
+              <p>Does it choose the right tool at the right time and behave like the workflow expects?</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <h2>What This Means For Your Agentic AI Platform</h2>
+          <p>This talk maps directly to a BA-friendly agent platform. The platform should let non-engineering stakeholders define high-stakes workflows, but it must compile those workflows into strict contracts: risk categories, domain expertise, approved tools, evaluation datasets, release gates, and monitoring.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Platform object</th>
+                  <th>Healthcare-inspired requirement</th>
+                  <th>Why it matters</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Master Agent</td>
+                  <td>Owns workflow routing, release gates, escalation, and risk policy.</td>
+                  <td>High-stakes systems need a responsible coordinator, not freeform autonomy.</td>
+                </tr>
+                <tr>
+                  <td>Sub-Agent</td>
+                  <td>Has scoped capabilities, permitted tools, and explicit output evidence.</td>
+                  <td>Clinical-style workflows require bounded specialization.</td>
+                </tr>
+                <tr>
+                  <td>Skill</td>
+                  <td>Includes when to use, when not to use, clinical/business rubrics, and evals.</td>
+                  <td>Skills in high-trust domains must be evaluated, not merely documented.</td>
+                </tr>
+                <tr>
+                  <td>Tool or MCP</td>
+                  <td>Defines read/write scope, audit logs, approvals, and mock/test modes.</td>
+                  <td>Tool use can create real-world action, so permissions must be productized.</td>
+                </tr>
+                <tr>
+                  <td>Business Flow Markdown</td>
+                  <td>Captures actor, risk, source evidence, approval, and monitoring requirements.</td>
+                  <td>BA users need a readable format that still compiles into governance.</td>
+                </tr>
+                <tr>
+                  <td>Eval Harness</td>
+                  <td>Combines reference-free judges, reference-based judges, human review, and live monitoring.</td>
+                  <td>One judge type is not enough for subjective, high-impact work.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="templates">
+          <h2>Reusable Templates</h2>
+          <p>These templates convert the talk into operating artifacts for high-stakes agent development.</p>
+          <div class="template-grid">
+            <div class="template-card">
+              <h3>High-Stakes Agent Eval Spec</h3>
+              <pre><code># Eval Spec: &lt;agent or skill name&gt;
+
+Domain:
+- Healthcare / finance / legal / internal ops / other
+
+Risk Statement:
+- What can go wrong?
+- Who can be harmed?
+- What regulation or policy applies?
+
+Quality Pillars:
+- Accuracy:
+- Safety:
+- Compliance:
+- Completeness:
+- Style or workflow fit:
+
+Datasets:
+- Historical cases:
+- Synthetic edge cases:
+- Production trace samples:
+- Specialist-labeled cases:
+
+Judges:
+- Reference-free:
+- Reference-based:
+- Human expert:
+- Adversarial or boundary:
+
+Release Gates:
+- Offline eval threshold:
+- Backtest threshold:
+- A/B partner group:
+- Online monitoring alerts:
+
+Rollback:
+- Trigger:
+- Owner:
+- Customer communication:</code></pre>
+            </div>
+            <div class="template-card">
+              <h3>BA-Friendly Agent Flow</h3>
+              <pre><code># Flow: &lt;clinical or business workflow&gt;
+
+Purpose:
+- &lt;business outcome&gt;
+
+Human Owner:
+- &lt;role accountable for decisions&gt;
+
+Actors:
+- User:
+- Master Agent:
+- Sub-Agents:
+- Reviewers:
+
+Inputs:
+- Source conversation:
+- Documents:
+- System records:
+- User feedback:
+
+Steps:
+1. Capture
+   - Required consent:
+   - Source evidence:
+2. Generate
+   - Agent:
+   - Skill:
+   - Tool permissions:
+3. Evaluate
+   - Judges:
+   - Human review condition:
+4. Release
+   - Approval gate:
+   - Monitoring:
+5. Learn
+   - Feedback captured:
+   - Data rights:
+   - Retraining or prompt update path:
+
+Do Not Do:
+- &lt;boundaries and forbidden actions&gt;</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="my-read">
+          <h2>My Read</h2>
+          <p>This is one of the more useful case studies for your platform because it shows the product shape of trustworthy autonomy. The winning pattern is not "agent does everything." It is a unified workflow experience backed by extremely disciplined evals, data operations, access controls, human expertise, and release gates.</p>
+          <p>For Master Agent and Sub-Agent design, the Abridge lesson is clear: autonomy should increase only after the platform proves that the task has known failure modes, high-quality labels, calibrated judges, clear tool permissions, human escalation, and live monitoring. In other words, the platform should sell confidence, not magic.</p>
+          <div class="verdict">
+            <h3>Bottom line</h3>
+            <p>In high-stakes domains, the agent is only half the product. The eval stack, audit trail, clinician or human control, and release discipline are the real moat.</p>
+          </div>
+        </section>
+
+        <section class="section" id="sources">
+          <h2>Sources And Confidence</h2>
+          <p>This page is based primarily on the extracted public captions from the LangChain video, with official Abridge and LangChain pages used to confirm product framing, scale context, evaluation, observability, and trust principles.</p>
+          <ul>
+            <li><a href="https://www.youtube.com/watch?v=mxweSHetuN8">Building Clinical AI Agents with LangGraph: Abridge's Eval Stack for High-Stakes Healthcare</a> - LangChain on YouTube.</li>
+            <li><a href="https://www.abridge.com/">Abridge official site</a>.</li>
+            <li><a href="https://www.abridge.com/platform/clinicians">Abridge Ambient AI for Clinicians</a>.</li>
+            <li><a href="https://www.abridge.com/blog/building-trusted-healthcare-ai">Abridge principles for trusted healthcare AI</a>.</li>
+            <li><a href="https://www.langchain.com/langsmith/evaluation">LangSmith evaluation overview</a>.</li>
+            <li><a href="https://www.langchain.com/langsmith/observability">LangSmith observability overview</a>.</li>
+          </ul>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Page navigation">
+        <section class="toc">
+          <h2>Read Path</h2>
+          <nav>
+            <a href="#executive-summary">Executive Summary</a>
+            <a href="#context">Abridge Context</a>
+            <a href="#high-stakes">High-Stakes Bar</a>
+            <a href="#notes-product">Clinical Notes</a>
+            <a href="#eval-stack">Eval Stack</a>
+            <a href="#data-quality">Data Quality</a>
+            <a href="#judge-design">Judge Design</a>
+            <a href="#release-ladder">Release Ladder</a>
+            <a href="#agent-system">Unified Agent</a>
+            <a href="#ux-principles">Agent UX</a>
+            <a href="#agent-evals">Agent Evals</a>
+            <a href="#platform">Platform Implications</a>
+            <a href="#templates">Templates</a>
+            <a href="#my-read">My Read</a>
+            <a href="#sources">Sources</a>
+          </nav>
+        </section>
+        <section class="source-box">
+          <h2>Useful Lens</h2>
+          <p>For regulated agent workflows, the question is not only "Did the model answer?" It is "Can we prove the output is safe, grounded, auditable, and under human control?"</p>
+          <div class="tag-grid">
+            <span class="tag">Healthcare AI</span>
+            <span class="tag">LangGraph</span>
+            <span class="tag">LangSmith</span>
+            <span class="tag">Clinical evals</span>
+            <span class="tag">Agent governance</span>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <p class="footer-note">Generated as a reading-focused resource page for the YouTube extractor and summarizer project.</p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,1223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Vercel Eve Open Agent Framework - Ship 26 NYC Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5d6a70;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f5f7f1;
+      --line: #d8dfd8;
+      --teal: #16756d;
+      --blue: #2c6381;
+      --green: #557d54;
+      --gold: #a97725;
+      --coral: #bd503f;
+      --plum: #665987;
+      --charcoal: #223039;
+      --mint: #e3f0ec;
+      --sky: #e6eef6;
+      --leaf: #e9f1df;
+      --sand: #f7edd8;
+      --rose: #f5e5df;
+      --shadow: 0 24px 68px rgb(23 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(22 117 109 / 6%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(44 99 129 / 5%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--green), var(--teal), var(--blue), var(--gold), var(--coral), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure, blockquote, pre { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td, code { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 86%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.96fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.45rem, 5.7vw, 5.15rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      object-fit: contain;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+      gap: 24px;
+      margin: 28px 0;
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 7%);
+    }
+
+    .quick-summary h2,
+    .section h2,
+    .sidebar h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-weight: 760;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+    }
+
+    .quick-summary p,
+    .section p,
+    .section li {
+      color: #334047;
+      font-size: 1.01rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .summary-list li::marker { color: var(--coral); }
+
+    .stats-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-width: 0;
+      min-height: 84px;
+      padding: 14px;
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.35rem;
+      line-height: 1.05;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .content {
+      display: grid;
+      gap: 22px;
+      min-width: 0;
+    }
+
+    .section {
+      padding: 34px 0;
+      background: transparent;
+      border-top: 1px solid var(--line);
+    }
+
+    .section h2 {
+      margin-bottom: 14px;
+      font-size: clamp(1.85rem, 3.2vw, 2.65rem);
+    }
+
+    .section h3 {
+      margin-top: 24px;
+      margin-bottom: 8px;
+      color: var(--charcoal);
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .section p + p { margin-top: 12px; }
+    .section ul, .section ol { display: grid; gap: 9px; margin-top: 12px; padding-left: 20px; }
+    .section li::marker { color: var(--teal); }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .toc,
+    .source-box {
+      padding: 18px;
+      background: rgb(255 254 249 / 94%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 14px 36px rgb(23 33 38 / 6%);
+    }
+
+    .toc h2,
+    .source-box h2 {
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+    }
+
+    .toc nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .toc a {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 780;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .source-box p,
+    .source-box li {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .callout {
+      margin-top: 18px;
+      padding: 18px;
+      background: var(--mint);
+      border: 1px solid rgb(22 117 109 / 18%);
+      border-left: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .callout.rose {
+      background: var(--rose);
+      border-color: rgb(189 80 63 / 18%);
+      border-left-color: var(--coral);
+    }
+
+    .callout.gold {
+      background: var(--sand);
+      border-color: rgb(169 119 37 / 22%);
+      border-left-color: var(--gold);
+    }
+
+    .quote-box {
+      margin: 18px 0 2px;
+      padding: 18px 20px;
+      color: #2a383f;
+      background: var(--sky);
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.12rem;
+      line-height: 1.58;
+    }
+
+    .tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0 10px;
+      color: var(--charcoal);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 820;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .flow li,
+    .role-card,
+    .metric-card,
+    .template-card,
+    .evidence-item {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .flow li {
+      position: relative;
+      min-height: 150px;
+      padding: 14px;
+    }
+
+    .flow li:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 48%;
+      right: -9px;
+      z-index: 1;
+      width: 14px;
+      height: 14px;
+      border-top: 2px solid var(--teal);
+      border-right: 2px solid var(--teal);
+      transform: rotate(45deg);
+      background: var(--paper);
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      margin-bottom: 10px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 50%;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .flow strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+      line-height: 1.25;
+    }
+
+    .flow span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.45;
+    }
+
+    .role-grid,
+    .metric-grid,
+    .template-grid,
+    .evidence-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .role-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .template-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .evidence-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .role-card,
+    .metric-card,
+    .template-card,
+    .evidence-item {
+      padding: 16px;
+    }
+
+    .role-card h3,
+    .metric-card h3,
+    .template-card h3,
+    .evidence-item h3 {
+      margin: 0 0 8px;
+      color: var(--ink);
+      font-size: 1rem;
+    }
+
+    .role-card p,
+    .metric-card p,
+    .template-card p,
+    .evidence-item p {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      min-width: 780px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.94rem;
+    }
+
+    th {
+      color: var(--charcoal);
+      background: var(--leaf);
+      font-weight: 880;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    pre {
+      overflow-x: auto;
+      margin-top: 16px;
+      padding: 18px;
+      color: #102027;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.87rem;
+      line-height: 1.62;
+    }
+
+    .verdict {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+      padding: 20px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .verdict p { color: rgb(255 255 255 / 88%); }
+
+    .footer-note {
+      padding: 34px 0 0;
+      color: var(--quiet);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 940px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar { position: static; }
+      h1 { max-width: 14ch; }
+      .flow { grid-template-columns: 1fr; }
+      .flow li:not(:last-child)::after { display: none; }
+      .role-grid,
+      .metric-grid,
+      .evidence-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .action-link {
+        flex: 1 1 auto;
+      }
+
+      .page {
+        padding: 0 18px 56px;
+      }
+
+      .hero {
+        padding: 36px 0 34px;
+      }
+
+      .quick-summary {
+        padding: 20px;
+      }
+
+      .stats-panel,
+      .role-grid,
+      .metric-grid,
+      .template-grid,
+      .evidence-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">Video Notes Library</a>
+    <div class="top-actions">
+      <a class="action-link" href="./index.html">All summaries</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=eD8pV7nSIxY">Watch source</a>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="kicker">Vercel Ship 26 NYC workshop</p>
+        <h1 id="page-title">Build Durable Agents With Eve</h1>
+        <p class="subtitle">A detailed guide to Andrew and Casey's Vercel workshop on Eve, the open agent framework: filesystem-first agents, channels, tools, connections, approvals, evals, observability, sandboxes, workflows, and what this architecture means for enterprise agent platforms.</p>
+        <div class="meta">
+          <span><strong>Source:</strong> Vercel</span>
+          <span><strong>Video:</strong> Ship 26 NYC - Workshop - Build an Agent with Eve</span>
+          <span><strong>Length:</strong> about 40 minutes</span>
+          <span><strong>Transcript:</strong> 403 caption rows, about 6,956 words</span>
+          <span><strong>Framework status:</strong> beta, per official docs</span>
+        </div>
+      </div>
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/eD8pV7nSIxY/hqdefault.jpg" alt="YouTube thumbnail for Ship 26 NYC workshop about Eve">
+        <figcaption>Source video thumbnail. This page summarizes the public captions and cross-checks the current Eve docs and GitHub repository.</figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" id="executive-summary">
+      <div>
+        <h2>Executive Summary</h2>
+        <p>Eve is Vercel's filesystem-first framework for durable backend AI agents. The pitch is that an agent should be inspectable as a directory of files, but still run with production primitives such as durable sessions, sandboxed compute, channels, approvals, observability, evals, and deployment to Vercel.</p>
+        <ul class="summary-list">
+          <li><strong>Authoring model:</strong> put instructions, tools, skills, channels, connections, subagents, schedules, and sandbox files under an <code>agent/</code> directory.</li>
+          <li><strong>Runtime model:</strong> Eve compiles that filesystem contract into a deployable app that runs on Vercel Functions and uses Vercel Workflows for durable session state.</li>
+          <li><strong>Interaction model:</strong> the same agent can be reached through HTTP, Slack, web UI, WebSocket, or other channels, while sessions and streams stay channel agnostic.</li>
+          <li><strong>Enterprise model:</strong> approvals, scoped tools, observability, evals, sandbox isolation, user identity, and code-first extensibility make Eve closer to an agent platform substrate than a single prebuilt assistant.</li>
+        </ul>
+      </div>
+      <div class="stats-panel" aria-label="Summary stats">
+        <div class="stat"><strong>agent/</strong><span>Authoring contract</span></div>
+        <div class="stat"><strong>403</strong><span>Caption rows</span></div>
+        <div class="stat"><strong>6,956</strong><span>Transcript words</span></div>
+        <div class="stat"><strong>Beta</strong><span>Current status</span></div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <article class="content">
+        <section class="section" id="central-thesis">
+          <h2>Central Thesis</h2>
+          <p>The workshop is not only a product demo. It presents a design philosophy for agent platforms: make the agent readable as files, make the runtime durable by default, and hide the generic harness plumbing that every serious agent needs.</p>
+          <p>Andrew describes the simplest Eve agent as just an instructions file and runtime configuration, then progressively adds channels, a Slack deployment, OpenAPI connections, custom tools, approvals, evals, channel permissions, multi-tenant memory, hooks, sandbox execution, and long-running workflow semantics.</p>
+          <div class="quote-box">The interesting thing about Eve is not that it can call an LLM. It is that the boring production pieces become first-class framework concepts instead of one-off glue code.</div>
+        </section>
+
+        <section class="section" id="why-eve">
+          <h2>Why Eve Exists</h2>
+          <p>Most agent demos start with a model call and then slowly accumulate infrastructure: a web route, a Slack integration, a tool registry, a sandbox, trace logging, retries, persistence, approvals, evals, and deployment. Eve reverses that. It assumes those pieces are part of the agent platform, not extra work for every team.</p>
+          <p>The official docs describe Eve as a filesystem-first framework for durable backend AI agents. You define files under <code>agent/</code>, Eve discovers and validates them, compiles a manifest, and serves the runtime as a deployable app. The docs also note that Eve is currently beta, so APIs and behavior may change before general availability.</p>
+          <div class="callout">
+            <p><strong>Practical interpretation:</strong> Eve is trying to be the agent equivalent of a full-stack web framework: conventions over custom wiring, but still code-first when teams need control.</p>
+          </div>
+        </section>
+
+        <section class="section" id="filesystem">
+          <h2>The Filesystem Is The Agent Interface</h2>
+          <p>The main authoring surface is a folder. The workshop shows that by default an Eve app has an <code>agent/</code> directory, and an agent can be just an instructions file. The official docs expand the structure into a conventional set of folders.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Path</th>
+                  <th>What it means</th>
+                  <th>Platform value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>agent/instructions.md</code></td>
+                  <td>The always-on prompt or persona.</td>
+                  <td>BA and domain owners can read the standing rules.</td>
+                </tr>
+                <tr>
+                  <td><code>agent/agent.ts</code></td>
+                  <td>Runtime config such as model and options.</td>
+                  <td>Engineering controls the model and runtime choices.</td>
+                </tr>
+                <tr>
+                  <td><code>agent/tools/*.ts</code></td>
+                  <td>Typed functions the model can call.</td>
+                  <td>Tools become inspectable, testable, and permissionable.</td>
+                </tr>
+                <tr>
+                  <td><code>agent/skills/*</code></td>
+                  <td>On-demand procedures or domain knowledge.</td>
+                  <td>Longer instructions stay outside the always-on prompt.</td>
+                </tr>
+                <tr>
+                  <td><code>agent/subagents/*</code></td>
+                  <td>Child agents for focused tasks.</td>
+                  <td>Delegation becomes explicit rather than hidden inside prompts.</td>
+                </tr>
+                <tr>
+                  <td><code>agent/channels/*</code></td>
+                  <td>Entry points such as Slack or HTTP.</td>
+                  <td>The same core agent can live in multiple business surfaces.</td>
+                </tr>
+                <tr>
+                  <td><code>agent/connections/*</code></td>
+                  <td>Typed integrations with external services.</td>
+                  <td>Credential handling and provider configuration stay outside model context.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="workshop-flow">
+          <h2>Workshop Walkthrough</h2>
+          <p>The live demo begins by scaffolding a new Eve app with the CLI. After authentication with a Vercel project and AI Gateway, the agent can be used from the command line. It is initially a generic assistant, but already has framework-level features such as web search and tool-call presentation.</p>
+          <p>Then the demo adds Slack as a channel. Eve uses Vercel Connect to connect the Slack workspace, deploys the agent, and lets the audience interact with it by mentioning the Slack bot. When a tool call fails during the live demo, Andrew jumps to Vercel's Agent Runs view to inspect the session, showing the observability story in practice.</p>
+          <ol class="flow" aria-label="Workshop flow">
+            <li><span class="step-number">1</span><strong>Scaffold</strong><span>Create a minimal Eve app with an agent directory.</span></li>
+            <li><span class="step-number">2</span><strong>Authenticate</strong><span>Connect local development to Vercel and AI Gateway.</span></li>
+            <li><span class="step-number">3</span><strong>Chat locally</strong><span>Use the terminal channel to test basic behavior.</span></li>
+            <li><span class="step-number">4</span><strong>Add Slack</strong><span>Deploy the same agent into a business channel.</span></li>
+            <li><span class="step-number">5</span><strong>Observe</strong><span>Use Agent Runs to inspect sessions, tools, traces, and failures.</span></li>
+          </ol>
+        </section>
+
+        <section class="section" id="channels">
+          <h2>Channels Are Runtime Entry Points</h2>
+          <p>Eve's channel concept is one of the strongest parts of the model. A channel is how users talk to the same agent runtime: terminal, HTTP, Slack, web UI, WebSocket, and potentially other surfaces. The channel owns authentication, routing, and platform-specific presentation.</p>
+          <p>In Slack, Eve can show thinking indicators, tool calls, and native interaction elements in a Slack-appropriate way. The workshop also clarifies that adding a Slack channel does not automatically give the agent permission to post anywhere in Slack. The channel contract defines how agent events render into Slack; Slack write actions are separate tools and permissions.</p>
+          <div class="callout gold">
+            <p><strong>Design lesson:</strong> channels should not be confused with tools. A channel is where the conversation happens. A tool is an action the agent can choose to execute.</p>
+          </div>
+        </section>
+
+        <section class="section" id="tools-connections">
+          <h2>Tools And Connections</h2>
+          <p>The demo then adds an OpenAPI connection for weather data. A coding agent reads the bundled Eve docs inside <code>node_modules/eve/docs</code>, adds a weather connection file, and the Eve agent immediately uses the connection to answer weather questions.</p>
+          <p>The Q&A distinguishes tools from connections. A normal tool is a one-to-one function. A connection is a typed integration with an external service, intended to keep provider details and credential access outside the prompt and tool internals. For delegated user or team credentials, the docs point to pairing Eve tools with Vercel Connect.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Primitive</th>
+                  <th>Use it for</th>
+                  <th>Example from workshop</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Connection</td>
+                  <td>Structured external API integration with provider-specific setup.</td>
+                  <td>OpenAPI weather connection.</td>
+                </tr>
+                <tr>
+                  <td>Read tool</td>
+                  <td>Low-risk retrieval from a data source.</td>
+                  <td>MongoDB query tool.</td>
+                </tr>
+                <tr>
+                  <td>Write tool</td>
+                  <td>Mutations that may require human approval.</td>
+                  <td>MongoDB mutate tool with approval required.</td>
+                </tr>
+                <tr>
+                  <td>Framework tools</td>
+                  <td>Standard harness operations like file reads, writes, web fetch, web search, glob, and grep.</td>
+                  <td>Default tools that can be disabled or replaced.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="approvals">
+          <h2>Human Approval Is A First-Class Control</h2>
+          <p>When Andrew shows the MongoDB example, he separates <code>query</code> from <code>mutate</code>. The mutation tool requires approval, so it will not run until a human approves the action. This is a small detail, but it is the shape of production agent design: reads and writes should not share the same trust boundary.</p>
+          <p>Approvals also flow through channels. In the terminal, a question or approval can appear as a TUI prompt; in Slack, the same interaction can be presented as a native Slack experience. The framework owns the channel-specific presentation so every team does not have to rebuild approval UI from scratch.</p>
+          <div class="callout rose">
+            <p><strong>Enterprise rule:</strong> any tool that mutates data, sends messages, changes configuration, spends budget, or exposes sensitive information should have an explicit approval policy.</p>
+          </div>
+        </section>
+
+        <section class="section" id="evals">
+          <h2>Evals Close The Feedback Loop</h2>
+          <p>When asked how Eve improves agents over time, Andrew points to evals as the starting point. If a business will iterate seriously on an agent, it needs to know the current state, then compare new behavior as instructions, tools, skills, and models change.</p>
+          <p>The demo asks a coding agent to write an eval for weather behavior. Eve's eval API lets developers interact with the agent similarly to manual CLI testing, but automate the assertions. It supports deterministic checks such as "does the output include NYC" and semantic checks through LLM-as-judge. Andrew also mentions sending evals to providers such as Braintrust.</p>
+          <div class="metric-grid">
+            <div class="metric-card">
+              <h3>Regression</h3>
+              <p>Does a new instruction or tool break previous behavior?</p>
+            </div>
+            <div class="metric-card">
+              <h3>Tool use</h3>
+              <p>Does the agent choose the correct connection or tool?</p>
+            </div>
+            <div class="metric-card">
+              <h3>Policy</h3>
+              <p>Does it ask for approval before risky operations?</p>
+            </div>
+            <div class="metric-card">
+              <h3>Semantics</h3>
+              <p>Does the answer mean the right thing, not merely match a string?</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="observability">
+          <h2>Observability Out Of The Box</h2>
+          <p>The workshop's failed Slack demo is useful because it shows the debugging surface. A run can be opened in Vercel, then inspected for messages, tool calls, reasoning, timings, and token usage. The official docs call Agent Runs the primary observability surface and say every Eve project gets it automatically without a separate instrumentation file.</p>
+          <p>This matters because agent failures are often not normal request failures. They can be tool failures, poor skill selection, bad context, invalid arguments, permission problems, or model behavior. A production platform needs turn-level inspection, not only application logs.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Observation target</th>
+                  <th>Why it matters</th>
+                  <th>Platform implication</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Sessions and turns</td>
+                  <td>Shows what interaction triggered the agent and how the conversation progressed.</td>
+                  <td>Support teams can reproduce user-visible behavior.</td>
+                </tr>
+                <tr>
+                  <td>Tool calls</td>
+                  <td>Shows what the agent attempted and what failed.</td>
+                  <td>Tool owners can debug contracts and permissions.</td>
+                </tr>
+                <tr>
+                  <td>Reasoning and traces</td>
+                  <td>Shows why the agent selected an action or skill.</td>
+                  <td>Reviewers can detect policy or prompt drift.</td>
+                </tr>
+                <tr>
+                  <td>Token usage</td>
+                  <td>Shows input, output, cached token, and cost patterns.</td>
+                  <td>Platform teams can manage budget and optimize context.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="sessions-streams">
+          <h2>Sessions, Streams, And Persistence</h2>
+          <p>The Q&A explores message persistence and channel ownership. Eve has sessions and streams. A session is channel agnostic, and channels decide how to present it. Andrew describes Vercel's internal data agent, where most invocations happen in Slack but a button can open the same session in a web view.</p>
+          <p>Official docs define a session as the durable conversation or task started by a channel or HTTP request. Each user message or external event creates a turn. During a turn, the agent can call tools, load skills, read and write sandbox files, delegate to subagents, and stream lifecycle events back to the client.</p>
+          <div class="callout">
+            <p><strong>Design lesson:</strong> persistence should belong to the task/session, not to any one UI channel. That lets Slack, web, HTTP, and future channels resume the same work safely.</p>
+          </div>
+        </section>
+
+        <section class="section" id="determinism">
+          <h2>Determinism Where It Matters</h2>
+          <p>A question asks how Eve handles less deterministic use cases that cross-reference multiple connections. Andrew's answer is pragmatic. He believes frontier models are good at following plain-English instructions, so teams should try that first, then add evals. But Eve also offers ways to regain determinism when needed.</p>
+          <p>The workshop mentions output schemas, TypeScript SDK surfaces, subagents, and possible workflow primitives that mix agent calls with predetermined output. The broader lesson is not to force every agent into a rigid workflow, but to make deterministic boundaries available where the business needs them.</p>
+          <div class="evidence-grid">
+            <div class="evidence-item">
+              <h3>Plain English first</h3>
+              <p>Use instructions and skills when the model can reasonably follow the procedure.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Output schema</h3>
+              <p>Ask the agent to return typed data when downstream systems need structure.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Workflow steps</h3>
+              <p>Use predetermined steps when compliance, approvals, or deterministic outcomes matter.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="subagents-skills">
+          <h2>Skills And Subagents</h2>
+          <p>Eve separates skills from subagents. A skill is larger procedural or domain context loaded into the running agent only when relevant. A subagent is a child agent with separate conversation history and state, useful for narrower tools, specialist identity, or parallel delegation.</p>
+          <p>This distinction is useful for your platform. A skill changes what the current agent knows or how it should behave. A subagent creates a separate worker with its own role, tools, memory boundary, and outputs. Mixing those concepts creates vague agent architecture.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Concept</th>
+                  <th>Use when</th>
+                  <th>Do not use when</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Skill</td>
+                  <td>The same agent needs a repeatable procedure or domain guide.</td>
+                  <td>You need isolated context, separate tools, or parallel work.</td>
+                </tr>
+                <tr>
+                  <td>Subagent</td>
+                  <td>A focused task deserves its own identity, state, or tool boundary.</td>
+                  <td>A short instruction would be enough.</td>
+                </tr>
+                <tr>
+                  <td>Tool</td>
+                  <td>The agent needs a typed action with inputs and outputs.</td>
+                  <td>You are only adding knowledge or process instructions.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="multi-tenant-memory">
+          <h2>Multi-Tenant Memory</h2>
+          <p>When asked how Eve differs from Claude Tag-like Slack agents, Andrew says Eve is code-first and intended for building an agent for your business. He contrasts a single deployed assistant with a programmable framework that can support multi-tenant APIs, per-user skills, and custom memory behavior.</p>
+          <p>The workshop references a guide for multi-tenant memory where skills could be defined per invoking user and stored in a database. That is a high-leverage idea: memory should not be a single global blob. It needs tenant, user, channel, permission, and data-retention boundaries.</p>
+          <div class="callout gold">
+            <p><strong>Platform lesson:</strong> for enterprise agents, memory must be scoped by who is asking, which workspace they are in, what data they are allowed to access, and whether the memory is personal, team, or global.</p>
+          </div>
+        </section>
+
+        <section class="section" id="harness-hooks">
+          <h2>Harness Extensibility And Hooks</h2>
+          <p>Eve owns the default harness, but it exposes extension points. The workshop mentions default harness features such as read file, write file, web fetch, web search, glob, and grep. Teams can disable or replace default implementations, but Andrew recommends leaning heavily on evals when doing so.</p>
+          <p>Hooks let developers plug into harness events such as compaction, pre-tool calls, and post-tool calls. That gives teams a way to build around the harness without replacing it wholesale. Andrew notes that owning the harness enables dynamic step boundaries, workflows, stateless serverless execution, and cross-function continuation.</p>
+        </section>
+
+        <section class="section" id="sandbox-workflows">
+          <h2>Sandbox And Durable Workflows</h2>
+          <p>Every Eve agent has a sandbox. Locally, the workshop says it uses Docker; on Vercel, it uses Vercel Sandbox. The official docs describe the sandbox as an isolated bash-style compute environment with its own filesystem, targeted by framework tools and authored tools. On Vercel, the sandbox can run in ephemeral microVMs for untrusted or model-generated commands.</p>
+          <p>For long-running tasks, Eve relies on Vercel Workflows under the hood. Andrew explains that because the harness is stateless, a turn can dispatch to a new serverless function at tool-call boundaries and pick up where it left off. This is how Eve can avoid thinking in terms of one long-running process stuck inside a single function timeout.</p>
+          <div class="role-grid">
+            <div class="role-card">
+              <h3>Sandbox</h3>
+              <p>Isolated filesystem and command execution for model-generated work.</p>
+            </div>
+            <div class="role-card">
+              <h3>Workflows</h3>
+              <p>Durable progress, replay, retries, and long-running session semantics.</p>
+            </div>
+            <div class="role-card">
+              <h3>Functions</h3>
+              <p>Serverless routes, tool execution, channels, and streaming surfaces.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="ai-sdk">
+          <h2>AI SDK Versus Eve</h2>
+          <p>One audience question asks when to use Eve versus the Vercel AI SDK. Andrew answers that Eve is built on top of AI SDK. If you want low-level primitives and want to build your own harness, AI SDK makes sense. If you want durable agents, channels, tools, evals, sandboxes, workflows, and production runtime conventions, Eve is the higher-level framework.</p>
+          <p>This is a useful mental model for platform teams. AI SDK is the model interaction layer. Eve is the agent runtime and authoring layer. A business can still drop down to lower-level primitives when it needs a different authoring model.</p>
+        </section>
+
+        <section class="section" id="pricing">
+          <h2>Cost Model</h2>
+          <p>The workshop says deployment itself is serverless, so an idle Eve agent should not cost much just by existing. The official pricing docs clarify that Eve usage is billed through the Vercel resources and third-party services the agent uses: Functions, Workflows, Sandbox, AI Gateway or model providers, plus any external APIs.</p>
+          <div class="metric-grid">
+            <div class="metric-card">
+              <h3>Session volume</h3>
+              <p>More sessions and turns create more function and workflow activity.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Model usage</h3>
+              <p>Prompt length, tool results, reasoning, cached tokens, and output length drive token cost.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Tool calls</h3>
+              <p>External APIs and tool execution increase duration and third-party usage.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Sandbox use</h3>
+              <p>Command execution, provisioned resources, snapshots, and network use add cost.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="platform-implications">
+          <h2>Implications For Your Agentic AI Platform</h2>
+          <p>Eve is a useful reference architecture for the platform you are building because it decomposes agent systems into objects that BA users and engineers can reason about separately. The important product lesson is not to expose one giant prompt box. Expose durable, inspectable building blocks.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Eve concept</th>
+                  <th>Your platform concept</th>
+                  <th>What BA users should configure</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Instructions</td>
+                  <td>Persona prompt or master policy</td>
+                  <td>Role, scope, tone, forbidden actions, escalation style.</td>
+                </tr>
+                <tr>
+                  <td>Skills</td>
+                  <td>Cognitive skill or SOP module</td>
+                  <td>When to use, inputs, steps, examples, eval cases.</td>
+                </tr>
+                <tr>
+                  <td>Tools</td>
+                  <td>Actionable skill or MCP tool</td>
+                  <td>Read/write permission, approvals, allowed fields, audit log.</td>
+                </tr>
+                <tr>
+                  <td>Channels</td>
+                  <td>Business surfaces</td>
+                  <td>Slack, web, email, ticketing, customer portal, and routing rules.</td>
+                </tr>
+                <tr>
+                  <td>Connections</td>
+                  <td>Enterprise integrations</td>
+                  <td>Credential scope, tenant, data classification, available operations.</td>
+                </tr>
+                <tr>
+                  <td>Subagents</td>
+                  <td>Specialized workers</td>
+                  <td>Task boundary, tool boundary, output contract, review owner.</td>
+                </tr>
+                <tr>
+                  <td>Evals</td>
+                  <td>Quality gate</td>
+                  <td>Example cases, pass/fail criteria, regression suite, judge rubric.</td>
+                </tr>
+                <tr>
+                  <td>Agent Runs</td>
+                  <td>Trace and audit console</td>
+                  <td>Who asked, what happened, which tools ran, what was approved.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="templates">
+          <h2>Reusable Templates</h2>
+          <p>These templates translate the workshop into practical platform artifacts.</p>
+          <div class="template-grid">
+            <div class="template-card">
+              <h3>Eve-Style Agent Spec</h3>
+              <pre><code># Agent: &lt;name&gt;
+
+Purpose:
+- &lt;business outcome&gt;
+
+Instructions:
+- Role:
+- Scope:
+- Do not:
+- Escalate when:
+
+Model:
+- Provider:
+- Model:
+- Budget:
+
+Channels:
+- Slack:
+- Web:
+- HTTP:
+
+Skills:
+- &lt;skill name&gt;: when to load, eval cases
+
+Tools:
+- &lt;tool name&gt;:
+  - read/write:
+  - input schema:
+  - approval:
+  - audit:
+
+Connections:
+- &lt;system&gt;:
+  - credential owner:
+  - allowed operations:
+  - tenant scope:
+
+Subagents:
+- &lt;subagent&gt;:
+  - task boundary:
+  - tools:
+  - output:
+
+Evals:
+- Regression:
+- Tool selection:
+- Approval behavior:
+- Business outcome:
+
+Observability:
+- Required traces:
+- Token budget alert:
+- Failure owner:</code></pre>
+            </div>
+            <div class="template-card">
+              <h3>Business Flow Markdown</h3>
+              <pre><code># Flow: &lt;business process&gt;
+
+Trigger:
+- User message / ticket / schedule / webhook
+
+Channel:
+- Where the agent is invoked:
+- Who can invoke it:
+
+Intent:
+- What the user is trying to accomplish:
+
+Steps:
+1. Understand request
+   - Agent:
+   - Skill:
+   - Evidence required:
+2. Retrieve data
+   - Connection:
+   - Read tools:
+   - Data classification:
+3. Decide next action
+   - Rule:
+   - Human approval needed when:
+4. Act
+   - Write tool:
+   - Approval:
+   - Audit record:
+5. Close
+   - Output format:
+   - Channel response:
+   - Trace link:
+
+Quality Gates:
+- Eval examples:
+- Must cite:
+- Must not:
+- Escalation condition:</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="my-read">
+          <h2>My Read</h2>
+          <p>Eve's strongest idea is the filesystem contract. It makes an agent inspectable in the same way a web app is inspectable: you can see where instructions live, where tools live, where channels live, where subagents live, and where skills live. That matters for teams because agent behavior must be reviewable, versioned, and testable.</p>
+          <p>The second strong idea is that runtime infrastructure should be boring. Durable sessions, sandboxing, observability, approvals, evals, and deployment should not be reinvented for every agent. Eve's opinionated stack is valuable because it turns production concerns into defaults.</p>
+          <p>For your platform, I would steal the object model more than the exact implementation. BA users should not see folders and TypeScript first. They should see Master Agent, Sub-Agent, Skill, Tool, Channel, Connection, Eval, Approval, Memory, and Flow. Under the hood, those can compile to filesystem-like artifacts, schemas, and deployable runtime pieces.</p>
+          <div class="verdict">
+            <h3>Bottom line</h3>
+            <p>Eve is a strong example of agent-platform architecture: code-first for engineers, file-first for inspectability, channel-first for deployment, eval-first for iteration, and workflow-backed for durable execution.</p>
+          </div>
+        </section>
+
+        <section class="section" id="sources">
+          <h2>Sources And Confidence</h2>
+          <p>This page is based primarily on the extracted public captions from the Vercel workshop, with official Vercel docs, changelog, and GitHub repository used to verify current Eve concepts and beta status as of July 22, 2026.</p>
+          <ul>
+            <li><a href="https://www.youtube.com/watch?v=eD8pV7nSIxY">Ship 26 NYC - Workshop - Build an Agent with Eve: The Open Agent Framework</a> - Vercel on YouTube.</li>
+            <li><a href="https://vercel.com/docs/eve">Vercel docs: Eve overview</a>.</li>
+            <li><a href="https://vercel.com/docs/eve/concepts">Vercel docs: Eve concepts</a>.</li>
+            <li><a href="https://vercel.com/docs/eve/observability">Vercel docs: Eve observability</a>.</li>
+            <li><a href="https://vercel.com/docs/eve/pricing">Vercel docs: Eve pricing and limits</a>.</li>
+            <li><a href="https://vercel.com/changelog/introducing-eve-an-open-source-agent-framework">Vercel changelog: Introducing Eve</a>.</li>
+            <li><a href="https://github.com/vercel/eve">GitHub: vercel/eve</a>.</li>
+          </ul>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Page navigation">
+        <section class="toc">
+          <h2>Read Path</h2>
+          <nav>
+            <a href="#executive-summary">Executive Summary</a>
+            <a href="#central-thesis">Central Thesis</a>
+            <a href="#why-eve">Why Eve</a>
+            <a href="#filesystem">Filesystem Interface</a>
+            <a href="#workshop-flow">Workshop Flow</a>
+            <a href="#channels">Channels</a>
+            <a href="#tools-connections">Tools and Connections</a>
+            <a href="#approvals">Approvals</a>
+            <a href="#evals">Evals</a>
+            <a href="#observability">Observability</a>
+            <a href="#sessions-streams">Sessions and Streams</a>
+            <a href="#determinism">Determinism</a>
+            <a href="#subagents-skills">Skills and Subagents</a>
+            <a href="#multi-tenant-memory">Multi-Tenant Memory</a>
+            <a href="#harness-hooks">Harness Hooks</a>
+            <a href="#sandbox-workflows">Sandbox and Workflows</a>
+            <a href="#ai-sdk">AI SDK vs Eve</a>
+            <a href="#pricing">Cost Model</a>
+            <a href="#platform-implications">Platform Implications</a>
+            <a href="#templates">Templates</a>
+            <a href="#my-read">My Read</a>
+            <a href="#sources">Sources</a>
+          </nav>
+        </section>
+        <section class="source-box">
+          <h2>Useful Lens</h2>
+          <p>Ask whether every agent capability is visible as a runtime object: channel, skill, tool, connection, eval, approval, memory, and trace.</p>
+          <div class="tag-grid">
+            <span class="tag">Vercel Eve</span>
+            <span class="tag">Agent runtime</span>
+            <span class="tag">Channels</span>
+            <span class="tag">Evals</span>
+            <span class="tag">Durable agents</span>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <p class="footer-note">Generated as a reading-focused resource page for the YouTube extractor and summarizer project.</p>
+  </main>
+</body>
+</html>

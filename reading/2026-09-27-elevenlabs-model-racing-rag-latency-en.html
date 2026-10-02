@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>How ElevenLabs Cut RAG Latency in Half with Model Racing</title>
+    <meta
+      name="description"
+      content="A critical, visual summary of ElevenLabs' model-racing architecture for faster query rewriting: the design, measured latency gains, failure modes, and production lessons."
+    />
+    <link rel="stylesheet" href="article-theme.css" />
+    <style>
+      .visual {
+        margin: 1.75rem 0 2rem;
+      }
+      .visual img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: #fff;
+      }
+      .visual figcaption {
+        margin-top: 0.7rem;
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.55;
+      }
+      .visual figcaption strong {
+        color: var(--ink);
+      }
+      .callout {
+        margin: 1.4rem 0;
+        padding: 1rem !important;
+        border-left: 3px solid var(--green) !important;
+      }
+      .callout.warning {
+        border-left-color: var(--gold) !important;
+      }
+      .metric-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1px;
+        margin: 1.5rem 0;
+        background: var(--line);
+        border: 1px solid var(--line);
+      }
+      .metric-strip > div {
+        padding: 1rem;
+        background: var(--paper);
+      }
+      .metric-strip span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+      }
+      .metric-strip strong {
+        display: block;
+        margin: 0.25rem 0;
+        font-family: var(--serif);
+        font-size: clamp(1.4rem, 4vw, 2rem);
+        font-weight: 500;
+      }
+      .metric-strip small {
+        color: var(--green);
+        font-size: 0.86rem;
+      }
+      .race-equation {
+        margin: 1.25rem 0;
+        padding: 1.15rem;
+        overflow-wrap: anywhere;
+        border: 1px solid var(--line);
+        background: var(--soft);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        text-align: center;
+      }
+      .evidence-table {
+        width: 100%;
+        min-width: 0 !important;
+        margin: 1.25rem 0;
+        table-layout: fixed;
+        border-collapse: collapse;
+      }
+      .evidence-table th,
+      .evidence-table td {
+        padding: 0.75rem 0.5rem;
+        text-align: left;
+        vertical-align: top;
+        overflow-wrap: anywhere;
+        border-bottom: 1px solid var(--line);
+      }
+      .evidence-table th {
+        font-weight: 500;
+      }
+      .tradeoff-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1px;
+        margin: 1.5rem 0;
+        background: var(--line);
+        border: 1px solid var(--line);
+      }
+      .tradeoff-grid > div {
+        padding: 1rem;
+        background: var(--paper);
+      }
+      .tradeoff-grid h3 {
+        margin-top: 0;
+      }
+      .tradeoff-grid p {
+        margin-bottom: 0;
+        color: var(--muted) !important;
+        font-size: 0.92rem !important;
+      }
+      @media (max-width: 750px) {
+        .metric-strip,
+        .tradeoff-grid {
+          grid-template-columns: 1fr;
+        }
+        .visual {
+          margin: 1.35rem 0 1.7rem;
+        }
+        .evidence-table {
+          font-size: 0.86rem;
+        }
+        .evidence-table th,
+        .evidence-table td {
+          padding-inline: 0.35rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="/reading/">Reading room</a>
+      <div class="top-actions">
+        <a class="action-link" href="https://elevenlabs.io/">ElevenLabs</a>
+      </div>
+    </nav>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">ElevenLabs · Engineering case study</p>
+          <h1>How ElevenLabs Cut RAG Latency in Half with Model Racing</h1>
+          <p class="subtitle">
+            The slow part was not vector search. It was the LLM rewriting each
+            conversational query before retrieval. ElevenLabs removed that
+            serial dependency by racing several models and accepting the first
+            valid answer.
+          </p>
+          <div class="meta">
+            <span>Source: six-page PDF</span><span>English deep dive</span
+            ><span>Summary run: September 27, 2026</span>
+          </div>
+        </div>
+        <figure class="hero-card">
+          <img
+            src="2026-09-27-elevenlabs-rag-model-racing-architecture.png"
+            alt="ElevenLabs before and after RAG architecture, with three query-rewrite models raced in parallel"
+          />
+          <figcaption>
+            The key change: replace one blocking rewrite model with several
+            independent candidates and a deadline-based fallback.
+          </figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="source">
+            <p class="section-label">Evidence boundary</p>
+            <h2>This is a vendor case study, not a controlled benchmark</h2>
+            <p>
+              The supplied document is a concise engineering brief by ElevenLabs
+              software engineer Michal Korbela. It explains the bottleneck,
+              architecture change, latency percentiles, and an outage anecdote.
+              It does not disclose sample size, traffic mix, regions, hardware,
+              evaluation window, rewrite-quality metrics, or statistical
+              uncertainty.
+            </p>
+            <p>
+              The reported numbers are still useful as a production pattern, but
+              they establish what happened in ElevenLabs' system rather than
+              proving that every RAG application will see the same gain.
+            </p>
+            <div class="callout warning">
+              <strong>Read “sub-200ms” precisely</strong>
+              <p>
+                The post-change median is 155ms. The p75 is 250ms and p95 is
+                426ms, so the headline does not describe every request.
+              </p>
+            </div>
+          </section>
+
+          <section id="summary">
+            <p class="section-label">Executive summary</p>
+            <h2>The optimization was architectural, not a faster prompt</h2>
+            <p>
+              ElevenLabs runs retrieval on every conversational turn. Before
+              searching, an LLM rewrites the user's latest message and dialogue
+              history into a self-contained query. This improves retrieval and
+              creates an auditable representation of what the system searched
+              for, but it also inserts another networked model call into the
+              critical path.
+            </p>
+            <p>
+              In the original design, one externally hosted LLM performed that
+              rewrite. Provider latency, regional throughput limits, and outages
+              therefore governed the whole RAG pipeline. According to the brief,
+              this single step accounted for
+              <strong>80% of total RAG latency</strong>.
+            </p>
+            <p>
+              The fix was to dispatch the same rewrite request to multiple
+              models simultaneously, including colocated self-hosted Qwen 3-4B
+              and Qwen 3-30B-A3B variants. The first completion that passes
+              validation wins. If none responds within one second, retrieval
+              proceeds with the raw user message instead.
+            </p>
+            <ul class="summary-list">
+              <li>Median RAG latency fell from 326ms to 155ms.</li>
+              <li>p75 fell from 436ms to 250ms.</li>
+              <li>p95 fell from 629ms to 426ms.</li>
+              <li>
+                The same design reduced dependence on one provider and allowed
+                conversations to continue during an external outage.
+              </li>
+            </ul>
+          </section>
+
+          <section id="rewrite">
+            <p class="section-label">The hidden bottleneck</p>
+            <h2>Conversational retrieval needs a self-contained query</h2>
+            <p>
+              A user rarely repeats all relevant context. A message such as “Can
+              we customize those limits based on our peak traffic patterns?”
+              only makes sense when the earlier conversation has already
+              established that “those limits” means Enterprise-plan API rate
+              limits.
+            </p>
+            <p>
+              The rewrite stage turns that dependent turn into an explicit
+              retrieval query: can Enterprise-plan API rate limits be customized
+              for specific traffic patterns? This can improve document matching
+              and produce a useful audit trail, especially in regulated support
+              workflows. Yet the rewrite is still a serial dependency: RAG
+              cannot begin until it finishes.
+            </p>
+            <div class="callout">
+              <strong>The systems lesson</strong>
+              <p>
+                Optimize the dominant stage, not the most fashionable one. Here,
+                vector retrieval was not the problem; the context-rewriting LLM
+                in front of it was.
+              </p>
+            </div>
+          </section>
+
+          <section id="architecture">
+            <p class="section-label">Model racing</p>
+            <h2>Turn one blocking dependency into a race</h2>
+            <p>
+              The new pipeline sends each rewrite request to an external model
+              and two self-hosted models at the same time. If their latencies
+              are not perfectly correlated, the winner is usually faster and
+              less variable than any one candidate.
+            </p>
+            <div
+              class="race-equation"
+              aria-label="Model racing latency equation"
+            >
+              T<sub>race</sub> = min(T<sub>external</sub>, T<sub
+                >self-hosted A</sub
+              >, T<sub>self-hosted B</sub>)
+            </div>
+            <p>
+              In practice, the expression is “first <em>valid</em> completion,”
+              not merely first bytes. The validity gate must reject empty,
+              malformed, unrelated, or policy-violating rewrites. A weak gate
+              converts a latency optimization into a retrieval-quality bug.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-09-27-elevenlabs-rag-model-racing-architecture.png"
+                alt="Before and after diagram showing a single external rewrite model replaced by parallel external and self-hosted models"
+                loading="lazy"
+              />
+              <figcaption>
+                <strong>Source diagram.</strong> Before, one rewrite LLM blocks
+                RAG. After, external and self-hosted candidates race; the dotted
+                path sends the raw query to RAG when the one-second deadline is
+                reached.
+              </figcaption>
+            </figure>
+          </section>
+
+          <section id="fallback">
+            <p class="section-label">Graceful degradation</p>
+            <h2>The one-second fallback chooses availability over precision</h2>
+            <p>
+              If every rewrite model misses the deadline, ElevenLabs uses the
+              user's raw message. The conversation continues instead of
+              stalling, but retrieval may lose context and return less relevant
+              documents. That is a deliberate product policy, not a free
+              reliability win.
+            </p>
+            <div class="tradeoff-grid">
+              <div>
+                <h3>What improves</h3>
+                <p>
+                  Bounded waiting time, provider independence, better regional
+                  stability, and continued service during model outages.
+                </p>
+              </div>
+              <div>
+                <h3>What can degrade</h3>
+                <p>
+                  Coreference resolution, retrieval recall, answer grounding,
+                  and auditability when the raw turn lacks prior context.
+                </p>
+              </div>
+            </div>
+            <p>
+              Production systems should record this fallback as an explicit
+              mode. It should be visible in traces and quality dashboards so
+              availability gains do not quietly hide a rise in wrong answers.
+            </p>
+          </section>
+
+          <section id="results">
+            <p class="section-label">Measured outcome</p>
+            <h2>Every reported percentile improved, but the tail remains</h2>
+            <div class="metric-strip" aria-label="RAG latency improvements">
+              <div>
+                <span>Median</span><strong>326 → 155ms</strong
+                ><small>52.5% lower</small>
+              </div>
+              <div>
+                <span>p75</span><strong>436 → 250ms</strong
+                ><small>42.7% lower</small>
+              </div>
+              <div>
+                <span>p95</span><strong>629 → 426ms</strong
+                ><small>32.3% lower</small>
+              </div>
+            </div>
+            <table class="evidence-table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Before</th>
+                  <th>After</th>
+                  <th>Saved</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Median</td>
+                  <td>326ms</td>
+                  <td>155ms</td>
+                  <td>171ms</td>
+                </tr>
+                <tr>
+                  <td>p75</td>
+                  <td>436ms</td>
+                  <td>250ms</td>
+                  <td>186ms</td>
+                </tr>
+                <tr>
+                  <td>p95</td>
+                  <td>629ms</td>
+                  <td>426ms</td>
+                  <td>203ms</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>
+              The absolute saving grows toward the tail, while the relative
+              improvement shrinks. This suggests the race removed a large
+              rewrite penalty but did not eliminate every source of tail latency
+              across the complete RAG path.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-09-27-elevenlabs-rag-latency-results.png"
+                alt="ElevenLabs latency cards showing before and after median, p75, and p95 measurements with a time-series chart"
+                loading="lazy"
+              />
+              <figcaption>
+                <strong>Source results.</strong> The cards provide the direct
+                before-and-after comparison. The chart's displayed means cover
+                the plotted historical interval and should not be confused with
+                the post-change cards.
+              </figcaption>
+            </figure>
+          </section>
+
+          <section id="reliability">
+            <p class="section-label">Beyond latency</p>
+            <h2>Racing is also a reliability pattern</h2>
+            <p>
+              An external provider can slow down at peak demand, impose regional
+              throughput limits, or become unavailable. Colocated self-hosted
+              models give the system independent paths with more predictable
+              network latency. ElevenLabs reports that when one LLM provider
+              failed, conversations continued on its internal models.
+            </p>
+            <p>
+              This is closely related to hedged requests in distributed systems:
+              duplicate work can reduce tail latency and mask isolated failures.
+              The benefit is strongest when candidates fail independently. It is
+              weaker when every model shares the same upstream dependency,
+              region, or capacity bottleneck.
+            </p>
+          </section>
+
+          <section id="costs">
+            <p class="section-label">Trade-offs</p>
+            <h2>The fastest answer may require more total work</h2>
+            <p>
+              Parallel inference spends capacity on candidates whose output is
+              discarded. ElevenLabs says the additional compute cost is
+              negligible because it already operates this infrastructure for
+              other services. That conclusion is specific to its deployment, not
+              a general property of model racing.
+            </p>
+            <ul class="summary-list">
+              <li>
+                <strong>Load amplification:</strong> one user turn can create
+                three inference requests instead of one.
+              </li>
+              <li>
+                <strong>Wasted compute:</strong> losing generations may continue
+                unless the runtime supports prompt cancellation.
+              </li>
+              <li>
+                <strong>Fast-model bias:</strong> the quickest valid model wins
+                more traffic, so subtle quality differences can become systemic.
+              </li>
+              <li>
+                <strong>Model drift:</strong> provider or self-hosted upgrades
+                can change rewrite style, retrieval behavior, and fallback rate.
+              </li>
+              <li>
+                <strong>Operational burden:</strong> self-hosting adds capacity
+                planning, observability, deployment, security, and incident
+                work.
+              </li>
+            </ul>
+          </section>
+
+          <section id="playbook">
+            <p class="section-label">Production playbook</p>
+            <h2>How to test this pattern without losing retrieval quality</h2>
+            <ol class="summary-list">
+              <li>
+                <strong>Profile the full path.</strong> Confirm that rewriting,
+                not embedding, vector search, reranking, or answer generation,
+                dominates the latency budget.
+              </li>
+              <li>
+                <strong>Build a rewrite evaluation set.</strong> Include
+                pronouns, follow-up questions, negation, topic changes, long
+                history, and domain-specific entities.
+              </li>
+              <li>
+                <strong>Define “valid” structurally and semantically.</strong>
+                Check schema, length, required entities, language, policy, and
+                obvious divergence from the latest user intent.
+              </li>
+              <li>
+                <strong>Measure downstream outcomes.</strong> Compare retrieval
+                recall, grounded-answer quality, citation accuracy, and task
+                success for each rewrite model and the raw-query fallback.
+              </li>
+              <li>
+                <strong>Set a budgeted deadline.</strong> Derive the fallback
+                threshold from the end-to-end voice or chat SLA rather than
+                copying one second blindly.
+              </li>
+              <li>
+                <strong>Trace every winner and loser.</strong> Record model,
+                latency, validity result, cancellation, fallback reason, region,
+                and downstream retrieval score.
+              </li>
+              <li>
+                <strong>Canary model changes.</strong> Pin versions and rerun
+                quality plus latency evals before changing the candidate pool.
+              </li>
+            </ol>
+            <div class="callout">
+              <strong>A cheaper variant</strong>
+              <p>
+                Full parallel racing is not the only design. A system can start
+                its preferred model, then launch a backup after a short hedge
+                delay when the first request is unusually slow. This trades a
+                little latency for lower duplicate compute.
+              </p>
+            </div>
+          </section>
+
+          <section id="fit">
+            <p class="section-label">Where it fits</p>
+            <h2>Use model racing when latency and independence justify it</h2>
+            <table class="evidence-table">
+              <thead>
+                <tr>
+                  <th>Good fit</th>
+                  <th>Poor fit</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Rewrite is the dominant latency stage</td>
+                  <td>Retrieval or generation dominates instead</td>
+                </tr>
+                <tr>
+                  <td>Several models meet the quality bar</td>
+                  <td>Only one model is sufficiently accurate</td>
+                </tr>
+                <tr>
+                  <td>Strict conversational latency SLA</td>
+                  <td>Batch or asynchronous workflow</td>
+                </tr>
+                <tr>
+                  <td>Independent provider and self-hosted paths</td>
+                  <td>All candidates share the same failure domain</td>
+                </tr>
+                <tr>
+                  <td>Fallback errors are detectable and recoverable</td>
+                  <td>A degraded rewrite can cause irreversible harm</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="verdict">
+            <p class="section-label">Verdict</p>
+            <h2>A strong pattern with an incomplete quality story</h2>
+            <p>
+              The case study's most valuable idea is not “use Qwen” or “run more
+              GPUs.” It is to remove a fragile serial dependency by combining
+              speculative execution, independent infrastructure, a validity
+              gate, and graceful degradation. That design directly addresses
+              both median latency and provider failure.
+            </p>
+            <p>
+              The evidence is persuasive on latency within this deployment, but
+              incomplete on quality and cost. A production team should reproduce
+              the result against its own conversations, retrieval corpus, error
+              costs, and compute budget. The system wins only when the first
+              answer is fast <em>and</em> good enough to retrieve the right
+              evidence.
+            </p>
+          </section>
+
+          <section id="sources">
+            <p class="section-label">Source and method</p>
+            <h2>What this summary is based on</h2>
+            <ul class="source-list">
+              <li>
+                Michal Korbela, ElevenLabs, “How we cut RAG latency in half for
+                enterprise-scale conversational systems.” The complete supplied
+                six-page PDF was reviewed visually, including both diagrams and
+                all reported percentile values.
+              </li>
+              <li>
+                Percent reductions and absolute gains were independently
+                recomputed from the before-and-after values printed in the PDF.
+              </li>
+              <li>
+                Architecture interpretation and the production checklist are
+                clearly separated from the vendor's reported results.
+              </li>
+            </ul>
+          </section>
+        </article>
+
+        <aside class="sidebar">
+          <nav class="toc" aria-labelledby="toc-title">
+            <h2 id="toc-title">In this article</h2>
+            <ul>
+              <li><a href="#source">Evidence boundary</a></li>
+              <li><a href="#summary">Executive summary</a></li>
+              <li><a href="#rewrite">Rewrite bottleneck</a></li>
+              <li><a href="#architecture">Model racing</a></li>
+              <li><a href="#fallback">Fallback policy</a></li>
+              <li><a href="#results">Measured results</a></li>
+              <li><a href="#reliability">Reliability</a></li>
+              <li><a href="#costs">Trade-offs</a></li>
+              <li><a href="#playbook">Production playbook</a></li>
+              <li><a href="#fit">Where it fits</a></li>
+              <li><a href="#verdict">Verdict</a></li>
+            </ul>
+          </nav>
+          <div class="note-card">
+            <h2>Core pattern</h2>
+            <p>
+              Race independent candidates, accept the first valid answer, and
+              degrade explicitly when the deadline expires.
+            </p>
+          </div>
+          <div class="tag-grid">
+            <span class="tag">RAG</span><span class="tag">Model racing</span
+            ><span class="tag">Tail latency</span
+            ><span class="tag">Query rewriting</span
+            ><span class="tag">Reliability</span>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>

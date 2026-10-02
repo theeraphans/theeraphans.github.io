@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="A detailed analysis of how Hex builds data agents: unified capabilities, context architecture, tool retrieval, semantic governance, memory conflicts, evaluation design, and a 90-day long-horizon simulation.">
+  <title>How Hex Builds Data Agents That Learn Over Time</title>
+  <link rel="stylesheet" href="article-theme.css">
+  <style>
+    .source-note { margin-top: 1rem; padding-left: 1rem; border-left: 3px solid var(--green); }
+    .thesis { margin: 1.15rem 0; padding: 1rem; background: var(--surface); border-left: 3px solid var(--ink); }
+    .thesis strong { display: block; margin-bottom: .35rem; font-weight: 600; }
+    .detail-list, .risk-list { margin-top: 1rem; border-top: 1px solid var(--line-strong); }
+    .detail, .risk { display: grid; grid-template-columns: minmax(9rem, .85fr) minmax(0, 2.15fr); gap: 1.25rem; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+    .detail-label span, .risk-label span { display: block; margin-bottom: .25rem; color: var(--green); font-size: .78rem; font-weight: 600; }
+    .detail-label strong, .risk-label strong { font-weight: 500; }
+    .detail-body p, .risk-body p { margin: 0 !important; }
+    .detail-body p + p, .risk-body p + p { margin-top: .7rem !important; }
+    .process-flow { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin: 1.25rem 0; border: 1px solid var(--line-strong); }
+    .flow-step { min-width: 0; padding: .82rem; border-right: 1px solid var(--line); }
+    .flow-step:last-child { border-right: 0; }
+    .flow-step span { display: block; margin-bottom: .3rem; color: var(--green); font-size: .73rem; font-weight: 600; }
+    .flow-step strong { display: block; font-size: .86rem; font-weight: 500; overflow-wrap: anywhere; }
+    .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 1.2rem 0; border: 1px solid var(--line-strong); }
+    .metric { min-width: 0; padding: 1rem; border-right: 1px solid var(--line); }
+    .metric:last-child { border-right: 0; }
+    .metric strong { display: block; margin-bottom: .3rem; font-size: 1.25rem; font-weight: 500; }
+    .metric span { display: block; color: var(--muted); font-size: .85rem; line-height: 1.4; }
+    .comparison { width: 100%; margin: 1.2rem 0; border-collapse: collapse; }
+    .comparison th, .comparison td { padding: .75rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+    .comparison th { border-top: 1px solid var(--line-strong); font-weight: 500; }
+    .quote-pull { margin: 1.4rem 0; padding: 1.1rem 0; border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); font-size: 1.2rem; font-weight: 300; line-height: 1.45; }
+    .source-links { display: grid; gap: .65rem; padding-left: 1.2rem; }
+    @media (max-width: 760px) {
+      .process-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .flow-step { border-bottom: 1px solid var(--line); }
+      .flow-step:nth-child(2n) { border-right: 0; }
+      .flow-step:nth-last-child(-n+2) { border-bottom: 0; }
+      .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metric { border-bottom: 1px solid var(--line); }
+      .metric:nth-child(2n) { border-right: 0; }
+      .metric:nth-last-child(-n+2) { border-bottom: 0; }
+    }
+    @media (max-width: 640px) {
+      .detail, .risk { grid-template-columns: 1fr; gap: .4rem; }
+      .comparison, .comparison tbody, .comparison tr, .comparison th, .comparison td { display: block; width: 100% !important; min-width: 0 !important; }
+      .comparison thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+      .comparison tr { padding: .7rem 0; border-bottom: 1px solid var(--line); }
+      .comparison td { padding: .25rem 0; border: 0; }
+      .comparison td::before { content: attr(data-label); display: block; color: var(--green); font-size: .75rem; font-weight: 600; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation">
+    <a class="brand" href="/reading/">Reading room</a>
+    <div class="top-actions">
+      <a class="action-link" href="https://www.youtube.com/watch?v=Xyh1EqcjGME">Watch source</a>
+      <a class="action-link" href="/">Portfolio</a>
+    </div>
+  </nav>
+
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Data agents · Context engineering · Long-horizon evals</p>
+        <h1>How Hex Builds Data Agents That Learn Over Time</h1>
+        <p class="subtitle">Izzy Miller explains why data analysis is harder to verify than coding, how Hex is unifying separate agents around capability bundles, and why honest evaluation must measure whether an agent improves across weeks of messy organizational work.</p>
+        <div class="meta">
+          <span><strong>Izzy Miller with Harrison Chase</strong></span>
+          <span>LangChain · Max Agency</span>
+          <span>68m 20s</span>
+          <span>Summary run September 7, 2026 · 14:46 ICT</span>
+        </div>
+        <p class="source-note">This is an editorial paraphrase of the complete public English transcript. Product behavior and benchmark results are reported by Izzy Miller; the architecture recommendations and critical assessment are additional analysis.</p>
+      </div>
+      <figure class="hero-card">
+        <a href="https://www.youtube.com/watch?v=Xyh1EqcjGME" aria-label="Watch the original LangChain interview">
+          <img src="2026-09-07-hex-data-agents-evals-thumbnail.webp" alt="Izzy Miller from Hex beside the words Most AI evals are broken">
+        </a>
+        <figcaption>The conversation connects agent architecture to a harder question: how do you know an analysis is not merely executable, but actually right and useful?</figcaption>
+      </figure>
+    </header>
+
+    <div class="layout">
+      <article class="content">
+        <section id="summary">
+          <p class="section-label">Executive summary</p>
+          <h2>A data agent must investigate, not merely translate a question into SQL</h2>
+          <p>Hex began with single-shot text-to-SQL inside individual notebook cells. That was impressive in the GPT-3.5 era, but it constrained the model to a tiny part of the user's actual job. Real analysis is iterative: an intermediate answer changes the next question, a surprising segment suggests another cut, and an implausible metric should trigger an investigation rather than a polished chart.</p>
+          <p>The Notebook Agent expanded AI from one cell to the whole project. It can create and execute SQL or Python cells, build charts, investigate data, and produce a notebook that remains a usable artifact. Hex later built Threads for conversational self-service and an agent for semantic-model authoring. Those initially separate systems are now converging because users reasonably expect similar-looking assistants in one product to possess the same capabilities and context.</p>
+          <p>Underneath, the agent loop is comparatively simple: a model repeatedly calls tools. The hard engineering is the harness around it—context harvesting, capability selection, tool design, orchestration, termination, compaction, user experience, observability, and evaluation. Hex's toolkit had grown to nearly 100,000 tokens of tool definitions, forcing the team to add retrieval and consolidate overly granular operations.</p>
+          <p>The deepest problem is verification. Code can often be compiled and tested. A data query may run successfully while using the wrong metric definition, joining at the wrong grain, or producing a fantastical result that the model accepts. Hex therefore combines governed semantic context, post-run issue detection, human feedback, and deliberately difficult evals. Its experimental Metric City benchmark simulates 90 days of changing data, stakeholder requests, mistakes, and accumulated agent knowledge to test whether the system compounds rather than merely answering once.</p>
+          <div class="thesis"><strong>Central thesis</strong><p>A production data agent is not a text-to-SQL model. It is a governed learning system that turns organizational context into analysis, leaves inspectable artifacts, detects conflicts and implausible results, and improves through a measured feedback loop.</p></div>
+        </section>
+
+        <section id="evolution">
+          <p class="section-label">Product evolution</p>
+          <h2>From cell completion to project-level agency</h2>
+          <div class="detail-list">
+            <div class="detail"><div class="detail-label"><span>Stage 1</span><strong>Single-shot cells</strong></div><div class="detail-body"><p>A user opened a SQL cell, described a query, and received code inside that cell. The scope was explicit and controllable, but every broader analysis had to be broken into tiny prompts by the user.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Stage 2</span><strong>Notebook Agent</strong></div><div class="detail-body"><p>As models improved, Hex gave an agent access to the notebook's existing capabilities and project context. A user could request a complete feature-adoption report and let the agent work through subquestions for roughly twenty minutes.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Stage 3</span><strong>Threads</strong></div><div class="detail-body"><p>Threads offers a chat-like interface for people who want an answer without seeing SQL or Python. It still creates interactive data artifacts, but abstracts the implementation and prioritizes lower cognitive overhead.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Stage 4</span><strong>Semantic authoring</strong></div><div class="detail-body"><p>A specialized agent writes semantic-model YAML and harvests evidence from notebooks, conversations, warehouse metadata, and other workspace artifacts so institutional knowledge can move upstream into governed definitions.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Stage 5</span><strong>Unified capabilities</strong></div><div class="detail-body"><p>Rather than preserving arbitrary differences between agents, Hex is reorganizing tools, prompts, static context, and completion behavior into capability bundles that can be exposed in the appropriate interface.</p></div></div>
+          </div>
+          <p>The UI may remain different because notebook builders and self-service business users have different needs. Unification concerns what the agent can know and do, not necessarily forcing every user into one screen.</p>
+        </section>
+
+        <section id="data-vs-code">
+          <p class="section-label">Domain difference</p>
+          <h2>Why data agents are harder to verify than coding agents</h2>
+          <table class="comparison">
+            <thead><tr><th>Dimension</th><th>Coding agent</th><th>Data agent</th></tr></thead>
+            <tbody>
+              <tr><td data-label="Dimension">Typical path</td><td data-label="Coding agent">Plan, implement, run tests, accept or reject</td><td data-label="Data agent">Explore, interpret, branch, revise the question, compare explanations</td></tr>
+              <tr><td data-label="Dimension">Executable proof</td><td data-label="Coding agent">Compilation and tests can verify many requirements</td><td data-label="Data agent">A successful query proves execution, not that the metric or interpretation is correct</td></tr>
+              <tr><td data-label="Dimension">Ground truth</td><td data-label="Coding agent">Often encoded in specifications and behavior</td><td data-label="Data agent">May vary by team definition, time period, data freshness, and business context</td></tr>
+              <tr><td data-label="Dimension">Useful artifact</td><td data-label="Coding agent">A code change and test evidence</td><td data-label="Data agent">A reproducible notebook, query, chart, narrative, caveats, and follow-up path</td></tr>
+              <tr><td data-label="Dimension">Critical failure</td><td data-label="Coding agent">Software does not behave as requested</td><td data-label="Data agent">Plausible analysis confidently explains an invalid number</td></tr>
+            </tbody>
+          </table>
+          <p>A strong analyst has a sense of when a result is strange. The agent must know when to distrust its own output, investigate the data-generating process, and ask a clarifying question. This “analytical instinct” is harder to reduce to a deterministic checker than a unit test.</p>
+        </section>
+
+        <section id="harness">
+          <p class="section-label">Under the hood</p>
+          <h2>The loop is simple; context and control are not</h2>
+          <p>Hex describes its core agent as an LLM in a tool-calling loop, surrounded by an opinionated harness. Context is divided into static and dynamic sources. A capability bundle can include tools, prompts, static instructions, contextual access, and small but consequential policies such as what the system should do on its final turn.</p>
+          <div class="process-flow" role="figure" aria-label="Hex data-agent execution loop">
+            <div class="flow-step"><span>01</span><strong>User intent</strong></div>
+            <div class="flow-step"><span>02</span><strong>Harvest context</strong></div>
+            <div class="flow-step"><span>03</span><strong>Select capability</strong></div>
+            <div class="flow-step"><span>04</span><strong>Investigate</strong></div>
+            <div class="flow-step"><span>05</span><strong>Create artifact</strong></div>
+            <div class="flow-step"><span>06</span><strong>Observe &amp; improve</strong></div>
+          </div>
+          <div class="detail-list">
+            <div class="detail"><div class="detail-label"><span>Context harvesting</span><strong>Assemble the relevant world</strong></div><div class="detail-body"><p>Potential sources include warehouse structure, semantic models, project cells, prior notebooks, Threads conversations, administrator guidance, and other artifacts. A context agent helps synthesize this graph rather than dumping everything into one prompt.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Termination</span><strong>Make the final turn explicit</strong></div><div class="detail-body"><p>Hex enforces a hard iteration ceiling. If the agent is still working when it reaches the limit, the harness forces an appropriate wrap-up. As models handle longer work and compaction improves, old limits can become constraints that suppress useful behavior.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Orchestration</span><strong>Support durable tasks</strong></div><div class="detail-body"><p>Hex migrated from a single-shot, bulk-queue architecture to a Temporal-based system for long-running workflows. The transition required running old and new systems together, but enabled a wider family of agents.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Compensating machinery</span><strong>Delete it when models outgrow it</strong></div><div class="detail-body"><p>Older models confused long artifact IDs in projects with 50–60 cells, so Hex built a complex reference registry mapping short identifiers to real IDs. New evals indicate modern models no longer need it, turning a once-essential innovation into technical debt.</p></div></div>
+          </div>
+          <p class="quote-pull">Harness components have a half-life. Every workaround should carry the eval that justified it—and a removal test for the day the model no longer needs it.</p>
+        </section>
+
+        <section id="tools">
+          <p class="section-label">Tool architecture</p>
+          <h2>Nearly 100K tokens of tools exposed the cost of capability sprawl</h2>
+          <p>At the time of the interview, Hex had almost 100,000 tokens of tool definitions in its toolkit. Some of that represented genuine product complexity; some was accidental fragmentation, such as separate create-chart, update-chart, and delete-chart operations whose repeated descriptions consumed context.</p>
+          <p>Two responses helped. First, tool search or retrieval lets the model discover relevant operations without loading every definition at once. Second, evaluation showed that several normalized operations could be consolidated into a more general chart tool without degrading results.</p>
+          <p>Yet the answer is not to expose only arbitrary Python or shell execution. Specific tools encode behavioral policy: when an action is appropriate, what must be persisted, which outputs are visible, and what evidence returns to the user. The right boundary balances expressive power with predictable behavior.</p>
+          <div class="detail-list">
+            <div class="detail"><div class="detail-label"><span>Persistent operations</span><strong>Build the visible notebook</strong></div><div class="detail-body"><p>Most generated SQL and Python becomes a cell. The user can inspect it, rerun it, modify it, and turn the notebook into a report or application.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Ephemeral operations</span><strong>Investigate before committing</strong></div><div class="detail-body"><p>Small hidden SQL queries help inspect tables, data types, joins, and candidate sources. This can make the first visible query cleaner, but models may over-investigate or answer from hidden work without showing durable evidence.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Retrieval</span><strong>Load capabilities progressively</strong></div><div class="detail-body"><p>Search over tools and guide-like skills reduces prompt pressure. The model sees enough metadata to select a capability, then loads the fuller instructions only when needed.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Evaluation</span><strong>Prove consolidation is safe</strong></div><div class="detail-body"><p>Tool cleanup should be evaluated against representative trajectories. A smaller schema is valuable only if the agent still chooses the right operation and produces equivalent artifacts.</p></div></div>
+          </div>
+        </section>
+
+        <section id="ux">
+          <p class="section-label">Agent experience</p>
+          <h2>Transparency is a UX problem, not the same as correctness</h2>
+          <p>Hex shows working activity while an agent runs and collapses it after completion. That helps users understand why a long task is taking time without leaving a wall of tool calls permanently open. But faster models and heavy parallelism may soon make turn-by-turn animation impossible to follow.</p>
+          <p>For technical notebook users, visible code supports inspection. For a business stakeholder who does not read SQL or Python, “show your work” can create the appearance of rigor without meaningful verification. Hex aims for the lowest cognitive-overhead answer appropriate to the request: a simple fact may need a concise response, while a complex question may require a reproducible report with charts and caveats.</p>
+          <p>The important distinction is:</p>
+          <ul class="summary-list">
+            <li><strong>Activity transparency</strong> explains what the agent is doing now.</li>
+            <li><strong>Artifact transparency</strong> preserves queries, transformations, and results for inspection.</li>
+            <li><strong>Verification</strong> establishes that definitions, data, joins, and conclusions are trustworthy.</li>
+          </ul>
+        </section>
+
+        <section id="governance">
+          <p class="section-label">Context governance</p>
+          <h2>Semantic models create rails; memory can introduce conflict</h2>
+          <p>A well-designed semantic model is Hex's strongest route to reliable self-service. Governed measures, dimensions, relationships, and approved assets constrain the agent to trusted organizational definitions. However, real analysis sometimes must go beyond the semantic layer, and even governed models can be incomplete or misused.</p>
+          <p>Hex's Context Studio gives data administrators a higher-level view of questions, answers, and suspicious outcomes. Separate model-based judges flag possible confusion or conflicts with the semantic model. The current loop is mostly post-action: a user may receive a wrong answer, the issue is surfaced to the data team, and the team improves a guide, model, or warehouse description so the failure is less likely to recur.</p>
+          <p>Personal memory complicates this hierarchy. A user may tell the agent that a metric has a particular meaning, but that claim could be wrong or stale. If user memory, team guidance, and admin-governed definitions disagree, models may spend dramatically longer reasoning and enter a collapse mode. In one Hex test, injecting contradictory context caused a normally efficient model to deliberate for about thirty minutes.</p>
+          <table class="comparison">
+            <thead><tr><th>Context layer</th><th>Authority</th><th>Required treatment</th></tr></thead>
+            <tbody>
+              <tr><td data-label="Context layer">Warehouse metadata</td><td data-label="Authority">Describes physical data, not business meaning</td><td data-label="Required treatment">Track freshness, lineage, grain, quality warnings</td></tr>
+              <tr><td data-label="Context layer">Semantic model</td><td data-label="Authority">Organization-governed definitions</td><td data-label="Required treatment">Prefer by default; expose owner and version</td></tr>
+              <tr><td data-label="Context layer">Admin guide</td><td data-label="Authority">Operational interpretation and policy</td><td data-label="Required treatment">Retrieve progressively; date and scope it</td></tr>
+              <tr><td data-label="Context layer">Team convention</td><td data-label="Authority">Valid within a bounded group</td><td data-label="Required treatment">Do not silently generalize across teams</td></tr>
+              <tr><td data-label="Context layer">User memory</td><td data-label="Authority">Preference or unverified correction</td><td data-label="Required treatment">Keep separate; reconcile conflicts explicitly</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="evals">
+          <p class="section-label">Evaluation</p>
+          <h2>Most data evals test syntax or trivia, not analytical judgment</h2>
+          <p>Miller argues that an eval set becomes weak when nobody actively maintains it. Common defects include incorrect ground truth, buggy deterministic graders, unrepresentative questions, and many near-duplicate cases built around one obscure rule. A benchmark may claim to measure data analysis while actually measuring SQL syntax, retrieval, or whether the model noticed a single sentence buried in documentation.</p>
+          <p>Hex prefers smaller aspirational suites whose failure modes the team can hold in its head. Difficult sets contain roughly 30–50 handcrafted cases and run multiple repetitions. A representative Notebook Agent eval may begin halfway through a complex project with the user's observation that a number looks wrong. The notebook contains a chain of three interacting bugs; fixing the visible one can obscure the other two. Success requires investigation, not direct translation.</p>
+          <div class="metric-grid" aria-label="Notable evaluation figures from the interview">
+            <div class="metric"><strong>30–50</strong><span>cases in difficult, curated eval suites</span></div>
+            <div class="metric"><strong>900%+</strong><span>quota attainment accepted by every tested model</span></div>
+            <div class="metric"><strong>4%</strong><span>Sonnet 4.6 on Metric City day zero</span></div>
+            <div class="metric"><strong>24%</strong><span>Sonnet 4.6 on Metric City day 90</span></div>
+          </div>
+          <h3>The 900% quota trap</h3>
+          <p>One eval starts from a real internal sales dashboard and introduces a fan-out join bug. Every account executive appears to achieve at least 900% of quota, with some above 1,200%. Asked how the top performers are doing, tested models celebrate an extraordinary quarter. Miller could raise the figures into the thousands before models expressed data-quality suspicion, and none independently found the join error. Yet after a human says “that does not seem right,” the model locates the bug within seconds.</p>
+          <p>This gap reveals a central weakness: models can debug effectively once doubt is supplied, but often fail to generate the doubt themselves. Human analytical instinct remains valuable not only for solving a problem, but for recognizing that a problem exists.</p>
+          <h3>Two eval layers</h3>
+          <p>Hex maintains ordinary cases with known answers to catch regressions and compare product changes. It also keeps aspirational cases that current systems perform poorly on. The first protects production quality; the second points research toward capabilities that do not yet exist.</p>
+        </section>
+
+        <section id="metric-city">
+          <p class="section-label">Long-horizon evaluation</p>
+          <h2>Metric City asks whether the agent compounds over 90 days</h2>
+          <p>Point-in-time benchmarks ignore the proposed value of an organizational agent: it should learn the company's data, recurring problems, conventions, and history. Miller's experimental Metric City environment evaluates this longer arc.</p>
+          <div class="process-flow" role="figure" aria-label="Metric City 90-day simulation">
+            <div class="flow-step"><span>Day 0</span><strong>Messy warehouse</strong></div>
+            <div class="flow-step"><span>Daily</span><strong>DBT updates</strong></div>
+            <div class="flow-step"><span>Events</span><strong>Products &amp; fraud</strong></div>
+            <div class="flow-step"><span>Tickets</span><strong>Stakeholder asks</strong></div>
+            <div class="flow-step"><span>Learning</span><strong>Wiki &amp; notes</strong></div>
+            <div class="flow-step"><span>Day 90</span><strong>Hard questions</strong></div>
+          </div>
+          <p>The fictional company, Shoreline Commerce, has a realistically sized Snowflake warehouse with deliberately injected nulls, broken joins, confusing columns, partial semantic modeling, and other data-quality traps. Each simulated day advances the clock and reruns DBT models. New rows arrive, products launch, fraud occurs, systems break, and stakeholder tickets ask questions or provide information.</p>
+          <p>After replying to a ticket, the agent can end the turn or perform proactive knowledge work: follow a loose thread, document a discovery, or clean the wiki. By day 90, the benchmark questions are designed to be answerable if the agent accumulated and retrieved the right knowledge. In the reported experiment, Sonnet 4.6 rose from roughly 4% on day zero to 24% on day 90—evidence of learning, but far below the theoretical 100% target.</p>
+          <p>The project is still a research prototype. It currently evaluates model behavior in a simplified harness rather than the production Hex agent, costs a great deal to run, and is difficult to orchestrate and judge. Its contribution is conceptual: systems built to improve over time need evals that allow time, interaction, and state to change.</p>
+        </section>
+
+        <section id="models">
+          <p class="section-label">Models and technical debt</p>
+          <h2>Measure every new model feature against the whole harness</h2>
+          <p>Hex tries to adopt the strongest current models because data science benefits broadly from general intelligence. But “best” depends on quality, latency, effort settings, context behavior, and cost. More reasoning effort can help difficult cases while making a simple question unacceptably slow, and low effort can occasionally trigger a confused spiral.</p>
+          <p>New model APIs bring tool search, server-side compaction, stateful execution, and vendor agent SDKs. Hex adopts features à la carte when its evals show value. It remains cautious about migrating wholesale to a provider's stack merely to stay “in distribution” with how a model was trained, because custom data tools may already move the application away from that distribution while lock-in reduces control.</p>
+          <p>The practical question is what Hex's CEO calls <strong>sand versus stone</strong>. If models become twice as capable, which compensating harness features wash away, and which product assets remain durable? Miller's answer is that domain opinions, interaction quality, and especially the accumulated context from users' real work are more durable than many model-specific workarounds.</p>
+        </section>
+
+        <section id="people">
+          <p class="section-label">People and organization</p>
+          <h2>Domain judgment is becoming more valuable, not less</h2>
+          <p>Miller moved from marketing, community, and developer relations into AI engineering. Years of product knowledge and user empathy became leverage when coding models made implementation more accessible. He still reads, reviews, and edits code, but describes caring deeply about the problem and having a strong product opinion as an increasing share of the role.</p>
+          <p>Hex hires from diverse backgrounds, including data science, mathematics, marketing, and product users. One highly productive AI engineer began as a Hex customer whose detailed feedback demonstrated strong intuition for the product. Visualization experts contribute by encoding forceful opinions about good charts and analytical communication into the agents.</p>
+          <p>This does not eliminate senior engineering. Long-running workflows, context systems, privacy, evaluation infrastructure, and safe execution remain difficult engineering problems. The shift is that domain experts can now participate more directly in implementation—and their ability to recognize excellent or suspicious analytical behavior becomes a core system input.</p>
+        </section>
+
+        <section id="platform">
+          <p class="section-label">For your agentic platform</p>
+          <h2>Turn Hex's lessons into BA-composable controls</h2>
+          <div class="detail-list">
+            <div class="detail"><div class="detail-label"><span>Capability bundle</span><strong>Package more than tools</strong></div><div class="detail-body"><p>Bundle the agent role, static policy, retrievable guides, allowed tools, context sources, completion behavior, and evaluation suite. A persona prompt alone cannot define reliable behavior.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Context authority</span><strong>Model precedence explicitly</strong></div><div class="detail-body"><p>Let BAs label context as enterprise-governed, team-scoped, user preference, observation, or inference. Define freshness, owner, conflict policy, and whether the agent may promote information to a higher level.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Cognitive skill</span><strong>Investigate and interpret</strong></div><div class="detail-body"><p>A data-analysis skill should specify hypotheses, plausibility checks, expected grain, metric definitions, and escalation conditions—not merely “write SQL.”</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Actionable skill</span><strong>Create inspectable artifacts</strong></div><div class="detail-body"><p>Tools that run queries or publish reports need scoped credentials, row and cost limits, timeouts, side-effect declarations, durable outputs, lineage, and receipts.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Flow Markdown</span><strong>Describe learning loops</strong></div><div class="detail-body"><p>Represent Request → Retrieve context → Investigate → Build artifact → Validate → Publish → Observe feedback → Propose context update. Give every loop a budget and every context mutation an approval policy.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Eval portfolio</span><strong>Cover normal, adversarial, and longitudinal behavior</strong></div><div class="detail-body"><p>Use regression cases for daily reliability, traps for missing analytical skepticism, conflict tests for context governance, and simulations for memory and compounding behavior.</p></div></div>
+          </div>
+        </section>
+
+        <section id="assessment">
+          <p class="section-label">Critical assessment</p>
+          <h2>The interview is unusually honest about what remains unsolved</h2>
+          <div class="risk-list">
+            <div class="risk"><div class="risk-label"><span>01</span><strong>Post-action detection is late</strong></div><div class="risk-body"><p>Context Studio may help prevent repetition, but a user can still receive a wrong answer first. High-stakes outputs need pre-delivery plausibility checks or explicit uncertainty gates.</p></div></div>
+            <div class="risk"><div class="risk-label"><span>02</span><strong>LLM judges are triage, not ground truth</strong></div><div class="risk-body"><p>Model-based clustering can preserve privacy and surface themes, but judges can share the agent's blind spots. Material metric failures need deterministic evidence or expert review.</p></div></div>
+            <div class="risk"><div class="risk-label"><span>03</span><strong>Long-horizon gains can hide accumulated error</strong></div><div class="risk-body"><p>A rising day-90 score is encouraging only if stored knowledge is correct, provenance is preserved, and mistakes can be repaired. Memory quality and memory quantity are different variables.</p></div></div>
+            <div class="risk"><div class="risk-label"><span>04</span><strong>Capability unification increases blast radius</strong></div><div class="risk-body"><p>A shared tool or context component improves consistency, but one defective update can affect every agent surface. Versioning, staged rollout, ownership, and per-capability evals become essential.</p></div></div>
+            <div class="risk"><div class="risk-label"><span>05</span><strong>Agent quality includes taste</strong></div><div class="risk-body"><p>Correctness alone cannot capture whether a report selected the right chart, caveat, explanation depth, or follow-up. Evaluation needs human preference and task-outcome evidence without reducing “good analysis” to superficial formatting.</p></div></div>
+          </div>
+          <div class="thesis"><strong>My assessment</strong><p>Hex's strongest insight is that the valuable moat is not a proprietary loop around an LLM. It is the governed context flywheel created by real work, plus domain opinions about how excellent analysis should proceed. Its hardest unsolved problem is preventing that same flywheel from accumulating conflicting or confidently wrong knowledge.</p></div>
+        </section>
+
+        <section id="takeaways">
+          <p class="section-label">Takeaways</p>
+          <h2>What to keep from the conversation</h2>
+          <ol class="summary-list">
+            <li>Data analysis needs iterative exploration and judgment; single-shot text-to-SQL is only one primitive.</li>
+            <li>Unify agent capabilities and context while preserving interfaces suited to different user groups.</li>
+            <li>Treat tool schemas as scarce context and retrieve or consolidate them based on eval evidence.</li>
+            <li>Keep hidden investigation separate from the durable artifact and require visible evidence for important claims.</li>
+            <li>Give semantic models, admin guidance, team conventions, and user memory explicit authority and conflict rules.</li>
+            <li>Maintain small, understood eval sets with repeated runs and realistic multi-step failure chains.</li>
+            <li>Evaluate systems that learn over time with changing-state simulations, not only one-shot questions.</li>
+            <li>Continuously retest harness workarounds so yesterday's advantage does not become tomorrow's constraint.</li>
+          </ol>
+        </section>
+
+        <section id="source">
+          <p class="section-label">Source and method</p>
+          <h2>What this summary is based on</h2>
+          <ul class="source-links">
+            <li><a href="https://www.youtube.com/watch?v=Xyh1EqcjGME">How Hex builds AI agents that reason like human data analysts</a> by LangChain.</li>
+          </ul>
+          <p>The complete English transcript—2,026 timed segments covering the full 68-minute interview—was read alongside the creator's chapter list, description, and source thumbnail. The article follows the discussion from product history through architecture, context, tools, verification, evals, career changes, and Metric City. Wording has been condensed and paraphrased.</p>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Article contents">
+        <nav class="toc" aria-labelledby="toc-title">
+          <h2 id="toc-title">On this page</h2>
+          <ul>
+            <li><a href="#summary">Executive summary</a></li>
+            <li><a href="#evolution">Product evolution</a></li>
+            <li><a href="#data-vs-code">Data vs. code</a></li>
+            <li><a href="#harness">Agent harness</a></li>
+            <li><a href="#tools">Tool architecture</a></li>
+            <li><a href="#ux">Agent experience</a></li>
+            <li><a href="#governance">Context governance</a></li>
+            <li><a href="#evals">Evaluation</a></li>
+            <li><a href="#metric-city">Metric City</a></li>
+            <li><a href="#models">Models and debt</a></li>
+            <li><a href="#people">People</a></li>
+            <li><a href="#platform">Your platform</a></li>
+            <li><a href="#assessment">Assessment</a></li>
+            <li><a href="#takeaways">Takeaways</a></li>
+            <li><a href="#source">Source</a></li>
+          </ul>
+        </nav>
+        <div class="note-card">
+          <h2>Source scope</h2>
+          <p>One 68m 20s interview with a complete English transcript. Summary prepared September 7, 2026.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer-note">Editorial paraphrase for study. The original LangChain interview remains the authoritative source.</footer>
+</body>
+</html>

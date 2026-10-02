@@ -1,0 +1,1130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Open Knowledge Format and Karpathy LLM Wikis - Detailed Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5b6870;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f5f7f1;
+      --line: #d8dfd8;
+      --teal: #1b756d;
+      --blue: #2c6381;
+      --green: #557d54;
+      --gold: #a97725;
+      --coral: #bd503f;
+      --plum: #665987;
+      --mint: #e3f0ec;
+      --sky: #e6eef6;
+      --sand: #f7edd8;
+      --rose: #f5e5df;
+      --lavender: #ece8f2;
+      --shadow: 0 24px 68px rgb(23 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgb(255 255 255 / 92%), rgb(245 247 241 / 96%)),
+        var(--canvas);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--green), var(--gold), var(--coral), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 86%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.55rem, 5.85vw, 5.15rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 860px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: #e8ede7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 28px;
+      margin: 34px 0 0;
+      padding: 24px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .quick-summary h2,
+    .section h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.85rem, 3.2vw, 2.7rem);
+      font-weight: 740;
+      line-height: 1.06;
+      letter-spacing: 0;
+    }
+
+    .quick-summary p {
+      margin-top: 14px;
+      color: #303a41;
+      font-size: 1.04rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .summary-list li {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+      color: var(--muted);
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+    }
+
+    .stat {
+      display: grid;
+      min-height: 74px;
+      padding: 12px;
+      background: var(--mint);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat:nth-child(2) { background: var(--sky); }
+    .stat:nth-child(3) { background: var(--sand); }
+
+    .stat strong {
+      font-size: 1.4rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 820;
+      text-transform: uppercase;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 46px;
+      align-items: start;
+      padding-top: 38px;
+    }
+
+    .article-layout > *,
+    .sidebar,
+    .sidebar-block,
+    .toc,
+    .content,
+    .section {
+      min-width: 0;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .sidebar-block,
+    .toc {
+      padding: 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .sidebar h2,
+    .toc h2 {
+      margin-bottom: 10px;
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .glance {
+      display: grid;
+      gap: 11px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: grid;
+      gap: 2px;
+      padding-bottom: 11px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .glance li:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .glance span {
+      color: var(--quiet);
+      font-size: 0.75rem;
+      font-weight: 820;
+      text-transform: uppercase;
+    }
+
+    .glance strong { font-size: 0.95rem; }
+
+    .toc {
+      display: grid;
+      gap: 8px;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--blue);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+      font-weight: 780;
+      text-decoration: none;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+    }
+
+    .section {
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .label {
+      display: inline-flex;
+      margin-bottom: 13px;
+      color: var(--coral);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .lead {
+      margin-top: 16px;
+      color: #303a41;
+      font-size: 1.12rem;
+      line-height: 1.72;
+    }
+
+    .section p:not(.lead),
+    .section ul,
+    .section ol {
+      margin-top: 15px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .section strong { color: var(--ink); }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card.mint { background: var(--mint); }
+    .card.sky { background: var(--sky); }
+    .card.sand { background: var(--sand); }
+    .card.rose { background: var(--rose); }
+    .card.lavender { background: var(--lavender); }
+
+    .card h3 {
+      margin-top: 10px;
+      font-size: 1.02rem;
+      line-height: 1.25;
+    }
+
+    .card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      color: #fff;
+      background: var(--blue);
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .pill.green { background: var(--green); }
+    .pill.gold { background: var(--gold); }
+    .pill.coral { background: var(--coral); }
+    .pill.plum { background: var(--plum); }
+    .pill.teal { background: var(--teal); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .flow-step {
+      min-height: 132px;
+      padding: 14px;
+      background: var(--mint);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .flow-step:nth-child(2) { background: var(--sky); }
+    .flow-step:nth-child(3) { background: var(--sand); }
+    .flow-step:nth-child(4) { background: var(--rose); }
+    .flow-step:nth-child(5) { background: var(--lavender); }
+
+    .flow-step span {
+      color: var(--coral);
+      font-size: 0.76rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .flow-step strong {
+      display: block;
+      margin-top: 8px;
+      line-height: 1.25;
+    }
+
+    .flow-step p {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .matrix {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .matrix th,
+    .matrix td {
+      padding: 12px;
+      vertical-align: top;
+      border: 1px solid var(--line);
+    }
+
+    .matrix th {
+      color: var(--ink);
+      background: var(--mint);
+      text-align: left;
+    }
+
+    .matrix td {
+      color: var(--muted);
+      background: #fff;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 13px 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .quote-box {
+      margin-top: 20px;
+      padding: 18px;
+      color: #263138;
+      background: linear-gradient(90deg, rgb(27 117 109 / 11%), rgb(189 80 63 / 10%));
+      border-left: 5px solid var(--teal);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.16rem;
+      line-height: 1.55;
+    }
+
+    .mini-spec {
+      margin: 20px 0 0;
+      padding: 18px;
+      overflow-x: auto;
+      color: #f7fbfb;
+      background: #1f2a30;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.88rem;
+      line-height: 1.58;
+      white-space: pre;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-left: 18px;
+    }
+
+    .note {
+      margin-top: 18px;
+      padding: 14px;
+      color: var(--muted);
+      background: var(--sky);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 26px 24px 38px;
+      color: var(--quiet);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar { position: static; }
+
+      .toc {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .toc h2 { grid-column: 1 / -1; }
+
+      .flow,
+      .three {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions { justify-content: flex-start; }
+      .page { padding-inline: 18px; }
+
+      .hero {
+        gap: 26px;
+        padding-top: 36px;
+      }
+
+      h1 { font-size: clamp(2.25rem, 13vw, 3.2rem); }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .two,
+      .three,
+      .flow,
+      .toc {
+        grid-template-columns: 1fr;
+      }
+
+      .matrix {
+        table-layout: fixed;
+      }
+
+      .matrix th,
+      .matrix td {
+        padding: 10px;
+      }
+
+      .mini-spec { white-space: pre-wrap; }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/reading/">Reading room</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#thesis">Thesis</a>
+      <a class="action-link" href="#problem">Problem</a>
+      <a class="action-link" href="#okf">OKF</a>
+      <a class="action-link" href="#bundle">Bundle</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=T33iI6izAKw">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Open Knowledge Format - LLM Wiki</span>
+        <h1>OKF Turns Karpathy-Style LLM Wikis Into Portable Agent Knowledge</h1>
+        <p class="subtitle">
+          A detailed summary of Cole Medin's video on Google's Open Knowledge Format:
+          why LLM wikis need a standard, how OKF structures markdown knowledge bundles,
+          and why this matters for second brains, team knowledge, and agent memory platforms.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> Finally, an Open Standard for the Karpathy LLM Wiki is HERE</span>
+          <span><strong>Creator:</strong> Cole Medin</span>
+          <span><strong>Transcript:</strong> 4,105 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/T33iI6izAKw/hqdefault.jpg" alt="Video thumbnail for Open Knowledge Format and Karpathy LLM Wiki">
+        <figcaption>
+          The video frames OKF as a minimal interoperability layer for personal agents:
+          markdown files, YAML frontmatter, index files, links, and a shared way for agents
+          to produce and consume knowledge.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          Cole's core point is simple: Karpathy's LLM wiki pattern is powerful because agents can build and maintain
+          linked markdown knowledge bases, but every person structures those wikis differently. OKF adds a small,
+          shared contract so one agent can understand another person's or team's knowledge bundle.
+        </p>
+        <ul class="summary-list">
+          <li>Karpathy-style LLM wikis turn raw sources into linked, persistent, agent-readable knowledge pages.</li>
+          <li>The fragmentation problem is metadata and structure: tags, categories, links, folders, and indexes differ across every wiki.</li>
+          <li>OKF standardizes the minimum needed surface: bundle structure, concept documents, frontmatter fields, index files, and markdown links.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>19m</strong><span>runtime</span></div>
+        <div class="stat"><strong>569</strong><span>caption rows</span></div>
+        <div class="stat"><strong>4,105</strong><span>words</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Main lens</span><strong>Portable agent knowledge</strong></li>
+            <li><span>Standard</span><strong>Open Knowledge Format v0.1</strong></li>
+            <li><span>Format</span><strong>Markdown + YAML frontmatter</strong></li>
+            <li><span>Best artifact</span><strong>OKF bundle spec</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#thesis">Core Thesis</a>
+          <a href="#problem">The Interoperability Problem</a>
+          <a href="#wiki">Karpathy Wiki Anatomy</a>
+          <a href="#okf">What OKF Standardizes</a>
+          <a href="#spec">Spec as Agent Skill</a>
+          <a href="#bundle">Cole's AI Coding Bundle</a>
+          <a href="#navigation">Progressive Disclosure</a>
+          <a href="#critique">The Minimalism Critique</a>
+          <a href="#platform">Platform Takeaways</a>
+          <a href="#templates">Flow Markdown</a>
+          <a href="#sources">Sources</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="thesis">
+          <span class="label">Core Thesis</span>
+          <h2>OKF is trying to make agent memory portable.</h2>
+          <p class="lead">
+            Cole opens with Andrej Karpathy's LLM wiki idea: instead of dumping documents into a RAG index, use an LLM to
+            incrementally build a persistent wiki made of structured, interlinked markdown files. The agent reads new sources,
+            extracts important knowledge, updates entity pages, links related concepts, and maintains a knowledge graph over time.
+          </p>
+          <p>
+            The problem is that this works well locally but breaks down socially. If everyone asks their coding agent to build
+            an LLM wiki from the same gist, each wiki may still end up with different folders, metadata fields, link conventions,
+            index files, and page types. An agent can probably figure it out eventually, but it loses the efficiency and reliability
+            that made the wiki valuable in the first place.
+          </p>
+          <div class="quote-box">
+            The real value of OKF is not that it invents a new knowledge system. It gives agents a shared reading and writing
+            contract for simple knowledge bundles.
+          </div>
+        </section>
+
+        <section class="section" id="problem">
+          <span class="label">Why a Standard Matters</span>
+          <h2>Without a standard, every LLM wiki becomes a private dialect.</h2>
+          <p class="lead">
+            Cole's main practical complaint is interoperability. A personal second brain is more useful when it can share knowledge
+            with team members, other agents, and other tools. But if each wiki uses a different metadata vocabulary, the receiving
+            agent does not know how to search it optimally.
+          </p>
+          <p>
+            Even tiny differences matter. One wiki might use `tags`; another might use `categories`. One might link related
+            concepts at the bottom of each page; another might store relationships in frontmatter. One might have a top-level
+            index only; another might use index files in every folder. These small differences compound when an agent needs to
+            traverse knowledge quickly.
+          </p>
+          <table class="matrix" aria-label="LLM wiki interoperability problems">
+            <thead>
+              <tr>
+                <th>Problem</th>
+                <th>What happens without OKF</th>
+                <th>Why agents suffer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Different metadata</td>
+                <td>Fields like tags, category, type, title, and resource vary by author.</td>
+                <td>The agent must inspect conventions before it can search or filter confidently.</td>
+              </tr>
+              <tr>
+                <td>Different folder shapes</td>
+                <td>Pages, concepts, transcripts, logs, and indexes are organized differently.</td>
+                <td>The agent has to rediscover the bundle map instead of using a known traversal pattern.</td>
+              </tr>
+              <tr>
+                <td>Different link rules</td>
+                <td>Relationships may be markdown links, lists, IDs, headings, or ad hoc text.</td>
+                <td>The knowledge graph is harder to follow and easier to miss.</td>
+              </tr>
+              <tr>
+                <td>No producer/consumer contract</td>
+                <td>One agent can write knowledge that another agent does not know how to consume.</td>
+                <td>Shared memory becomes brittle, bespoke, and expensive to integrate.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="wiki">
+          <span class="label">Karpathy Wiki Anatomy</span>
+          <h2>A basic LLM wiki already has progressive disclosure and graph traversal.</h2>
+          <p class="lead">
+            Cole shows one of his earlier Karpathy-style wikis. At the top is an index file. The agent reads that first to see
+            what documents exist and which pages might be relevant. The index acts like a map, giving short summaries so the
+            agent can decide whether to drill deeper.
+          </p>
+          <p>
+            Each page can then include metadata, a title, tags, the main content, and links to related concepts. This creates a
+            knowledge graph that agents can traverse. The important design pattern is progressive disclosure: show the agent the
+            high-level map first, then let it open full pages only when the task calls for them.
+          </p>
+          <div class="flow" aria-label="LLM wiki traversal flow">
+            <div class="flow-step">
+              <span>Start</span>
+              <strong>Read index</strong>
+              <p>The agent loads the top-level map and summaries.</p>
+            </div>
+            <div class="flow-step">
+              <span>Filter</span>
+              <strong>Use metadata</strong>
+              <p>Type, title, tags, and resource fields narrow the search space.</p>
+            </div>
+            <div class="flow-step">
+              <span>Drill</span>
+              <strong>Open concept page</strong>
+              <p>The agent reads a specific file when the index says it is relevant.</p>
+            </div>
+            <div class="flow-step">
+              <span>Traverse</span>
+              <strong>Follow links</strong>
+              <p>Related concepts connect pages into a navigable graph.</p>
+            </div>
+            <div class="flow-step">
+              <span>Update</span>
+              <strong>Maintain wiki</strong>
+              <p>New sources can revise pages, links, and indexes over time.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="okf">
+          <span class="label">What OKF Does</span>
+          <h2>OKF standardizes organization and frontmatter, not the whole knowledge model.</h2>
+          <p class="lead">
+            Cole says OKF standardizes two main things: how information is organized and what metadata fields appear at the top
+            of documents. The official Google Cloud post describes OKF v0.1 as a directory of markdown files with YAML
+            frontmatter and a small set of conventions so different producers and consumers can interoperate.
+          </p>
+          <p>
+            The official spec is intentionally minimal. A bundle is a directory tree of markdown concept documents. A concept is
+            one unit of knowledge. Frontmatter gives agents a structured entry point. Markdown links express relationships beyond
+            parent-child folders. Optional `index.md` files support progressive disclosure, and optional `log.md` files can track
+            update history.
+          </p>
+          <div class="grid three">
+            <article class="card mint">
+              <span class="pill teal">Bundle</span>
+              <h3>Unit of distribution</h3>
+              <p>A self-contained directory of knowledge documents that can be shared as a repo, archive, or subdirectory.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill">Concept</span>
+              <h3>One knowledge unit</h3>
+              <p>A single markdown file that can describe a table, API, process, metric, video, idea, or any other useful entity.</p>
+            </article>
+            <article class="card sand">
+              <span class="pill gold">Frontmatter</span>
+              <h3>Structured agent hints</h3>
+              <p>YAML metadata lets agents filter, route, search, cite, and understand the page before reading everything.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="spec">
+          <span class="label">Spec as Skill</span>
+          <h2>The OKF spec can be used like an instruction file for your coding agent.</h2>
+          <p class="lead">
+            Cole emphasizes the practicality of the `SPEC.md` file. Like Karpathy's gist, the OKF spec can be copied into a
+            coding agent and used as a skill. You can ask the agent to build a new OKF wiki or refactor an existing wiki into
+            the format.
+          </p>
+          <p>
+            The reason this works is that the standard is small. The agent only needs to understand bundle structure, terminology,
+            frontmatter, required and optional fields, links, indexes, and logs. For a large existing second brain, Cole suggests
+            using sub-agents to refactor different sections in parallel.
+          </p>
+          <ul class="checklist">
+            <li><strong>For new wikis:</strong> give the agent the OKF spec, a memory brief, and the raw sources to transform into concept pages.</li>
+            <li><strong>For existing wikis:</strong> ask the agent to map old metadata and folder conventions into OKF bundle structure.</li>
+            <li><strong>For large wikis:</strong> split folders across sub-agents, then run a final validator to check frontmatter, links, and indexes.</li>
+            <li><strong>For teams:</strong> keep the spec and bundle conventions in version control so producers and consumers share the same contract.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="bundle">
+          <span class="label">Example Bundle</span>
+          <h2>Cole's AI coding bundle shows why portable knowledge matters.</h2>
+          <p class="lead">
+            Cole then demonstrates his own OKF bundle for selected AI coding videos. The idea is that a creator can package
+            transcripts, concepts, and relationships into a bundle that viewers can import into their own second brain.
+          </p>
+          <p>
+            This is more valuable than sharing raw transcripts. The bundle can contain video pages, concept pages, indexes, and
+            links between repeated ideas such as context engineering, sub-agents, or the PIV loop. The consumer's agent can ask
+            questions against the bundle and use the standardized structure to find the right concept without being told exactly
+            where to look.
+          </p>
+          <div class="grid two">
+            <article class="card rose">
+              <span class="pill coral">Creator value</span>
+              <h3>Package knowledge, not just content</h3>
+              <p>Creators can turn videos, articles, talks, and templates into a portable agent-readable knowledge product.</p>
+            </article>
+            <article class="card lavender">
+              <span class="pill plum">Consumer value</span>
+              <h3>Ask questions over curated memory</h3>
+              <p>Users can mount the bundle in Obsidian, Notion, a repo, or a local agent workspace and query it directly.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="navigation">
+          <span class="label">Agent Navigation</span>
+          <h2>The demo shows OKF working through layered indexes and concept IDs.</h2>
+          <p class="lead">
+            Cole adds a small CLI on top of his bundles. It lets the agent list bundles, view an index, and read a file by bundle
+            and concept ID. This is not required by OKF, but it shows the useful separation between the storage format and the
+            agent-facing retrieval tools.
+          </p>
+          <p>
+            In the demo, he asks his agent what bundles are available, then asks a question about his biggest idea for reliable
+            AI coding. The agent reads the AI coding bundle index, identifies relevant concepts, drills into the concept page,
+            and answers from the curated knowledge. That is the progressive disclosure pattern in action.
+          </p>
+          <table class="matrix" aria-label="OKF navigation model">
+            <thead>
+              <tr>
+                <th>Layer</th>
+                <th>What the agent sees</th>
+                <th>Why it matters</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Bundle index</td>
+                <td>A list of available knowledge bundles and their purposes.</td>
+                <td>The agent can choose the right knowledge source before reading details.</td>
+              </tr>
+              <tr>
+                <td>Folder index</td>
+                <td>Sections such as videos, concepts, metrics, tables, or runbooks.</td>
+                <td>The agent can traverse a large corpus without loading everything.</td>
+              </tr>
+              <tr>
+                <td>Concept page</td>
+                <td>Frontmatter, structured markdown, references, and links.</td>
+                <td>The agent gets the actual curated knowledge with enough metadata to cite and connect it.</td>
+              </tr>
+              <tr>
+                <td>Retrieval tool</td>
+                <td>CLI, MCP server, file search, or app-specific consumer.</td>
+                <td>The format stays portable while each runtime can expose the best interface.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="critique">
+          <span class="label">Critique</span>
+          <h2>The best criticism of OKF is also its design strength: it is very small.</h2>
+          <p class="lead">
+            Cole acknowledges a valid critique: OKF does not add a huge amount on top of a Karpathy wiki. It mainly standardizes
+            organization and metadata. The required field is minimal, and many fields are optional.
+          </p>
+          <p>
+            His response is that minimalism is the point. A knowledge standard should avoid becoming a platform, schema registry,
+            SDK, or cloud dependency. It should define just enough so agents can produce and consume bundles consistently. Google
+            Cloud's own post frames OKF the same way: format, not platform.
+          </p>
+          <div class="grid two">
+            <article class="card sand">
+              <span class="pill gold">Risk</span>
+              <h3>Too little structure</h3>
+              <p>Teams may still invent incompatible type systems, body templates, and quality rules on top of OKF.</p>
+            </article>
+            <article class="card mint">
+              <span class="pill green">Benefit</span>
+              <h3>Easy adoption</h3>
+              <p>Because OKF is simple markdown and YAML, agents, tools, creators, and teams can adopt it without a new runtime.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your agentic AI platform.</h2>
+          <p class="lead">
+            This video pairs well with the LangChain LLM Wikis panel. That panel argued that wikis are agent memory infrastructure.
+            This video adds a concrete portability layer: OKF can be the exchange format for memory bundles across agents, teams,
+            and tools.
+          </p>
+          <ul class="checklist">
+            <li><strong>Use OKF as the memory artifact format.</strong> Store BA-authored and agent-generated knowledge as bundles, concepts, frontmatter, indexes, and logs.</li>
+            <li><strong>Keep memory separate from persona prompts.</strong> Persona defines behavior. OKF bundles define inspectable domain knowledge that agents can read and update.</li>
+            <li><strong>Let BAs define bundle types.</strong> A business flow can create bundles for SOPs, customer journeys, product knowledge, compliance rules, and operational runbooks.</li>
+            <li><strong>Expose OKF through MCP tools.</strong> Agents should list bundles, search frontmatter, read concepts, write proposed updates, validate links, and open review requests.</li>
+            <li><strong>Add a validator agent.</strong> Check required `type`, broken links, missing indexes, stale logs, duplicate concepts, access rules, and source citations.</li>
+            <li><strong>Use bundles as reusable skills context.</strong> A skill can declare which OKF bundle it needs before running, making domain context composable.</li>
+            <li><strong>Track producer and consumer metrics.</strong> Measure bundle creation cost, retrieval success, token savings, stale-entry corrections, and answer quality.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">Flow Markdown</span>
+          <h2>A practical OKF bundle spec for platform builders.</h2>
+          <p class="lead">
+            This template turns the video into a reusable platform artifact. It defines how a BA, Knowledge Agent, and runtime
+            can produce and consume an OKF bundle for a business domain.
+          </p>
+          <pre class="mini-spec"># OKF Knowledge Bundle Flow
+
+goal: Produce a portable, agent-readable knowledge bundle for one business domain.
+owner: Knowledge Domain Owner
+runtime_owner: Agent Platform Team
+format: Open Knowledge Format v0.1
+flow_type: okf_bundle_production
+
+bundle:
+  id: claims-processing-knowledge
+  description: Shared agent knowledge for claims intake, evidence review, coverage checks, fraud signals, and escalation rules.
+  distribution:
+    - git_repository
+    - zip_archive
+    - mcp_read_interface
+  required_files:
+    - index.md
+  optional_files:
+    - log.md
+
+concept_types:
+  - sop
+  - policy
+  - workflow
+  - role
+  - tool
+  - metric
+  - exception
+  - customer_case_pattern
+
+frontmatter_contract:
+  required:
+    - type
+  recommended:
+    - title
+    - description
+    - resource
+    - tags
+    - timestamp
+    - owner
+    - confidence
+    - source_system
+    - access_level
+
+producer_agent:
+  role: knowledge_librarian
+  inputs:
+    - existing_sop_docs
+    - workshop_notes
+    - tickets
+    - policy_documents
+    - data_dictionary
+  responsibilities:
+    - create_concept_pages
+    - write_frontmatter
+    - maintain_index_files
+    - create_markdown_links
+    - cite_sources
+    - append_log_updates
+
+consumer_agent:
+  role: domain_task_agent
+  tools:
+    - list_okf_bundles
+    - read_okf_index
+    - search_okf_frontmatter
+    - read_okf_concept
+    - follow_okf_links
+  retrieval_policy:
+    - read_bundle_index_first
+    - prefer_concept_pages_over_raw_sources
+    - follow_links_when_context_is_incomplete
+    - cite_concept_ids_in_final_answer
+
+mcp_tools:
+  - okf.list_bundles
+  - okf.read_index
+  - okf.search
+  - okf.read_concept
+  - okf.validate_bundle
+  - okf.propose_update
+  - okf.open_review
+
+validation:
+  checks:
+    - every_concept_has_type
+    - markdown_links_resolve
+    - index_files_match_children
+    - restricted_concepts_have_access_level
+    - concepts_have_source_or_owner
+    - log_updated_for_material_changes
+  human_review_required_for:
+    - policy_changes
+    - compliance_content
+    - customer_sensitive_content
+    - high_confidence_claims_without_sources
+
+metrics:
+  - bundle_reuse_count
+  - retrieval_success_rate
+  - broken_link_count
+  - stale_concept_count
+  - token_savings_per_task
+  - human_review_acceptance_rate
+  - answer_quality_with_bundle_vs_without_bundle</pre>
+        </section>
+
+        <section class="section" id="sources">
+          <span class="label">Sources and Notes</span>
+          <h2>What this summary is based on.</h2>
+          <p class="lead">
+            The main summary was generated from the public YouTube captions for Cole Medin's video. I also checked Google's
+            official Open Knowledge Format announcement and the GitHub OKF specification to confirm the format details.
+          </p>
+          <ul class="source-list">
+            <li><a href="https://www.youtube.com/watch?v=T33iI6izAKw">Source video: Finally, an Open Standard for the Karpathy LLM Wiki is HERE</a></li>
+            <li><a href="https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing">Google Cloud Blog: Introducing the Open Knowledge Format</a></li>
+            <li><a href="https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md">GitHub: Open Knowledge Format SPEC.md</a></li>
+          </ul>
+          <p class="note">
+            OKF v0.1 is a draft and may evolve. Treat this page as a strategic and architectural summary, then verify exact
+            conformance rules against the current official spec before implementation.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>Finally, an Open Standard for the Karpathy LLM Wiki is HERE</strong>.
+    Source: Cole Medin. Video ID: T33iI6izAKw.
+  </footer>
+</body>
+</html>

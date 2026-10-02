@@ -1,0 +1,941 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Dynamic Subagents - Parallel Agents in Deep Agents - LangChain Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5f6d73;
+      --paper: #fffef9;
+      --canvas: #f4f7f2;
+      --line: #d7ded6;
+      --teal: #14716a;
+      --blue: #315f85;
+      --coral: #bd4e3e;
+      --gold: #a1741e;
+      --violet: #675a87;
+      --charcoal: #243039;
+      --soft-teal: #e3f0ed;
+      --soft-blue: #e6edf5;
+      --soft-gold: #f7efd8;
+      --shadow: 0 24px 62px rgb(23 33 38 / 11%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(20 113 106 / 7%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(49 95 133 / 6%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--coral), var(--gold), var(--violet));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 84%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.04fr) minmax(300px, 0.96fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.9rem, 6.7vw, 5.85rem);
+      font-weight: 760;
+      line-height: 0.96;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      margin-top: 24px;
+      color: #303b41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2.05vw, 1.48rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e6ece7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 86%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: rgb(255 255 255 / 88%);
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .stat {
+      padding: 14px;
+      color: var(--ink);
+      background: #fff;
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--coral);
+      font-size: 1.65rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 238px minmax(0, 1fr);
+      gap: 40px;
+      align-items: start;
+      margin-top: 38px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 6px;
+      padding: 16px;
+      background: rgb(255 255 255 / 80%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .toc span {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 750;
+      text-decoration: none;
+      border-top: 1px solid rgb(215 222 214 / 76%);
+    }
+
+    .content {
+      display: grid;
+      gap: 28px;
+      min-width: 0;
+    }
+
+    .section {
+      min-width: 0;
+      padding: 34px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; padding-top: 0; }
+
+    .label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      max-width: 900px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.9rem, 4vw, 3.35rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      max-width: 920px;
+      margin-top: 14px;
+      color: #303b41;
+      font-size: 1.08rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      margin-bottom: 12px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .flow-step {
+      min-width: 0;
+      padding: 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 30px rgb(23 33 38 / 6%);
+    }
+
+    .flow-step b {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--coral);
+      font-size: 0.8rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .lanes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .lane {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .lane:nth-child(1) { background: var(--soft-teal); }
+    .lane:nth-child(2) { background: var(--soft-blue); }
+    .lane:nth-child(3) { background: var(--soft-gold); }
+
+    .lane h3 {
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 1.08rem;
+    }
+
+    .lane p {
+      color: #42505a;
+      font-size: 0.96rem;
+    }
+
+    .table-wrap {
+      min-width: 0;
+      margin-top: 24px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: #fff;
+      background: var(--blue);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    td {
+      color: #344047;
+      font-size: 0.95rem;
+    }
+
+    .quote {
+      margin-top: 24px;
+      padding: 22px;
+      color: #fff;
+      background: var(--violet);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.22rem, 2.4vw, 1.78rem);
+      line-height: 1.35;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 14px 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .checklist strong { color: var(--coral); }
+
+    .pattern-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .pattern {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .pattern h3 {
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+
+    .pattern p {
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .pattern code {
+      display: block;
+      margin-top: 12px;
+      padding: 10px 12px;
+      color: #233039;
+      background: #f4f7f2;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.86rem;
+      white-space: normal;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 46px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .toc { position: static; }
+
+      .grid,
+      .two,
+      .tldr,
+      .lanes,
+      .pattern-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .page { padding-inline: 16px; }
+
+      .hero {
+        padding-top: 36px;
+        gap: 28px;
+      }
+
+      h1 {
+        max-width: 10ch;
+        font-size: clamp(2.55rem, 13vw, 4.15rem);
+      }
+
+      .quick-summary { padding: 22px; }
+
+      .grid,
+      .two,
+      .tldr,
+      .lanes,
+      .pattern-grid {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        min-width: 0;
+        table-layout: fixed;
+      }
+
+      th, td {
+        padding: 11px 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/reading/">Reading room</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#why">Why</a>
+      <a class="action-link" href="#patterns">Six Patterns</a>
+      <a class="action-link" href="#platform">Platform Takeaways</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=5AkdMangfNk">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Dynamic Subagents</span>
+        <h1>Parallel Agents That Finish the Work</h1>
+        <p class="subtitle">
+          A readable summary of LangChain's walkthrough on dynamic subagents in Deep Agents.
+          The talk explains how agents can write code to spawn and coordinate subagents,
+          turning large repetitive workflows into reliable loops, branches, retries, and parallel fan-out.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> Dynamic Subagents: How to Run Parallel Agents Reliably in Deep Agents</span>
+          <span><strong>Creator:</strong> LangChain</span>
+          <span><strong>Transcript:</strong> 4,948 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/5AkdMangfNk/hqdefault.jpg" alt="Video thumbnail for Dynamic Subagents in Deep Agents">
+        <figcaption>
+          Source video from LangChain, focused on dynamic subagents, Decode, Deep Agents, task globals, typed schemas, and six workflow patterns.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="quick-summary-title">
+      <div>
+        <h2 id="quick-summary-title">The Short Version</h2>
+        <p>
+          Deep Agents already had subagents for context isolation. Dynamic subagents add programmatic orchestration:
+          the main agent writes code, uses the code interpreter middleware, calls a task global, and fans out subagents in parallel.
+          This makes big workflows more reliable because coverage, branching, retries, synthesis, and stop conditions move into code.
+        </p>
+        <ul class="tldr">
+          <li>Subagents keep main-agent context clean by doing work in isolated context windows and returning compact results.</li>
+          <li>Dynamic subagents help when the task is too repetitive or large for turn-by-turn tool calling.</li>
+          <li>The workflow keyword steers the agent toward writing orchestration code instead of handling everything mentally.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>25m</strong><span>runtime</span></div>
+        <div class="stat"><strong>568</strong><span>caption rows</span></div>
+        <div class="stat"><strong>4.9k</strong><span>transcript words</span></div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Table of contents">
+        <span>Read</span>
+        <a href="#why">Why dynamic subagents</a>
+        <a href="#mechanism">How it works</a>
+        <a href="#steering">Steering</a>
+        <a href="#patterns">Six patterns</a>
+        <a href="#schemas">Schemas and traces</a>
+        <a href="#platform">Platform takeaways</a>
+        <a href="#templates">BA templates</a>
+      </nav>
+
+      <article class="content">
+        <section class="section" id="why">
+          <span class="label">Why Dynamic Subagents</span>
+          <h2>The problem is not subagents. The problem is unreliable orchestration at scale</h2>
+          <p class="lead">
+            Ordinary subagents already solve one big problem: context isolation. Each subagent receives a focused task,
+            works in its own context window, and returns results to the main agent. The gap appears when the main agent
+            must call the subagent tool hundreds of times, keep track of coverage, merge results, retry failures, and decide when it is done.
+          </p>
+
+          <div class="lanes" aria-label="Why dynamic subagents matter">
+            <article class="lane">
+              <h3>Plain Tool Calling</h3>
+              <p>The main agent repeatedly decides which subagent to call next. For a few calls this works, but for large jobs it can skip items or stop early.</p>
+            </article>
+            <article class="lane">
+              <h3>Dynamic Subagents</h3>
+              <p>The main agent writes orchestration code that loops over items, spawns subagents, waits for results, and merges them deterministically.</p>
+            </article>
+            <article class="lane">
+              <h3>Reliability Gain</h3>
+              <p>Completeness stops depending on prompt luck. A loop can cover all pages, files, tickets, candidates, or services.</p>
+            </article>
+          </div>
+
+          <p class="quote">
+            The key idea: move orchestration out of the agent's head and into code whenever code is the clearer control surface.
+          </p>
+        </section>
+
+        <section class="section" id="mechanism">
+          <span class="label">Mechanism</span>
+          <h2>The code interpreter middleware gives the agent a programmable subagent API</h2>
+          <p class="lead">
+            LangChain's code interpreter middleware provides a lightweight in-memory sandbox and exposes an eval tool.
+            The agent writes a code block, the runtime executes it, and only the final result returns to the main context.
+            For dynamic subagents, the important addition is the task global, which is the programmatic version of the Deep Agents task tool.
+          </p>
+
+          <div class="flow" aria-label="Dynamic subagent execution flow">
+            <div class="flow-step"><b>Request</b><span>User asks for a workflow that needs coverage, parallelism, or multi-step control.</span></div>
+            <div class="flow-step"><b>Code</b><span>Main agent writes orchestration code in the eval tool.</span></div>
+            <div class="flow-step"><b>Task Global</b><span>The code calls await task with description, subagent type, and optional schema.</span></div>
+            <div class="flow-step"><b>Parallel Work</b><span>Subagents run in isolated contexts and return compact outputs.</span></div>
+            <div class="flow-step"><b>Synthesize</b><span>The code or main agent merges, ranks, filters, or loops based on results.</span></div>
+          </div>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Description</span>
+              <h3>Subagent prompt</h3>
+              <p>Each task call includes a description, which acts like the focused system prompt for the spawned subagent.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Type</span>
+              <h3>Subagent specialization</h3>
+              <p>The agent can target different subagent types such as bug investigator, feature analyst, verifier, judge, or security reviewer.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Schema</span>
+              <h3>Typed results</h3>
+              <p>Dynamic response schemas let the agent branch, loop, filter, or vote using known fields from subagent outputs.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="steering">
+          <span class="label">Steering</span>
+          <h2>The workflow keyword tells the agent to write orchestration code</h2>
+          <p class="lead">
+            Once the middleware is attached, the agent can use dynamic subagents, but it may not always choose that path.
+            In Decode, LangChain uses the workflow keyword as a steering signal. A request like "review every file in this PR"
+            may or may not fan out, but "run workflow to review every file in this PR" explicitly asks for code-driven orchestration.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Plain request</th>
+                  <th>Workflow request</th>
+                  <th>Expected behavior</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Review the utility code.</td>
+                  <td>Run a workflow to review every file in the utility code.</td>
+                  <td>Fan out one or more reviewers across files and synthesize a final report.</td>
+                </tr>
+                <tr>
+                  <td>Find security issues.</td>
+                  <td>Run a workflow to find security issues and independently verify each finding.</td>
+                  <td>Generate candidates, send them to verifier subagents, and report confirmed issues only.</td>
+                </tr>
+                <tr>
+                  <td>Suggest a refactor.</td>
+                  <td>Run a workflow to generate several refactor designs and pick the strongest one.</td>
+                  <td>Generate multiple candidates, score or compare them, then recommend a winner.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="patterns">
+          <span class="label">Six Patterns</span>
+          <h2>Dynamic subagents turn common agent workflows into reusable orchestration shapes</h2>
+          <p class="lead">
+            The video walks through six patterns, originally shaped by Anthropic's dynamic workflow framing and demonstrated through LangSmith traces.
+            Each pattern is triggered by the task shape and by how the workflow request is phrased.
+          </p>
+
+          <div class="pattern-grid">
+            <article class="pattern">
+              <h3>1. Classify and Act</h3>
+              <p>Use when mixed inputs need different handling. The agent classifies items, groups them, and sends each group to the right subagent type.</p>
+              <code>Run a workflow to classify each support ticket and handle each type the right way.</code>
+            </article>
+            <article class="pattern">
+              <h3>2. Fan Out and Synthesize</h3>
+              <p>Use when every item needs the same operation and the user wants one combined output. The agent covers all files or documents in parallel.</p>
+              <code>Review every file and give me one prioritized summary.</code>
+            </article>
+            <article class="pattern">
+              <h3>3. Adversarial Verification</h3>
+              <p>Use for high-stakes precision. One pass finds candidate issues, independent verifier subagents check them, and only confirmed findings are reported.</p>
+              <code>Find issues, independently verify each one, and report only confirmed findings.</code>
+            </article>
+            <article class="pattern">
+              <h3>4. Generate and Filter</h3>
+              <p>Use for open-ended quality. Several subagents produce candidate designs or approaches, then the agent scores and keeps the strongest one.</p>
+              <code>Generate several redesigns, score them, and recommend the best with rationale.</code>
+            </article>
+            <article class="pattern">
+              <h3>5. Tournament</h3>
+              <p>Use when "best" is subjective. Candidate variants compete head to head and judge subagents advance winners until one remains.</p>
+              <code>Produce several rewrites and compare them head to head until one winner stands out.</code>
+            </article>
+            <article class="pattern">
+              <h3>6. Loop Until Done</h3>
+              <p>Use for exhaustiveness. The agent runs passes, deduplicates what it already found, and keeps going until a pass finds nothing new.</p>
+              <code>Find all dead code and do not stop until a full pass turns up nothing new.</code>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="schemas">
+          <span class="label">Schemas and Traces</span>
+          <h2>Typed outputs and traces are what make these workflows inspectable</h2>
+          <p class="lead">
+            A repeated detail in the demos is dynamic response schemas. When the main agent knows that a subagent result contains
+            fields like severity, evidence, confirmed, reason, score, or file path, it can write code that branches and filters safely.
+            LangSmith traces then show the actual fan-out, eval calls, subagent prompts, results, and final synthesis.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Typed Output</span>
+              <h3>Branching needs shape</h3>
+              <p>Response schemas turn natural-language subagent results into values that loops, filters, votes, and rankings can consume.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Persistent Variables</span>
+              <h3>Eval calls can build on prior work</h3>
+              <p>The video shows variables from one eval call being reused in another, which enables iterative multi-stage workflows.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Trace View</span>
+              <h3>Debugging becomes concrete</h3>
+              <p>LangSmith traces reveal whether the agent classified, fanned out, verified, deduplicated, synthesized, and stopped correctly.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your agentic AI platform</h2>
+          <p class="lead">
+            This video maps very directly to your Master Agent, Sub-Agent, Skill, Tool MCP, and Flow Markdown design.
+            A BA-facing platform should let users choose workflow shapes, not force them to hand-write every orchestration detail.
+          </p>
+
+          <ul class="checklist">
+            <li><strong>Make dynamic subagent patterns first-class.</strong> Let BAs choose Classify and Act, Fan Out and Synthesize, Verify, Generate and Filter, Tournament, or Loop Until Done.</li>
+            <li><strong>Compile Flow Markdown into orchestration code.</strong> A flow should produce loops, branches, retries, parallel fan-out, schema contracts, and stop conditions.</li>
+            <li><strong>Keep Master Agent context clean.</strong> The Master Agent should own goal, plan, state, and synthesis while Sub-Agents handle isolated heavy work.</li>
+            <li><strong>Define subagent types like roles, not just prompts.</strong> Each Sub-Agent type needs scope, input schema, output schema, allowed tools, evaluation rule, and trace labels.</li>
+            <li><strong>Use typed response schemas everywhere.</strong> Business workflows need structured outputs so the platform can branch, verify, deduplicate, rank, and audit.</li>
+            <li><strong>Add explicit steering language.</strong> Your UI can expose "Run as workflow" or "Use parallel subagents" instead of relying on hidden prompt keywords.</li>
+            <li><strong>Show a dynamic subagents view.</strong> Users should see each phase, running subagents, task descriptions, durations, status, and result summaries.</li>
+            <li><strong>Separate candidate generation from verification.</strong> High-risk business processes should use independent verifier subagents before actions are accepted.</li>
+            <li><strong>Treat completion as a policy.</strong> "Every file", "confirmed only", "winner selected", and "no new findings" are different stop rules that should be configurable.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">BA Templates</span>
+          <h2>Reusable templates for a BA-facing dynamic subagent builder</h2>
+          <p class="lead">
+            The most useful product translation is a template library. Instead of asking a BA to understand code interpreter middleware,
+            the platform can expose workflow templates that compile into safe orchestration code and traceable subagent calls.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Template</th>
+                  <th>BA fills in</th>
+                  <th>Platform compiles</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Classify and Act</td>
+                  <td>Input list, classes, routing rules, action per class, and expected output per class.</td>
+                  <td>Classifier step, grouped task calls, subagent type mapping, and merged report.</td>
+                </tr>
+                <tr>
+                  <td>Fan Out and Synthesize</td>
+                  <td>Items to cover, subagent role, checklist, ranking rule, and final report format.</td>
+                  <td>Parallel task calls, Promise.all-style execution, typed review schema, and synthesis step.</td>
+                </tr>
+                <tr>
+                  <td>Adversarial Verification</td>
+                  <td>Candidate finder, verifier role, confidence policy, rejection reason fields, and voting rule.</td>
+                  <td>Two-pass workflow, independent verifier fan-out, majority or threshold logic, and confirmed-only output.</td>
+                </tr>
+                <tr>
+                  <td>Generate and Filter</td>
+                  <td>Number of variants, evaluation criteria, scoring rubric, output location, and winner rationale.</td>
+                  <td>Candidate generator fan-out, scoring matrix, filter code, and recommendation artifact.</td>
+                </tr>
+                <tr>
+                  <td>Tournament</td>
+                  <td>Variants, pairwise comparison criteria, judge role, bracket depth, and tie-breaking rule.</td>
+                  <td>Bracket orchestration, judge subagents, round outputs, winner selection, and traceable rationale.</td>
+                </tr>
+                <tr>
+                  <td>Loop Until Done</td>
+                  <td>Pass goal, dedupe key, max passes, stop condition, and evidence required for final output.</td>
+                  <td>Iterative passes, previous-findings context, deduplication state, and stop-reason record.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="quote">
+            Strong opinion: dynamic subagents are less about "more agents" and more about making orchestration explicit, inspectable, and repeatable.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>Dynamic Subagents: How to Run Parallel Agents Reliably in Deep Agents</strong>.
+    Source: LangChain. Video ID: 5AkdMangfNk.
+  </footer>
+</body>
+</html>

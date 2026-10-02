@@ -1,0 +1,1314 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Anthropic Vertical AI and Evals as PRDs - Dianne Penn Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5b6870;
+      --quiet: #7a858b;
+      --paper: #fffefa;
+      --canvas: #f4f7f2;
+      --line: #d8dfd7;
+      --red: #c94c3b;
+      --teal: #1d766c;
+      --blue: #2c6682;
+      --green: #5b7d51;
+      --gold: #a97925;
+      --plum: #665987;
+      --wash-red: #f8e5df;
+      --wash-teal: #e2f0ec;
+      --wash-blue: #e5eff6;
+      --wash-green: #e9f1df;
+      --wash-gold: #f7edd8;
+      --shadow: 0 24px 68px rgb(23 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(29 118 108 / 6%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(44 102 130 / 5%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 46px 46px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--red), var(--teal), var(--blue), var(--green), var(--gold), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure, blockquote, pre { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td, code { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 88%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.96fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--red);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 13ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.45rem, 5.9vw, 5.25rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      margin-top: 24px;
+      color: #303b42;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      object-fit: contain;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+      gap: 24px;
+      margin: 28px 0;
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 7%);
+    }
+
+    .quick-summary h2,
+    .section h2,
+    .sidebar h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-weight: 760;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+    }
+
+    .quick-summary p,
+    .section p,
+    .section li {
+      color: #334047;
+      font-size: 1.01rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .stats-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat {
+      display: grid;
+      align-content: space-between;
+      min-height: 112px;
+      padding: 16px;
+      background: var(--wash-teal);
+      border: 1px solid rgb(29 118 108 / 18%);
+      border-radius: 8px;
+    }
+
+    .stat:nth-child(2) { background: var(--wash-blue); border-color: rgb(44 102 130 / 18%); }
+    .stat:nth-child(3) { background: var(--wash-gold); border-color: rgb(169 121 37 / 18%); }
+    .stat:nth-child(4) { background: var(--wash-green); border-color: rgb(91 125 81 / 18%); }
+
+    .stat strong {
+      color: var(--ink);
+      font-size: 1.25rem;
+      line-height: 1.05;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .content {
+      display: grid;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .section {
+      padding: 32px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 7%);
+    }
+
+    .section h2 {
+      margin-bottom: 16px;
+      font-size: clamp(1.75rem, 3vw, 2.45rem);
+    }
+
+    .section h3 {
+      margin-bottom: 8px;
+      color: #1f2a31;
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+
+    .section p + p { margin-top: 14px; }
+
+    .section ul,
+    .section ol {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+      padding-left: 22px;
+    }
+
+    .callout,
+    .quote-box,
+    .verdict {
+      margin-top: 20px;
+      padding: 18px 20px;
+      background: var(--wash-teal);
+      border: 1px solid rgb(29 118 108 / 20%);
+      border-radius: 8px;
+    }
+
+    .callout.gold { background: var(--wash-gold); border-color: rgb(169 121 37 / 22%); }
+    .callout.red { background: var(--wash-red); border-color: rgb(201 76 59 / 20%); }
+    .quote-box { color: #24333a; font-family: ui-serif, Georgia, "Times New Roman", serif; font-size: 1.16rem; }
+    .verdict { background: #1f2b32; border-color: #1f2b32; }
+    .verdict h3,
+    .verdict p { color: #fff; }
+
+    .card-grid,
+    .evidence-grid,
+    .metric-grid,
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .card,
+    .evidence-item,
+    .metric-card,
+    .template-card {
+      min-width: 0;
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .metric-card:nth-child(1) { background: var(--wash-red); }
+    .metric-card:nth-child(2) { background: var(--wash-teal); }
+    .metric-card:nth-child(3) { background: var(--wash-blue); }
+    .metric-card:nth-child(4) { background: var(--wash-gold); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .flow li {
+      display: grid;
+      gap: 8px;
+      min-height: 174px;
+      padding: 16px;
+      color: #334047;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .step-number {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 50%;
+      font-weight: 900;
+    }
+
+    .map {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .map-node {
+      display: grid;
+      gap: 8px;
+      min-height: 136px;
+      padding: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-left: 6px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .map-node:nth-child(2) { border-left-color: var(--blue); }
+    .map-node:nth-child(3) { border-left-color: var(--gold); }
+    .map-node:nth-child(4) { border-left-color: var(--green); }
+    .map-node:nth-child(5) { border-left-color: var(--red); }
+    .map-node:nth-child(6) { border-left-color: var(--plum); }
+
+    .table-wrap {
+      width: 100%;
+      margin-top: 20px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 720px;
+      border-collapse: collapse;
+      background: #fff;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: var(--ink);
+      background: var(--wash-blue);
+      font-size: 0.82rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+    td { color: #344047; font-size: 0.95rem; }
+
+    pre {
+      max-width: 100%;
+      margin-top: 12px;
+      padding: 16px;
+      overflow-x: auto;
+      color: #eaf3f3;
+      background: #1f2b32;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      line-height: 1.58;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .toc,
+    .source-box {
+      padding: 20px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 14px 32px rgb(23 33 38 / 6%);
+    }
+
+    .toc h2,
+    .source-box h2 {
+      margin-bottom: 12px;
+      color: var(--quiet);
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .toc nav {
+      display: grid;
+      gap: 6px;
+    }
+
+    .toc a {
+      color: var(--ink);
+      font-size: 0.92rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--red); }
+
+    .source-box p {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .tag {
+      display: inline-flex;
+      min-height: 30px;
+      align-items: center;
+      padding: 0 10px;
+      color: var(--ink);
+      background: var(--wash-green);
+      border: 1px solid rgb(91 125 81 / 20%);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .footer-note {
+      margin-top: 28px;
+      color: var(--quiet);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar { position: static; }
+      h1 { max-width: 14ch; }
+      .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .map,
+      .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .action-link { flex: 1 1 auto; }
+      .page { padding: 0 18px 56px; }
+      .hero { padding: 36px 0 34px; }
+      .quick-summary,
+      .section { padding: 20px; }
+      .stats-panel,
+      .card-grid,
+      .evidence-grid,
+      .metric-grid,
+      .template-grid,
+      .flow,
+      .map {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">Video Notes Library</a>
+    <div class="top-actions">
+      <a class="action-link" href="./index.html">All summaries</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=tivaWTTVRhY&t=1752s">Watch source</a>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="kicker">Lenny's Podcast Anthropic product strategy summary</p>
+        <h1 id="page-title">Vertical AI, Evals, And Frontier Products</h1>
+        <p class="subtitle">A detailed reading guide to Lenny Rachitsky's conversation with Dianne Penn, Head of Product for Anthropic's AI Research and Labs teams, on why model progress needs product surfaces, why evals are becoming the new PRDs, and how user feedback becomes model improvement.</p>
+        <div class="meta">
+          <span><strong>Source:</strong> Lenny's Podcast</span>
+          <span><strong>Guest:</strong> Dianne Penn, Anthropic</span>
+          <span><strong>Length:</strong> about 93 minutes</span>
+          <span><strong>Transcript:</strong> 2,359 caption rows, about 16,377 words</span>
+          <span><strong>Requested timestamp:</strong> 29:12</span>
+        </div>
+      </div>
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/tivaWTTVRhY/hqdefault.jpg" alt="YouTube thumbnail for Dianne Penn on Lenny's Podcast">
+        <figcaption>Source video thumbnail. This page summarizes the public captions and turns the interview into a practical product and agent-platform playbook.</figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" id="executive-summary">
+      <div>
+        <h2>Executive Summary</h2>
+        <p>This interview is one of the most useful product-management conversations in the library because it explains how a frontier AI lab turns fuzzy user feedback into model, harness, and product improvements. Dianne Penn's main lesson is that AI product work is no longer only about writing a PRD and shipping a feature. It is about discovering capabilities, building the right product surface, measuring failures as evals, and shortening the path from user pain to research action.</p>
+        <ul class="summary-list">
+          <li><strong>Frontier models need frontier products:</strong> Opus 4.5 and Claude Code amplified each other. A powerful model needs a product vehicle that lets users feel the new capability.</li>
+          <li><strong>Capabilities arrive discontinuously:</strong> models may suddenly become good at a new behavior. Teams need evals and hands-on exploration to notice the jump.</li>
+          <li><strong>Evals are the new PRDs:</strong> for AI products, the defining artifact is often an eval set that captures a real user pain, not a long requirements document.</li>
+          <li><strong>Sweat the tokens:</strong> PMs need to inspect failed trajectories, tool calls, retrieved facts, schema failures, and model behavior with the same care older product teams gave to pixels.</li>
+          <li><strong>Feedback must become actionable:</strong> "Claude hallucinated" is not useful enough. The product job is to diagnose whether the issue is tool use, search, synthesis, alignment, context, or another component.</li>
+          <li><strong>Human judgment remains central:</strong> AI can be a thinking partner, but leaders still need taste, persistence, point of view, and responsibility for what gets shipped.</li>
+        </ul>
+      </div>
+      <div class="stats-panel" aria-label="Summary stats">
+        <div class="stat"><strong>93 min</strong><span>Interview length</span></div>
+        <div class="stat"><strong>16.4k</strong><span>Transcript words</span></div>
+        <div class="stat"><strong>29:12</strong><span>Key timestamp</span></div>
+        <div class="stat"><strong>evals</strong><span>New product artifact</span></div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <article class="content">
+        <section class="section" id="core-thesis">
+          <h2>Core Thesis</h2>
+          <p>The title says AI is going vertical again, but the deeper point is that value is moving from generic model capability into specific product surfaces, workflows, and feedback loops. Anthropic's early challenge was not only to train strong models. It had to find where Claude created distinctive user value, then build the product paths that made those capabilities legible.</p>
+          <p>Penn describes Anthropic as moving from a small team with one API engineer and a chat assistant into a company that found its identity through research demos, coding, tools, computer use, MCP, Skills, Claude Code, Claude Tag, and Labs. The pattern is not "model first, product later." It is a loop: research creates possible capability, product exposes it to users, users reveal where it works or fails, and evals turn that evidence back into research and product work.</p>
+          <div class="callout">
+            <p><strong>Best one-line read:</strong> the winning AI product loop is capability discovery plus product surface plus eval feedback plus research improvement.</p>
+          </div>
+        </section>
+
+        <section class="section" id="anthropic-early-days">
+          <h2>Anthropic's Early Product Identity</h2>
+          <p>Dianne joined Anthropic in 2023, when the product engineering team was tiny and Claude was not yet strongly associated with coding. She says the culture, mission, and bottom-up energy were already present, but the company was still discovering how the technology would bring value to users and society.</p>
+          <p>One surprising example is Golden Gate Claude. Anthropic published interpretability research showing that model "features" could be identified and adjusted. The team turned that research into a 24-hour public demo where Claude became unusually focused on the Golden Gate Bridge. The demo reached a modest number of users, but internally it showed that Anthropic could turn research into a user experience quickly, authentically, and with product, design, engineering, and research collaborating in startup mode.</p>
+          <div class="quote-box">Golden Gate Claude matters here because it was a culture signal: research should not stay trapped in papers when a simple product experience can help people feel what was discovered.</div>
+        </section>
+
+        <section class="section" id="inflection-points">
+          <h2>Inflection Points: Opus, Coding, And Claude Code</h2>
+          <p>Penn names Opus 3 as an internal confidence-building moment. It proved Anthropic could train and ship a frontier model, and it helped the company answer why users should choose Claude. A smaller but important training choice around long-form code generation also helped Claude stand out among early developers, because users were beginning to move beyond autocomplete into larger coding tasks.</p>
+          <p>She then describes Opus 4.5 and Claude Code as a mutual acceleration. Opus 4.5 would not have had the same moment without Claude Code as a product vehicle, and Claude Code would not have accelerated the same way without a model strong enough for end-to-end agentic coding. This is the "frontier products for frontier models" thesis.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Inflection</th>
+                  <th>What changed</th>
+                  <th>Product lesson</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Golden Gate Claude</td>
+                  <td>Research became a quirky public product demo within about a day.</td>
+                  <td>Research needs lightweight product surfaces that let users feel the idea.</td>
+                </tr>
+                <tr>
+                  <td>Opus 3</td>
+                  <td>Anthropic built confidence in training and shipping a frontier model.</td>
+                  <td>A model launch can also be an internal trust-building operating event.</td>
+                </tr>
+                <tr>
+                  <td>Coding focus</td>
+                  <td>Claude became differentiated for long-form coding, not only autocomplete.</td>
+                  <td>User behavior can reveal high-leverage training opportunities.</td>
+                </tr>
+                <tr>
+                  <td>Opus 4.5 plus Claude Code</td>
+                  <td>A powerful model and a strong product vehicle compounded each other.</td>
+                  <td>Capability and UX are not separate. The product is how capability becomes real.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="exponential">
+          <h2>Living Inside The Exponential</h2>
+          <p>The interview spends time on what it feels like when model progress is accelerating. Penn says teams cannot perfectly predict which model release will unlock which capability. That means the product organization must be adaptable, first-principles driven, and willing to change plans when new evidence appears.</p>
+          <p>She draws on scaling-law thinking: overall loss can improve smoothly, but particular capabilities can appear discontinuously. A model may suddenly become reliable at something it failed before. If the team does not have evals, prototypes, and people using the model deeply, the jump can go unnoticed or unmanaged.</p>
+          <div class="map" aria-label="Capability discovery map">
+            <div class="map-node">
+              <h3>Research Model</h3>
+              <p>New capability appears or improves, sometimes abruptly.</p>
+            </div>
+            <div class="map-node">
+              <h3>Hands-On Exploration</h3>
+              <p>Builders spend real time using the model rather than theorizing from outside.</p>
+            </div>
+            <div class="map-node">
+              <h3>Prototype Surface</h3>
+              <p>A Labs-style product path exposes the capability to real workflows.</p>
+            </div>
+            <div class="map-node">
+              <h3>User Feedback</h3>
+              <p>Failures and surprising wins reveal the actual opportunity.</p>
+            </div>
+            <div class="map-node">
+              <h3>Eval Set</h3>
+              <p>The failure becomes measurable and repeatable.</p>
+            </div>
+            <div class="map-node">
+              <h3>Research Loop</h3>
+              <p>The eval guides training, harness, tool, or product improvements.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="token-maxing">
+          <h2>Token Maxing Means Experimentation, Not Waste</h2>
+          <p>Lenny brings up the idea that people willing to spend heavily on tokens today are living in a future that will be cheaper later. Penn reframes it through a product lens: token spend is an input, but the real goal is experimentation. The best builders spend time with each research model because strategy is hard to form without touching fast-moving technology.</p>
+          <p>She also describes "working in public" internally. Anthropic teams tried early models in shared channels, watched each other experiment, copied useful ideas, and remixed them. The discovery process was communal, not purely individual. This matters because many AI use cases emerge when someone sees another person's attempt and realizes a nearby workflow is now possible.</p>
+          <div class="callout gold">
+            <p><strong>Practical interpretation:</strong> do not measure only token budget. Measure how many meaningful experiments, reusable patterns, evals, and product insights the token budget produced.</p>
+          </div>
+        </section>
+
+        <section class="section" id="labs">
+          <h2>Anthropic Labs: Discontinuous Bets</h2>
+          <p>Penn describes Labs as the place for discontinuous bets that may not sit cleanly on the core roadmap. Labs pulls on threads such as Claude Code, Skills, Claude Design, MCP, and Claude Tag, asking whether there is a "there there" and what the 10x, 100x, or 1000x version could be.</p>
+          <p>The operating style is strongly held on theme, weakly held on exact prototype. Small pods or even one engineer can test a bold direction. Some ideas do not work yet and are paused until future model generations. Those prototypes still create value because they teach the organization what to revisit when the model catches up.</p>
+          <div class="evidence-grid">
+            <div class="evidence-item">
+              <h3>Small pods</h3>
+              <p>Large ambiguous ideas can move faster with a small team that behaves like founders.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Strong theme</h3>
+              <p>The team knows the direction, such as agentic coding or skills, even if the prototype changes weekly.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Future revisit</h3>
+              <p>A rejected prototype may become viable one or two model generations later.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Research-product bridge</h3>
+              <p>Labs sees around corners by pairing model capability with product intuition.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="timestamp">
+          <h2>Timestamp Focus: 29:12 And The Product-Research Loop</h2>
+          <p>The timestamp in your link lands in one of the most important parts of the conversation. Penn explains how her team works with researchers by turning user feedback into something that is understandable and actionable for model teams. This is a core pattern for any AI platform team.</p>
+          <p>A user might say "Claude hallucinated." That feedback is too vague to fix. The product team has to inspect the trajectory and ask what actually failed. Did Claude fail to call a tool? Did it search the right document but pull the wrong fact? Did it synthesize the right facts incorrectly? Was the issue alignment, overconfidence, context, retrieval, or tool access? The value of the PM is in moving from complaint to diagnosis to eval.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>User feedback</th>
+                  <th>Diagnosis question</th>
+                  <th>Likely owner</th>
+                  <th>Potential eval</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>"Claude hallucinated."</td>
+                  <td>Was it missing knowledge, using the wrong source, or overconfident?</td>
+                  <td>Retrieval, model behavior, or alignment team.</td>
+                  <td>Fact-grounded answer set with source verification.</td>
+                </tr>
+                <tr>
+                  <td>"It ignored my instruction."</td>
+                  <td>Which instruction failed, and was the format or priority ambiguous?</td>
+                  <td>Instruction-following and prompt/harness team.</td>
+                  <td>Instruction hierarchy and schema-following cases.</td>
+                </tr>
+                <tr>
+                  <td>"It did not use the tool."</td>
+                  <td>Should the model have called a tool, and was the tool available?</td>
+                  <td>Tool-use, MCP, or agent runtime team.</td>
+                  <td>Tool-call decision benchmark.</td>
+                </tr>
+                <tr>
+                  <td>"The result was wrong."</td>
+                  <td>Did reasoning, search, tool execution, or final synthesis fail?</td>
+                  <td>Diagnoser routes to the right sub-system.</td>
+                  <td>Trace-level failure classification.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="evals-prds">
+          <h2>Evals Are The New PRDs</h2>
+          <p>Penn says her team has a saying: evals are the new PRDs. She does not mean PRDs are dead. She means that when the product is a model or agent behavior, the artifact that best defines the work may be the test set that captures the user's need.</p>
+          <p>The example is JSON schema following. Early Claude users complained that Claude was not good at following instructions. When Penn dug into the actual examples, a large share of the pain was that Claude was not producing the right JSON. The product move was to collect 30 to 40 concrete examples, turn them into an eval set, and add the eval to the model development loop. Over time, that failure became essentially solved.</p>
+          <div class="flow" aria-label="Eval-driven product loop">
+            <li><span class="step-number">1</span><strong>Hear pain</strong><span>Collect real user complaints or failed trajectories.</span></li>
+            <li><span class="step-number">2</span><strong>Inspect tokens</strong><span>Read prompts, responses, tool calls, retrieved facts, and failure context.</span></li>
+            <li><span class="step-number">3</span><strong>Cluster failure</strong><span>Find the repeated pattern behind vague feedback.</span></li>
+            <li><span class="step-number">4</span><strong>Write eval</strong><span>Create examples, rubrics, expected outcomes, and pass conditions.</span></li>
+            <li><span class="step-number">5</span><strong>Improve loop</strong><span>Run it on future models or harnesses until the pain disappears.</span></li>
+          </div>
+          <div class="quote-box">For AI products, an eval can be a product requirement expressed as a reproducible failure.</div>
+        </section>
+
+        <section class="section" id="prds-still-matter">
+          <h2>PRDs Still Matter, But Their Job Changes</h2>
+          <p>Penn is clear that Anthropic still uses PRDs. They are useful when a broad group needs alignment around goals, source-of-truth context, launch setup, legal, safety, engineering, and product surface coordination. Every model can still have a PRD-like alignment artifact.</p>
+          <p>The distinction is that PRDs are not always the shortest path to product improvement. For a defined model failure, the eval is often more actionable. For an ambiguous new product direction such as computer use, the vision and alignment parts of a PRD remain valuable because the user pain and product shape may not yet be fully known.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Use an eval when</th>
+                  <th>Use a PRD when</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>The issue is a repeatable model, tool, or harness failure.</td>
+                  <td>The team needs shared context across many functions.</td>
+                </tr>
+                <tr>
+                  <td>You can express the desired behavior as examples, rubrics, or tests.</td>
+                  <td>The opportunity is ambiguous and needs narrative framing.</td>
+                </tr>
+                <tr>
+                  <td>The main stakeholder is research, model training, or agent runtime.</td>
+                  <td>The main stakeholders include product surface, legal, safety, GTM, and operations.</td>
+                </tr>
+                <tr>
+                  <td>The team needs to measure improvement over time.</td>
+                  <td>The team needs to align on what should exist at all.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="pm-skills">
+          <h2>What Product People Need Now</h2>
+          <p>Penn says Anthropic's PM hiring loop has not fundamentally changed, but the meaning of the traits has become sharper. First-principles thinking matters more than pattern matching from old consumer or B2B SaaS playbooks. The question is not "what artifact do PMs usually produce?" The question is "what activity actually creates user value for this model, this user group, and this technology?"</p>
+          <p>She also emphasizes hands-on work. Product leaders cannot only manage from a distance. They need to build, ship, read feedback, talk to users, and work directly with models. She says managers should spend a portion of time walking in the shoes of their teams so they can maintain a current theory of mind about where the model is improving and where it is still jagged.</p>
+          <div class="metric-grid">
+            <div class="metric-card">
+              <h3>First principles</h3>
+              <p>Do what creates user value, not what old product rituals prescribe.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Hands-on shipping</h3>
+              <p>Build with the technology yourself so judgment is grounded in real friction.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Token-level taste</h3>
+              <p>Inspect trajectories, context, tools, and outputs deeply enough to diagnose failures.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Ambition</h3>
+              <p>Ask what changes when Claude 8 exists, then build today's path to be forward compatible.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="safeguards">
+          <h2>Safeguards And Fallback UX</h2>
+          <p>As frontier models become more capable, pre-release testing, red teaming, and safeguards must evolve. Penn avoids policy specifics, but she names the product problem: safety systems should improve without destroying the user experience.</p>
+          <p>She describes building fallback systems so users can still receive a useful response from another model or path when newer model access is constrained by safeguards. This matters for platform design because safety is not only a backend policy. It is a product experience. A blocked path should have an explainable, useful, and lower-risk alternative.</p>
+          <div class="callout red">
+            <p><strong>Platform lesson:</strong> every high-risk agent capability needs a fallback UX. "No" is not enough; the user needs a safe next-best path.</p>
+          </div>
+        </section>
+
+        <section class="section" id="ai-thinking-partner">
+          <h2>AI As A Thinking Partner, Not A Flatterer</h2>
+          <p>Penn talks about using Claude to prepare for difficult management conversations and as a sparring partner for thinking. The important point is that she does not want Claude to take over her point of view. She often forms her own view first, then uses Claude to refine, challenge, or deepen it.</p>
+          <p>This connects to Anthropic's alignment work. A useful assistant should not only agree. It should know when to push back, when to propose a better idea, and when to help the user reach a stronger conclusion. Penn frames proactivity as not just doing scheduled tasks, but knowing when a new idea or objection would help.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Bad AI behavior</th>
+                  <th>Better AI behavior</th>
+                  <th>Design implication</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Agrees with every user idea.</td>
+                  <td>Pushes back when assumptions are weak.</td>
+                  <td>Build critique modes and evidence checks into agents.</td>
+                </tr>
+                <tr>
+                  <td>Writes in generic AI voice.</td>
+                  <td>Preserves user intent, tone, and ownership.</td>
+                  <td>Separate drafting from verification and sign-off.</td>
+                </tr>
+                <tr>
+                  <td>Executes isolated tasks only.</td>
+                  <td>Knows when to suggest a better path.</td>
+                  <td>Define proactivity rules, not just task lists.</td>
+                </tr>
+                <tr>
+                  <td>Optimizes for compliance.</td>
+                  <td>Optimizes for better judgment.</td>
+                  <td>Measure whether the human came away with a stronger decision.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="writing-verification">
+          <h2>Writing, Voice, And Verification</h2>
+          <p>Lenny asks why AI writing still often feels recognizable. Penn says writing and tone are active improvement areas, and that models have jagged edges: when agentic behavior improves, other rough edges such as writing style become more visible.</p>
+          <p>Her most useful distinction is that the real issue may be less "who wrote this?" and more "who verified or signed off on this?" For some artifacts, such as a standard monthly business review, it may be fine for Claude to write much of it while a human reviews. For opinionated writing or personal judgment, the human should preserve the core point of view.</p>
+        </section>
+
+        <section class="section" id="human-judgment">
+          <h2>Where Human Brains Still Matter</h2>
+          <p>Penn names judgment as the scarce human skill. Models can build many things, but product leaders still need to decide which things should be built, which direction matters, and how to interpret nuance. Judgment is accumulated through experience, context, and hard-earned taste.</p>
+          <p>She also emphasizes persistence, point of view, curiosity, and an inner voice. Her parenting answer mirrors her product answer: people need their own perspective before they let AI reshape it. The more capable the model becomes, the more important it is that the human knows what they believe, what they are trying to accomplish, and what they will verify.</p>
+        </section>
+
+        <section class="section" id="culture">
+          <h2>Culture: Radical Ownership Plus Team Collaboration</h2>
+          <p>Penn says Anthropic shipped more model volume in one quarter of 2026 than in all of 2024. Sustaining that pace is not an individual sport. The culture depends on radical ownership, team collaboration, low ego, and people helping each other when launches are intense.</p>
+          <p>She describes teammates staying up before launches even when they are not the directly responsible individual, helping review blog posts, improve demos, and be extra hands. This is part of what people describe as Anthropic's "hive mind": shared context, shared standards, and the ability to back each other up without every detail being centrally controlled.</p>
+          <div class="callout">
+            <p><strong>Agent-era reminder:</strong> working with agents can make people lonelier. High-performing AI teams still need human collaboration, shared thinking, and low-ego backup.</p>
+          </div>
+        </section>
+
+        <section class="section" id="platform-translation">
+          <h2>Translation For Your Agentic AI Platform</h2>
+          <p>This interview maps directly to your Master Agent, Sub-Agent, Skill, Tools/MCP, and BA flow problem. The big lesson is that an agent platform should not start with a blank persona prompt. It should start with a business workflow, a source of truth, a failure taxonomy, and an eval definition.</p>
+          <ol class="flow" aria-label="Agentic platform feedback loop">
+            <li><span class="step-number">1</span><strong>Workflow</strong><span>BA defines business outcome, actors, systems, and decision points.</span></li>
+            <li><span class="step-number">2</span><strong>Agent surface</strong><span>Master Agent, Sub-Agents, Skills, and tools are generated from the workflow.</span></li>
+            <li><span class="step-number">3</span><strong>Trace</strong><span>Every run logs prompts, context, tools, outputs, and approvals.</span></li>
+            <li><span class="step-number">4</span><strong>Diagnosis</strong><span>Feedback is classified into model, retrieval, tool, policy, or workflow failure.</span></li>
+            <li><span class="step-number">5</span><strong>Eval</strong><span>The repeated failure becomes a reusable eval that gates future releases.</span></li>
+          </ol>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Anthropic pattern</th>
+                  <th>Your platform object</th>
+                  <th>BA-friendly meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Evals are the new PRDs</td>
+                  <td>Eval-backed Flow Spec</td>
+                  <td>Define the expected behavior through real examples and pass/fail criteria.</td>
+                </tr>
+                <tr>
+                  <td>Sweat the tokens</td>
+                  <td>Trace viewer and run inspector</td>
+                  <td>Let builders inspect what the agent saw, decided, called, and produced.</td>
+                </tr>
+                <tr>
+                  <td>User feedback to researcher action</td>
+                  <td>Failure diagnoser</td>
+                  <td>Turn vague feedback into a component-level issue.</td>
+                </tr>
+                <tr>
+                  <td>MCP and tool use</td>
+                  <td>Tool contract and permission policy</td>
+                  <td>Specify what data and actions an agent can access.</td>
+                </tr>
+                <tr>
+                  <td>Skills</td>
+                  <td>Reusable capability package</td>
+                  <td>Package instructions, resources, and optional scripts for specialized tasks.</td>
+                </tr>
+                <tr>
+                  <td>Labs-style experiments</td>
+                  <td>Sandboxed prototype lane</td>
+                  <td>Test bold workflow ideas before promoting them into governed production flows.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="templates">
+          <h2>Reusable Templates</h2>
+          <p>These templates translate the episode into artifacts your BA-side users and platform team can actually use.</p>
+          <div class="template-grid">
+            <div class="template-card">
+              <h3>Eval-As-PRD Template</h3>
+              <pre><code># Eval-As-PRD: &lt;behavior or workflow&gt;
+
+Business outcome:
+- &lt;what user or business result improves&gt;
+
+User pain:
+- Raw feedback:
+- Example run:
+- Why it matters:
+
+Failure diagnosis:
+- Model reasoning:
+- Retrieval/search:
+- Tool use/MCP:
+- Context/memory:
+- Policy/alignment:
+- Workflow/UX:
+
+Eval set:
+- Positive examples:
+- Negative examples:
+- Edge cases:
+- Golden answer:
+- Scoring rubric:
+
+Pass criteria:
+- Accuracy:
+- Safety:
+- Completeness:
+- Tool correctness:
+- Human approval:
+
+Release gate:
+- Required score:
+- Regression checks:
+- Rollback trigger:</code></pre>
+            </div>
+            <div class="template-card">
+              <h3>Trajectory Inspector Schema</h3>
+              <pre><code>{
+  "run_id": "...",
+  "user_goal": "...",
+  "agent": {
+    "master_agent": "...",
+    "sub_agent": "...",
+    "skill": "..."
+  },
+  "inputs": {
+    "prompt": "...",
+    "context_refs": [],
+    "source_of_truth": []
+  },
+  "trajectory": [
+    {
+      "step": 1,
+      "thought_summary": "...",
+      "tool_called": "...",
+      "tool_input": {},
+      "tool_output_ref": "...",
+      "decision": "..."
+    }
+  ],
+  "output": {
+    "answer": "...",
+    "evidence": [],
+    "confidence": "low|medium|high"
+  },
+  "feedback": {
+    "raw": "...",
+    "failure_type": "tool_use|retrieval|synthesis|policy|workflow|model",
+    "actionability": "low|medium|high"
+  },
+  "eval_candidate": {
+    "should_create_eval": true,
+    "reason": "..."
+  }
+}</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="flow-markdown">
+          <h2>Business Flow Markdown Pattern</h2>
+          <p>This pattern connects Penn's eval-driven product loop with BA-friendly workflow authoring.</p>
+          <pre><code># Business Flow: &lt;flow name&gt;
+
+Outcome:
+- &lt;business result or user value&gt;
+
+User group:
+- &lt;who this is for&gt;
+
+Trigger:
+- &lt;event, request, schedule, or threshold&gt;
+
+Source of truth:
+- Primary system:
+- Supporting data:
+- Conflict rule:
+
+Agent design:
+- Master Agent:
+- Sub-Agents:
+- Cognitive Skills:
+- Actionable Skills:
+- Tools/MCP:
+
+Flow:
+1. Step:
+   - Owner:
+   - Agent or human:
+   - Input:
+   - Tool:
+   - Output:
+   - Decision:
+   - Evidence:
+   - Escalation:
+
+Quality gates:
+- Before tool call:
+- Before external action:
+- Before final answer:
+
+Feedback:
+- Raw user feedback:
+- Run trace:
+- Failure taxonomy:
+- Eval candidate:
+
+Eval:
+- Examples:
+- Rubric:
+- Pass threshold:
+- Regression set:
+
+Release:
+- Approver:
+- Rollout plan:
+- Fallback UX:
+- Rollback trigger:</code></pre>
+        </section>
+
+        <section class="section" id="timeline">
+          <h2>Structured Timeline</h2>
+          <p>The interview is long. This timeline gives a fast path back into the key moments.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Topic</th>
+                  <th>What to listen for</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>00:00</td>
+                  <td>Opening thesis</td>
+                  <td>Anthropic, Claude, coding, evals as PRDs, token experimentation, and ambition.</td>
+                </tr>
+                <tr>
+                  <td>03:45</td>
+                  <td>Early Anthropic</td>
+                  <td>Small team, strong culture, search for product identity.</td>
+                </tr>
+                <tr>
+                  <td>04:58</td>
+                  <td>Golden Gate Claude</td>
+                  <td>Research demo turned into a user-facing experience.</td>
+                </tr>
+                <tr>
+                  <td>09:12</td>
+                  <td>Opus 3</td>
+                  <td>Internal confidence and early coding differentiation.</td>
+                </tr>
+                <tr>
+                  <td>12:39</td>
+                  <td>Opus 4.5 and Claude Code</td>
+                  <td>Frontier model plus frontier product surface.</td>
+                </tr>
+                <tr>
+                  <td>15:07</td>
+                  <td>Inside the exponential</td>
+                  <td>Adaptability, first-principles thinking, and discontinuous capability jumps.</td>
+                </tr>
+                <tr>
+                  <td>20:04</td>
+                  <td>Token maxing</td>
+                  <td>Token spend as experimentation, not vanity cost.</td>
+                </tr>
+                <tr>
+                  <td>23:36</td>
+                  <td>Labs</td>
+                  <td>Discontinuous bets, small teams, Claude Code, Skills, Claude Design, MCP.</td>
+                </tr>
+                <tr>
+                  <td>29:12</td>
+                  <td>Research-product feedback loop</td>
+                  <td>Translate vague user feedback into actionable research diagnosis.</td>
+                </tr>
+                <tr>
+                  <td>40:06</td>
+                  <td>PM traits</td>
+                  <td>First principles instead of pattern matching.</td>
+                </tr>
+                <tr>
+                  <td>41:20</td>
+                  <td>Evals are the new PRDs</td>
+                  <td>Product requirements become testable examples and rubrics.</td>
+                </tr>
+                <tr>
+                  <td>44:29</td>
+                  <td>JSON schema eval</td>
+                  <td>A concrete example of turning user pain into an eval set.</td>
+                </tr>
+                <tr>
+                  <td>47:57</td>
+                  <td>PRDs still exist</td>
+                  <td>PRDs align broad groups; evals drive measurable behavior change.</td>
+                </tr>
+                <tr>
+                  <td>50:20</td>
+                  <td>Hands-on PM leadership</td>
+                  <td>Managers must ship, read feedback, and work directly with models.</td>
+                </tr>
+                <tr>
+                  <td>54:08</td>
+                  <td>Finding joy in AI</td>
+                  <td>Experimentation is communal; go deep on a few use cases.</td>
+                </tr>
+                <tr>
+                  <td>58:22</td>
+                  <td>Using Claude as a manager</td>
+                  <td>Skills for crucial conversations and better coaching.</td>
+                </tr>
+                <tr>
+                  <td>63:25</td>
+                  <td>Pushback and alignment</td>
+                  <td>A useful assistant should challenge weak ideas, not flatter the user.</td>
+                </tr>
+                <tr>
+                  <td>67:30</td>
+                  <td>AI writing and verification</td>
+                  <td>Authorship matters less than human verification and sign-off.</td>
+                </tr>
+                <tr>
+                  <td>72:10</td>
+                  <td>Human judgment</td>
+                  <td>Judgment, persistence, point of view, and expertise remain important.</td>
+                </tr>
+                <tr>
+                  <td>77:00</td>
+                  <td>Burnout and team culture</td>
+                  <td>Radical ownership, low ego, and team support make the pace sustainable.</td>
+                </tr>
+                <tr>
+                  <td>82:18</td>
+                  <td>Final takeaway</td>
+                  <td>Product people remain critical because user-centric detail work becomes more valuable.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="my-read">
+          <h2>My Read</h2>
+          <p>This is a very strong video for your agentic AI platform because it gives the missing bridge between product management and agent engineering. The biggest practical takeaway is that feedback must become structured. A BA or user saying "the agent was wrong" is just the beginning. The platform should guide them to identify whether the issue was source of truth, missing tool access, wrong tool choice, bad synthesis, policy, prompt, memory, or workflow design.</p>
+          <p>I would directly borrow the phrase "evals are the new PRDs," but implement it carefully. A PRD still helps align humans. An eval helps align agents, models, skills, tools, and future releases. For a BA-friendly platform, the best experience is probably a hybrid: the BA writes a business flow, the platform generates agent specs and candidate evals, then every real failure can be promoted into the regression set.</p>
+          <p>The second big takeaway is that vertical AI products need their own harness. Claude Code worked because it was not just a better model. It was a product surface with context, tools, loops, and user workflows. Your platform should treat each domain workflow the same way: not "one universal agent," but a vertical harness with source-of-truth data, tools, skills, evals, traces, fallback UX, and human ownership.</p>
+          <div class="verdict">
+            <h3>Bottom line</h3>
+            <p>This interview says the future product manager is part user researcher, part eval author, part trace analyst, part systems designer, and part frontier explorer. That is exactly the builder profile your agentic AI platform should support.</p>
+          </div>
+        </section>
+
+        <section class="section" id="sources">
+          <h2>Sources And Confidence</h2>
+          <p>This page is based primarily on the extracted public captions from the YouTube video, cross-checked with Lenny's public episode page and official Anthropic pages for related product context.</p>
+          <ul>
+            <li><a href="https://www.youtube.com/watch?v=tivaWTTVRhY&t=1752s">Why AI is going vertical (again) - Dianne Penn (Anthropic)</a> - Lenny's Podcast on YouTube.</li>
+            <li><a href="https://www.lennysnewsletter.com/p/anthropics-first-technical-pm-on">Lenny's Newsletter episode page</a> - public metadata and topic list.</li>
+            <li><a href="https://www.anthropic.com/news/golden-gate-claude">Anthropic: Golden Gate Claude</a> - official context for the research demo.</li>
+            <li><a href="https://www.anthropic.com/news/introducing-anthropic-labs">Anthropic: Introducing Labs</a> - official context for Labs and experimental products.</li>
+            <li><a href="https://www.anthropic.com/news/model-context-protocol">Anthropic: Introducing the Model Context Protocol</a> - official context for MCP.</li>
+            <li><a href="https://www.anthropic.com/news/skills">Anthropic: Introducing Agent Skills</a> - official context for Skills.</li>
+            <li><a href="https://www.anthropic.com/news/introducing-claude-tag">Anthropic: Introducing Claude Tag</a> - official context for team-based agent delegation.</li>
+            <li><a href="https://www.youtube.com/@LennysPodcast">Lenny's Podcast YouTube channel</a>.</li>
+          </ul>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Page navigation">
+        <section class="toc">
+          <h2>Read Path</h2>
+          <nav>
+            <a href="#executive-summary">Executive Summary</a>
+            <a href="#core-thesis">Core Thesis</a>
+            <a href="#anthropic-early-days">Early Anthropic</a>
+            <a href="#inflection-points">Inflection Points</a>
+            <a href="#exponential">Exponential</a>
+            <a href="#token-maxing">Token Maxing</a>
+            <a href="#labs">Labs</a>
+            <a href="#timestamp">29:12 Timestamp</a>
+            <a href="#evals-prds">Evals as PRDs</a>
+            <a href="#prds-still-matter">PRDs Still Matter</a>
+            <a href="#pm-skills">PM Skills</a>
+            <a href="#safeguards">Safeguards</a>
+            <a href="#ai-thinking-partner">Thinking Partner</a>
+            <a href="#writing-verification">Verification</a>
+            <a href="#human-judgment">Human Judgment</a>
+            <a href="#culture">Culture</a>
+            <a href="#platform-translation">Platform Translation</a>
+            <a href="#templates">Templates</a>
+            <a href="#flow-markdown">Flow Markdown</a>
+            <a href="#timeline">Timeline</a>
+            <a href="#my-read">My Read</a>
+            <a href="#sources">Sources</a>
+          </nav>
+        </section>
+        <section class="source-box">
+          <h2>Useful Lens</h2>
+          <p>For every AI workflow failure, ask: what exact trajectory failed, which component owns it, and can this become a reusable eval?</p>
+          <div class="tag-grid">
+            <span class="tag">Evals as PRDs</span>
+            <span class="tag">Anthropic</span>
+            <span class="tag">Claude Code</span>
+            <span class="tag">MCP</span>
+            <span class="tag">Skills</span>
+            <span class="tag">Agent platform</span>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <p class="footer-note">Generated as a reading-focused resource page for the YouTube extractor and summarizer project.</p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="A detailed guide to building an AI-assisted investment knowledge base with Obsidian, Markdown, YAML, source ingestion, research and review agents, linked concepts, entities, logs, and indexes.">
+  <title>Building an AI Second Brain for Investing</title>
+  <link rel="stylesheet" href="article-theme.css">
+  <style>
+    .source-note { margin-top: 1rem; padding-left: 1rem; border-left: 3px solid var(--green); }
+    .thesis { margin: 1.15rem 0; padding: 1rem; background: var(--surface); border-left: 3px solid var(--ink); }
+    .thesis strong { display: block; margin-bottom: .35rem; font-weight: 600; }
+    .detail-list, .risk-list { margin-top: 1rem; border-top: 1px solid var(--line-strong); }
+    .detail, .risk { display: grid; grid-template-columns: minmax(9rem, .85fr) minmax(0, 2.15fr); gap: 1.25rem; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+    .detail-label span, .risk-label span { display: block; margin-bottom: .25rem; color: var(--green); font-size: .78rem; font-weight: 600; }
+    .detail-label strong, .risk-label strong { font-weight: 500; }
+    .detail-body p, .risk-body p { margin: 0 !important; }
+    .detail-body p + p, .risk-body p + p { margin-top: .7rem !important; }
+    .process-flow { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); margin: 1.25rem 0; border: 1px solid var(--line-strong); }
+    .flow-step { min-width: 0; padding: .8rem; border-right: 1px solid var(--line); }
+    .flow-step:last-child { border-right: 0; }
+    .flow-step span { display: block; margin-bottom: .3rem; color: var(--green); font-size: .73rem; font-weight: 600; }
+    .flow-step strong { display: block; font-size: .84rem; font-weight: 500; overflow-wrap: anywhere; }
+    .folder-map { margin: 1.2rem 0; padding: 1rem; background: var(--surface); border: 1px solid var(--line); font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: .86rem; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .comparison { width: 100%; margin: 1.2rem 0; border-collapse: collapse; }
+    .comparison th, .comparison td { padding: .75rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+    .comparison th { border-top: 1px solid var(--line-strong); font-weight: 500; }
+    .source-links { display: grid; gap: .65rem; padding-left: 1.2rem; }
+    @media (max-width: 760px) {
+      .process-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .flow-step { border-bottom: 1px solid var(--line); }
+      .flow-step:nth-child(2n) { border-right: 0; }
+      .flow-step:last-child { grid-column: 1 / -1; border-bottom: 0; }
+    }
+    @media (max-width: 640px) {
+      .detail, .risk { grid-template-columns: 1fr; gap: .4rem; }
+      .comparison, .comparison tbody, .comparison tr, .comparison th, .comparison td { display: block; width: 100% !important; min-width: 0 !important; }
+      .comparison thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+      .comparison tr { padding: .7rem 0; border-bottom: 1px solid var(--line); }
+      .comparison td { padding: .25rem 0; border: 0; }
+      .comparison td::before { content: attr(data-label); display: block; color: var(--green); font-size: .75rem; font-weight: 600; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation">
+    <a class="brand" href="/reading/">Reading room</a>
+    <div class="top-actions">
+      <a class="action-link" href="https://www.youtube.com/watch?v=-EtsVMWlgp4">Watch source</a>
+      <a class="action-link" href="/">Portfolio</a>
+    </div>
+  </nav>
+
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Knowledge systems · Investing · AI agents</p>
+        <h1>Building an AI Second Brain for Investing</h1>
+        <p class="subtitle">A practical walkthrough of turning scattered filings, PDFs, videos, articles, and research into a local LLM Wiki: source-grounded notes that both people and coding agents can read, connect, search, and extend.</p>
+        <div class="meta">
+          <span><strong>Mick · หุ้นการบ้าน</strong></span>
+          <span>AI Battle in Finance · QuantCorner</span>
+          <span>47m 35s</span>
+          <span>Summary run September 7, 2026 · 13:08 ICT</span>
+        </div>
+        <p class="source-note">This is an English editorial paraphrase of the complete Thai-language session. It explains a research workflow, not an investment recommendation. Tool behavior and financial facts should be independently verified before use.</p>
+      </div>
+      <figure class="hero-card">
+        <a href="https://www.youtube.com/watch?v=-EtsVMWlgp4" aria-label="Watch the original AI Battle in Finance session">
+          <img src="2026-09-07-llm-wiki-second-brain-finance-thumbnail.webp" alt="AI Battle in Finance session cover titled Second Brain LLM Wiki">
+        </a>
+        <figcaption>The session combines a local Obsidian vault with coding agents that ingest sources and maintain a linked investment knowledge base.</figcaption>
+      </figure>
+    </header>
+
+    <div class="layout">
+      <article class="content">
+        <section id="summary">
+          <p class="section-label">Executive summary</p>
+          <h2>Do not make the model remember everything; give it a library</h2>
+          <p>Investors work across earnings calls, annual reports, MD&amp;A sections, spreadsheets, news, research notes, interviews, and videos. Copying all of that into one chat produces an expensive and fragile conversation. The session proposes a different architecture: keep durable knowledge in plain local files, organize it with lightweight metadata, and let an agent retrieve or transform only the material needed for the current task.</p>
+          <p>The speaker calls this an <strong>LLM Wiki</strong>: a personal Wikipedia in which notes link to concepts, companies, people, industries, and original sources. Obsidian supplies the local, human-readable workspace. Markdown keeps content compact and portable. YAML front matter gives each note structured fields such as type, tags, date, and source. Coding agents handle the tedious work of ingesting documents, extracting concepts, checking facts, linking entities, saving assets, and updating indexes.</p>
+          <p>The system is valuable only if it improves thinking. The closing warning is the most important: a Second Brain should outsource storage and clerical organization, not the investor's First Brain. AI can help gather and structure evidence; the human still needs to question assumptions, compare sources, understand uncertainty, and own the decision.</p>
+          <div class="thesis"><strong>Central thesis</strong><p>A durable AI knowledge system separates raw evidence from derived knowledge, preserves traceability back to the source, and uses agents to maintain structure—while keeping analysis and investment judgment under human control.</p></div>
+        </section>
+
+        <section id="foundation">
+          <p class="section-label">Foundation</p>
+          <h2>Why long chats are a weak knowledge base</h2>
+          <div class="detail-list">
+            <div class="detail"><div class="detail-label"><span>Stateless sessions</span><strong>Continuity must be supplied</strong></div><div class="detail-body"><p>A model does not automatically retain a reliable memory across independent sessions. Every task needs enough context to understand the user, the objective, and the relevant evidence.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Context window</span><strong>The working desk is finite</strong></div><div class="detail-body"><p>The speaker compares the context window to a desk. Documents, user messages, model responses, and tool results all compete for space. More context is not always better; irrelevant or repetitive material can distract the model and raise cost.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Context rot</span><strong>Signal weakens as the session grows</strong></div><div class="detail-body"><p>Long-running conversations may lose early constraints, bury important evidence, or produce less consistent answers. The practical advice is to summarize completed work, save durable results externally, and begin a clean session for the next bounded task.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Compaction</span><strong>A continuation is not perfect memory</strong></div><div class="detail-body"><p>Applications can compress prior conversation to keep a session alive, but compression inevitably selects and abstracts. Critical facts and source references belong in persistent notes rather than only inside conversational history.</p></div></div>
+          </div>
+          <p>The presentation uses approximate context and token figures to build intuition. Exact limits, caching behavior, and pricing vary by model and product; the lasting principle is to keep the active context purposeful and move durable knowledge into an external system.</p>
+        </section>
+
+        <section id="second-brain">
+          <p class="section-label">Human knowledge</p>
+          <h2>A Second Brain stores; the First Brain reasons</h2>
+          <p>Drawing on Tiago Forte's Second Brain concept, the session argues that human cognition is better used for interpretation than for memorizing every document. A digital system can preserve information, connect ideas, and make prior work retrievable. Yet traditional note systems often impose their own burden: users spend time learning formats, choosing folders, applying tags, and maintaining links.</p>
+          <p>The proposed use of AI is narrow but powerful. Let the agent perform repetitive knowledge maintenance—classification, formatting, extraction, and linking—so the investor spends more time evaluating the business and less time grooming a database.</p>
+          <table class="comparison">
+            <thead><tr><th>Layer</th><th>Best responsibility</th><th>Failure to avoid</th></tr></thead>
+            <tbody>
+              <tr><td data-label="Layer">First Brain</td><td data-label="Best responsibility">Question, interpret, compare, model uncertainty, decide</td><td data-label="Failure to avoid">Accepting a generated conclusion without understanding its evidence</td></tr>
+              <tr><td data-label="Layer">Second Brain</td><td data-label="Best responsibility">Store, connect, retrieve, preserve provenance</td><td data-label="Failure to avoid">Becoming an elaborate archive that is never used</td></tr>
+              <tr><td data-label="Layer">AI agent</td><td data-label="Best responsibility">Ingest, transform, verify, link, index, answer from sources</td><td data-label="Failure to avoid">Inventing facts, overwriting evidence, or acting without review</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="data-model">
+          <p class="section-label">Data model</p>
+          <h2>Why Obsidian, Markdown, and YAML fit the job</h2>
+          <div class="detail-list">
+            <div class="detail"><div class="detail-label"><span>Local files</span><strong>Portable ownership</strong></div><div class="detail-body"><p>An Obsidian vault is a folder on the user's machine. Notes are not trapped in a proprietary database, and ordinary file tools or agents can inspect them. Cloud sync can be added separately when desired.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Markdown</span><strong>Readable by human and machine</strong></div><div class="detail-body"><p>Headings, lists, checkboxes, tables, emphasis, and links are represented with little markup. The same file remains pleasant to read in Obsidian and efficient for an LLM to parse.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>YAML front matter</span><strong>Predictable metadata</strong></div><div class="detail-body"><p>Fields at the top of a note can identify title, type, company, ticker, tags, source URL, creation date, period, and review status. A schema makes those fields consistent enough for filtering and automation.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Wiki links</span><strong>Connected concepts</strong></div><div class="detail-body"><p>A company note can link to its CEO, industry, competitors, products, and financial concepts. Obsidian visualizes those relationships as a graph, but the valuable part is navigability and reuse—not the visual spectacle itself.</p></div></div>
+          </div>
+          <div class="folder-map" role="figure" aria-label="Suggested LLM Wiki folder structure">LLM-Wiki/
+├── raw/        Original transcripts, filings, PDFs and captured pages
+├── wiki/       Concepts, companies, people, industries and relationships
+├── logs/       What each ingestion or research run changed
+├── schema/     Required fields and writing rules for each note type
+├── index/      Searchable views of the knowledge base
+├── assets/     Extracted images, charts and supporting files
+└── agents/     Project instructions, skills and specialized workers</div>
+          <p>The folder boundaries separate evidence from interpretation. A raw source should remain available even when the derived concept note is later rewritten. That distinction is essential in financial research, where conclusions change but the historical record should not.</p>
+        </section>
+
+        <section id="workflow">
+          <p class="section-label">Ingestion workflow</p>
+          <h2>From source material to linked, reviewable knowledge</h2>
+          <div class="process-flow" role="figure" aria-label="LLM Wiki ingestion pipeline">
+            <div class="flow-step"><span>01</span><strong>Capture source</strong></div>
+            <div class="flow-step"><span>02</span><strong>Store raw</strong></div>
+            <div class="flow-step"><span>03</span><strong>Extract facts</strong></div>
+            <div class="flow-step"><span>04</span><strong>Cross-check</strong></div>
+            <div class="flow-step"><span>05</span><strong>Create concepts</strong></div>
+            <div class="flow-step"><span>06</span><strong>Link &amp; index</strong></div>
+            <div class="flow-step"><span>07</span><strong>Human review</strong></div>
+          </div>
+          <div class="detail-list">
+            <div class="detail"><div class="detail-label"><span>Capture</span><strong>Accept many source types</strong></div><div class="detail-body"><p>The demo feeds the system YouTube links, MD&amp;A PDFs, articles, and company research. The speaker also mentions earnings calls, Excel files, analyst material, and recorded management conversations converted to text.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Raw preservation</span><strong>Keep an audit trail</strong></div><div class="detail-body"><p>The source is written into the raw area before summarization. Video becomes a timed transcript; documents retain extracted tables or sections; useful visual material can be saved to assets.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Research</span><strong>Verify names, numbers, and context</strong></div><div class="detail-body"><p>A research worker examines whether extracted information is plausible. Another agent may open the source link or retrieve supporting information. The workflow is intended to reduce transcription errors and ambiguous figures before they become durable notes.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Knowledge writing</span><strong>Separate entities and concepts</strong></div><div class="detail-body"><p>Derived notes describe entities such as a company, executive, or media channel and concepts such as an industry, strategy, or financial mechanism. Each note follows the schema and links back to sources and related notes.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Index and log</span><strong>Make maintenance observable</strong></div><div class="detail-body"><p>The index shows what exists and what was created recently. Logs record which workflow ran and what it changed, helping the user understand agent activity rather than treating the vault as mysteriously self-updating.</p></div></div>
+          </div>
+        </section>
+
+        <section id="agents">
+          <p class="section-label">Agent organization</p>
+          <h2>The project is governed by files, skills, and specialized workers</h2>
+          <p>A top-level project instruction file—shown as agent-oriented Markdown files for different coding assistants—tells a newly opened agent what the repository is, how notes are structured, and which rules apply. Skills expose repeatable commands such as onboarding, ingestion, and research. Specialized sub-agents divide responsibilities such as collecting a source, checking it, writing concepts, and reviewing numbers.</p>
+          <p>The <strong>onboarding</strong> skill interviews the user about the intended knowledge base and explains unfamiliar project concepts. The <strong>ingest</strong> skill accepts a source and runs the transformation pipeline. The <strong>research</strong> skill starts from a company or topic when the user does not already have a source.</p>
+          <p>The live demonstration runs different coding-agent products against the same starter structure. The point is portability: because the core state is a folder of documented text files, the knowledge base is not completely coupled to one model vendor or chat interface.</p>
+          <div class="thesis"><strong>Design principle</strong><p>Prompts should not be the only architecture. Durable instructions, typed metadata, bounded skills, source-preserving workflows, review steps, and logs make the system understandable across sessions and agent products.</p></div>
+        </section>
+
+        <section id="demo">
+          <p class="section-label">Live demonstration</p>
+          <h2>What the audience sees the system produce</h2>
+          <p>The speaker opens the starter project as an Obsidian vault, starts a coding agent in the project directory, and invokes ingestion on several sources. Examples include a trading-related YouTube video, an MD&amp;A document for Delta, a topic relating to Webull, and an options video. Several agent products run in parallel to show that the file-oriented workflow can be shared.</p>
+          <p>Completed runs populate the raw folder with source text, create entity and concept notes, record source links, extract selected images, and update the index. A reviewer checks important numbers before the result is presented as a finished Markdown note. The user can then navigate links in Obsidian or ask natural-language questions through an embedded agent sidebar.</p>
+          <p>The demo also shows a simpler intake route. A user may paste article text directly into the agent or use an Obsidian web clipper to save a webpage into the raw folder. Automation is helpful, but capture remains useful even when a particular parser or source connector fails.</p>
+        </section>
+
+        <section id="finance">
+          <p class="section-label">For financial research</p>
+          <h2>Structure each claim so it can be challenged later</h2>
+          <div class="detail-list">
+            <div class="detail"><div class="detail-label"><span>Provenance</span><strong>Attach claim to source and date</strong></div><div class="detail-body"><p>A revenue figure without reporting period, currency, filing page, publication date, and source type is not durable knowledge. Preserve enough context to reproduce the claim.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Fact vs. interpretation</span><strong>Do not blend evidence and thesis</strong></div><div class="detail-body"><p>Keep reported figures, management statements, analyst assumptions, and the investor's own inference distinguishable. Each deserves a different confidence level.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Temporal validity</span><strong>Knowledge expires</strong></div><div class="detail-body"><p>Management, guidance, product mix, regulation, and valuation change. Notes need an as-of date and a review status so retrieval does not present stale information as current truth.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Contradiction</span><strong>Preserve disagreement</strong></div><div class="detail-body"><p>A useful Wiki should not collapse conflicting sources into one confident summary. Link bullish and bearish evidence, record uncertainty, and surface what would falsify the thesis.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Decision record</span><strong>Track what changed the view</strong></div><div class="detail-body"><p>Record the thesis, assumptions, observed evidence, rejected alternatives, and later outcome. This turns the archive into a learning system rather than a collection of polished summaries.</p></div></div>
+          </div>
+        </section>
+
+        <section id="assessment">
+          <p class="section-label">Critical assessment</p>
+          <h2>The architecture is strong; automation needs firmer controls</h2>
+          <div class="risk-list">
+            <div class="risk"><div class="risk-label"><span>01</span><strong>Verification cannot be model-only</strong></div><div class="risk-body"><p>A second agent may repeat the first agent's mistake. Material figures should be checked against primary filings, official transcripts, exchange disclosures, or reproducible calculations.</p></div></div>
+            <div class="risk"><div class="risk-label"><span>02</span><strong>Autonomous permissions are risky</strong></div><div class="risk-body"><p>The demo uses modes that let agents act without asking repeatedly. That is convenient in a disposable starter vault, but a production system should restrict file paths, network destinations, commands, spending, and irreversible changes.</p></div></div>
+            <div class="risk"><div class="risk-label"><span>03</span><strong>Graph density is not insight</strong></div><div class="risk-body"><p>A beautiful network can reward excessive linking. Connections should answer a research question or support retrieval; otherwise they become visual clutter and maintenance cost.</p></div></div>
+            <div class="risk"><div class="risk-label"><span>04</span><strong>Summaries can erase nuance</strong></div><div class="risk-body"><p>MD&amp;A language, accounting footnotes, and executive interviews often contain qualification and uncertainty. Derived notes need direct source anchors so readers can inspect the original context.</p></div></div>
+            <div class="risk"><div class="risk-label"><span>05</span><strong>Private knowledge needs governance</strong></div><div class="risk-body"><p>Local storage improves ownership but does not guarantee privacy once cloud models or external tools read the files. Secrets, licensed research, personal recordings, and material non-public information require access controls and explicit data-handling policy.</p></div></div>
+          </div>
+          <div class="thesis"><strong>My assessment</strong><p>The session gets the most important design choice right: make the filesystem the durable memory and the model a replaceable worker. Its strongest implementation would add typed provenance, freshness checks, primary-source verification, permission boundaries, and a mandatory human review state for investment claims.</p></div>
+        </section>
+
+        <section id="takeaways">
+          <p class="section-label">Takeaways</p>
+          <h2>What to keep from the session</h2>
+          <ol class="summary-list">
+            <li>Keep active model context small and move durable knowledge into an external, inspectable store.</li>
+            <li>Use local Markdown files when portability, human readability, and agent access matter.</li>
+            <li>Define a schema before automating ingestion so notes remain consistent across sources and agents.</li>
+            <li>Preserve raw evidence separately from concepts, entities, and summaries.</li>
+            <li>Give ingestion, research, writing, review, and indexing separate responsibilities.</li>
+            <li>For finance, track source, reporting period, as-of date, confidence, contradictions, and reviewer status.</li>
+            <li>Use the Second Brain to reduce clerical work—not to outsource skepticism or investment judgment.</li>
+          </ol>
+        </section>
+
+        <section id="source">
+          <p class="section-label">Source and method</p>
+          <h2>What this summary is based on</h2>
+          <ul class="source-links">
+            <li><a href="https://www.youtube.com/watch?v=-EtsVMWlgp4">AI Battle in Finance — LLM Wiki: Build a Second Brain with AI</a> on the นัทเล่าเรื่อง YouTube channel.</li>
+          </ul>
+          <p>The complete Thai auto-caption transcript—927 timed segments from the introduction through the closing remarks—was read alongside the creator's description and source thumbnail. The article follows the presentation's foundation, tool explanation, live demonstration, and conclusion while consolidating repetition. Technical corrections, safeguards, and the financial-research data model are editorial analysis.</p>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Article contents">
+        <nav class="toc" aria-labelledby="toc-title">
+          <h2 id="toc-title">On this page</h2>
+          <ul>
+            <li><a href="#summary">Executive summary</a></li>
+            <li><a href="#foundation">Context foundation</a></li>
+            <li><a href="#second-brain">Second Brain</a></li>
+            <li><a href="#data-model">Data model</a></li>
+            <li><a href="#workflow">Ingestion workflow</a></li>
+            <li><a href="#agents">Agent organization</a></li>
+            <li><a href="#demo">Live demo</a></li>
+            <li><a href="#finance">Financial research</a></li>
+            <li><a href="#assessment">Assessment</a></li>
+            <li><a href="#takeaways">Takeaways</a></li>
+            <li><a href="#source">Source</a></li>
+          </ul>
+        </nav>
+        <div class="note-card">
+          <h2>Source scope</h2>
+          <p>One 47m 35s Thai-language workshop with complete timed captions. Summary prepared September 7, 2026.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer-note">Editorial paraphrase for study, not investment advice. Verify material facts with primary sources.</footer>
+</body>
+</html>

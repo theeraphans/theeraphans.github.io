@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Showed that a 175-billion-parameter autoregressive model could perform many tasks from instructions and examples in context without gradient updates.">
+  <meta name="resource-file" content="2026-09-08-gpt-3-few-shot-in-context-learning-en.html">
+  <title>GPT-3 · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css">
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2005.14165">Read paper</a><a class="action-link" href="/reading/">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Scaling, Data, and Open Models · Paper 10 of 37</p>
+        <h1>Language Models are Few-Shot Learners</h1>
+        <p class="subtitle">Showed that a 175-billion-parameter autoregressive model could perform many tasks from instructions and examples in context without gradient updates.</p>
+        <div class="meta"><span><strong>Tom B. Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared Kaplan, Prafulla Dhariwal, Arvind Neelakantan, Pranav Shyam, Girish Sastry, Amanda Askell, Sandhini Agarwal, Ariel Herbert-Voss, Gretchen Krueger, Tom Henighan, Rewon Child, Aditya Ramesh, Daniel M. Ziegler, Jeffrey Wu, Clemens Winter, Christopher Hesse, Mark Chen, Eric Sigler, Mateusz Litwin, Scott Gray, Benjamin Chess, Jack Clark, Christopher Berner, Sam McCandlish, Alec Radford, Ilya Sutskever, Dario Amodei</strong></span><span>2020</span><span>Intermediate</span><span>13 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>GPT-3</h2><p>OpenAI</p><p><strong>Prerequisites:</strong> GPT-2, scaling laws, prompting, and benchmark evaluation.</p><a href="https://arxiv.org/abs/2005.14165">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Intermediate</strong></div><div class="paper-fact"><span>Place in path</span><strong>10 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Task-specific fine-tuning requires labeled data and a new optimization cycle for every task. GPT-2 suggested zero-shot transfer, but performance remained inconsistent.</p>
+<p>The paper tests whether scale alone can make one frozen language model adapt from natural-language descriptions or a small set of examples supplied inside its context.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Train a much larger causal Transformer on a broad mixture, then frame downstream tasks as text completion. Zero-shot supplies only a task description, one-shot adds one example, and few-shot places several demonstrations before the query.</p>
+<p>No parameters change during evaluation. The sequence itself conditions the model into a temporary task pattern.</p><div class="equation">p(output | instruction, demonstrations, query; fixed θ)</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Pretrain models from 125 million to 175 billion parameters on filtered Common Crawl plus curated corpora. At evaluation, select a prompt template and fit demonstrations within the 2048-token context.</p>
+<p>For generative tasks the model completes text; for classification it scores label strings. Comparing model sizes and shot counts reveals whether task performance scales.</p><figure class="concept-flow" aria-label="Few-shot inference">
+    <div class="flow-step"><span>01</span><strong>Instruction</strong><p>Describe the desired mapping.</p></div>
+<div class="flow-step"><span>02</span><strong>Examples</strong><p>Show several input-output pairs.</p></div>
+<div class="flow-step"><span>03</span><strong>Query</strong><p>Append the new task instance.</p></div>
+<div class="flow-step"><span>04</span><strong>Condition</strong><p>Attention reads the complete pattern.</p></div>
+<div class="flow-step"><span>05</span><strong>Complete</strong><p>Generate the inferred output format.</p></div>
+    <figcaption>The context carries a temporary task specification while the model parameters remain fixed.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>The largest model uses dense decoder-only attention and enormous distributed training. In-context learning can resemble pattern matching or implicit inference, but the paper does not identify a weight-update mechanism inside the forward pass.</p>
+<p>Prompt order, label words, separators, and example selection affect outcomes. Those are algorithmic inputs even when model weights are frozen.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>GPT-3 approached or exceeded then-current results on several language, question-answering, translation, and reasoning tasks, while failing badly on others such as some comparison and common-sense problems. Few-shot often improved with scale.</p>
+<p>The paper documented contamination analysis and broad limitations. A huge benchmark suite increases coverage but also creates multiple-comparison and prompt-selection concerns.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>GPT-3 moved the dominant interface from fine-tuning toward prompting and made general-purpose language-model APIs plausible. It accelerated research on instructions, chain of thought, retrieval, tools, and post-training.</p>
+<p>It also made model evaluation a product concern: a single model can express many behaviors, so capability depends on context construction and usage policy.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Treat demonstrations as runtime data. Version them, test order sensitivity, and prevent user input from crossing instruction boundaries. Measure token cost and latency as examples consume context.</p>
+<p>Use retrieval or fine-tuning when stable domain behavior matters. Few-shot prompting is convenient, but repeated long demonstrations can cost more and vary more than a trained adapter.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>Scale does not guarantee truth, robustness, fairness, or reliable arithmetic. The model can reproduce training data and social biases, and its output is sensitive to prompt form.</p>
+<p>The 175B model was expensive to train and serve. Later compute-optimal work showed that parameter count alone was not the best use of a fixed training budget.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>GPT-3 follows GPT-2’s zero-shot direction and the original scaling laws. InstructGPT adds human demonstrations and preferences to improve instruction following. Chain-of-Thought later changes the prompt to expose intermediate reasoning.</p><div class="article-nav"><a href="2026-09-08-scaling-laws-neural-language-models-en.html">← Scaling Laws for Neural Language Models</a><a href="2026-09-08-the-pile-large-scale-language-model-data-en.html">The Pile →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>Few-shot examples can specify a task without gradient updates.</li><li>In-context learning grows more reliable with scale but remains task-dependent.</li><li>Prompt construction is part of the algorithm.</li><li>Broad capability does not imply calibrated truthfulness.</li><li>Large frozen models enabled a general-purpose API model.</li><li>Training and serving economics remain central.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2005.14165">Language Models are Few-Shot Learners</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>In-context learning is behavior induced by the prompt, not weight learning. Track contamination and prompt-selection effects before interpreting few-shot scores.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

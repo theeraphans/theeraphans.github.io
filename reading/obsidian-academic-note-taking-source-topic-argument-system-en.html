@@ -1,0 +1,1335 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Obsidian Academic Note-Taking System - Detailed Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5d6a70;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f5f7f1;
+      --line: #d8dfd8;
+      --teal: #16756d;
+      --blue: #2c6381;
+      --green: #557d54;
+      --gold: #a97725;
+      --coral: #bd503f;
+      --plum: #665987;
+      --charcoal: #223039;
+      --mint: #e3f0ec;
+      --sky: #e6eef6;
+      --leaf: #e9f1df;
+      --sand: #f7edd8;
+      --rose: #f5e5df;
+      --shadow: 0 24px 68px rgb(23 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(22 117 109 / 6%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(44 99 129 / 5%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--green), var(--teal), var(--blue), var(--gold), var(--coral), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure, blockquote, pre { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td, code { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 86%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.96fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.45rem, 5.7vw, 5.15rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      object-fit: contain;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+      gap: 24px;
+      margin: 28px 0;
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 7%);
+    }
+
+    .quick-summary h2,
+    .section h2,
+    .sidebar h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-weight: 760;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+    }
+
+    .quick-summary p,
+    .section p,
+    .section li {
+      color: #334047;
+      font-size: 1.01rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .summary-list li::marker { color: var(--coral); }
+
+    .stats-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-width: 0;
+      min-height: 84px;
+      padding: 14px;
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.35rem;
+      line-height: 1.05;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .content {
+      display: grid;
+      gap: 22px;
+      min-width: 0;
+    }
+
+    .section {
+      padding: 34px 0;
+      background: transparent;
+      border-top: 1px solid var(--line);
+    }
+
+    .section h2 {
+      margin-bottom: 14px;
+      font-size: clamp(1.85rem, 3.2vw, 2.65rem);
+    }
+
+    .section h3 {
+      margin-top: 24px;
+      margin-bottom: 8px;
+      color: var(--charcoal);
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .section p + p { margin-top: 12px; }
+    .section ul, .section ol { display: grid; gap: 9px; margin-top: 12px; padding-left: 20px; }
+    .section li::marker { color: var(--teal); }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .toc,
+    .source-box {
+      padding: 18px;
+      background: rgb(255 254 249 / 94%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 14px 36px rgb(23 33 38 / 6%);
+    }
+
+    .toc h2,
+    .source-box h2 {
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+    }
+
+    .toc nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .toc a {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 780;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .source-box p,
+    .source-box li {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .callout {
+      margin-top: 18px;
+      padding: 18px;
+      background: var(--mint);
+      border: 1px solid rgb(22 117 109 / 18%);
+      border-left: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .callout.rose {
+      background: var(--rose);
+      border-color: rgb(189 80 63 / 18%);
+      border-left-color: var(--coral);
+    }
+
+    .callout.gold {
+      background: var(--sand);
+      border-color: rgb(169 119 37 / 22%);
+      border-left-color: var(--gold);
+    }
+
+    .quote-box {
+      margin: 18px 0 2px;
+      padding: 18px 20px;
+      color: #2a383f;
+      background: var(--sky);
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.12rem;
+      line-height: 1.58;
+    }
+
+    .tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0 10px;
+      color: var(--charcoal);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 820;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .flow li,
+    .role-card,
+    .metric-card,
+    .template-card,
+    .evidence-item {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .flow li {
+      position: relative;
+      min-height: 150px;
+      padding: 14px;
+    }
+
+    .flow li:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 48%;
+      right: -9px;
+      z-index: 1;
+      width: 14px;
+      height: 14px;
+      border-top: 2px solid var(--teal);
+      border-right: 2px solid var(--teal);
+      transform: rotate(45deg);
+      background: var(--paper);
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      margin-bottom: 10px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 50%;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .flow strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+      line-height: 1.25;
+    }
+
+    .flow span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.45;
+    }
+
+    .role-grid,
+    .metric-grid,
+    .template-grid,
+    .evidence-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .role-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .template-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .evidence-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .role-card,
+    .metric-card,
+    .template-card,
+    .evidence-item {
+      padding: 16px;
+    }
+
+    .role-card h3,
+    .metric-card h3,
+    .template-card h3,
+    .evidence-item h3 {
+      margin: 0 0 8px;
+      color: var(--ink);
+      font-size: 1rem;
+    }
+
+    .role-card p,
+    .metric-card p,
+    .template-card p,
+    .evidence-item p {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      min-width: 780px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.94rem;
+    }
+
+    th {
+      color: var(--charcoal);
+      background: var(--leaf);
+      font-weight: 880;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    pre {
+      overflow-x: auto;
+      margin-top: 16px;
+      padding: 18px;
+      color: #102027;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.87rem;
+      line-height: 1.62;
+    }
+
+    .verdict {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+      padding: 20px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .verdict p { color: rgb(255 255 255 / 88%); }
+
+    .footer-note {
+      padding: 34px 0 0;
+      color: var(--quiet);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 940px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar { position: static; }
+      h1 { max-width: 14ch; }
+      .flow { grid-template-columns: 1fr; }
+      .flow li:not(:last-child)::after { display: none; }
+      .role-grid,
+      .metric-grid,
+      .evidence-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .action-link {
+        flex: 1 1 auto;
+      }
+
+      .page {
+        padding: 0 18px 56px;
+      }
+
+      .hero {
+        padding: 36px 0 34px;
+      }
+
+      .quick-summary {
+        padding: 20px;
+      }
+
+      .stats-panel,
+      .role-grid,
+      .metric-grid,
+      .template-grid,
+      .evidence-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">Video Notes Library</a>
+    <div class="top-actions">
+      <a class="action-link" href="./index.html">All summaries</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=S_-uD3GtFno&t=2139s">Watch from timestamp</a>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="kicker">Deep academic workflow summary</p>
+        <h1 id="page-title">Build A Personal Research Wikipedia</h1>
+        <p class="subtitle">A detailed reading guide to The Effortless Academic's Obsidian system for academics and students: source notes, topic notes, argument notes, PDF links, bases, atomic claims, AI-assisted drafting, and long-term idea generation.</p>
+        <div class="meta">
+          <span><strong>Source:</strong> The Effortless Academic</span>
+          <span><strong>Video:</strong> Obsidian Note-Taking System for Academics and Students</span>
+          <span><strong>Length:</strong> about 53 minutes</span>
+          <span><strong>Transcript:</strong> 1,333 caption rows, about 9,353 words</span>
+          <span><strong>Requested timestamp:</strong> 35:39, the argument-notes section</span>
+        </div>
+      </div>
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/S_-uD3GtFno/hqdefault.jpg" alt="YouTube thumbnail for Obsidian Note-Taking System for Academics and Students">
+        <figcaption>Source video thumbnail. This page summarizes the complete public captions and pays special attention to the timestamped section on argument notes.</figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" id="executive-summary">
+      <div>
+        <h2>Executive Summary</h2>
+        <p>The core idea is simple but powerful: stop treating academic note-taking as paper summarization. Build a personal Wikipedia where every source, topic, claim, question, and argument is connected. The system turns reading into reusable research infrastructure.</p>
+        <ul class="summary-list">
+          <li><strong>Wikipedia is the model:</strong> organize knowledge by concepts, links, and references, not by folders full of paper summaries.</li>
+          <li><strong>Three note types matter:</strong> source notes hold raw materials, topic notes hold sourced claims, and argument notes hold your own synthesis and speculation.</li>
+          <li><strong>The smallest useful unit is an atomic claim:</strong> one narrow sentence, connected to the exact source or PDF passage that supports it.</li>
+          <li><strong>Writing becomes assembly:</strong> once topic notes mature into narrow literature-review clusters, paragraphs and paper drafts become easier to compose, including with AI assistance.</li>
+          <li><strong>Idea generation becomes a side effect:</strong> new research questions emerge by walking the graph of related concepts instead of forcing brainstorming from a blank page.</li>
+        </ul>
+      </div>
+      <div class="stats-panel" aria-label="Summary stats">
+        <div class="stat"><strong>3 notes</strong><span>Source topic argument</span></div>
+        <div class="stat"><strong>5 years</strong><span>System maturity</span></div>
+        <div class="stat"><strong>4 papers</strong><span>Speaker outcome</span></div>
+        <div class="stat"><strong>1 graph</strong><span>Research memory</span></div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <article class="content">
+        <section class="section" id="thesis">
+          <h2>Central Thesis</h2>
+          <p>The video argues that academic success depends less on collecting more highlights and more on having a durable strategy for organizing knowledge. A PhD is framed like chess: grinding harder is not enough if you have no strategy. Since research is a knowledge game, the strategy must make knowledge searchable, reusable, verifiable, and recombinable over years.</p>
+          <p>The speaker's own motivation is practical. He started a biology PhD later in life, had to learn fast, studied methods such as smart notes, second brain systems, and Zettelkasten-style linking, then developed an Obsidian vault that helped him finish his PhD early and write four first-author papers.</p>
+          <div class="quote-box">The system is not about beautiful notes. It is about turning reading into future writing blocks whose claims can always be traced back to evidence.</div>
+        </section>
+
+        <section class="section" id="wikipedia">
+          <h2>The Wikipedia Analogy</h2>
+          <p>The most important mental model is Wikipedia. Wikipedia does not organize knowledge as folders of paper summaries. It organizes knowledge around concepts. Concepts link to other concepts, and claims point to references. That structure makes a large body of knowledge navigable.</p>
+          <p>The speaker wants a personal version of this for research. Obsidian becomes the browser, markdown files become pages, PDFs and web clips become evidence, and links become the connective tissue. The goal is to build a local, searchable research wiki where every useful claim is connected to a source and every source reveals the topics it contributes to.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Wikipedia feature</th>
+                  <th>Personal research version</th>
+                  <th>Why it matters</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Concept pages</td>
+                  <td>Topic notes such as biodiversity, biological processes, or climate impact.</td>
+                  <td>You can update a topic over years instead of scattering facts across paper summaries.</td>
+                </tr>
+                <tr>
+                  <td>Internal links</td>
+                  <td>Obsidian links between people, journals, books, concepts, projects, and questions.</td>
+                  <td>Links make related knowledge discoverable during reading and writing.</td>
+                </tr>
+                <tr>
+                  <td>References</td>
+                  <td>Source notes, PDF links, web clips, and block links.</td>
+                  <td>Every claim can be checked before it appears in academic writing.</td>
+                </tr>
+                <tr>
+                  <td>No paper summaries as the main structure</td>
+                  <td>Claims are extracted into topical locations.</td>
+                  <td>Knowledge becomes reusable instead of trapped inside a source-by-source notebook.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="obsidian-basics">
+          <h2>Obsidian Basics</h2>
+          <p>The first practical section introduces Obsidian as a local vault of markdown files. This is important because your notes remain ordinary files on your computer. If a tool changes pricing or disappears, your knowledge still exists as text, images, PDFs, and folders.</p>
+          <p>The video covers the minimum interface knowledge needed to start. Markdown formatting uses symbols behind the scenes, but the speaker recommends installing an editing toolbar if you do not want to memorize syntax. He also shows callouts, internal links, external links, image embeds, note embeds, PDF handling, split panes, and the command palette.</p>
+          <div class="evidence-grid">
+            <div class="evidence-item">
+              <h3>Markdown files</h3>
+              <p>Notes are plain text files. Formatting is lightweight and portable.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Double-bracket links</h3>
+              <p>Use links to connect notes and create missing notes when a concept deserves its own page.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Embeds</h3>
+              <p>An exclamation mark before a link embeds images, PDFs, or even another note's content.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Callouts</h3>
+              <p>Useful for summaries, author intentions, AI-generated material, warnings, and collapsible sections.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Split view</h3>
+              <p>Read the source on one side and write structured notes on the other.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Command palette</h3>
+              <p>A fast way to access Obsidian actions without memorizing every menu.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="vault-structure">
+          <h2>Vault Structure</h2>
+          <p>The recommended starting vault is intentionally simple. Create a folder for notes, a folder for sources, and a support folder for images, screenshots, embeds, and other attachments. This gives enough structure without burying knowledge in a complicated folder taxonomy.</p>
+          <p>The speaker demonstrates creating a source note for a paper, dragging in the PDF, moving the PDF into support, and moving the source note into sources. He does not usually embed PDFs directly inside notes because PDF scrolling can interfere with note scrolling. Instead, he prefers opening the PDF beside the source note in split view.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Folder</th>
+                  <th>Purpose</th>
+                  <th>Examples</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Notes</td>
+                  <td>Topic notes and argument notes.</td>
+                  <td>Biodiversity, biological processes, impact of biodiversity decline.</td>
+                </tr>
+                <tr>
+                  <td>Sources</td>
+                  <td>Source notes that anchor raw material.</td>
+                  <td>Smith 2020, Wilson book note, web article note.</td>
+                </tr>
+                <tr>
+                  <td>Support</td>
+                  <td>Attachments that should not clutter the note list.</td>
+                  <td>PDFs, images, screenshots, embeds.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="properties-bases">
+          <h2>Properties And Bases</h2>
+          <p>Source notes become much more powerful when they include structured properties such as author, journal, title, year, aliases, tags, status, rating, reading intent, project, and publication relevance. In Obsidian, properties live at the top of a file and can be searched, filtered, sorted, and displayed in structured views.</p>
+          <p>The speaker is especially enthusiastic about Obsidian Bases. He compares a base to an Excel-like view: each note is a row and each property is a column. This makes it possible to build reading lists, paper databases, project-specific source tables, papers grouped by year, and lists ranked by rating or relevance.</p>
+          <p>His strong opinion is that a well-designed Obsidian base can replace parts of a reference manager workflow because it gives more control over rows, columns, preview, properties, and links into notes and PDFs. I would treat that as a personal workflow choice rather than a universal rule: Zotero, Paperpile, or another reference manager may still be useful for citation formatting, browser imports, collaboration, and institutional workflows.</p>
+          <div class="callout">
+            <p><strong>Practical rule:</strong> use properties for small, atomic metadata that helps you retrieve and filter. Do not overload properties with long prose. Put prose in the note body.</p>
+          </div>
+        </section>
+
+        <section class="section" id="mindset">
+          <h2>The Mindset Shift</h2>
+          <p>The strongest conceptual section begins around 21 minutes. The speaker says most people mistake note-taking for summarizing sources. But a summary is like a suitcase: it compresses information, yet makes it hard to find one specific item later. Research needs a wardrobe, where every piece has a place and can be retrieved quickly.</p>
+          <p>That means the unit of organization must change. Instead of taking notes on a paper, first identify the topics inside the paper. Then extract the claims that the paper makes about those topics and place them into the relevant topic notes. This is what lets knowledge scale from dozens to hundreds or thousands of notes.</p>
+          <div class="role-grid">
+            <div class="role-card">
+              <h3>Bad default</h3>
+              <p>One note per paper, filled with highlights, summaries, and copied passages.</p>
+            </div>
+            <div class="role-card">
+              <h3>Better strategy</h3>
+              <p>One source note anchors the paper, while useful claims are distributed into topic notes.</p>
+            </div>
+            <div class="role-card">
+              <h3>Long-term payoff</h3>
+              <p>Topic notes become narrow literature-review clusters that can be reused during writing.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="three-notes">
+          <h2>The Source-Topic-Argument System</h2>
+          <p>The complete system has three note types. This is the heart of the video and the author's related blog post.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Note type</th>
+                  <th>Contains</th>
+                  <th>Does not contain</th>
+                  <th>Key rule</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Source note</td>
+                  <td>Raw material or a pointer to raw material: PDF, web clip, book, metadata, DOI, title, author, journal, summary, figures, author intentions.</td>
+                  <td>Your main knowledge organization. It should not become the only place where useful claims live.</td>
+                  <td>Use it as the anchor for verification and citation.</td>
+                </tr>
+                <tr>
+                  <td>Topic note</td>
+                  <td>Short claims about one narrow topic, each linked back to supporting sources.</td>
+                  <td>Unsupported speculation or unrelated content just because it came from the same paper.</td>
+                  <td>One topic, short statements, source links everywhere.</td>
+                </tr>
+                <tr>
+                  <td>Argument note</td>
+                  <td>Your own synthesis, questions, hypotheses, thesis outlines, project logic, struggles, and speculative connections.</td>
+                  <td>Claims disguised as facts without evidence, or raw notes copied from sources.</td>
+                  <td>Make your own thinking explicit and separate from what sources say.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="quote-box">The clean separation is: what they said, what you understood they said, and what you think.</div>
+        </section>
+
+        <section class="section" id="source-notes">
+          <h2>Source Notes In Detail</h2>
+          <p>Source notes are mostly immutable because they represent something someone else wrote. They do not need to be long. Their job is to preserve access to the raw material and give every extracted claim a reliable origin.</p>
+          <p>A source note can include the paper title, author, year, journal, DOI, aliases, PDF link, extracted figures, a short summary, the author's intention, and any source-specific comments. The speaker often hides the PDF link behind the paper title so the note stays readable while still giving fast access to the raw source.</p>
+          <ul>
+            <li>Name source notes in citation-like form, such as <code>Smith 2020</code>.</li>
+            <li>Add the PDF or web clip close to the top so the raw material is one hover or click away.</li>
+            <li>Use aliases so a source can be found by short citation names.</li>
+            <li>Keep figures or screenshots in the source note when they belong specifically to that paper's argument.</li>
+            <li>Use linked mentions and backlinks to see which topics the source contributes to.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="topic-notes">
+          <h2>Topic Notes In Detail</h2>
+          <p>Topic notes are where the system becomes a research engine. Each topic note gathers what you know about one narrow topic. The speaker emphasizes that topic notes should stay short and atomic. If a topic grows too broad, split it into narrower notes.</p>
+          <p>The key move is interpretation. You do not simply copy the source sentence. You compress the source's claim into your own sentence and place it in the right conceptual context. For example, a source may discuss biodiversity broadly, but your note may convert a passage into a claim about biodiversity decline, ecosystem resilience, or nonlinear biological responses to climate.</p>
+          <div class="callout gold">
+            <p><strong>Important distinction:</strong> topic notes are interpreted, but not speculative. They contain your understanding of what the source supports, and they should always point back to evidence.</p>
+          </div>
+          <p>This is also where direct PDF links become valuable. A claim should not only link to the source note. When possible, link to the exact highlighted passage in the PDF or exact block in the source note. That way, future you can verify the claim before citing it.</p>
+        </section>
+
+        <section class="section" id="argument-notes">
+          <h2>Argument Notes - The Timestamped Section</h2>
+          <p>The link you sent starts at 35:39, right in the argument-notes section. This is where the speaker explains where your own ideas belong. Source notes are what others said. Topic notes are sourced claims you extracted and interpreted. Argument notes are your own thinking: questions, possible explanations, thesis outlines, research angles, email discussions, and speculative connections.</p>
+          <p>This separation is crucial for academic integrity. If a sentence is in a topic note, it should be traceable to a source. If it is your hypothesis, uncertainty, or proposed connection, it belongs in an argument note. That way, your system never confuses evidence with speculation.</p>
+          <div class="evidence-grid">
+            <div class="evidence-item">
+              <h3>Question notes</h3>
+              <p>Open problems, doubts, and "does X affect Y?" style research questions.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Project arguments</h3>
+              <p>Thesis aims, chapter outlines, introduction logic, and paper structure.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>External conversations</h3>
+              <p>Email threads, advisor feedback, community discussions, and expert pointers.</p>
+            </div>
+          </div>
+          <div class="quote-box">Argument notes are the creative layer. They let the vault become not only a memory system, but a thinking system.</div>
+        </section>
+
+        <section class="section" id="claim-flow">
+          <h2>The Claim Extraction Workflow</h2>
+          <p>The demo shows the workflow repeatedly. Read a source on the left, keep notes on the right, identify a useful claim, decide which topic it belongs to, write an atomic sentence, and add a link to the source or exact source block. If the right topic does not exist, create it.</p>
+          <ol class="flow" aria-label="Claim extraction workflow">
+            <li><span class="step-number">1</span><strong>Read source</strong><span>Paper, book, PDF, web article, or clipped page.</span></li>
+            <li><span class="step-number">2</span><strong>Spot claim</strong><span>Find a sentence, result, definition, figure, or useful relation.</span></li>
+            <li><span class="step-number">3</span><strong>Choose topic</strong><span>Place the claim in the narrow concept where it will be reused.</span></li>
+            <li><span class="step-number">4</span><strong>Write atomically</strong><span>Compress it into one clear sentence in your own words.</span></li>
+            <li><span class="step-number">5</span><strong>Link evidence</strong><span>Connect to the source note, PDF passage, or source block.</span></li>
+          </ol>
+          <p>Over time, every source note becomes a gateway to the topics it supports, and every topic note becomes a mini literature review of all the sources that support that topic.</p>
+        </section>
+
+        <section class="section" id="pdf-links">
+          <h2>PDF Links And Verification</h2>
+          <p>The speaker spends time on a subtle but important academic problem: a paper can mention a claim without being the original evidence for that claim. For example, a paper's introduction may cite prior works for a biological claim. If you cite the introduction paper as though it produced the original evidence, your citation may be wrong.</p>
+          <p>This is why direct PDF selection links matter. Linking to the exact sentence helps you check whether the paper itself supports the claim, or whether you need to follow the cited references. The speaker uses two link types in some cases: one link to the exact PDF passage for verification, and another link to the source note so the knowledge graph stays connected.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Link type</th>
+                  <th>Purpose</th>
+                  <th>Example use</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Source-note link</td>
+                  <td>Keeps the note network connected and shows backlinks from source to topics.</td>
+                  <td><code>[[Smith 2020]]</code></td>
+                </tr>
+                <tr>
+                  <td>PDF selection link</td>
+                  <td>Verifies the exact passage behind the claim.</td>
+                  <td>A link to highlighted text in the PDF.</td>
+                </tr>
+                <tr>
+                  <td>Block link</td>
+                  <td>Points to a specific block inside a note or web clip.</td>
+                  <td>Useful for clipped articles, books, or notes without PDFs.</td>
+                </tr>
+                <tr>
+                  <td>Alias link</td>
+                  <td>Keeps display text clean while linking to the real file or note.</td>
+                  <td><code>[[Long Paper Title|Smith 2020]]</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="web-clipper">
+          <h2>Web Sources</h2>
+          <p>The system is not limited to PDFs. For websites and online articles, the speaker recommends Obsidian Web Clipper. A clipped web page can become a source note containing text, images, links, and metadata. The same rule applies: the source note should preserve enough raw material that claims extracted into topic notes can be checked later.</p>
+          <p>This matters because web notes often become messy if they are treated as disposable snippets. In this system, a web clip is handled like a paper: it is a source, it gets properties, it links to topics, and its claims can be traced.</p>
+        </section>
+
+        <section class="section" id="ai-writing">
+          <h2>Where AI Fits</h2>
+          <p>AI appears near the end of the system, not at the beginning. The speaker's point is that once you have many atomic, sourced claims, you can ask AI to help combine them into paragraphs. That can produce a strong first draft because the input is already curated, topic-specific, and linked to references.</p>
+          <p>The difference from generic AI writing is control. You are not asking AI to invent a literature review from memory. You are asking it to arrange claims that you selected, interpreted, and sourced. The result still needs editing and verification, but it starts from a better substrate.</p>
+          <div class="callout rose">
+            <p><strong>Ethics caution:</strong> the speaker explicitly raises whether this kind of AI-assisted writing is ethical. The safest interpretation is that AI can assist drafting from your own sourced notes, but you still own the argument, verification, citation accuracy, and institutional policy compliance.</p>
+          </div>
+        </section>
+
+        <section class="section" id="idea-generation">
+          <h2>Idea Generation As A Side Effect</h2>
+          <p>The final conceptual payoff is idea generation. The speaker explains that new ideas emerge by walking the knowledge graph. You start from one topic, follow links to another, discover an old source you read years ago, and notice a connection that creates a research question.</p>
+          <p>In the video's example, you might move from fossil fuels to climate change to melting ice sheets to penguin populations, then connect that to a paper about declining penguin populations in Antarctica. A new question emerges from the network: how might new fossil-fuel emissions projections affect penguin populations?</p>
+          <p>The author contrasts two modes of research. Hunters of information start from an urgent writing deadline and search from scratch. Farmers of knowledge plant notes over time, then harvest mature connections when writing begins. The metaphor is vivid, but the operational point is serious: a good structure lets ideas compound.</p>
+        </section>
+
+        <section class="section" id="visual-map">
+          <h2>Visual Map Of The System</h2>
+          <p>The system can be understood as a layered knowledge graph. Sources support topics. Topics accumulate claims. Arguments connect topics into original thinking. Drafts harvest arguments and topic notes into papers.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Layer</th>
+                  <th>Input</th>
+                  <th>Output</th>
+                  <th>Quality check</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Source layer</td>
+                  <td>Papers, books, web articles, PDFs, emails, figures.</td>
+                  <td>Source notes with metadata and raw material.</td>
+                  <td>Can you reach the original evidence quickly?</td>
+                </tr>
+                <tr>
+                  <td>Claim layer</td>
+                  <td>Highlighted passages and source statements.</td>
+                  <td>Atomic claims placed in topic notes.</td>
+                  <td>Can every claim be verified by a link?</td>
+                </tr>
+                <tr>
+                  <td>Topic layer</td>
+                  <td>Claims from multiple sources.</td>
+                  <td>Narrow literature-review clusters.</td>
+                  <td>Is the topic narrow enough to remain useful?</td>
+                </tr>
+                <tr>
+                  <td>Argument layer</td>
+                  <td>Questions, connections, project logic, speculation.</td>
+                  <td>Research ideas, thesis arguments, outlines.</td>
+                  <td>Is your thinking clearly separated from source claims?</td>
+                </tr>
+                <tr>
+                  <td>Writing layer</td>
+                  <td>Topic notes, argument notes, AI drafting, human editing.</td>
+                  <td>Paper sections and publishable drafts.</td>
+                  <td>Are citations correct and claims still supported?</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="implementation">
+          <h2>Implementation Checklist</h2>
+          <p>If you wanted to recreate the system, the smallest workable version looks like this.</p>
+          <ul>
+            <li>Create folders: <code>Notes</code>, <code>Sources</code>, and <code>Support</code>.</li>
+            <li>Create source notes for papers, books, web pages, and important conversations.</li>
+            <li>Add properties such as author, year, title, journal, type, status, project, rating, and aliases.</li>
+            <li>Create a base that filters notes in the <code>Sources</code> folder and displays useful properties.</li>
+            <li>Read with the source on one side and topic notes on the other.</li>
+            <li>Extract claims into topic notes as atomic sentences.</li>
+            <li>Link every topic claim back to a source note, PDF selection, or source block.</li>
+            <li>Split topic notes when they become too broad.</li>
+            <li>Create argument notes for your own synthesis, questions, and project logic.</li>
+            <li>Use AI only after you have a curated set of sourced claims to assemble.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <h2>Reusable Templates</h2>
+          <p>These templates translate the video into ready-to-use note structures.</p>
+          <div class="template-grid">
+            <div class="template-card">
+              <h3>Source Note Template</h3>
+              <pre><code>---
+type: source
+source_type: paper
+authors:
+  - "[[Author Name]]"
+year:
+journal: "[[Journal Name]]"
+title:
+doi:
+status: unread
+rating:
+project:
+aliases:
+  - "Author Year"
+---
+
+# &lt;Paper title or book title&gt;
+
+PDF: &lt;link to PDF or attachment&gt;
+Original URL:
+
+## Why I saved this
+- 
+
+## Author intention
+- What problem is this source trying to solve?
+- What claim does it want readers to accept?
+
+## Key figures or passages
+- 
+
+## Notes
+- 
+
+## Linked topics
+- Use backlinks to see which topic notes cite this source.</code></pre>
+            </div>
+            <div class="template-card">
+              <h3>Topic Note Template</h3>
+              <pre><code>---
+type: topic
+aliases:
+  - 
+---
+
+# &lt;Narrow topic&gt;
+
+One-sentence definition:
+- 
+
+## Claims
+- &lt;Atomic claim in your own words&gt; [[Source Year]]
+- &lt;Atomic claim&gt; [exact PDF passage] in [[Source Year]]
+
+## Related concepts
+- [[Concept A]]
+- [[Concept B]]
+
+## Open questions
+- 
+
+## Needs checking
+- Claims that need direct source verification before citation.</code></pre>
+            </div>
+            <div class="template-card">
+              <h3>Argument Note Template</h3>
+              <pre><code>---
+type: argument
+status: seed
+project:
+---
+
+# &lt;Question, thesis, or argument&gt;
+
+## Claim I might want to make
+- 
+
+## Why I think this matters
+- 
+
+## Supporting topic notes
+- [[Topic A]]
+- [[Topic B]]
+
+## Evidence I need
+- 
+
+## Counterarguments
+- 
+
+## Draft paragraph
+- 
+
+## Next action
+- Read:
+- Ask:
+- Test:
+- Write:</code></pre>
+            </div>
+            <div class="template-card">
+              <h3>Base View Starter</h3>
+              <pre><code># Papers base idea
+
+Filter:
+- Folder is Sources
+- source_type is paper
+
+Columns:
+- file name
+- title
+- authors
+- year
+- journal
+- status
+- rating
+- project
+- reading intent
+
+Views:
+- All papers
+- Reading list
+- By project
+- By year
+- High-value sources
+
+Rule:
+- A source can be unread, skimmed, read, extracted, or cited.</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="agent-platform">
+          <h2>Connection To Agentic AI Platforms</h2>
+          <p>Even though this video is about academic notes, it is surprisingly relevant to agentic AI platform design. The Source-Topic-Argument separation maps almost perfectly to how enterprise agents should handle memory and business knowledge.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Academic system</th>
+                  <th>Agent platform equivalent</th>
+                  <th>Design implication</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Source note</td>
+                  <td>Evidence memory: documents, calls, tickets, policies, SOPs, logs, transcripts.</td>
+                  <td>Agents should cite raw evidence before acting or making business claims.</td>
+                </tr>
+                <tr>
+                  <td>Topic note</td>
+                  <td>Domain concept memory: product rules, customer concepts, workflows, entities, definitions.</td>
+                  <td>Keep domain facts narrow, sourced, and reusable across agents.</td>
+                </tr>
+                <tr>
+                  <td>Argument note</td>
+                  <td>Decision memory: hypotheses, plans, recommendations, tradeoffs, design rationale.</td>
+                  <td>Separate agent reasoning and human decisions from verified facts.</td>
+                </tr>
+                <tr>
+                  <td>Atomic claim</td>
+                  <td>Grounded fact unit.</td>
+                  <td>Every memory item should be small enough to verify, update, expire, or cite.</td>
+                </tr>
+                <tr>
+                  <td>Backlinks</td>
+                  <td>Traceability graph.</td>
+                  <td>A business concept should reveal all sources, flows, tools, agents, and decisions connected to it.</td>
+                </tr>
+                <tr>
+                  <td>AI-assisted drafting</td>
+                  <td>Agent-generated deliverables.</td>
+                  <td>Generation should assemble trusted claims, not invent from ungrounded context.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout">
+            <p><strong>For your BA builder:</strong> let BA users create Source, Topic, and Argument blocks inside Business Flow Markdown. Then your Master Agent can know which content is evidence, which content is domain knowledge, and which content is a proposed decision.</p>
+          </div>
+        </section>
+
+        <section class="section" id="ba-flow">
+          <h2>Business Flow Markdown Adaptation</h2>
+          <p>Here is how the academic system could become a knowledge structure for your multi-agent platform.</p>
+          <pre><code># Business Knowledge Flow: &lt;process name&gt;
+
+## Sources
+- [[Policy: Refund Rules 2026]]
+- [[Call Transcript: Customer Escalation 2026-07-21]]
+- [[SOP: Claims Review]]
+
+## Topics
+- [[Refund eligibility]]
+- [[Fraud risk signals]]
+- [[Customer consent]]
+- [[Approval threshold]]
+
+## Atomic Claims
+- Customers with plan type A can request refund within 14 days. [[Policy: Refund Rules 2026]]
+- High-value refunds require manager approval. [[SOP: Claims Review]]
+- Consent must be captured before accessing external records. [[Policy: Data Access]]
+
+## Arguments / Decisions
+- We should route high-value refund cases to a human reviewer because the approval threshold creates business risk.
+- The Fraud Review Sub-Agent should only produce evidence summaries, not final decisions.
+
+## Agent Contracts
+- Master Agent: route case, check policy, assign sub-agents, escalate exceptions.
+- Policy Sub-Agent: retrieve and cite policy.
+- Evidence Sub-Agent: summarize documents with source links.
+- Action Tool: create ticket only after approval.
+
+## Verification
+- Every recommendation must include source links.
+- Every action must list approval status.
+- Every unsupported claim must be marked as a hypothesis.</code></pre>
+        </section>
+
+        <section class="section" id="common-mistakes">
+          <h2>Common Mistakes To Avoid</h2>
+          <ul>
+            <li><strong>Summarizing everything:</strong> paper summaries feel productive but trap knowledge in source-shaped boxes.</li>
+            <li><strong>Creating broad topic notes:</strong> if a note becomes a dumping ground, split it into narrower concepts.</li>
+            <li><strong>Copying passages without interpretation:</strong> copied text is harder to reuse and increases citation risk.</li>
+            <li><strong>Losing source traceability:</strong> every academic claim should be checkable later.</li>
+            <li><strong>Over-customizing too early:</strong> plugins and colors can help, but the system works only if the core workflow is clear.</li>
+            <li><strong>Letting AI write from vague inputs:</strong> AI is most useful after the claim network is already curated.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="my-read">
+          <h2>My Read</h2>
+          <p>This is a very good video because it moves note-taking from aesthetics to architecture. The strongest idea is the clean separation between source, topic, and argument. That separation solves three problems at once: retrieval, citation integrity, and original thinking.</p>
+          <p>The only part I would soften is the idea that Obsidian Bases can replace a reference manager for everyone. For a solo researcher who wants total control, it may work beautifully. For teams, labs, or strict citation workflows, a reference manager may still be useful. The better principle is not "replace Zotero"; it is "make your source metadata queryable and connected to your claims."</p>
+          <p>For your agentic platform, the most valuable lesson is memory design. Agent memory should not be one messy long-term note. It should separate raw evidence, grounded domain claims, and proposed reasoning. Once that structure exists, AI can draft, answer, plan, and summarize with much less hallucination risk.</p>
+          <div class="verdict">
+            <h3>Bottom line</h3>
+            <p>Build notes like a knowledge graph, not like a notebook. Put evidence in sources, verified claims in topics, and your thinking in arguments. Then writing and idea generation become downstream outputs of a well-maintained system.</p>
+          </div>
+        </section>
+
+        <section class="section" id="sources">
+          <h2>Sources And Confidence</h2>
+          <p>This page is based primarily on the extracted public captions from the YouTube video. External links were used to verify the author's related Source-Topic-Argument article and current Obsidian feature documentation.</p>
+          <ul>
+            <li><a href="https://www.youtube.com/watch?v=S_-uD3GtFno&t=2139s">Obsidian Note-Taking System for Academics and Students - Full Tutorial and Demo</a> - The Effortless Academic on YouTube.</li>
+            <li><a href="https://effortlessacademic.com/academic-note-taking-system/">Academic Note-Taking: Source-Topic-Argument system</a> - The Effortless Academic.</li>
+            <li><a href="https://obsidian.md/help/link-notes">Obsidian Help: Link notes</a>.</li>
+            <li><a href="https://obsidian.md/help/properties">Obsidian Help: Properties</a>.</li>
+            <li><a href="https://obsidian.md/help/bases">Obsidian Help: Bases</a>.</li>
+            <li><a href="https://obsidian.md/help/web-clipper">Obsidian Help: Web Clipper</a>.</li>
+          </ul>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Page navigation">
+        <section class="toc">
+          <h2>Read Path</h2>
+          <nav>
+            <a href="#executive-summary">Executive Summary</a>
+            <a href="#thesis">Central Thesis</a>
+            <a href="#wikipedia">Wikipedia Analogy</a>
+            <a href="#obsidian-basics">Obsidian Basics</a>
+            <a href="#vault-structure">Vault Structure</a>
+            <a href="#properties-bases">Properties and Bases</a>
+            <a href="#mindset">Mindset Shift</a>
+            <a href="#three-notes">Three Note Types</a>
+            <a href="#source-notes">Source Notes</a>
+            <a href="#topic-notes">Topic Notes</a>
+            <a href="#argument-notes">Argument Notes</a>
+            <a href="#claim-flow">Claim Workflow</a>
+            <a href="#pdf-links">PDF Links</a>
+            <a href="#web-clipper">Web Sources</a>
+            <a href="#ai-writing">AI Writing</a>
+            <a href="#idea-generation">Idea Generation</a>
+            <a href="#visual-map">Visual Map</a>
+            <a href="#implementation">Checklist</a>
+            <a href="#templates">Templates</a>
+            <a href="#agent-platform">Agent Platform</a>
+            <a href="#ba-flow">BA Flow</a>
+            <a href="#common-mistakes">Mistakes</a>
+            <a href="#my-read">My Read</a>
+            <a href="#sources">Sources</a>
+          </nav>
+        </section>
+        <section class="source-box">
+          <h2>Useful Lens</h2>
+          <p>Ask of every note: is this raw evidence, a sourced claim, or my own thinking? Mixing those three is where research systems get messy.</p>
+          <div class="tag-grid">
+            <span class="tag">Obsidian</span>
+            <span class="tag">Academic writing</span>
+            <span class="tag">Knowledge graph</span>
+            <span class="tag">Source Topic Argument</span>
+            <span class="tag">Agent memory</span>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <p class="footer-note">Generated as a reading-focused resource page for the YouTube extractor and summarizer project.</p>
+  </main>
+</body>
+</html>

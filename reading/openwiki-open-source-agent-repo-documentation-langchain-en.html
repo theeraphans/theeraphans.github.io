@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>OpenWiki - Open Source Agent for Repo Documentation - LangChain Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5f6d73;
+      --paper: #fffef9;
+      --canvas: #f4f7f2;
+      --line: #d7ded6;
+      --teal: #14716a;
+      --blue: #315f85;
+      --coral: #bd4e3e;
+      --gold: #a1741e;
+      --violet: #675a87;
+      --charcoal: #243039;
+      --soft-teal: #e3f0ed;
+      --soft-blue: #e6edf5;
+      --soft-gold: #f7efd8;
+      --shadow: 0 24px 62px rgb(23 33 38 / 11%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(20 113 106 / 7%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(49 95 133 / 6%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--coral), var(--gold), var(--violet));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 84%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.04fr) minmax(300px, 0.96fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.9rem, 6.7vw, 5.85rem);
+      font-weight: 760;
+      line-height: 0.96;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      margin-top: 24px;
+      color: #303b41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2.05vw, 1.48rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e6ece7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 86%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: rgb(255 255 255 / 88%);
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .stat {
+      padding: 14px;
+      color: var(--ink);
+      background: #fff;
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--coral);
+      font-size: 1.65rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 238px minmax(0, 1fr);
+      gap: 40px;
+      align-items: start;
+      margin-top: 38px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 6px;
+      padding: 16px;
+      background: rgb(255 255 255 / 80%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .toc span {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 750;
+      text-decoration: none;
+      border-top: 1px solid rgb(215 222 214 / 76%);
+    }
+
+    .content {
+      display: grid;
+      gap: 28px;
+      min-width: 0;
+    }
+
+    .section {
+      min-width: 0;
+      padding: 34px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; padding-top: 0; }
+
+    .label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      max-width: 900px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.9rem, 4vw, 3.35rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      max-width: 920px;
+      margin-top: 14px;
+      color: #303b41;
+      font-size: 1.08rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      margin-bottom: 12px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .flow-step {
+      min-width: 0;
+      padding: 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 30px rgb(23 33 38 / 6%);
+    }
+
+    .flow-step b {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--coral);
+      font-size: 0.8rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .lanes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .lane {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .lane:nth-child(1) { background: var(--soft-teal); }
+    .lane:nth-child(2) { background: var(--soft-blue); }
+    .lane:nth-child(3) { background: var(--soft-gold); }
+
+    .lane h3 {
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 1.08rem;
+    }
+
+    .lane p {
+      color: #42505a;
+      font-size: 0.96rem;
+    }
+
+    .table-wrap {
+      min-width: 0;
+      margin-top: 24px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: #fff;
+      background: var(--blue);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    td {
+      color: #344047;
+      font-size: 0.95rem;
+    }
+
+    .quote {
+      margin-top: 24px;
+      padding: 22px;
+      color: #fff;
+      background: var(--violet);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.22rem, 2.4vw, 1.78rem);
+      line-height: 1.35;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 14px 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .checklist strong { color: var(--coral); }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 46px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .toc { position: static; }
+
+      .grid,
+      .two,
+      .tldr,
+      .lanes {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .page { padding-inline: 16px; }
+
+      .hero {
+        padding-top: 36px;
+        gap: 28px;
+      }
+
+      h1 {
+        max-width: 10ch;
+        font-size: clamp(2.55rem, 13vw, 4.15rem);
+      }
+
+      .quick-summary { padding: 22px; }
+
+      .grid,
+      .two,
+      .tldr,
+      .lanes {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        min-width: 0;
+        table-layout: fixed;
+      }
+
+      th, td {
+        padding: 11px 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/reading/">Reading room</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#setup">Setup</a>
+      <a class="action-link" href="#docs">Docs</a>
+      <a class="action-link" href="#automation">Automation</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=nIVu3zfYprI">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">OpenWiki</span>
+        <h1>An Agent for Repo Documentation</h1>
+        <p class="subtitle">
+          A readable summary of LangChain's OpenWiki demo. OpenWiki is an open source agent that generates,
+          updates, and exposes repository documentation designed for coding agents, so agents can understand not only
+          what the code does, but also why important implementation decisions exist.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> Introducing OpenWiki, an open source agent for repo documentation</span>
+          <span><strong>Creator:</strong> LangChain</span>
+          <span><strong>Transcript:</strong> 1,352 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/nIVu3zfYprI/hqdefault.jpg" alt="Video thumbnail for OpenWiki repository documentation agent">
+        <figcaption>
+          Source video from LangChain, focused on OpenWiki setup, repo documentation generation, GitHub Actions updates, chat, agents.md integration, and LangSmith tracing.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="quick-summary-title">
+      <div>
+        <h2 id="quick-summary-title">The Short Version</h2>
+        <p>
+          OpenWiki is a repository documentation agent. You install it with NPM, run an init command, choose a model provider,
+          and it generates an OpenWiki documentation directory for the current repo. It can update those docs from Git history,
+          expose them to coding agents through agents.md or claude.md, and optionally trace runs through LangSmith.
+        </p>
+        <ul class="tldr">
+          <li>OpenWiki creates agent-readable docs that act as both repo overview and navigation map.</li>
+          <li>Docs stay current by inspecting commits, PR descriptions, comments, and file changes since the last update.</li>
+          <li>The agents.md integration tells coding agents when and how to use OpenWiki context automatically.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>6m</strong><span>runtime</span></div>
+        <div class="stat"><strong>203</strong><span>caption rows</span></div>
+        <div class="stat"><strong>1.4k</strong><span>transcript words</span></div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Table of contents">
+        <span>Read</span>
+        <a href="#setup">Setup</a>
+        <a href="#docs">Documentation shape</a>
+        <a href="#automation">Git updates</a>
+        <a href="#chat">Chat mode</a>
+        <a href="#agent-context">Agent context</a>
+        <a href="#platform">Platform takeaways</a>
+      </nav>
+
+      <article class="content">
+        <section class="section" id="setup">
+          <span class="label">Setup</span>
+          <h2>OpenWiki starts as a local CLI flow, then immediately generates docs</h2>
+          <p class="lead">
+            The demo begins by installing OpenWiki through NPM and running <strong>openwiki init</strong>.
+            The init process asks for a model provider, API key, and model choice. It supports open and closed model providers,
+            includes predefined models, and lets users provide a custom model ID when needed.
+          </p>
+
+          <div class="flow" aria-label="OpenWiki setup flow">
+            <div class="flow-step"><b>Install</b><span>Install OpenWiki locally through NPM.</span></div>
+            <div class="flow-step"><b>Init</b><span>Run openwiki init inside the target repository.</span></div>
+            <div class="flow-step"><b>Provider</b><span>Select a model provider such as OpenRouter or another supported provider.</span></div>
+            <div class="flow-step"><b>Model</b><span>Choose a predefined model or enter a custom model ID.</span></div>
+            <div class="flow-step"><b>Trace</b><span>Optionally add a LangSmith API key to trace every action.</span></div>
+            <div class="flow-step"><b>Generate</b><span>OpenWiki starts generating repository documentation.</span></div>
+          </div>
+        </section>
+
+        <section class="section" id="docs">
+          <span class="label">Documentation Shape</span>
+          <h2>The generated docs are an index and knowledge map for future coding agents</h2>
+          <p class="lead">
+            OpenWiki creates an OpenWiki directory with a quickstart.md file and subdirectories for different parts of the repository.
+            The quickstart file is the index: it describes the repo at a high level, names important files, links to deeper docs,
+            and gives a coding agent a fast first stop when it needs repository context.
+          </p>
+
+          <div class="lanes" aria-label="OpenWiki document layers">
+            <article class="lane">
+              <h3>Quickstart Index</h3>
+              <p>High-level repository overview, important files, and links into the rest of the OpenWiki documentation.</p>
+            </article>
+            <article class="lane">
+              <h3>Subsystem Docs</h3>
+              <p>Focused pages for architecture, CLI behavior, operations, agent internals, and other major repo areas.</p>
+            </article>
+            <article class="lane">
+              <h3>Decision Context</h3>
+              <p>Business logic and reasoning behind implementation choices, derived from commits, PRs, comments, and history.</p>
+            </article>
+          </div>
+
+          <p class="quote">
+            The important design choice is that the docs are not only for humans. They are written as context that coding agents should inspect first.
+          </p>
+        </section>
+
+        <section class="section" id="automation">
+          <span class="label">Automation</span>
+          <h2>A GitHub Action can keep OpenWiki docs updated from Git history</h2>
+          <p class="lead">
+            OpenWiki is not meant to become another manual documentation chore. The demo shows a GitHub Action that runs
+            <strong>openwiki update</strong> on a schedule and opens a pull request with documentation updates.
+            The update process uses Git history as its input.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Track</span>
+              <h3>Last checked commit</h3>
+              <p>OpenWiki stores the commit hash that was last reflected in the docs.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Inspect</span>
+              <h3>New changes</h3>
+              <p>It reviews commits, changed files, PR descriptions, comments, and related context after that point.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Propose</span>
+              <h3>Documentation PR</h3>
+              <p>The scheduled action can open a pull request updating the OpenWiki docs when changes are needed.</p>
+            </article>
+          </div>
+
+          <ul class="checklist">
+            <li><strong>Schedule is flexible.</strong> A quiet repo may update weekly, while a high-volume repo may update every few hours.</li>
+            <li><strong>The agent is time-frame independent.</strong> It reads Git history, so the schedule can be adjusted without changing the core behavior.</li>
+            <li><strong>Docs become part of review flow.</strong> Humans still merge the update PRs, which keeps generated documentation inspectable.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="chat">
+          <span class="label">Chat Mode</span>
+          <h2>OpenWiki is also a repo-aware chatbot and docs manager</h2>
+          <p class="lead">
+            Running OpenWiki without the init or update command launches a chat interface.
+            From there, the user can customize model settings, update or clear docs, ask questions about the repo,
+            search through generated documentation, and make targeted changes.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mode</th>
+                  <th>User can do</th>
+                  <th>Why it matters</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Ask</td>
+                  <td>Ask questions about the repository or generated docs.</td>
+                  <td>OpenWiki becomes a lightweight knowledge interface over the codebase.</td>
+                </tr>
+                <tr>
+                  <td>Manage</td>
+                  <td>Update, clear, or tune documentation behavior.</td>
+                  <td>Docs can be maintained without hand-editing every file.</td>
+                </tr>
+                <tr>
+                  <td>Edit</td>
+                  <td>Request targeted changes to specific documentation areas.</td>
+                  <td>The generated wiki can evolve with human feedback and repo changes.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="agent-context">
+          <span class="label">Agent Context</span>
+          <h2>agents.md or claude.md tells coding agents to use OpenWiki automatically</h2>
+          <p class="lead">
+            The final step is how other coding agents discover OpenWiki. OpenWiki creates or updates agents.md,
+            or claude.md for Claude Code, with instructions that tell the coding agent where the OpenWiki docs live
+            and when to use them. That means future coding agents can pick up repository context without extra prompting.
+          </p>
+
+          <div class="flow" aria-label="Coding agent context flow">
+            <div class="flow-step"><b>OpenWiki</b><span>Generates docs and inserts usage instructions.</span></div>
+            <div class="flow-step"><b>agents.md</b><span>References the OpenWiki directory and explains when to inspect it.</span></div>
+            <div class="flow-step"><b>Coding Agent</b><span>Reads the agent instructions when launched in the repo.</span></div>
+            <div class="flow-step"><b>Context</b><span>Uses OpenWiki docs before making changes.</span></div>
+            <div class="flow-step"><b>Update Loop</b><span>Scheduled PRs keep the docs aligned with the repository.</span></div>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your agentic AI platform</h2>
+          <p class="lead">
+            OpenWiki is especially relevant to your BA-facing platform because it shows a practical memory/documentation layer
+            for agents. It turns repository understanding into a maintained artifact instead of repeatedly rediscovering the same context.
+          </p>
+
+          <ul class="checklist">
+            <li><strong>Make agent-readable docs a first-class memory layer.</strong> Not all memory should be vectors or chat history; structured markdown can guide agents directly.</li>
+            <li><strong>Use an index file as the entrypoint.</strong> A quickstart-style page gives Master Agents and Sub-Agents a predictable first place to inspect.</li>
+            <li><strong>Capture why, not only what.</strong> Commit history, PR descriptions, and comments can explain business logic and design decisions that code alone does not reveal.</li>
+            <li><strong>Automate documentation updates through workflow triggers.</strong> Scheduled updates or merge-triggered updates can keep Flow Markdown, Skill Cards, and SOP docs fresh.</li>
+            <li><strong>Surface docs through agent instruction files.</strong> Your platform can generate agents.md-style guidance that tells agents where to find approved context.</li>
+            <li><strong>Trace documentation agents.</strong> LangSmith-style tracing matters because generated docs become part of future agent decisions.</li>
+            <li><strong>Use PRs for governance.</strong> Generated documentation should be reviewable, diffable, and mergeable rather than silently changing platform memory.</li>
+            <li><strong>Extend the pattern beyond code repos.</strong> The same approach can maintain SOP documentation, business process maps, tool catalogs, policy docs, and agent skill libraries.</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>Introducing OpenWiki, an open source agent for repo documentation</strong>.
+    Source: LangChain. Video ID: nIVu3zfYprI.
+  </footer>
+</body>
+</html>

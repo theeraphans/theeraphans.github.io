@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Introduced Group Relative Policy Optimization in DeepSeekMath, using rewards normalized across sampled answer groups to train reasoning without a separate value model.">
+  <meta name="resource-file" content="2026-09-08-grpo-group-relative-policy-optimization-en.html">
+  <title>GRPO · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css">
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2402.03300">Read paper</a><a class="action-link" href="/reading/">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Instruction and Preference Alignment · Paper 22 of 37</p>
+        <h1>DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models</h1>
+        <p class="subtitle">Introduced Group Relative Policy Optimization in DeepSeekMath, using rewards normalized across sampled answer groups to train reasoning without a separate value model.</p>
+        <div class="meta"><span><strong>Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu, Junxiao Song, Xiao Bi, Haowei Zhang, Mingchuan Zhang, Y. K. Li, Y. Wu, Daya Guo</strong></span><span>2024</span><span>Advanced</span><span>14 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>GRPO</h2><p>DeepSeek-AI</p><p><strong>Prerequisites:</strong> Policy gradients, PPO, KL penalties, reward functions, and sampled reasoning outputs.</p><a href="https://arxiv.org/abs/2402.03300">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Advanced</strong></div><div class="paper-fact"><span>Place in path</span><strong>22 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>PPO-style RLHF uses a value model to estimate advantages, adding memory and training complexity comparable to another large network. Mathematical reasoning offers outcome rewards that can score sampled answers directly.</p>
+<p>DeepSeekMath sought an efficient reinforcement-learning method that could improve reasoning while avoiding a separate critic.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>For each prompt, sample a group of responses from the current or old policy. Score each response, then normalize rewards within the group to create relative advantages. Optimize a clipped policy objective with a KL regularizer.</p>
+<p>Each answer is judged against its siblings rather than an absolute learned value baseline. This makes group diversity and reward quality central.</p><div class="equation">advantage_i = (reward_i − mean(group rewards)) / std(group rewards)</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Sample G completions for one problem. Apply rule-based or learned rewards. Compute group mean and standard deviation, assign normalized advantages, and update token probabilities with a PPO-like clipped ratio.</p>
+<p>Repeat with fresh groups as the policy improves. A reference model or analytic KL term limits destructive drift.</p><figure class="concept-flow" aria-label="GRPO rollout group">
+    <div class="flow-step"><span>Prompt</span><strong>One problem</strong><p>Select a reasoning task.</p></div>
+<div class="flow-step"><span>Sample</span><strong>Generate G answers</strong><p>Explore several trajectories.</p></div>
+<div class="flow-step"><span>Verify</span><strong>Assign rewards</strong><p>Score outcomes or processes.</p></div>
+<div class="flow-step"><span>Normalize</span><strong>Compare within group</strong><p>Create relative advantages.</p></div>
+<div class="flow-step"><span>Optimize</span><strong>Clip and regularize</strong><p>Update the policy safely.</p></div>
+    <figcaption>Responses to the same prompt form their own baseline; normalized relative rewards drive the policy update.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>Removing the critic reduces memory, but sampling several long completions increases inference cost. When all group rewards are equal, normalized advantage carries little information; near-zero variance needs stable handling.</p>
+<p>Outcome rewards can reinforce correct final answers while leaving flawed hidden reasoning unexamined. Process rewards offer denser signals but require more reliable labels.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>DeepSeekMath reported large gains on mathematical benchmarks after continued pretraining, supervised fine-tuning, and GRPO. The full result cannot be attributed to GRPO alone because data and training stages interact.</p>
+<p>Later systems expanded GRPO’s visibility, but those results are subsequent evidence and should not be retroactively assigned to the original paper.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>GRPO became a major method for reasoning-model post-training because it combines online exploration, verifiable rewards, and lower critic memory.</p>
+<p>It shifted infrastructure toward high-throughput generation, grouped rollout storage, reward sandboxes, and careful policy-version control.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Use deterministic verifiers where possible and defend them against formatting hacks. Record prompt, policy checkpoint, samples, reward components, and group statistics for every rollout.</p>
+<p>Track diversity and reward saturation. If all samples converge to one pattern, group-relative learning weakens and can amplify brittle strategies.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>Relative reward does not tell whether an entire group is good; it only ranks within the group. Weak or hackable verifiers can optimize incorrect behavior confidently.</p>
+<p>Online sampling is expensive, and clipping/KL choices remain sensitive. Mathematical correctness provides unusually clean rewards that many business domains lack.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>GRPO contrasts with offline DPO and ORPO. Chain-of-Thought supplies reasoning traces, while Test-Time Scaling uses extra inference rather than weight updates to select better answers.</p><div class="article-nav"><a href="2026-09-08-orpo-odds-ratio-preference-optimization-en.html">← ORPO</a><a href="2026-09-08-lora-low-rank-adaptation-language-models-en.html">LoRA →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>GRPO replaces the learned critic with group-relative reward baselines.</li><li>Several responses must be sampled for each prompt.</li><li>Verifiable rewards make the method especially useful for math and code.</li><li>No critic does not mean low total compute.</li><li>Equal or hacked rewards provide weak learning signal.</li><li>Attribute DeepSeekMath gains to the full pipeline, not one objective.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2402.03300">DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>GRPO saves critic memory and works well with verifiable rewards, but relative normalization and repeated sampling change variance, cost, and failure modes.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

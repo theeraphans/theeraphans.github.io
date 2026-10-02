@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Measured smooth power-law relationships between language-model loss and model size, dataset size, and training compute, turning scale into a quantitative planning variable.">
+  <meta name="resource-file" content="2026-09-08-scaling-laws-neural-language-models-en.html">
+  <title>Scaling Laws for Neural Language Models · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css">
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2001.08361">Read paper</a><a class="action-link" href="/reading/">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Scaling, Data, and Open Models · Paper 9 of 37</p>
+        <h1>Scaling Laws for Neural Language Models</h1>
+        <p class="subtitle">Measured smooth power-law relationships between language-model loss and model size, dataset size, and training compute, turning scale into a quantitative planning variable.</p>
+        <div class="meta"><span><strong>Jared Kaplan, Sam McCandlish, Tom Henighan, Tom B. Brown, Benjamin Chess, Rewon Child, Scott Gray, Alec Radford, Jeffrey Wu, Dario Amodei</strong></span><span>2020</span><span>Intermediate</span><span>12 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>Scaling Laws for Neural Language Models</h2><p>OpenAI</p><p><strong>Prerequisites:</strong> Cross-entropy loss, power laws, training compute, and overfitting.</p><a href="https://arxiv.org/abs/2001.08361">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Intermediate</strong></div><div class="paper-fact"><span>Place in path</span><strong>9 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Teams scaling language models had to choose parameter count, token count, and compute budget with limited quantitative guidance. Training a model that is too large for its data wastes parameters; training a small model too long may waste compute.</p>
+<p>The paper asks whether held-out loss changes predictably enough with scale to forecast returns and select resource allocations before paying for the largest run.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Across several orders of magnitude, test loss can be approximated by power laws in model parameters, dataset size, and compute when other factors are not limiting. Performance improves smoothly rather than requiring a special architectural threshold.</p>
+<p>The fitted exponents imply diminishing but predictable returns. Under the paper’s setup, compute-efficient training favored increasing model size quickly and stopping before full convergence.</p><div class="equation">L(N, D, C) follows approximate power laws until another resource becomes the bottleneck.</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Train many autoregressive Transformers across model sizes, dataset amounts, batch sizes, and compute budgets. Fit simple curves to the lower envelope where a single resource dominates.</p>
+<p>Use those curves to estimate irreducible loss, identify whether parameters or data constrain a run, and derive how an optimal budget should be divided.</p><figure class="concept-flow" aria-label="Scaling-law planning loop">
+    <div class="flow-step"><span>01</span><strong>Sweep scale</strong><p>Vary parameters, tokens, and compute.</p></div>
+<div class="flow-step"><span>02</span><strong>Measure loss</strong><p>Evaluate on held-out data consistently.</p></div>
+<div class="flow-step"><span>03</span><strong>Fit frontier</strong><p>Estimate power-law exponents.</p></div>
+<div class="flow-step"><span>04</span><strong>Allocate budget</strong><p>Choose model and data balance.</p></div>
+<div class="flow-step"><span>05</span><strong>Recalibrate</strong><p>Compare forecast with the next run.</p></div>
+    <figcaption>Small controlled runs estimate a frontier, which guides but does not guarantee a larger training decision.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>A power law is linear in log-log coordinates, making exponents interpretable as rates of improvement. The paper separates parameter-limited, data-limited, and compute-limited regimes and studies batch-size efficiency.</p>
+<p>The recommendations depend on the empirical exponents, optimizer, data distribution, architecture family, and definition of compute. Later work with larger and better-tuned experiments estimated a substantially different compute-optimal token-to-parameter balance.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>Hundreds of training runs showed regular loss curves across more than seven orders of magnitude of compute. The paper also connected lower perplexity to downstream performance trends in its evaluation suite.</p>
+<p>Smooth fit does not establish causality or universal exponents. It is strongest as evidence that controlled scaling experiments can forecast nearby regimes.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>Scaling laws influenced budget planning, model roadmaps, and the expectation that predictable capability gains could be purchased with compute. They encouraged labs to run smaller sweeps before committing to frontier training.</p>
+<p>They also shifted architecture research toward data, systems, and scale allocation: when the basic architecture scales smoothly, finding enough high-quality tokens and accelerator utilization becomes strategic.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Fit laws on your own architecture, tokenizer, data mixture, optimizer, and metric. Track uncertainty and test predictions against held-out run sizes before extrapolating far beyond observed compute.</p>
+<p>Optimize total project cost, not pretraining loss alone. Inference traffic, latency, memory, data acquisition, and adaptation may favor a smaller model trained on more tokens.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>The dataset and architecture reflect 2020 practice. Loss predicts many capabilities imperfectly, and abrupt benchmark behavior can result from metric thresholds even when loss changes smoothly.</p>
+<p>The paper’s compute-optimal prescription was later revised by Chinchilla. Data quality, repeated epochs, contamination, multimodality, and post-training are outside the core fit.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>GPT-3 exemplifies parameter-forward scaling informed by this era. Chinchilla re-estimates the allocation and argues that many large models were undertrained. Test-Time Scaling later asks when inference compute can substitute for more pretraining.</p><div class="article-nav"><a href="2026-09-08-grouped-query-attention-gqa-en.html">← Grouped-Query Attention</a><a href="2026-09-08-gpt-3-few-shot-in-context-learning-en.html">GPT-3 →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>Language-model loss often follows smooth empirical power laws.</li><li>Parameters, data, and compute can each be the limiting resource.</li><li>Power laws describe diminishing returns, not free capability.</li><li>Fitted exponents are regime-specific engineering evidence.</li><li>Optimal training depends on the objective being optimized.</li><li>Chinchilla materially revised the original allocation recommendation.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2001.08361">Scaling Laws for Neural Language Models</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>The paper fits empirical laws inside a particular regime. Use them as planning models, not timeless constants, and contrast its parameter-heavy compute allocation with Chinchilla.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Simplified sparse mixture-of-experts routing to one expert per token, scaling model capacity to a trillion parameters while keeping per-token computation comparatively bounded.">
+  <meta name="resource-file" content="2026-09-08-switch-transformer-mixture-of-experts-en.html">
+  <title>Switch Transformer · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css">
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2101.03961">Read paper</a><a class="action-link" href="/reading/">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Efficient Adaptation and Training · Paper 25 of 37</p>
+        <h1>Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity</h1>
+        <p class="subtitle">Simplified sparse mixture-of-experts routing to one expert per token, scaling model capacity to a trillion parameters while keeping per-token computation comparatively bounded.</p>
+        <div class="meta"><span><strong>William Fedus, Barret Zoph, Noam Shazeer</strong></span><span>2021</span><span>Advanced</span><span>14 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>Switch Transformer</h2><p>Google Research</p><p><strong>Prerequisites:</strong> Transformer feed-forward layers, sparse routing, distributed training, and load balancing.</p><a href="https://arxiv.org/abs/2101.03961">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Advanced</strong></div><div class="paper-fact"><span>Place in path</span><strong>25 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Dense models increase computation for every token as parameters grow. Earlier MoE systems offered sparse capacity but suffered from routing complexity, communication, instability, and expert imbalance.</p>
+<p>Switch Transformer asks whether choosing only one expert per token can make sparsity simpler and more scalable.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Replace selected feed-forward layers with many expert feed-forward networks. A learned router assigns each token to its highest-probability expert; only that expert computes the transformation.</p>
+<p>An auxiliary objective spreads tokens across experts, while capacity limits define how many tokens each expert accepts.</p><div class="equation">y = expert_argmax(router(x))(x), plus an auxiliary load-balancing loss.</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Compute router logits for each token, select top-1 expert, dispatch tokens across devices, process each expert batch, and combine outputs back into sequence order.</p>
+<p>If an expert exceeds capacity, overflow tokens may skip the expert through the residual path. Routing noise and load loss discourage collapse onto a few experts.</p><figure class="concept-flow" aria-label="Switch expert routing">
+    <div class="flow-step"><span>Token</span><strong>Hidden state</strong><p>Enter a sparse FFN layer.</p></div>
+<div class="flow-step"><span>Router</span><strong>Score experts</strong><p>Choose the top-1 destination.</p></div>
+<div class="flow-step"><span>Dispatch</span><strong>Move token</strong><p>Send it to the expert device.</p></div>
+<div class="flow-step"><span>Expert</span><strong>Transform once</strong><p>Run one feed-forward network.</p></div>
+<div class="flow-step"><span>Combine</span><strong>Restore order</strong><p>Return output to the sequence.</p></div>
+    <figcaption>Each token takes one sparse expert path while a shared residual stream preserves sequence flow.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>Sparse activation decouples total parameter count from active compute, but all-to-all communication and expert memory remain. Capacity factor trades dropped tokens against padding and utilization.</p>
+<p>The paper uses reduced precision carefully and reports techniques that stabilize router computation. Expert parallelism adds a new axis beyond data and tensor parallelism.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>Switch models improved pretraining speed and downstream quality over dense T5 baselines at matched compute in the reported regime, including a trillion-parameter experiment.</p>
+<p>Total parameter count can make headlines while hiding communication cost and inactive weights. Comparisons must match active FLOPs and hardware topology.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>Switch Transformer made sparse MoE a practical route to high-capacity language models and influenced later open and proprietary architectures.</p>
+<p>It turned router health, expert utilization, and distributed all-to-all traffic into core training metrics.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Monitor tokens per expert, overflow rate, routing entropy, auxiliary loss, and per-device stragglers. Average utilization can hide individual overloaded experts.</p>
+<p>Design serving around expert placement and batch mix. Sparse FLOPs do not guarantee low latency when requests activate scattered experts or memory bandwidth dominates.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>Top-1 routing may restrict combination capacity, and expert specialization can be fragile. Overflow drops useful computation; load balancing can fight task-optimal routing.</p>
+<p>MoE checkpoints are large to store and communicate. Fine-tuning and serving require specialized kernels and topology-aware placement.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>DeepSeekMoE refines specialization with smaller experts and shared experts. GQA and inference methods target runtime cache rather than feed-forward parameter activation.</p><div class="article-nav"><a href="2026-09-08-qlora-efficient-finetuning-quantized-llms-en.html">← QLoRA</a><a href="2026-09-08-deepseekmoe-expert-specialization-en.html">DeepSeekMoE →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>MoE scales capacity separately from active FLOPs.</li><li>Switch routing chooses one expert per token.</li><li>Load balancing is necessary for usable distributed training.</li><li>Capacity limits create overflow trade-offs.</li><li>Communication can dominate theoretical compute savings.</li><li>Total parameters are not active parameters.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2101.03961">Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>MoE increases total parameters without activating all of them. Separate parameter capacity, FLOPs per token, communication, memory, and serving efficiency.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

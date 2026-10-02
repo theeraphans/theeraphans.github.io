@@ -1,0 +1,1101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ontologies, World Models, Company Brains, and LLM Wikis - CustomAI Studio Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #182126;
+      --muted: #5b6870;
+      --quiet: #7b8588;
+      --paper: #fffef9;
+      --canvas: #f6f8f2;
+      --line: #d9dfd8;
+      --teal: #1c746d;
+      --blue: #2e607d;
+      --green: #557d54;
+      --gold: #a87625;
+      --coral: #bd503f;
+      --plum: #665987;
+      --mint: #e3f0ec;
+      --sky: #e7eef6;
+      --sand: #f7eed8;
+      --rose: #f5e5df;
+      --lavender: #ece8f2;
+      --shadow: 0 24px 68px rgb(24 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgb(255 255 255 / 92%), rgb(246 248 242 / 96%)),
+        var(--canvas);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--green), var(--gold), var(--coral), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td, code { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 86%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 13ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.5rem, 5.6vw, 5rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 860px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: #e8ede7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+      gap: 24px;
+      margin: 28px 0;
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(24 33 38 / 7%);
+    }
+
+    .quick-summary h2,
+    .section h2,
+    .sidebar h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-weight: 760;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+    }
+
+    .quick-summary p,
+    .section p,
+    .section li {
+      color: #334047;
+      font-size: 1.01rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-height: 96px;
+      padding: 16px;
+      background: var(--mint);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat:nth-child(2) { background: var(--sky); }
+    .stat:nth-child(3) { background: var(--sand); }
+    .stat strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.45rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 760;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 290px minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 16px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .sidebar-block,
+    .toc {
+      padding: 20px;
+      background: rgb(255 255 255 / 86%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .sidebar h2 {
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+    }
+
+    .glance {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: grid;
+      gap: 3px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .glance li:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .glance span {
+      color: var(--quiet);
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .glance strong {
+      color: var(--ink);
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .toc {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+
+    .toc a {
+      padding: 8px 0;
+      color: var(--muted);
+      border-top: 1px solid rgb(217 223 216 / 78%);
+      font-size: 0.92rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .content {
+      display: grid;
+      gap: 22px;
+    }
+
+    .section {
+      padding: 30px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .label {
+      display: inline-flex;
+      margin-bottom: 12px;
+      color: var(--coral);
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .section h2 {
+      margin-bottom: 14px;
+      font-size: clamp(1.7rem, 3vw, 2.45rem);
+    }
+
+    .section h3 {
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+      line-height: 1.25;
+    }
+
+    .lead {
+      color: #26333a !important;
+      font-size: clamp(1.06rem, 1.5vw, 1.2rem) !important;
+    }
+
+    .section p + p,
+    .section p + .grid,
+    .section p + .flow,
+    .section p + .matrix,
+    .section p + .checklist,
+    .section .grid + p {
+      margin-top: 16px;
+    }
+
+    .quote-box {
+      margin-top: 18px;
+      padding: 18px;
+      color: #243139;
+      background: var(--sand);
+      border-left: 5px solid var(--gold);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.16rem;
+      line-height: 1.55;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .mint { background: var(--mint); }
+    .sky { background: var(--sky); }
+    .sand { background: var(--sand); }
+    .rose { background: var(--rose); }
+    .lavender { background: var(--lavender); }
+
+    .pill {
+      display: inline-flex;
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 12px;
+      padding: 5px 9px;
+      color: #fff;
+      background: var(--blue);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pill.teal { background: var(--teal); }
+    .pill.green { background: var(--green); }
+    .pill.gold { background: var(--gold); }
+    .pill.coral { background: var(--coral); }
+    .pill.plum { background: var(--plum); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .flow-step {
+      min-height: 156px;
+      padding: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .flow-step span {
+      display: block;
+      color: var(--quiet);
+      font-size: 0.73rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .flow-step strong {
+      display: block;
+      margin-top: 8px;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+
+    .flow-step p,
+    .card p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.58;
+    }
+
+    .matrix {
+      width: 100%;
+      margin-top: 18px;
+      border-collapse: collapse;
+      table-layout: fixed;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .matrix th,
+    .matrix td {
+      padding: 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+    }
+
+    .matrix th {
+      color: var(--ink);
+      background: var(--mint);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .matrix td {
+      color: #334047;
+      background: #fff;
+      font-size: 0.94rem;
+    }
+
+    .matrix tr:last-child td { border-bottom: 0; }
+    .matrix th:last-child,
+    .matrix td:last-child { border-right: 0; }
+
+    .checklist {
+      display: grid;
+      gap: 11px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .mini-spec {
+      margin-top: 18px;
+      padding: 18px;
+      overflow-x: auto;
+      color: #eef7f3;
+      background: #183039;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      line-height: 1.6;
+      white-space: pre;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+      padding-left: 20px;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .flow,
+      .three {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .page {
+        padding-inline: 18px;
+      }
+
+      .hero {
+        gap: 26px;
+        padding-top: 36px;
+      }
+
+      h1 { font-size: clamp(2.2rem, 12vw, 3.15rem); }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .sidebar,
+      .two,
+      .three,
+      .flow,
+      .stats,
+      .toc {
+        grid-template-columns: 1fr;
+      }
+
+      .matrix {
+        table-layout: fixed;
+      }
+
+      .matrix th,
+      .matrix td {
+        padding: 10px;
+      }
+
+      .mini-spec { white-space: pre-wrap; }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/reading/">Reading room</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#thesis">Thesis</a>
+      <a class="action-link" href="#terms">Terms</a>
+      <a class="action-link" href="#architecture">Architecture</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link" href="#templates">Flow Markdown</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=4JBp4Wp36Lw">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">CustomAI Studio Summary - Agent Memory Infrastructure</span>
+        <h1>Ontologies, World Models, Company Brains, and LLM Wikis</h1>
+        <p class="subtitle">
+          A detailed English summary of Devin Kearns' explanation of the category behind the current terminology wave:
+          centralized, contextualized company knowledge that humans and AI agents can query, reason over, and act from.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> Ontologies, World Models, Company Brains, LLM Wikis... FULLY EXPLAINED</span>
+          <span><strong>Creator:</strong> Devin Kearns | CustomAI Studio</span>
+          <span><strong>Transcript:</strong> English captions, 905 rows</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/4JBp4Wp36Lw/hqdefault.jpg" alt="Video thumbnail for a CustomAI Studio video about ontologies and company world models">
+        <figcaption>
+          The talk argues that models and chat interfaces will keep changing, but the company-specific context layer underneath them is durable infrastructure.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          The video says the names differ, but the underlying category is the same: companies need a durable layer that represents
+          their entities, relationships, events, rules, history, permissions, and operating context. The AI layer can be swapped.
+          The company context layer is harder to copy.
+        </p>
+        <ul class="summary-list">
+          <li><strong>The moat is context:</strong> not only raw data, but how the data relates, changes, and guides decisions.</li>
+          <li><strong>The ontology is the business map:</strong> customers, deals, projects, tasks, people, meetings, decisions, follow-ups, policies, and actions.</li>
+          <li><strong>The future workflow is event-driven:</strong> capture an event, contextualize it, store it, retrieve it, decide whether to act, and execute with safety controls.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>29m</strong><span>runtime</span></div>
+        <div class="stat"><strong>6.2k</strong><span>caption words</span></div>
+        <div class="stat"><strong>EN</strong><span>caption language</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Main lens</span><strong>Company context as infrastructure</strong></li>
+            <li><span>Core claim</span><strong>The AI layer commoditizes; ontology compounds</strong></li>
+            <li><span>Best pattern</span><strong>Event capture into a living world model</strong></li>
+            <li><span>Platform use</span><strong>Agent context, permissions, abstention, and workflow memory</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#thesis">Core Thesis</a>
+          <a href="#terms">Terminology Map</a>
+          <a href="#ontology">What an Ontology Stores</a>
+          <a href="#moat">Why Context Is the Moat</a>
+          <a href="#risk">Data Sharing Risk</a>
+          <a href="#freshness">Context Freshness</a>
+          <a href="#architecture">Event-Driven Architecture</a>
+          <a href="#abstention">Abstention and Safety</a>
+          <a href="#platform">Platform Takeaways</a>
+          <a href="#templates">Flow Markdown</a>
+          <a href="#sources">Sources</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="thesis">
+          <span class="label">Core Thesis</span>
+          <h2>The durable layer is not the model. It is the company's contextualized operating memory.</h2>
+          <p class="lead">
+            Devin Kearns frames ontologies, world models, company brains, second brains, and LLM wikis as different names for
+            a shared category: centralized company data enriched with structure, context, and relationships so agents can use it
+            for real work. He sees this as more than a temporary AI trend. It is infrastructure for how companies will operate.
+          </p>
+          <p>
+            His argument starts from a practical observation. ChatGPT, Claude, Gemini, Cursor, custom harnesses, and even the
+            underlying models are increasingly interchangeable at the application layer. The interface may improve, the model may
+            change, and the harness may be rebuilt. What cannot be swapped easily is the actual business: its history, jargon,
+            exceptions, relationships, decision logic, customer nuance, and evolving workflows.
+          </p>
+          <div class="quote-box">
+            The strategic point is simple: the AI tool is useful, but the company-specific context that lets it act precisely is the defensible asset.
+          </div>
+        </section>
+
+        <section class="section" id="terms">
+          <span class="label">Terminology Map</span>
+          <h2>The terms overlap, but each one emphasizes a slightly different part of the same system.</h2>
+          <p class="lead">
+            The video treats the terminology wave as noisy but directionally correct. The important thing is not whether a team
+            says ontology, company brain, world model, AI memory layer, or LLM wiki. The important thing is whether the system can
+            preserve business meaning and make it usable by humans and agents.
+          </p>
+          <table class="matrix" aria-label="Comparison of ontology world model company brain and LLM wiki">
+            <thead>
+              <tr>
+                <th>Term</th>
+                <th>What it emphasizes</th>
+                <th>How to think about it</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Ontology</td>
+                <td>Structured entities, relationships, events, rules, and valid actions.</td>
+                <td>The nouns and verbs of the business, plus the edges that explain how work actually moves.</td>
+              </tr>
+              <tr>
+                <td>World model</td>
+                <td>The system's overall understanding of the business environment.</td>
+                <td>A digital twin of operations: what matters, what changed, what context is relevant, and what actions make sense.</td>
+              </tr>
+              <tr>
+                <td>Company brain</td>
+                <td>Searchable company knowledge, SOPs, history, people, documents, workflows, and decisions.</td>
+                <td>A more user-friendly framing, especially for smaller teams that want practical knowledge retrieval.</td>
+              </tr>
+              <tr>
+                <td>LLM wiki</td>
+                <td>File-based, agent-readable knowledge that is easier for LLMs to retrieve and maintain.</td>
+                <td>A lightweight memory surface made of structured markdown, indexes, links, and concept pages.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="ontology">
+          <span class="label">Ontology Anatomy</span>
+          <h2>An ontology turns scattered artifacts into a web of business meaning.</h2>
+          <p class="lead">
+            Kearns explains ontology with ordinary business objects. A customer connects to deals. Deals connect to projects.
+            Projects connect to tasks. Tasks connect to people. People connect to meetings. Meetings produce decisions.
+            Decisions create follow-ups. The business is a changing graph, not a folder of isolated documents.
+          </p>
+          <p>
+            This matters because agents need context across time and across systems. If a single account moves from sales into
+            delivery, the relevant context may live in CRM records, call transcripts, emails, contracts, project tasks, support
+            tickets, meeting notes, and informal Slack messages. A long document can hold a narrative for one client, but it does
+            not generalize well across accounts, roles, projects, or workflows.
+          </p>
+          <div class="flow" aria-label="Business ontology flow">
+            <div class="flow-step">
+              <span>Entity</span>
+              <strong>Customer</strong>
+              <p>Account history, stakeholders, sensitivity, preferences, and active relationship state.</p>
+            </div>
+            <div class="flow-step">
+              <span>Transaction</span>
+              <strong>Deal</strong>
+              <p>Sales stage, commercial terms, blockers, decision makers, and handoff requirements.</p>
+            </div>
+            <div class="flow-step">
+              <span>Delivery</span>
+              <strong>Project</strong>
+              <p>Scope, tasks, owners, deadlines, dependencies, risks, and deliverables.</p>
+            </div>
+            <div class="flow-step">
+              <span>Interaction</span>
+              <strong>Meeting</strong>
+              <p>Participants, decisions, commitments, unresolved questions, and follow-up actions.</p>
+            </div>
+            <div class="flow-step">
+              <span>Action</span>
+              <strong>Follow-up</strong>
+              <p>Next step, owner, timing, policy constraints, confidence, and completion evidence.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="moat">
+          <span class="label">The Moat</span>
+          <h2>The business value lives in relationship context, not just in data access.</h2>
+          <p class="lead">
+            The talk repeatedly separates raw data from operating context. A company may have emails, Slack messages, CRM updates,
+            sales calls, transcripts, and support tickets. But the valuable part is knowing which version is current, which source
+            matters for a task, how people interpret signals, and what normally happens after a certain event.
+          </p>
+          <p>
+            This is why the speaker pushes back on the idea that buying AI seats and teaching everyone to use them is enough.
+            Training employees on Claude or ChatGPT can help, but it does not build the future-proof layer. A durable AI strategy
+            should ask how the company owns, updates, and operationalizes its context before it worries too much about the specific
+            chat interface on top.
+          </p>
+          <div class="grid three">
+            <article class="card mint">
+              <span class="pill teal">Raw data</span>
+              <h3>What happened</h3>
+              <p>Messages, documents, tickets, call transcripts, CRM fields, contracts, tasks, and event logs.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill">Context</span>
+              <h3>Why it matters</h3>
+              <p>Relationships, priority, recency, source trust, policy constraints, customer nuance, and informal norms.</p>
+            </article>
+            <article class="card sand">
+              <span class="pill gold">Action logic</span>
+              <h3>What to do next</h3>
+              <p>Valid actions, escalation rules, confidence thresholds, human approvals, and write-back behavior.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="risk">
+          <span class="label">Data Sharing Risk</span>
+          <h2>Giving a frontier tool your context can mean giving away the operating logic of the business.</h2>
+          <p class="lead">
+            Kearns' strongest warning is that companies are often casual about sending high-value context into frontier-model
+            products. The sensitive part is not only customer records or confidential documents. It is the accumulated operating
+            knowledge: internal shorthand, unspoken communication norms, who makes which decision, why a client needs a different
+            approach, and which exceptions are understood but not written down.
+          </p>
+          <p>
+            The speaker's position is not anti-model-provider. It is pro-ownership. Companies can still use powerful external
+            models, but they should keep the contextualized business layer under their own control and expose only what a task
+            requires. The future question is less "Which model did we choose?" and more "What company context can the model access,
+            under what rules, and is that context sufficient for safe action?"
+          </p>
+          <table class="matrix" aria-label="Context sharing risk">
+            <thead>
+              <tr>
+                <th>Context type</th>
+                <th>Why it is valuable</th>
+                <th>Platform control needed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Customer nuance</td>
+                <td>Shows how to communicate, escalate, negotiate, and avoid relationship damage.</td>
+                <td>Account-level permissions, source citations, and task-scoped disclosure.</td>
+              </tr>
+              <tr>
+                <td>Tribal knowledge</td>
+                <td>Captures habits and rules that make operations work but rarely appear in SOPs.</td>
+                <td>Curated memory, review loops, provenance, and policy tagging.</td>
+              </tr>
+              <tr>
+                <td>Decision patterns</td>
+                <td>Explains how the company actually chooses between tradeoffs.</td>
+                <td>Approval boundaries, confidence scoring, and audit trails.</td>
+              </tr>
+              <tr>
+                <td>Process exceptions</td>
+                <td>Prevents agents from applying a generic process where the business uses judgment.</td>
+                <td>Exception registry, escalation rules, and abstention policies.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="freshness">
+          <span class="label">Context Freshness</span>
+          <h2>Static context engineering decays as the business changes.</h2>
+          <p class="lead">
+            The video argues that many agent workflows work for a while and then lose relevance. The company changes in small
+            ways: people move roles, goals shift, process details change, customers behave differently, and the old retrieval logic
+            no longer gathers the right context. The system did not necessarily fail because the model got worse. It failed because
+            the context layer went stale.
+          </p>
+          <p>
+            This is why Kearns likes the idea of a living world model. If the system captures events and updates entities,
+            relationships, workflows, success criteria, and safe actions over time, the harness can keep working even as models
+            are swapped or simplified. The ideal direction is a self-maintaining context layer, not a pile of one-off prompt and
+            retrieval scripts.
+          </p>
+          <div class="grid two">
+            <article class="card rose">
+              <span class="pill coral">Brittle pattern</span>
+              <h3>One-off retrieval logic</h3>
+              <p>An email agent, CRM agent, scheduling agent, and document agent each rebuild context differently for each use case.</p>
+            </article>
+            <article class="card lavender">
+              <span class="pill plum">Compounding pattern</span>
+              <h3>Shared contextual layer</h3>
+              <p>Agents query the same structured source of truth and use event updates to keep relationships, rules, and context current.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="architecture">
+          <span class="label">Event-Driven Architecture</span>
+          <h2>The practical system starts by capturing events and turning them into reusable context.</h2>
+          <p class="lead">
+            Kearns describes an event-driven direction for real agentic work. An email comes in. The system captures the event
+            at the source, identifies who is involved, determines which account or project it belongs to, decides whether a task
+            should be created, stores the structured event, and makes the resulting context retrievable for humans and agents.
+          </p>
+          <p>
+            The storage layer is flexible. It could be a knowledge graph, relational database, vector database, or hybrid architecture.
+            The important part is the semantic contract: events become organized into the company world model, connected to entities
+            and workflows, and evaluated against success criteria and policy boundaries.
+          </p>
+          <div class="flow" aria-label="Event to agent action architecture">
+            <div class="flow-step">
+              <span>1</span>
+              <strong>Capture event</strong>
+              <p>Email, ticket, CRM update, meeting, contract change, or support issue arrives.</p>
+            </div>
+            <div class="flow-step">
+              <span>2</span>
+              <strong>Contextualize</strong>
+              <p>Identify people, account, project, intent, history, policy, and likely next action.</p>
+            </div>
+            <div class="flow-step">
+              <span>3</span>
+              <strong>Store structure</strong>
+              <p>Write entities, edges, event facts, sources, timestamps, and confidence into memory.</p>
+            </div>
+            <div class="flow-step">
+              <span>4</span>
+              <strong>Retrieve for work</strong>
+              <p>Agents and humans get pre-contextualized data instead of searching scattered systems.</p>
+            </div>
+            <div class="flow-step">
+              <span>5</span>
+              <strong>Act or abstain</strong>
+              <p>Execute, ask for approval, spawn sub-agents, or refuse to act when risk is too high.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="abstention">
+          <span class="label">Safety Layer</span>
+          <h2>A real company world model must know when not to act.</h2>
+          <p class="lead">
+            The video makes an important distinction: a company brain should not be only a retrieval engine. If the agent lacks
+            confidence, the requested action is risky, or the policy context is incomplete, the system should abstain. That means
+            "do nothing yet" is a valid output, not a failure.
+          </p>
+          <p>
+            This is a useful design point for agentic platforms. Confidence scoring is not enough by itself. The platform needs
+            policies, risk tiers, source quality, permission boundaries, approval paths, and audit evidence. A world model should
+            tell the agent not only what is true, but what action is allowed and what uncertainty should block automation.
+          </p>
+          <table class="matrix" aria-label="Abstention design checklist">
+            <thead>
+              <tr>
+                <th>Question</th>
+                <th>Agent should proceed when</th>
+                <th>Agent should abstain when</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Is the context current?</td>
+                <td>Sources are fresh, relevant, and tied to the correct entity.</td>
+                <td>The latest state is missing, conflicting, or older than the workflow allows.</td>
+              </tr>
+              <tr>
+                <td>Is the action permitted?</td>
+                <td>The user's role, workflow policy, and account permissions allow the action.</td>
+                <td>The action crosses a policy, money, legal, security, or customer-risk boundary.</td>
+              </tr>
+              <tr>
+                <td>Is confidence sufficient?</td>
+                <td>The system can cite evidence and the success criteria are clear.</td>
+                <td>The agent would need to guess, invent context, or rely on weak signals.</td>
+              </tr>
+              <tr>
+                <td>Is human judgment required?</td>
+                <td>The work is routine, reversible, and covered by SOP or prior examples.</td>
+                <td>The decision is ambiguous, high-impact, political, or exception-heavy.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>For an agentic AI platform, the ontology layer is the product foundation.</h2>
+          <p class="lead">
+            This video maps closely to the platform problem you have been describing: how business analysts can define SOPs,
+            agent personas, skills, tools, and flows without forcing engineers to hard-code every workflow. The answer implied by
+            the talk is to separate the company memory layer from the agent execution layer.
+          </p>
+          <p>
+            Business users should be able to model the domain in a controlled language: entity types, relationships, events,
+            SOP states, permissions, valid tools, confidence rules, and escalation policies. Agents should then query that layer
+            as their operating context, rather than each agent carrying a giant bespoke prompt.
+          </p>
+          <ul class="checklist">
+            <li><strong>Build entity templates:</strong> account, customer, policy, claim, order, project, asset, ticket, document, meeting, decision, task, and follow-up.</li>
+            <li><strong>Model events explicitly:</strong> each workflow should start from an event type with source, payload, actor, affected entities, and expected outcome.</li>
+            <li><strong>Separate cognitive and actionable skills:</strong> cognitive skills read, classify, reason, compare, and summarize; actionable skills require tools, permission checks, and write-back rules.</li>
+            <li><strong>Make SOPs graph-aware:</strong> every SOP step should declare required context, evidence sources, allowed tools, exit criteria, and abstention rules.</li>
+            <li><strong>Keep personas compact:</strong> agent prompts should reference role, responsibility, decision boundary, and memory contracts instead of stuffing all business knowledge into the prompt.</li>
+            <li><strong>Track context quality:</strong> freshness, source trust, conflicts, missing fields, and human overrides should become first-class runtime signals.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">Flow Markdown</span>
+          <h2>A reusable business-flow template inspired by the talk.</h2>
+          <p class="lead">
+            Use this as a starting format for turning business flow into agent-readable markdown. The goal is to let BA-side users
+            define a process while still giving engineering enough structure for tools, permissions, memory, evaluation, and tracing.
+          </p>
+          <pre class="mini-spec"><code>---
+flow_id: inbound_customer_email_to_follow_up
+domain: customer_operations
+trigger_event:
+  type: email.received
+  source: gmail_or_outlook
+  required_fields: [sender, recipients, subject, body, received_at]
+entities:
+  - customer_account
+  - contact
+  - active_project
+  - open_ticket
+  - prior_decision
+memory_contract:
+  retrieve:
+    - latest_account_summary
+    - unresolved_tasks
+    - prior_meetings
+    - similar_support_cases
+    - communication_preferences
+  freshness_policy:
+    account_summary_max_age_days: 14
+    ticket_state_must_be_current: true
+agent_roles:
+  master_agent:
+    responsibility: route_event_and_select_workflow
+    may_spawn: [context_research_agent, draft_response_agent, policy_check_agent]
+  context_research_agent:
+    skill_type: cognitive
+    responsibility: gather_and_compare_relevant_context
+  draft_response_agent:
+    skill_type: actionable
+    required_tools: [email_draft_tool]
+    responsibility: produce_response_draft_only
+  policy_check_agent:
+    skill_type: cognitive
+    responsibility: verify_permission_risk_and_abstention
+steps:
+  - id: classify_event
+    required_context: [sender, account_match, intent]
+    output: event_classification
+  - id: retrieve_context
+    required_context: [account_id, active_project_id]
+    output: evidence_pack
+  - id: decide_action
+    policy:
+      abstain_if:
+        - account_match_confidence_below: 0.85
+        - customer_risk_tier_in: [high, regulated]
+        - unresolved_conflicting_context: true
+    output: action_plan
+  - id: draft_or_escalate
+    allowed_tools: [email_draft_tool, task_create_tool]
+    human_approval_required_if:
+      - pricing_or_contract_terms_present: true
+      - legal_or_security_topic_present: true
+success_metrics:
+  - correct_account_link_rate
+  - human_edit_distance_on_drafts
+  - unnecessary_escalation_rate
+  - unsafe_action_attempts
+  - customer_response_time
+trace_requirements:
+  - cite_sources_used
+  - log_retrieved_entities
+  - log_tool_calls
+  - record_abstention_reason
+---</code></pre>
+        </section>
+
+        <section class="section" id="sources">
+          <span class="label">Sources</span>
+          <h2>Source and reliability notes.</h2>
+          <p class="lead">
+            This page is a structured summary of the public YouTube captions for the video. It is not a verbatim transcript.
+            The captions contain some automatic-transcription noise around names and product terms, so the summary normalizes
+            obvious terms such as Palantir, Alex Karp, Claude, ChatGPT, and LLM wiki where the context is clear.
+          </p>
+          <ul class="source-list">
+            <li><a href="https://www.youtube.com/watch?v=4JBp4Wp36Lw">Original YouTube video</a> by Devin Kearns | CustomAI Studio.</li>
+            <li>Caption extraction: English captions, 905 rows, approximately 6,216 words.</li>
+            <li>Generated for agentic platform research: ontology design, context engineering, company memory, and event-driven agent workflows.</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

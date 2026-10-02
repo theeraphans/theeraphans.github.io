@@ -1,0 +1,1302 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Codex Superpowers for Designers - Meng To Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #182127;
+      --muted: #5d6971;
+      --quiet: #7b858c;
+      --paper: #fffdf8;
+      --canvas: #f3f6f1;
+      --line: #d8dfd7;
+      --red: #c94f3d;
+      --teal: #1f756d;
+      --blue: #2d6886;
+      --green: #5f7d4f;
+      --gold: #a87723;
+      --plum: #665985;
+      --wash-red: #f8e7e0;
+      --wash-teal: #e2f0ec;
+      --wash-blue: #e5eff6;
+      --wash-green: #e9f1df;
+      --wash-gold: #f7ecd6;
+      --shadow: 0 24px 68px rgb(24 33 39 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(31 117 109 / 6%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(45 104 134 / 5%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 46px 46px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--red), var(--teal), var(--blue), var(--green), var(--gold), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure, blockquote, pre { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td, code { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 88%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.94fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--red);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.55rem, 6.1vw, 5.4rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      margin-top: 24px;
+      color: #303b42;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      object-fit: contain;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+      gap: 24px;
+      margin: 28px 0;
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(24 33 39 / 7%);
+    }
+
+    .quick-summary h2,
+    .section h2,
+    .sidebar h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-weight: 760;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+    }
+
+    .quick-summary p,
+    .section p,
+    .section li {
+      color: #334047;
+      font-size: 1.01rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .stats-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat {
+      min-height: 116px;
+      padding: 18px;
+      background: linear-gradient(135deg, #fff, var(--wash-teal));
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--teal);
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 760;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 270px;
+      gap: 46px;
+      align-items: start;
+    }
+
+    .content {
+      display: grid;
+      gap: 24px;
+      min-width: 0;
+    }
+
+    .section {
+      padding: 30px;
+      background: rgb(255 253 248 / 92%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 14px 36px rgb(24 33 39 / 5%);
+    }
+
+    .section h2 {
+      margin-bottom: 18px;
+      color: var(--ink);
+      font-size: clamp(1.72rem, 3.2vw, 2.55rem);
+    }
+
+    .section h3 {
+      color: var(--ink);
+      font-size: 1.02rem;
+      line-height: 1.35;
+    }
+
+    .section p + p,
+    .section p + .callout,
+    .section p + .table-wrap,
+    .section p + .card-grid,
+    .section p + .flow,
+    .section p + .timeline,
+    .section p + .template-grid,
+    .section p + .quote-box,
+    .section p + pre {
+      margin-top: 18px;
+    }
+
+    .section ul,
+    .section ol {
+      padding-left: 22px;
+    }
+
+    .section li + li { margin-top: 8px; }
+
+    .sidebar {
+      position: sticky;
+      top: 22px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .toc,
+    .note-card {
+      padding: 18px;
+      background: rgb(255 253 248 / 92%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .toc h2,
+    .note-card h2 {
+      margin-bottom: 12px;
+      color: var(--quiet);
+      font-size: 0.78rem;
+      font-family: inherit;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .toc nav {
+      display: grid;
+      gap: 9px;
+    }
+
+    .toc a {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .note-card p {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .callout {
+      padding: 18px;
+      background: var(--wash-blue);
+      border: 1px solid rgb(45 104 134 / 24%);
+      border-left: 6px solid var(--blue);
+      border-radius: 8px;
+    }
+
+    .callout.gold {
+      background: var(--wash-gold);
+      border-color: rgb(168 119 35 / 25%);
+      border-left-color: var(--gold);
+    }
+
+    .callout.green {
+      background: var(--wash-green);
+      border-color: rgb(95 125 79 / 25%);
+      border-left-color: var(--green);
+    }
+
+    .quote-box {
+      padding: 22px;
+      color: #263039;
+      background: linear-gradient(135deg, var(--wash-red), #fff);
+      border: 1px solid rgb(201 79 61 / 20%);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.28rem;
+      line-height: 1.55;
+    }
+
+    .card-grid,
+    .map,
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .three-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card,
+    .map-node,
+    .template-card {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card h3,
+    .map-node h3,
+    .template-card h3 {
+      margin-bottom: 8px;
+    }
+
+    .card p,
+    .map-node p,
+    .template-card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .map-node:nth-child(1) { background: var(--wash-teal); }
+    .map-node:nth-child(2) { background: var(--wash-blue); }
+    .map-node:nth-child(3) { background: var(--wash-gold); }
+    .map-node:nth-child(4) { background: var(--wash-green); }
+    .map-node:nth-child(5) { background: var(--wash-red); }
+    .map-node:nth-child(6) { background: #eeeaf6; }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .flow li {
+      min-height: 170px;
+      padding: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      margin-bottom: 12px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 50%;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .flow strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ink);
+      line-height: 1.25;
+    }
+
+    .flow span:last-child {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--ink);
+      background: #f8faf5;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    td {
+      color: #334047;
+      font-size: 0.94rem;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+    }
+
+    .time-item {
+      display: grid;
+      grid-template-columns: 82px minmax(0, 1fr);
+      gap: 14px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .time-item time {
+      color: var(--red);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .time-item h3 {
+      margin-bottom: 4px;
+    }
+
+    .time-item p {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    pre {
+      overflow-x: auto;
+      padding: 18px;
+      color: #243036;
+      background: #f9fbf6;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 10px;
+      padding-left: 20px;
+    }
+
+    footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 46px;
+      color: var(--quiet);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar { position: static; }
+      h1 { max-width: 14ch; }
+      .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .map,
+      .card-grid,
+      .template-grid,
+      .three-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .action-link { flex: 1 1 auto; }
+      .page { padding: 0 18px 56px; }
+      .hero { padding: 36px 0 34px; }
+      .quick-summary,
+      .section { padding: 20px; }
+      .stats-panel,
+      .card-grid,
+      .three-grid,
+      .template-grid,
+      .flow,
+      .map {
+        grid-template-columns: 1fr;
+      }
+
+      .time-item {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">Video Notes Library</a>
+    <div class="top-actions">
+      <a class="action-link" href="./index.html">All summaries</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=SznrOQYiahg">Watch source</a>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="kicker">Dive Club AI design workflow summary</p>
+        <h1 id="page-title">Codex Superpowers For Designers</h1>
+        <p class="subtitle">A detailed reading guide to Dive Club's conversation with Meng To about building design, content, tools, and products through Codex, screenshots, design.md, agents.md, plugins, skills, memory, and a strong human sense of taste.</p>
+        <div class="meta">
+          <span><strong>Source:</strong> Dive Club</span>
+          <span><strong>Guest:</strong> Meng To, Design + Code</span>
+          <span><strong>Length:</strong> about 35 minutes</span>
+          <span><strong>Transcript:</strong> 938 caption rows, about 6,489 words</span>
+        </div>
+      </div>
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/SznrOQYiahg/hqdefault.jpg" alt="YouTube thumbnail for Meng To on Dive Club">
+        <figcaption>Source video thumbnail. This page summarizes the public captions and translates the workflow into practical patterns for designers and agentic AI platform teams.</figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" id="executive-summary">
+      <div>
+        <h2>Executive Summary</h2>
+        <p>Meng To's main argument is that designers should stop thinking of AI as a prompt box and start treating it as an operating environment. In his current workflow, Codex is not only where code gets written. It is where ideas, Markdown files, local references, screenshots, image prompts, plugins, skills, agents, and memory come together into a personal product-building system.</p>
+        <ul class="summary-list">
+          <li><strong>Codex changes the design mindset:</strong> Meng describes it as an evolution from ChatGPT into a computer-aware environment where files, tools, threads, and integrations become part of the work.</li>
+          <li><strong>Designers need their own tools:</strong> his local Notion-like system keeps content in Markdown, makes context available to agents, and generates article covers, YouTube covers, videos, and presentation assets from local knowledge.</li>
+          <li><strong>Skills are taste containers:</strong> in this conversation, skills are framed as prompt/style-guide artifacts that encode best practices, design taste, fonts, colors, and anti-slop rules.</li>
+          <li><strong>Plugins are capability connectors:</strong> plugins and integrations are compared to Figma plugins: they connect outside capabilities such as Figma, Canva, Remotion, voice, video, and other specialized tools.</li>
+          <li><strong>Human memory is the differentiator:</strong> the best context is not generic internet style. It is the designer's own past work, screenshots, fonts, files, code, and judgment.</li>
+          <li><strong>The designer becomes an editor and director:</strong> Meng says he writes none of the code now, but spends heavy effort testing, reporting bugs precisely, using screenshots and voice, and steering the last 10 percent.</li>
+        </ul>
+      </div>
+      <div class="stats-panel" aria-label="Summary stats">
+        <div class="stat"><strong>35m</strong><span>Episode length</span></div>
+        <div class="stat"><strong>6.5k</strong><span>Transcript words</span></div>
+        <div class="stat"><strong>0%</strong><span>Code Meng says he now writes himself</span></div>
+        <div class="stat"><strong>10%</strong><span>Final polish where taste matters most</span></div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <article class="content">
+        <section class="section" id="core-thesis">
+          <h2>Core Thesis</h2>
+          <p>The episode is not only about Codex as a coding tool. It is about a shift from "designer using AI" to "designer operating a personal product studio." Meng's workflow combines local files, screenshots, reusable prompts, image generation, plugins, Markdown knowledge, and agent memory so that he can build, edit, publish, and organize work with far less handoff.</p>
+          <p>The deeper message is that AI does not remove taste. It raises the baseline. As soon as a visual pattern becomes easy for models to reproduce, it becomes generic. The designer's job is to stay ahead of the baseline by supplying better context, sharper references, stronger constraints, and a personal design language.</p>
+          <div class="quote-box">AI can make competent output cheap. The designer's advantage is knowing what should not look like everyone else's output.</div>
+        </section>
+
+        <section class="section" id="why-codex">
+          <h2>Why Codex Changed Meng's Workflow</h2>
+          <p>Meng says he used to use Cursor heavily, but Codex changed his mindset because it feels closer to an AI-native workspace than a code editor. It can work with files on the computer, chat, plan, build apps, create HTML, generate Markdown, produce charts, and connect to integrations. He also points to threads as a major change: the work becomes multiple parallel streams rather than one linear session.</p>
+          <p>He compares the current moment with his earlier Dream Cut attempt. With older models and tools, it was possible to build quickly, but some quality problems stayed unsolved. In the new workflow, he believes the same kind of work can move from weeks or months to a day, as long as the builder has enough domain knowledge to guide the system.</p>
+          <div class="callout">
+            <p><strong>Important nuance:</strong> the productivity gain is not magic. Meng repeatedly says knowledge matters. If you do not know the product, the domain, the library, or the taste bar, the agent will not invent that expertise for you.</p>
+          </div>
+        </section>
+
+        <section class="section" id="tool-stack">
+          <h2>The Tool Stack: Codex, Plugins, Skills, Files, Memory</h2>
+          <p>Meng's stack has several layers. Codex is the operating workspace. Local Markdown files are the knowledge substrate. Plugins connect external capabilities. Skills package taste and best practices. Screenshots and voice provide fast context. Memory and agents.md preserve project-specific decisions. Together, this becomes a loop for building and refining products.</p>
+          <div class="map" aria-label="Codex designer tool stack">
+            <div class="map-node">
+              <h3>Codex Workspace</h3>
+              <p>Threads, tasks, files, local project context, browser/computer context, and agent execution.</p>
+            </div>
+            <div class="map-node">
+              <h3>Local Markdown</h3>
+              <p>Notes, articles, prompts, style guides, version history, talk scripts, and product references.</p>
+            </div>
+            <div class="map-node">
+              <h3>Plugins</h3>
+              <p>Capability connectors for specialized work such as design tools, video, voice, charts, or communication.</p>
+            </div>
+            <div class="map-node">
+              <h3>Skills</h3>
+              <p>Reusable prompt/style-guide knowledge: taste, fonts, colors, anti-slop rules, and workflow practice.</p>
+            </div>
+            <div class="map-node">
+              <h3>Screenshots And Voice</h3>
+              <p>Fast, precise input for bug reports, design references, layout fixes, and visual intent.</p>
+            </div>
+            <div class="map-node">
+              <h3>Memory And Agents.md</h3>
+              <p>Project-level decisions, repeated design rules, workflow conventions, and reusable instructions.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="local-notion">
+          <h2>The Local Notion Pattern</h2>
+          <p>One of the most useful examples is Meng's local Notion-like tool. He built it because cloud tools trap context online, while Codex works well with local files. In his setup, Markdown files appear in a local web interface, and the agent can use those files to create images, article covers, presentation assets, and video variants.</p>
+          <p>The key idea is not that every designer should clone Notion. The key idea is that personal context should be computable. If your notes, references, prompts, version history, and assets are stored in a way an agent can read, then every workflow can use that context without asking you to re-explain yourself.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Old pattern</th>
+                  <th>Meng's pattern</th>
+                  <th>Why it matters</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Content lives in a cloud app.</td>
+                  <td>Content lives as local Markdown.</td>
+                  <td>The agent can read, edit, and compose directly from project files.</td>
+                </tr>
+                <tr>
+                  <td>Prompts are typed repeatedly.</td>
+                  <td>Presets and prompts are embedded in the tool.</td>
+                  <td>The designer spends less effort recreating context.</td>
+                </tr>
+                <tr>
+                  <td>Design output is separate from notes.</td>
+                  <td>Images, articles, slides, and history share the same workspace.</td>
+                  <td>Artifacts can be generated from the same underlying context.</td>
+                </tr>
+                <tr>
+                  <td>The tool defines the workflow.</td>
+                  <td>The designer builds the missing workflow.</td>
+                  <td>Custom software becomes a design advantage.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="plugins-vs-skills">
+          <h2>Plugins Vs Skills</h2>
+          <p>Meng draws a practical distinction that maps directly to your agentic AI platform. Plugins are integrations built by startups, individuals, or tool providers. They connect to external capabilities, similar to how Figma plugins expand Figma. Skills are closer to large prompts or style guides. They encode best practices and taste so the model can act with better defaults.</p>
+          <p>For your platform, this distinction is important because "skill" should not mean every possible automation. A cognitive skill may only guide reasoning or style. An actionable skill may require a tool. A tool or MCP connector should define permissions, inputs, outputs, side effects, and failure modes.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Purpose</th>
+                  <th>Requires tool?</th>
+                  <th>BA-friendly example</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Cognitive Skill</td>
+                  <td>Guide reasoning, writing, taste, analysis, or review.</td>
+                  <td>No.</td>
+                  <td>"Use our product-design critique checklist before proposing screens."</td>
+                </tr>
+                <tr>
+                  <td>Actionable Skill</td>
+                  <td>Guide a workflow that may call one or more tools.</td>
+                  <td>Usually yes.</td>
+                  <td>"Create a Jira ticket, attach screenshots, and notify Slack after approval."</td>
+                </tr>
+                <tr>
+                  <td>Tool / MCP Connector</td>
+                  <td>Perform a specific external action or read external state.</td>
+                  <td>It is the tool.</td>
+                  <td>Figma, Slack, Google Drive, database, browser, email, or internal API.</td>
+                </tr>
+                <tr>
+                  <td>Agent Memory</td>
+                  <td>Preserve project-specific rules and repeated decisions.</td>
+                  <td>No, unless persistence is external.</td>
+                  <td>"For this product, modal animations should use the approved slow-ease pattern."</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="anti-slop">
+          <h2>The Anti-Slop Strategy</h2>
+          <p>Meng opens with a warning: if designers chase trends, they quickly become generic. He uses examples such as default fonts, purple gradients, predictable model-made animations, and soon other trends that will become recognizable as AI output. His solution is to stay ahead of the baseline.</p>
+          <p>The anti-slop strategy has three parts. First, preserve personal memory: past work, fonts, screenshots, Figma files, code, and design references. Second, put that memory into files and skills that AI can read. Third, spend the last 10 percent on taste, iteration, and precise direction. The first draft is not the work. The edited version is the work.</p>
+          <div class="card-grid three-grid">
+            <div class="card">
+              <h3>Reference Yourself</h3>
+              <p>Use your own past work as a starting point so the output inherits your taste rather than generic internet style.</p>
+            </div>
+            <div class="card">
+              <h3>Package Taste</h3>
+              <p>Put fonts, colors, spacing, motion, composition, and anti-patterns into reusable design.md or skill files.</p>
+            </div>
+            <div class="card">
+              <h3>Edit Hard</h3>
+              <p>Use screenshots, voice, annotations, and repeated tests to guide the final details.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="screenshot-workflow">
+          <h2>Screenshots, Voice, And Annotation As Prompting</h2>
+          <p>Meng says his workflow starts with screenshots over and over. The reason is simple: screenshots carry visual context faster than typing. If he wants to fix a bug or adjust a UI detail, he can send the current window to Codex, point to the problem, and explain what should change.</p>
+          <p>Voice matters for the same reason. Designers often leave out details when typing because describing a visual issue is tedious. Speaking lets them explain three to five times more detail. Annotation adds another layer: instead of saying where the problem is, the designer can point to the exact area and then give an instruction.</p>
+          <ol class="flow" aria-label="Screenshot prompting loop">
+            <li><span class="step-number">1</span><strong>Capture</strong><span>Send the current screen, broken state, target reference, or inspiration into the agent.</span></li>
+            <li><span class="step-number">2</span><strong>Point</strong><span>Annotate or name the region: header, timeline, modal, padding, transition, or button.</span></li>
+            <li><span class="step-number">3</span><strong>Explain</strong><span>Use voice or short text to say what is wrong and what success should feel like.</span></li>
+            <li><span class="step-number">4</span><strong>Patch</strong><span>Let the agent implement, then inspect the actual product, not just the diff.</span></li>
+            <li><span class="step-number">5</span><strong>Remember</strong><span>Save reusable design terms, rules, and patterns when the fix becomes a convention.</span></li>
+          </ol>
+        </section>
+
+        <section class="section" id="zero-code">
+          <h2>0 Percent Code Does Not Mean 0 Percent Work</h2>
+          <p>Meng says he has moved from writing most of his own code to writing none of it manually. The important point is what replaced the coding. He is still testing, inspecting, bug-reporting, searching for libraries, evaluating edge cases, and using precise language to make the AI understand what has to happen.</p>
+          <p>That is why this workflow is better described as "designer as director" than "designer as passenger." The work becomes choosing the right library, knowing what the product should do, recognizing wrong output, reporting bugs well, and controlling the last 10 percent of quality.</p>
+          <div class="callout gold">
+            <p><strong>Platform lesson:</strong> when BA users build multi-agent systems, do not promise that they can ignore domain knowledge. Give them better artifacts for expressing knowledge, checking output, and approving changes.</p>
+          </div>
+        </section>
+
+        <section class="section" id="image-and-motion">
+          <h2>Image, HTML, And Motion Exploration</h2>
+          <p>Meng describes using GPT Image 2 to create UI concepts, then converting screenshots into HTML. He also uses image generation for article covers, YouTube covers, slides, wireframes, 3D versions of logos, glass effects, and perspective mockups. The pattern is content first, concept second, artifact third.</p>
+          <p>For animation, he shares a tactic that is easy to reuse: give the AI a video of the motion and ask it how to prompt that animation. This is powerful because interaction design often fails at the language layer. Designers know what they want when they see it, but may not know the animation terms, easing vocabulary, shader terms, or implementation language.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Input</th>
+                  <th>Agent task</th>
+                  <th>Output</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Bullet points or PRD</td>
+                  <td>Generate landing page direction.</td>
+                  <td>Hero section, testimonial section, product narrative.</td>
+                </tr>
+                <tr>
+                  <td>Screenshot</td>
+                  <td>Turn visual direction into HTML.</td>
+                  <td>Prototype, marketing page, UI variant, component draft.</td>
+                </tr>
+                <tr>
+                  <td>Flat logo</td>
+                  <td>Explore material and perspective.</td>
+                  <td>3D glass logo, perspective mockup, brand asset.</td>
+                </tr>
+                <tr>
+                  <td>Motion video</td>
+                  <td>Describe the prompt and implementation language.</td>
+                  <td>Animation prompt, easing description, implementation plan.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="design-md">
+          <h2>What Design.md Really Is</h2>
+          <p>Meng's explanation of design.md is one of the most useful parts of the episode. A design.md file is not a random prompt. It is the designer's accumulated style guide, taste, visual principles, typography decisions, spacing logic, color behavior, accessibility rules, composition patterns, and anti-patterns in a form that an AI can read.</p>
+          <p>He says designers used to carry this inside their training and experience. The AI cannot see that internal taste unless the designer makes it explicit. A strong design.md lets a stronger model use the designer's language and constraints. A weak model may ignore it, but a capable model can use it to produce more distinctive results.</p>
+          <div class="template-grid">
+            <div class="template-card">
+              <h3>Design.md Sections</h3>
+              <p>Product personality, visual principles, typography, color, layout, components, motion, accessibility, content voice, anti-patterns, and examples.</p>
+            </div>
+            <div class="template-card">
+              <h3>How To Use It</h3>
+              <p>Attach it at project start, reference it during new screens, and distill recurring fixes into it after repeated iteration.</p>
+            </div>
+          </div>
+          <pre><code># design.md
+
+## Product Personality
+- The product should feel:
+- The product should never feel:
+
+## Visual Principles
+- Layout:
+- Density:
+- Hierarchy:
+- Rhythm:
+
+## Typography
+- Preferred families:
+- Scale:
+- Weight rules:
+- Line-height rules:
+
+## Color
+- Core palette:
+- Accent usage:
+- Contrast rules:
+- Forbidden combinations:
+
+## Components
+- Buttons:
+- Cards:
+- Forms:
+- Modals:
+- Navigation:
+
+## Motion
+- Easing:
+- Duration:
+- When motion is useful:
+- When motion is distracting:
+
+## Anti-Slop Rules
+- Avoid:
+- Always check:
+- Reference examples:
+</code></pre>
+        </section>
+
+        <section class="section" id="agents-md">
+          <h2>Agents.md, Runbook.md, Workflow.md, And Memory</h2>
+          <p>Meng is careful about agents.md. He says it can be useful because it is read for prompts, threads, or tasks inside a project, but it can also become dangerous if it contains too much global instruction. His preference is to keep it focused and use memory for specific decisions that should repeat.</p>
+          <p>He sometimes calls workflow instructions runbook.md or workflow.md. The distinction is useful: design.md describes taste, agents.md describes project behavior, and runbook.md describes a repeatable workflow. For your platform, this suggests a clean separation between persona prompt, skill spec, tool contract, memory policy, and workflow SOP.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>File</th>
+                  <th>Primary job</th>
+                  <th>What to avoid</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>design.md</td>
+                  <td>Encode taste, visual language, product feel, and UI constraints.</td>
+                  <td>Do not put operational secrets or unrelated process rules here.</td>
+                </tr>
+                <tr>
+                  <td>agents.md</td>
+                  <td>Tell the agent how to behave inside this project.</td>
+                  <td>Do not overload it with rules for every possible future project.</td>
+                </tr>
+                <tr>
+                  <td>runbook.md</td>
+                  <td>Describe a repeatable workflow, checks, approvals, and done criteria.</td>
+                  <td>Do not mix it with brand taste unless the workflow depends on taste.</td>
+                </tr>
+                <tr>
+                  <td>memory</td>
+                  <td>Persist decisions that should apply again later.</td>
+                  <td>Do not save vague preferences that will pollute unrelated work.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="model-choice">
+          <h2>Model Choice And Context Size</h2>
+          <p>Meng distinguishes between fast, cheaper models and more capable higher-effort models. His point is not that the most expensive model should be used for everything. For simple tasks, a very strong model may produce output similar to a weaker one because the task does not use its intelligence. To use a powerful model well, you need rich context: design.md, screenshots, references, HTML previews, URLs, sections, and pre-prompts.</p>
+          <p>This is an excellent operational rule: model power only matters when the task is hard enough and the context is rich enough. Otherwise the user may be paying for unused capability. In a BA-facing platform, this should become a routing policy.</p>
+          <div class="callout green">
+            <p><strong>Routing policy:</strong> use cheaper models for drafts, summaries, simple edits, and fast iteration. Use stronger models when the task requires large context, multiple constraints, design reasoning, architecture decisions, or high-impact output.</p>
+          </div>
+        </section>
+
+        <section class="section" id="platform-translation">
+          <h2>Translation For Your Agentic AI Platform</h2>
+          <p>This video maps cleanly to your Master Agent, Sub-Agent, Skill, Tool, and MCP problem. Meng's workflow suggests that a BA should not be forced to write raw prompts. Instead, the platform should offer structured artifacts: design.md for taste, skill.md for reusable cognition, actionable-skill specs for tool workflows, runbook.md for SOPs, and agents.md for project-specific agent behavior.</p>
+          <p>The platform should make the difference between "knowledge", "behavior", and "capability" visible. Knowledge is what the agent should know. Behavior is how it should act. Capability is what it is allowed to do through tools. Most multi-agent confusion happens when those three are mixed into one giant persona prompt.</p>
+          <ol class="flow" aria-label="Agentic platform composition loop">
+            <li><span class="step-number">1</span><strong>Business Goal</strong><span>BA defines the workflow outcome, user role, inputs, and done criteria.</span></li>
+            <li><span class="step-number">2</span><strong>Knowledge Files</strong><span>Attach policy, examples, design.md, product docs, and domain references.</span></li>
+            <li><span class="step-number">3</span><strong>Skills</strong><span>Select cognitive and actionable skills with clear trigger rules.</span></li>
+            <li><span class="step-number">4</span><strong>Tools</strong><span>Bind MCP/API capabilities with permissions, scopes, and approval gates.</span></li>
+            <li><span class="step-number">5</span><strong>Agents</strong><span>Compose Master Agent routing plus Sub-Agent responsibilities.</span></li>
+            <li><span class="step-number">6</span><strong>Runbook</strong><span>Turn the business flow into steps, checks, outputs, and escalation rules.</span></li>
+            <li><span class="step-number">7</span><strong>Evaluate</strong><span>Run traces, eval cases, human review, and regression checks.</span></li>
+            <li><span class="step-number">8</span><strong>Remember</strong><span>Persist only reusable decisions and successful patterns.</span></li>
+          </ol>
+        </section>
+
+        <section class="section" id="templates">
+          <h2>Reusable Templates</h2>
+          <p>These templates turn the episode into concrete artifacts for agentic platform design. They are written for BA-side users who need structure without needing to become prompt engineers.</p>
+          <div class="template-grid">
+            <div class="template-card">
+              <h3>Cognitive Skill Template</h3>
+              <pre><code># Skill: &lt;name&gt;
+
+Type: Cognitive
+Purpose:
+- What thinking or writing does this skill improve?
+
+When to use:
+- Trigger conditions:
+- User phrases:
+- Workflow stages:
+
+Inputs:
+- Required context:
+- Optional context:
+- Examples:
+
+Process:
+1. Read the user goal.
+2. Check constraints and reference files.
+3. Apply the reasoning framework.
+4. Produce the output format.
+
+Output:
+- Format:
+- Quality bar:
+- Common failure modes:
+
+Eval:
+- Golden examples:
+- Bad examples:
+- Review checklist:
+</code></pre>
+            </div>
+            <div class="template-card">
+              <h3>Actionable Skill Template</h3>
+              <pre><code># Skill: &lt;name&gt;
+
+Type: Actionable
+Purpose:
+- What work does this skill complete?
+
+Required tools:
+- Tool/MCP:
+- Permission scope:
+- Side effects:
+
+Inputs:
+- Required:
+- Optional:
+- Validation:
+
+Workflow:
+1. Confirm intent.
+2. Gather missing context.
+3. Draft plan.
+4. Request approval if needed.
+5. Call tool.
+6. Verify result.
+7. Summarize outcome.
+
+Guardrails:
+- Never:
+- Ask before:
+- Escalate when:
+
+Eval:
+- Success cases:
+- Failure cases:
+- Tool mock cases:
+</code></pre>
+            </div>
+            <div class="template-card">
+              <h3>Agents.md Template</h3>
+              <pre><code># agents.md
+
+## Project Role
+You are the agent for:
+
+## Product Context
+- Product:
+- Users:
+- Current workflow:
+
+## Operating Rules
+- Prefer:
+- Avoid:
+- Ask when:
+- Escalate when:
+
+## File Conventions
+- Read first:
+- Update:
+- Do not edit:
+
+## Tool Rules
+- Allowed tools:
+- Approval required:
+- Disallowed actions:
+
+## Done Criteria
+- Functional:
+- Design:
+- Evidence:
+</code></pre>
+            </div>
+            <div class="template-card">
+              <h3>Business Flow Markdown</h3>
+              <pre><code># Business Flow: &lt;name&gt;
+
+Owner:
+User role:
+Trigger:
+Business outcome:
+
+Inputs:
+- Source:
+- Required fields:
+- Optional fields:
+
+Steps:
+1. Detect intent.
+2. Validate required information.
+3. Choose skill.
+4. Call tools if approved.
+5. Produce artifact.
+6. Request human review.
+7. Save memory if reusable.
+
+Decision points:
+- If:
+- Then:
+- Else:
+
+Outputs:
+- User-facing:
+- System-facing:
+- Audit log:
+
+Risks:
+- Data:
+- Compliance:
+- User harm:
+- Business harm:
+
+Eval cases:
+- Happy path:
+- Missing data:
+- Tool failure:
+- Ambiguous intent:
+</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="timeline">
+          <h2>Structured Timeline</h2>
+          <p>This timeline follows the main conceptual turns of the episode, not every sentence.</p>
+          <div class="timeline">
+            <div class="time-item">
+              <time>00:00</time>
+              <div>
+                <h3>AI slop and the design baseline</h3>
+                <p>Meng warns that trend-chasing becomes generic quickly because AI turns yesterday's taste into today's default output.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>01:06</time>
+              <div>
+                <h3>Why Codex changed the mindset</h3>
+                <p>Codex is described as more than a chat tool: it can work with local files, build apps, plan, generate HTML and Markdown, and connect integrations.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>03:20</time>
+              <div>
+                <h3>Threads, model choice, and leaving Figma for new work</h3>
+                <p>Meng says thread-based building changes the workflow and that he now does new design creation in Codex rather than starting in Figma.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>07:04</time>
+              <div>
+                <h3>Local Notion and custom tools</h3>
+                <p>He shows a local Markdown-based content system that agents can read and use to generate images, covers, presentations, and video assets.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>12:00</time>
+              <div>
+                <h3>Plugins versus skills</h3>
+                <p>Plugins connect external capabilities, while skills behave like prompts or style guides that encode taste and best practice.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>14:07</time>
+              <div>
+                <h3>Personal memory as anti-slop context</h3>
+                <p>The designer's own files, fonts, Figma work, screenshots, and code become the best source material for distinctive AI output.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>15:00</time>
+              <div>
+                <h3>Screenshots as the fastest prompt</h3>
+                <p>Visual context helps the agent understand layout and bugs faster than typed descriptions alone.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>17:45</time>
+              <div>
+                <h3>0 percent manual code, but high human direction</h3>
+                <p>Meng says he no longer writes code manually, but spends significant effort testing, reporting bugs, and giving precise guidance.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>22:00</time>
+              <div>
+                <h3>GPT Image 2, screenshot-to-HTML, and design exploration</h3>
+                <p>He uses generated images, screenshots, and taste skills to create UI directions, covers, slides, wireframes, and brand assets.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>24:10</time>
+              <div>
+                <h3>Prompting motion from video</h3>
+                <p>He describes giving AI a video and asking it to write the prompt language needed to recreate the animation.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>26:20</time>
+              <div>
+                <h3>Design.md as accumulated taste</h3>
+                <p>Design.md is framed as the designer's style guide, principles, tokens, accessibility, and composition language in model-readable form.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>29:40</time>
+              <div>
+                <h3>Agents.md, runbooks, workflow memory</h3>
+                <p>Meng explains how project-specific memory and agents.md can preserve reusable instructions without overloading every task.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>32:06</time>
+              <div>
+                <h3>Curiosity and constant workflow evolution</h3>
+                <p>The episode closes with the idea that the workflow keeps changing and requires attention, curiosity, and shipping discipline.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="my-read">
+          <h2>My Read</h2>
+          <p>Meng is directionally right about the next designer workflow, especially for solo builders and design engineers. The strongest insight is not "designers should stop using Figma." It is that designers need a personal context system that the AI can read. If your taste, references, design language, and workflow live only in your head, the model will fall back to generic taste.</p>
+          <p>For your agentic AI platform, the most useful takeaway is separation of concerns. Persona prompts should not hold everything. BA users need structured building blocks: role, business flow, cognitive skill, actionable skill, tool contract, design/taste guide, runbook, evals, memory policy, and approval rules. That is how non-engineers can compose a multi-agent system without turning every workflow into one giant brittle prompt.</p>
+          <div class="callout">
+            <p><strong>Strong recommendation:</strong> build your BA experience around editable Markdown artifacts plus guided forms. Let the form keep users safe, but let Markdown preserve power, portability, reviewability, and version history.</p>
+          </div>
+        </section>
+
+        <section class="section" id="sources">
+          <h2>Sources And Confidence</h2>
+          <p>This page is based primarily on the extracted YouTube captions, then cross-checked against public episode listings and related notes. The transcript contains a few likely auto-caption errors in model names, so tool names that appear unusual should be treated as transcript-level phrasing rather than official naming.</p>
+          <ul class="source-list">
+            <li><a href="https://www.youtube.com/watch?v=SznrOQYiahg">Meng To - Codex superpowers for designers</a> - source YouTube video.</li>
+            <li><a href="https://www.youtube.com/@joindiveclub">Dive Club YouTube channel</a> - source channel.</li>
+            <li><a href="https://www.dive.club/deep-dives/meng-to-2">Dive Club episode page</a> - episode listing and guest context.</li>
+            <li><a href="https://podcasts.apple.com/no/podcast/meng-to-codex-superpowers-for-designers/id1686414242?i=1000774840404">Apple Podcasts listing</a> - episode date, length, and summary bullets.</li>
+            <li><a href="https://figmalion.com/topics/codex">Figmalion Codex topic notes</a> - third-party design-tool summary of this workflow.</li>
+          </ul>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Table of contents">
+        <div class="toc">
+          <h2>Read By Topic</h2>
+          <nav>
+            <a href="#executive-summary">Executive Summary</a>
+            <a href="#core-thesis">Core Thesis</a>
+            <a href="#why-codex">Why Codex</a>
+            <a href="#tool-stack">Tool Stack</a>
+            <a href="#local-notion">Local Notion</a>
+            <a href="#plugins-vs-skills">Plugins Vs Skills</a>
+            <a href="#anti-slop">Anti-Slop</a>
+            <a href="#screenshot-workflow">Screenshots And Voice</a>
+            <a href="#zero-code">0 Percent Code</a>
+            <a href="#image-and-motion">Image And Motion</a>
+            <a href="#design-md">Design.md</a>
+            <a href="#agents-md">Agents.md</a>
+            <a href="#model-choice">Model Choice</a>
+            <a href="#platform-translation">Platform Translation</a>
+            <a href="#templates">Templates</a>
+            <a href="#timeline">Timeline</a>
+            <a href="#my-read">My Read</a>
+            <a href="#sources">Sources</a>
+          </nav>
+        </div>
+        <div class="note-card">
+          <h2>Best Use</h2>
+          <p>Use this page as a design-workflow playbook and as a reference model for BA-created skills, tools, runbooks, and multi-agent composition.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer>
+    Summary generated from the public YouTube transcript and supporting public episode pages. Built as a standalone resource page for the local video notes library.
+  </footer>
+</body>
+</html>

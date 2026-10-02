@@ -1,0 +1,927 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>The Best AI Agents Are Simpler Than You Think - Summary Blog</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172027;
+      --muted: #60707a;
+      --soft: #f4f2eb;
+      --paper: #fffdf8;
+      --line: #ddd6c8;
+      --red: #b63a32;
+      --green: #286c61;
+      --blue: #315f8c;
+      --gold: #a36f22;
+      --violet: #66598b;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--soft);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--red), var(--green), var(--blue), var(--gold));
+    }
+
+    a {
+      color: var(--green);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    h1, h2, h3, p, figure { margin: 0; }
+
+    p, li { line-height: 1.78; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--red);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 11ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 8vw, 6.4rem);
+      font-weight: 760;
+      line-height: 0.92;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 800px;
+      margin-top: 24px;
+      color: #2d363d;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.18rem, 2.2vw, 1.55rem);
+      line-height: 1.6;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 28px 60px rgb(24 32 39 / 14%);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: #1f3535;
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 84%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: rgb(255 255 255 / 88%);
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .stat {
+      padding: 14px;
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 18%);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: #fff;
+      font-size: 1.35rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      color: rgb(255 255 255 / 72%);
+      font-size: 0.88rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 48px;
+      align-items: start;
+      padding-top: 44px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 24px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .side-box {
+      padding-left: 18px;
+      border-left: 4px solid var(--green);
+    }
+
+    .side-box h2 {
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 780;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--red); }
+
+    .note-list {
+      display: grid;
+      gap: 8px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .content {
+      min-width: 0;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 20px 46px rgb(24 32 39 / 8%);
+      overflow: hidden;
+    }
+
+    .section {
+      padding: 36px 44px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; }
+
+    .label {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--red);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .section h2 {
+      max-width: 800px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.9rem, 4vw, 2.8rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 780px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1.04rem;
+    }
+
+    .takeaways {
+      counter-reset: takeaway;
+      display: grid;
+      gap: 16px;
+      padding: 0;
+      margin: 26px 0 0;
+      list-style: none;
+    }
+
+    .takeaways li {
+      counter-increment: takeaway;
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr);
+      gap: 16px;
+      padding: 18px;
+      background: #f7faf7;
+      border: 1px solid #dce5de;
+      border-radius: 8px;
+    }
+
+    .takeaways li::before {
+      content: counter(takeaway, decimal-leading-zero);
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      color: #fff;
+      background: var(--green);
+      border-radius: 50%;
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+
+    .takeaways strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--ink);
+      font-size: 1.05rem;
+    }
+
+    .cards,
+    .decision-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      margin-top: 26px;
+    }
+
+    .card,
+    .decision-card {
+      padding: 18px;
+      border-radius: 8px;
+    }
+
+    .card {
+      background: #f8f7fb;
+      border: 1px solid #dfd9ea;
+    }
+
+    .decision-card {
+      background: #f7faf7;
+      border: 1px solid #dce5de;
+    }
+
+    .decision-card:nth-child(2) {
+      background: #fbf8ef;
+      border-color: #eadfca;
+    }
+
+    .decision-card:nth-child(3) {
+      background: #f6f8fb;
+      border-color: #d8e0ea;
+    }
+
+    .card h3,
+    .decision-card h3 {
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+    }
+
+    .card h3 { color: var(--violet); }
+
+    .card p,
+    .decision-card p {
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .flow {
+      display: grid;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .flow-step {
+      display: grid;
+      grid-template-columns: 86px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+      padding: 18px;
+      background: #fbf8ef;
+      border: 1px solid #eadfca;
+      border-radius: 8px;
+    }
+
+    .flow-step time,
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 30px;
+      padding: 0 10px;
+      color: #fff;
+      background: var(--gold);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .flow-step h3 {
+      margin-bottom: 5px;
+      font-size: 1.08rem;
+    }
+
+    .flow-step p { color: var(--muted); }
+
+    .table-wrap {
+      margin-top: 26px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 720px;
+      border-collapse: collapse;
+      background: #fff;
+    }
+
+    th, td {
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      background: #f8f5ee;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .quote {
+      margin-top: 28px;
+      padding: 24px;
+      color: #fff;
+      background: var(--blue);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.25rem;
+      line-height: 1.55;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 26px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 14px 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 28px auto 0;
+      padding: 0 24px 42px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 940px) {
+      .hero,
+      .quick-summary,
+      .layout,
+      .tldr {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      h1 { max-width: 100%; }
+    }
+
+    @media (max-width: 620px) {
+      .topbar,
+      .page,
+      .footer {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions { justify-content: flex-start; }
+
+      .hero {
+        gap: 28px;
+        padding-top: 36px;
+      }
+
+      .quick-summary,
+      .section {
+        padding: 24px 18px;
+      }
+
+      .takeaways li,
+      .flow-step {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <nav class="topbar" aria-label="Page navigation">
+    <a class="brand" href="/reading/">Reading room</a>
+    <div class="top-actions" aria-label="Page links">
+      <a class="action-link" href="/">Portfolio</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=uCKhOmth2ms">Watch source</a>
+    </div>
+  </nav>
+
+  <main class="page">
+    <header class="hero">
+      <div>
+        <p class="kicker">Summary Blog</p>
+        <h1>The Best AI Agents Are Simpler Than You Think</h1>
+        <p class="subtitle">
+          A summary of LangChain's conversation with Zack Reno Wedeen from Sierra about why production AI agents
+          usually need clearer product loops, better abstractions, low-latency infrastructure, memory, simulations,
+          and domain-specific workflows more than they need magical autonomy.
+        </p>
+        <div class="meta">
+          <span>Source: <strong>LangChain</strong></span>
+          <span>Length: <strong>87 min</strong></span>
+          <span>Transcript: <strong>16,511 words</strong></span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/uCKhOmth2ms/hqdefault.jpg" alt="The best AI agents are simpler than you think video thumbnail">
+        <figcaption>This page is a curated summary of the video transcript, not a full transcript.</figcaption>
+      </figure>
+    </header>
+
+    <section class="quick-summary" aria-labelledby="quick-summary-title">
+      <div>
+        <h2 id="quick-summary-title">The Short Version</h2>
+        <p>
+          The video argues that the best production agents are not mysterious autonomous blobs.
+          They are carefully designed products: domain experts shape them, analysis tools find improvement opportunities,
+          authoring agents help edit workflows, simulations prevent regressions, and infrastructure handles latency,
+          payments, voice, memory, and provider choice. Sierra's lesson is that agent quality comes from the whole system,
+          not just the model call.
+        </p>
+        <ul class="tldr" aria-label="Three point TLDR">
+          <li>Agents become useful when they are tied to business outcomes, not just chat.</li>
+          <li>The right abstraction matters: make it easy for humans and legible to models.</li>
+          <li>Voice, payments, memory, and evals turn an agent demo into a real product.</li>
+        </ul>
+      </div>
+      <div class="stats" aria-label="Summary stats">
+        <div class="stat"><strong>10</strong><span>core lessons</span></div>
+        <div class="stat"><strong>7</strong><span>major topics</span></div>
+        <div class="stat"><strong>87 min</strong><span>source video</span></div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <section class="side-box toc" aria-labelledby="toc-title">
+          <h2 id="toc-title">Read</h2>
+          <a href="#takeaways">Core lessons</a>
+          <a href="#platform">Sierra's agent loop</a>
+          <a href="#abstractions">Abstractions</a>
+          <a href="#voice">Voice architecture</a>
+          <a href="#commerce">Agentic commerce</a>
+          <a href="#memory">Memory and evals</a>
+          <a href="#decision-guide">Decision guide</a>
+          <a href="#builder">Builder profile</a>
+        </section>
+
+        <section class="side-box" aria-labelledby="best-for-title">
+          <h2 id="best-for-title">Best For</h2>
+          <ul class="note-list">
+            <li>Teams building customer-facing agents</li>
+            <li>Product people designing agent workflows</li>
+            <li>Engineers thinking about voice, memory, payments, and evals</li>
+          </ul>
+        </section>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="takeaways">
+          <span class="label">Key Takeaways</span>
+          <h2>Core Lessons From the Video</h2>
+          <p class="lead">The interview keeps returning to one theme: simple agent experiences often require serious system design behind the scenes.</p>
+
+          <ol class="takeaways">
+            <li>
+              <div>
+                <strong>Agents should be treated as products, not chatbots.</strong>
+                Sierra frames customer-facing agents around outcomes such as resolution rate, customer satisfaction, loyalty, sales conversion, and retention.
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>The workflow is analyze, build, release.</strong>
+                Conversation data feeds analysis; analysis suggests improvements; authoring tools update the agent; release workflows push changes safely.
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>No-code matters because domain knowledge is not always in engineering.</strong>
+                Customer experience and operations teams often know the policy, procedure, and desired customer journey better than engineers do.
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>The best abstraction is neither always code nor always natural language.</strong>
+                Sierra's journeys are structured enough to compile deterministically, but friendly enough for non-engineers and authoring agents.
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>Voice agents are latency products.</strong>
+                A chat agent can pause; a phone agent that waits several seconds feels broken. That changes the architecture.
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>Provider modularity is a practical advantage.</strong>
+                Different transcription, synthesis, and voice-to-voice models win for different accents, languages, and use cases.
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>Prompt caching is secondary to performance and context quality.</strong>
+                Speed and cost matter, but not enough to keep stale or insufficient context in a production interaction.
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>Memory only works when identity, authentication, and retrieval work.</strong>
+                Remembering a customer is useful, but only if the system knows who the customer is and can retrieve the right memory at the right time.
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>Simulations are the production eval layer.</strong>
+                Public benchmarks help compare providers, but customer-specific simulations are what prevent regressions in real agents.
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>The agent builder role blends product and engineering judgment.</strong>
+                As coding gets easier, deciding what should be built becomes more important.
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Product Loop</span>
+          <h2>Sierra's Agent Platform Is Built Around a Feedback Loop</h2>
+          <p class="lead">
+            The platform is described as three major surfaces: analyze, build, and release. This is a useful mental model for any production agent team.
+          </p>
+
+          <div class="flow">
+            <article class="flow-step">
+              <time>Analyze</time>
+              <div>
+                <h3>Find opportunities in real conversations</h3>
+                <p>Explorer acts like deep research over customer conversations and platform data. Reports and monitors watch performance continuously.</p>
+              </div>
+            </article>
+            <article class="flow-step">
+              <time>Build</time>
+              <div>
+                <h3>Use Ghostwriter and journeys to change behavior</h3>
+                <p>Ghostwriter helps author agent workflows. Journeys act as the editable source layer for procedures, knowledge, variables, and behavior.</p>
+              </div>
+            </article>
+            <article class="flow-step">
+              <time>Release</time>
+              <div>
+                <h3>Ship changes through collaboration and controls</h3>
+                <p>Enterprise teams need versioning, CI/CD, review, and safe release workflows because agents become part of business operations.</p>
+              </div>
+            </article>
+          </div>
+
+          <p class="quote">
+            The hidden lesson: the agent is not the product. The improvement loop around the agent is the product.
+          </p>
+        </section>
+
+        <section class="section" id="abstractions">
+          <span class="label">Abstractions</span>
+          <h2>Simple Agents Need the Right Source Code</h2>
+          <p class="lead">
+            Sierra moved much of agent development from code into a no-code layer called journeys.
+            The interesting part is not "no-code" as a slogan; it is the choice of abstraction.
+          </p>
+
+          <div class="table-wrap" aria-label="Abstraction comparison table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Layer</th>
+                  <th>Why It Exists</th>
+                  <th>Risk</th>
+                  <th>Lesson</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Raw code</td>
+                  <td>Powerful, testable, works with CI/CD.</td>
+                  <td>Too far from operations teams who own customer experience details.</td>
+                  <td>Keep it available for enterprise workflows, but do not make it the only interface.</td>
+                </tr>
+                <tr>
+                  <td>Pure natural language</td>
+                  <td>Easy for people to write.</td>
+                  <td>Hard to compile deterministically and hard to reason about changes.</td>
+                  <td>Useful, but too loose as the sole source layer.</td>
+                </tr>
+                <tr>
+                  <td>Journeys</td>
+                  <td>Structured workflows that compile to Agent SDK code.</td>
+                  <td>Requires teaching models and users the DSL.</td>
+                  <td>A middle layer can work if it is inspectable, deterministic, and close to the domain.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="voice">
+          <span class="label">Voice Agents</span>
+          <h2>Voice Changes the Architecture</h2>
+          <p class="lead">
+            Voice agents are not just chat agents with text-to-speech. They create hard latency constraints and require parallel listening, thinking, and speaking.
+          </p>
+
+          <div class="cards">
+            <article class="card">
+              <h3>Latency dominates</h3>
+              <p>If the agent does not respond in roughly one or two seconds, the user may think it disappeared.</p>
+            </article>
+            <article class="card">
+              <h3>Modularity matters</h3>
+              <p>Sierra can choose different providers for transcription, synthesis, and voice-to-voice depending on language, accent, and use case.</p>
+            </article>
+            <article class="card">
+              <h3>Voice-to-voice is real but not universal</h3>
+              <p>Native voice models are useful for some English scenarios, but complex enterprise use cases still benefit from modular pipelines.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="commerce">
+          <span class="label">Commerce</span>
+          <h2>Agentic Commerce Requires Trust Infrastructure</h2>
+          <p class="lead">
+            The interview predicts that personal agents will increasingly interact with brand agents.
+            If that happens, brands need agents that can sell, service, authenticate, remember, and take payment safely.
+          </p>
+
+          <div class="flow">
+            <article class="flow-step">
+              <span class="pill">01</span>
+              <div>
+                <h3>Personal agents create new demand</h3>
+                <p>Instead of clicking through websites, users may ask their own agents to manage subscriptions, bookings, purchases, and support.</p>
+              </div>
+            </article>
+            <article class="flow-step">
+              <span class="pill">02</span>
+              <div>
+                <h3>Brand agents need to be ready</h3>
+                <p>Companies need agents that can represent their policies, inventory, customer context, and commerce workflows.</p>
+              </div>
+            </article>
+            <article class="flow-step">
+              <span class="pill">03</span>
+              <div>
+                <h3>Payments are infrastructure, not an add-on</h3>
+                <p>Payment data cannot simply be sent through any LLM provider. Sierra built isolated payment infrastructure for PCI constraints.</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="memory">
+          <span class="label">Memory and Evals</span>
+          <h2>Memory, Simulations, and Benchmarks Do Different Jobs</h2>
+          <p class="lead">
+            The conversation separates three ideas that often get blurred together: remembering customers, testing agents, and evaluating providers.
+          </p>
+
+          <div class="decision-grid">
+            <article class="decision-card">
+              <h3>Memory</h3>
+              <p>Useful when it is tied to identity, authentication, retrieval, and a real customer outcome such as better resolution or personalization.</p>
+            </article>
+            <article class="decision-card">
+              <h3>Simulations</h3>
+              <p>The main eval layer for customer-specific agents because production conversations branch in many directions and regressions are expensive.</p>
+            </article>
+            <article class="decision-card">
+              <h3>Benchmarks</h3>
+              <p>Helpful for provider selection and research. The interview mentions TaoVoice, TaoKnowledge, TaoBench, and MuBench, but treats them as complements to customer-specific testing.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="decision-guide">
+          <span class="label">Decision Guide</span>
+          <h2>What This Means If You Are Building an Agent</h2>
+          <p class="lead">Use this as the practical translation of the interview.</p>
+
+          <ul class="checklist">
+            <li>Start with the business outcome: resolution, conversion, retention, support quality, or operational efficiency.</li>
+            <li>Give domain experts a direct way to shape agent behavior; do not route every policy change through engineering.</li>
+            <li>Choose abstractions that are inspectable and testable, not just impressive in a demo.</li>
+            <li>For voice, design around latency from day one. Voice is an infrastructure problem as much as a model problem.</li>
+            <li>Use memory only when identity and retrieval are solid. Bad memory is worse than no memory.</li>
+            <li>Invest in simulations before scaling a customer-facing agent to more teams and more use cases.</li>
+            <li>Benchmark providers with tools like TaoBench or MuBench, but evaluate your actual agent with your actual customer scenarios.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="builder">
+          <span class="label">Builder Profile</span>
+          <h2>The Best Agent Builders Look Like Product Engineers</h2>
+          <p class="lead">
+            The last part of the interview turns into an org-design point: when code gets easier, judgment becomes the bottleneck.
+          </p>
+
+          <div class="cards">
+            <article class="card">
+              <h3>They can talk to customers</h3>
+              <p>Agent work starts with understanding the actual customer journey and the messy edge cases inside it.</p>
+            </article>
+            <article class="card">
+              <h3>They can reason about systems</h3>
+              <p>They know when the problem is a prompt, a tool, a release process, an eval, a memory issue, or a product decision.</p>
+            </article>
+            <article class="card">
+              <h3>They know what not to build</h3>
+              <p>As building gets faster, taste and prioritization matter more. More agent behavior is not automatically better agent behavior.</p>
+            </article>
+          </div>
+
+          <p class="quote">
+            Tomorrow's move: pick one customer journey, map the analyze-build-release loop around it, and write the simulations that would catch the top five ways that journey can fail.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated for <strong>The best AI agents are simpler than you think</strong>. Source: LangChain interview with Zack Reno Wedeen from Sierra.
+  </footer>
+</body>
+</html>

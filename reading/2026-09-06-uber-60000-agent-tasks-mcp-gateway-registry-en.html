@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="A detailed summary of how Uber operates MCP at enterprise scale with a central gateway, registry, IDL-generated tools, security controls, three agent surfaces, and an evaluation roadmap.">
+  <title>How Uber Runs 60,000 AI Agent Tasks per Week with MCP</title>
+  <link rel="stylesheet" href="article-theme.css">
+  <style>
+    .hero-card img { aspect-ratio: 16 / 9 !important; }
+    .source-note { margin-top: 1rem; padding-left: 1rem; border-left: 3px solid var(--green); }
+    .metric-strip { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin-top: 1rem; border-top: 1px solid var(--line); }
+    .metric { padding: 0.9rem 0; border-bottom: 1px solid var(--line); }
+    .metric:nth-child(odd) { padding-right: 1rem; }
+    .metric:nth-child(even) { padding-left: 1rem; border-left: 1px solid var(--line); }
+    .metric strong { display: block; font-size: 1.35rem; font-weight: 500; }
+    .metric span { color: var(--muted); font-size: 0.9rem; }
+    .architecture { margin-top: 1rem; border-top: 1px solid var(--line); }
+    .architecture-row, .control-row, .platform-row { display: grid; grid-template-columns: minmax(8rem, 0.9fr) minmax(0, 2.1fr); gap: 1rem; padding: 0.9rem 0; border-bottom: 1px solid var(--line); }
+    .architecture-row strong, .control-row strong, .platform-row strong { font-weight: 500; }
+    .architecture-row p, .control-row p, .platform-row p { margin: 0 !important; }
+    .flow-label { color: var(--green); font-size: 0.84rem; font-weight: 600; }
+    .callout-line { margin: 1rem 0; padding: 1rem; background: var(--surface); border-left: 3px solid var(--ink); }
+    .callout-line strong { display: block; margin-bottom: 0.35rem; }
+    .control-list, .platform-list { display: grid; gap: 0; margin-top: 1rem; border-top: 1px solid var(--line); }
+    .chapter-list { margin: 1rem 0 0 !important; padding: 0 !important; list-style: none !important; border-top: 1px solid var(--line); }
+    .chapter { display: grid; grid-template-columns: 5.6rem minmax(0, 1fr); gap: 1.1rem; padding: 1.08rem 0; border-bottom: 1px solid var(--line); }
+    .chapter time { color: var(--muted); font-size: 0.9rem; white-space: nowrap; }
+    .chapter h3 { margin: 0 0 0.45rem !important; }
+    .chapter p { margin: 0 !important; }
+    .comparison { margin-top: 1rem; }
+    .source-links { display: grid; gap: 0.65rem; padding-left: 1.2rem; }
+    @media (max-width: 640px) {
+      .metric-strip { grid-template-columns: 1fr; }
+      .metric:nth-child(odd), .metric:nth-child(even) { padding: 0.8rem 0; border-left: 0; }
+      .architecture-row, .control-row, .platform-row, .chapter { grid-template-columns: 1fr; gap: 0.35rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation">
+    <a class="brand" href="/reading/">Reading room</a>
+    <div class="top-actions">
+      <a class="action-link" href="https://www.youtube.com/watch?v=yVqMxBahjfA">Watch video</a>
+      <a class="action-link" href="/">Portfolio</a>
+    </div>
+  </nav>
+
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Enterprise MCP · Gateway · Registry · Governance</p>
+        <h1>How Uber Runs 60,000 AI Agent Tasks per Week with MCP</h1>
+        <p class="subtitle">Meghana Somasundara and Rush Tehrani explain how Uber turned thousands of existing service APIs into governed agent tools, centralized MCP discovery and security, and exposed the same control plane to no-code, code-first, and coding-agent experiences.</p>
+        <div class="meta">
+          <span><strong>Agentic AI Foundation</strong></span>
+          <span>14:27 keynote</span>
+          <span>Published May 7, 2026</span>
+          <span>Summary run September 6, 2026 · 12:30 ICT</span>
+        </div>
+        <p class="source-note">This is a detailed editorial summary based on the public English captions and source chapter metadata. Scale figures and product claims are attributed to the speakers; roadmap items are labelled separately from deployed capabilities.</p>
+      </div>
+      <figure class="hero-card">
+        <a href="https://www.youtube.com/watch?v=yVqMxBahjfA" aria-label="Watch the original video on YouTube">
+          <img src="https://i.ytimg.com/vi/yVqMxBahjfA/hqdefault.jpg" alt="How Uber Runs 60,000 AI Agent Tasks Per Week With MCP video thumbnail">
+        </a>
+        <figcaption>Meghana Somasundara, Agentic AI Lead, and Rush Tehrani, Head of Engineering for Agentic AI Platform at Uber, presenting at MCP Dev Summit.</figcaption>
+      </figure>
+    </header>
+
+    <div class="layout">
+      <article class="content">
+        <section id="summary">
+          <p class="section-label">Executive summary</p>
+          <h2>MCP becomes enterprise infrastructure when agents stop being experiments</h2>
+          <p>Uber's talk begins after the pilot phase. The speakers report more than 5,000 engineers, over 90% monthly AI usage among them, more than 10,000 internal services, over 1,500 monthly active agents, and more than 60,000 agent executions each week. At that scale, allowing every team or agent to rediscover and integrate each service independently creates duplicated engineering, inconsistent security, poor discovery, and unpredictable tool quality.</p>
+          <p>Uber's answer is a centrally operated MCP Gateway and Registry. The platform mines the service definitions the company already owns, particularly Protobuf and Thrift IDLs, and converts selected endpoints into MCP tools. An orchestrator uses service names, messages, and comments to generate initial tool descriptions. Service owners remain responsible for deciding which endpoints are exposed and refining the descriptions agents will see.</p>
+          <p>The registry becomes the source of truth for available MCP servers and versions. The gateway becomes the enforcement and delivery plane. Changes are represented as code diffs, scanned before deployment, and distributed through object storage to the gateway service. Central authorization, PII redaction, periodic code scanning, blocking of dangerous mutable endpoints, metrics, logging, and tracing apply consistently across consumers.</p>
+          <p>Those consumers span three product surfaces: a no-code Agent Builder, a code-first Agent SDK, and coding agents such as Claude Code, Cursor, and Uber's Minions background agent. Reliability is improved by progressively reducing unnecessary model choice: builders can scope an MCP server, select only allowed tools, and override fixed parameters so the model cannot hallucinate values that the workflow already knows.</p>
+          <p>The next phase focuses on quality and discovery. Uber plans to add evaluation metrics and service-level tiers to the registry, load tools on demand through an “omni MCP” search capability, and treat skills as shareable recipes whose output quality, invocation correctness, and competing versions can be evaluated.</p>
+        </section>
+
+        <section id="scale">
+          <p class="section-label">Reported scale</p>
+          <h2>Why local MCP conventions were no longer enough</h2>
+          <div class="metric-strip" aria-label="Scale figures reported in the talk">
+            <div class="metric"><strong>5,000+</strong><span>Uber engineers</span></div>
+            <div class="metric"><strong>90%+</strong><span>using AI monthly, according to the speakers</span></div>
+            <div class="metric"><strong>10,000+</strong><span>internal services</span></div>
+            <div class="metric"><strong>1,500+</strong><span>monthly active internal agents</span></div>
+            <div class="metric"><strong>60,000+</strong><span>agent executions per week</span></div>
+            <div class="metric"><strong>1,800</strong><span>weekly code changes attributed to Minions</span></div>
+          </div>
+          <p>These numbers explain the design pressure. A protocol can standardize the shape of a tool call, but it does not automatically create ownership, lifecycle management, security review, discoverability, or a quality bar. Uber needed an organizational control plane around the protocol.</p>
+        </section>
+
+        <section id="problems">
+          <p class="section-label">Three problem classes</p>
+          <h2>The challenges were operational, not merely syntactic</h2>
+          <div class="control-list">
+            <div class="control-row"><strong>Lifecycle fragmentation</strong><p>Teams independently built custom integrations and solved the same deployment problems in silos. One-off playground environments were difficult to reuse, update, audit, or trust in production.</p></div>
+            <div class="control-row"><strong>Security and governance</strong><p>Agents can call systems faster and more broadly than people. Uber needed complete visibility into who accessed which data, protection against unauthorized service calls, and stricter treatment of third-party MCP servers and their data-handling behavior.</p></div>
+            <div class="control-row"><strong>Discovery and quality</strong><p>Finding a server is not enough. Builders and agents need to know whether its tools are reliable, performant, safe, and suitable for a given workflow. Poor tools degrade the entire agent, even when the underlying model is capable.</p></div>
+          </div>
+          <div class="callout-line"><strong>Important distinction</strong><p>MCP standardizes connectivity. Uber's gateway and registry standardize how connectivity is created, approved, discovered, secured, measured, and consumed.</p></div>
+        </section>
+
+        <section id="architecture">
+          <p class="section-label">Architecture</p>
+          <h2>From 10,000 service definitions to governed agent tools</h2>
+          <div class="architecture" role="figure" aria-label="Uber MCP Gateway and Registry flow">
+            <div class="architecture-row"><span class="flow-label">Service layer</span><p><strong>Existing Protobuf and Thrift IDLs</strong> describe Uber's internal service endpoints, message names, types, and comments.</p></div>
+            <div class="architecture-row"><span class="flow-label">Orchestrator</span><p><strong>Crawl and generate.</strong> The gateway orchestrator discovers IDLs and asks an LLM to draft MCP tool descriptions from the service metadata.</p></div>
+            <div class="architecture-row"><span class="flow-label">Ownership</span><p><strong>Service owners decide exposure.</strong> Domain experts select which endpoints may become tools and refine descriptions for the intended agents.</p></div>
+            <div class="architecture-row"><span class="flow-label">Registry</span><p><strong>Versioned source of truth.</strong> Approved MCP definitions and metadata are stored centrally so teams do not depend on private one-off integrations.</p></div>
+            <div class="architecture-row"><span class="flow-label">Change gate</span><p><strong>Updates become diffs.</strong> Definition changes produce pull-request-like diffs that pass Uber's unified security scanning. Scan reports are attached before commit and deployment.</p></div>
+            <div class="architecture-row"><span class="flow-label">Distribution</span><p><strong>Object storage carries approved definitions.</strong> A configuration provider in the gateway service picks up the deployed versions.</p></div>
+            <div class="architecture-row"><span class="flow-label">Gateway</span><p><strong>Serve and enforce.</strong> The gateway exposes tools while applying central authorization, redaction, endpoint controls, and observability.</p></div>
+            <div class="architecture-row"><span class="flow-label">Consumers</span><p><strong>One plane, three experiences.</strong> Agent Builder, Agent SDK applications, and coding agents consume the same governed MCP inventory.</p></div>
+          </div>
+          <div class="callout-line"><strong>The architectural move</strong><p>Uber converts existing API governance assets into agent infrastructure instead of asking every service team to hand-build and operate a separate MCP server.</p></div>
+        </section>
+
+        <section id="security">
+          <p class="section-label">Security and governance</p>
+          <h2>Controls are placed at every stage of the tool lifecycle</h2>
+          <div class="control-list">
+            <div class="control-row"><strong>Trust tiers</strong><p>Third-party MCP servers receive more gating, scanning, and rigorous checks than trusted internal integrations. The distinction reflects different code, data, and operational ownership.</p></div>
+            <div class="control-row"><strong>Central authorization</strong><p>Tool access integrates with Uber's authorization service so availability does not imply universal permission to call the underlying data or endpoint.</p></div>
+            <div class="control-row"><strong>PII redaction</strong><p>A central redaction service removes sensitive information as part of the platform path rather than relying on every agent builder to implement privacy filtering correctly.</p></div>
+            <div class="control-row"><strong>Code and metadata scanning</strong><p>Changes are scanned at diff or commit time, and periodic scans look for risky patterns, accidental endpoint exposure, and problematic tool metadata.</p></div>
+            <div class="control-row"><strong>Mutable endpoint blocking</strong><p>The gateway can prevent agents from reaching operations capable of changing or disrupting critical services. Read and write capabilities are not treated as equivalent.</p></div>
+            <div class="control-row"><strong>Observability</strong><p>Logs, metrics, and traces provide visibility into calls and outcomes. This supports incident response, adoption analysis, performance management, and future tool evaluation.</p></div>
+          </div>
+          <p>The talk's broader lesson is that agent speed changes risk. A person might take several deliberate steps to cause damage, while an agent can repeat a mistaken call rapidly. The control plane must therefore enforce policy at the tool gateway, not merely describe expected behavior in a prompt.</p>
+        </section>
+
+        <section id="surfaces">
+          <p class="section-label">Agent consumption</p>
+          <h2>One MCP control plane supports three levels of abstraction</h2>
+          <div class="table-wrap comparison">
+            <table>
+              <thead><tr><th>Surface</th><th>Audience and use</th><th>How MCP is configured</th></tr></thead>
+              <tbody>
+                <tr><td>Uber Agent Builder</td><td>No-code internal productivity and team workflow automation</td><td>Reference an MCP server in system instructions, narrow it to specific tools, and apply parameter overrides through the UI</td></tr>
+                <tr><td>Uber Agent SDK</td><td>Code-first production agents with managed memory, chat history, and orchestration; examples include grocery, care coordination, and customer support</td><td>Declare the MCP identifier, selected tools, and parameter overrides in YAML configuration; the SDK loads the constrained tool set</td></tr>
+                <tr><td>Coding agents</td><td>Developer assistants such as Claude Code and Cursor, plus Uber's Minions background agent</td><td>Use Uber's AIFX CLI to add local or remote MCP servers to supported development environments</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The common platform does not force every user into the same interface. It standardizes tool ownership, security, and delivery, then offers a no-code configuration surface, a programmable SDK, and developer-native tooling.</p>
+        </section>
+
+        <section id="reliability">
+          <p class="section-label">Reliability pattern</p>
+          <h2>Remove model decisions when the workflow already knows the answer</h2>
+          <p>Tool calling often fails before execution: the model selects the wrong tool or invents an inappropriate parameter. Uber addresses this with three increasingly narrow controls.</p>
+          <ol class="summary-list">
+            <li><strong>Scope the MCP server.</strong> The builder tells the agent which server is relevant to the workflow.</li>
+            <li><strong>Select the exact tools.</strong> The configuration can expose only the operations the agent needs, eliminating unnecessary tool-choice ambiguity.</li>
+            <li><strong>Override fixed parameters.</strong> Known values such as tenant, environment, region, or workflow mode can be supplied by configuration rather than generated by the model.</li>
+          </ol>
+          <p>This is a strong enterprise pattern because it separates business configuration from probabilistic reasoning. The model should decide only what genuinely depends on context. Policy, identity, environment, and other predetermined values belong in trusted configuration.</p>
+        </section>
+
+        <section id="roadmap">
+          <p class="section-label">Near-term roadmap</p>
+          <h2>Uber wants the registry to become a quality and routing system</h2>
+          <p>The speakers describe the following as work in progress or future direction, not as a fully completed system:</p>
+          <div class="control-list">
+            <div class="control-row"><strong>Evaluation metadata</strong><p>Surface quality metrics in the registry so builders can compare tools using evidence rather than name recognition or internal popularity.</p></div>
+            <div class="control-row"><strong>SLA tiers</strong><p>Attach reliability and availability information to MCP servers, making production suitability visible during discovery and selection.</p></div>
+            <div class="control-row"><strong>Omni MCP search</strong><p>Give agents a tool-search capability that discovers and loads the relevant MCP tools on demand. This improves selection and reduces context bloat from loading every schema up front.</p></div>
+            <div class="control-row"><strong>Shareable skills</strong><p>Treat skills as reusable recipes that combine processes, conventions, and MCP use across teams.</p></div>
+            <div class="control-row"><strong>Skill evaluation</strong><p>Measure output quality, whether the skill was invoked correctly, and which version wins in an A/B test.</p></div>
+          </div>
+        </section>
+
+        <section id="chapters">
+          <p class="section-label">Chapter notes</p>
+          <h2>The keynote, in sequence</h2>
+          <ol class="chapter-list">
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=yVqMxBahjfA&t=0s">00:00</a></time><div><h3>From promising protocol to production infrastructure</h3><p>Somasundara and Tehrani frame the talk around operationalizing MCP across thousands of engineers, services, and agents rather than demonstrating a single tool connection.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=yVqMxBahjfA&t=34s">00:34</a></time><div><h3>AI usage is already the internal standard</h3><p>The speakers report more than 5,000 engineers, over 90% monthly AI usage, more than 1,500 active agents, and over 60,000 weekly executions. They position MCP as the reusable access layer across 10,000-plus services.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=yVqMxBahjfA&t=105s">01:45</a></time><div><h3>Fragmented development prevents production trust</h3><p>Without a standard lifecycle, teams create bespoke integrations and solve repeated deployment problems independently. The result is duplicated work and infrastructure that is difficult to govern.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=yVqMxBahjfA&t=144s">02:24</a></time><div><h3>Agent speed increases governance pressure</h3><p>Uber needs visibility into who calls what, prevention of unauthorized data access, and stronger checks for external MCP servers. Rapid automated action increases potential blast radius.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=yVqMxBahjfA&t=189s">03:09</a></time><div><h3>Discovery without quality is insufficient</h3><p>Builders must find a tool that is not only relevant but safe, reliable, and performant. A low-quality tool can make an otherwise capable agent unreliable.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=yVqMxBahjfA&t=209s">03:29</a></time><div><h3>Gateway and Registry become the control plane</h3><p>Uber moves to config-driven tool generation, preserves service-owner control, centralizes versions, and eliminates isolated playground deployments.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=yVqMxBahjfA&t=245s">04:05</a></time><div><h3>External and internal MCP servers receive different treatment</h3><p>Third-party systems face additional gating and scanning because Uber does not own their code, operations, or data-handling behavior.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=yVqMxBahjfA&t=285s">04:45</a></time><div><h3>Security is embedded across the lifecycle</h3><p>Central authorization, PII redaction, change scanning, periodic scanning, endpoint blocking, logs, metrics, and traces form a shared baseline.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=yVqMxBahjfA&t=340s">05:40</a></time><div><h3>IDLs are transformed into MCP definitions</h3><p>The orchestrator crawls Protobuf and Thrift files, drafts descriptions with an LLM, stores definitions, and feeds them to the gateway. Service-owner edits become scanned diffs before deployment.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=yVqMxBahjfA&t=444s">07:24</a></time><div><h3>Three agent surfaces consume the same platform</h3><p>Agent Builder serves no-code workflows, Agent SDK supports production applications, and coding tools serve developers. The abstraction changes while governance remains centralized.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=yVqMxBahjfA&t=530s">08:50</a></time><div><h3>Minions demonstrates background coding scale</h3><p>Uber's internal background agent, built on a Claude harness, is reported to produce around 1,800 code changes each week.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=yVqMxBahjfA&t=550s">09:10</a></time><div><h3>No-code reliability comes from narrowing choice</h3><p>Builders can name the server, select specific tools, and override parameters. Each constraint removes a decision the model does not need to make.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=yVqMxBahjfA&t=638s">10:38</a></time><div><h3>The SDK expresses equivalent controls as configuration</h3><p>A YAML file identifies the MCP server, limits tools, and supplies overrides. The SDK makes the resulting constrained set available to the agent.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=yVqMxBahjfA&t=676s">11:16</a></time><div><h3>AIFX connects development agents</h3><p>Uber's command-line tooling makes local or remote MCP servers available across supported coding environments such as Claude Code and Cursor.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=yVqMxBahjfA&t=702s">11:42</a></time><div><h3>The registry roadmap adds evidence and on-demand discovery</h3><p>Future work includes tool evaluation metrics, SLA tiers, and an omni MCP search tool that avoids loading every tool schema into context.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=yVqMxBahjfA&t=795s">13:15</a></time><div><h3>Skills become evaluated recipes for MCP use</h3><p>Uber wants teams to share processes and conventions as skills, then measure result quality, invocation correctness, and competing versions through A/B tests.</p></div></li>
+          </ol>
+        </section>
+
+        <section id="platform-translation">
+          <p class="section-label">Translation for an agentic AI platform</p>
+          <h2>Design implications for Master Agent, Sub-Agent, Skill, and MCP</h2>
+          <div class="platform-list">
+            <div class="platform-row"><strong>MCP Registry</strong><p>Store owner, version, trust tier, schemas, data classification, mutability, SLA, evaluation scores, approved consumers, and deprecation state. A name and description are not enough.</p></div>
+            <div class="platform-row"><strong>MCP Gateway</strong><p>Enforce identity, authorization, rate limits, PII policy, immutable-versus-mutable restrictions, audit logs, tracing, and emergency disablement at execution time.</p></div>
+            <div class="platform-row"><strong>Master Agent</strong><p>Discover a small eligible tool set based on business intent and policy. It should never receive the entire enterprise schema catalog in its working context.</p></div>
+            <div class="platform-row"><strong>Sub-Agent</strong><p>Receive only the MCP tools and parameter range required for its delegated role. A researcher, approver, and transaction executor should have different capabilities.</p></div>
+            <div class="platform-row"><strong>Actionable Skill</strong><p>Declare required tools, optional tools, fixed parameter bindings, runtime permissions, expected evidence, evaluation suite, and fallback or escalation behavior.</p></div>
+            <div class="platform-row"><strong>Cognitive Skill</strong><p>Carry interpretation and reasoning guidance without inheriting unnecessary action permissions. Separate “how to assess” from “permission to execute.”</p></div>
+            <div class="platform-row"><strong>BA Builder</strong><p>Offer controlled selectors for server, tool, fixed parameters, approval boundary, and output criteria. This is safer and easier to evaluate than asking a BA to encode everything in free-form system instructions.</p></div>
+            <div class="platform-row"><strong>Evaluation</strong><p>Score tool selection, parameter correctness, authorization behavior, execution success, latency, result quality, and skill invocation. Registry ranking should use these signals.</p></div>
+          </div>
+          <div class="callout-line"><strong>The most useful platform rule</strong><p>If the business already knows a value, bind it in trusted configuration. Do not spend model probability on rediscovering tenant, environment, permission, destination, or workflow mode.</p></div>
+        </section>
+
+        <section id="assessment">
+          <p class="section-label">Critical assessment</p>
+          <h2>What Uber demonstrates and what the talk does not prove</h2>
+          <h3>Strongest evidence</h3>
+          <p>The architecture is compelling because it reuses existing enterprise assets: IDLs, service ownership, code review, authorization, scanning, object storage, and observability. MCP is integrated into the engineering control system rather than operated as an isolated AI layer.</p>
+          <h3>Throughput is not a quality metric</h3>
+          <p>Sixty thousand executions and 1,800 code changes demonstrate adoption and operational volume, not correctness, cost efficiency, user value, or incident rate. Those outcomes require the evaluation and SLA work described in the roadmap.</p>
+          <h3>Generated descriptions still need governance</h3>
+          <p>An LLM can accelerate conversion from IDL to tool metadata, but message names and comments may be incomplete or written for human API consumers. Service-owner review, evaluation against realistic agent queries, and versioned rollback remain essential.</p>
+          <h3>Internal does not mean harmless</h3>
+          <p>Risk-based controls for third-party servers are reasonable, but internal tools can still expose sensitive data or damaging mutations. The same authorization, attribution, logging, and endpoint policy should remain mandatory; trust tier should change review depth, not erase runtime enforcement.</p>
+          <h3>Static constraints trade flexibility for reliability</h3>
+          <p>Tool selection and parameter overrides improve predictability when the workflow is known. They can also become brittle when context legitimately changes. The platform should make bindings explicit, test them across versions, and provide a safe escalation path rather than silently relaxing constraints.</p>
+          <div class="callout-line"><strong>My synthesis</strong><p>Uber's key contribution is not a particular MCP implementation. It is the idea that enterprise tool use needs a product lifecycle: generate, own, review, publish, authorize, observe, evaluate, rank, and retire.</p></div>
+        </section>
+
+        <section id="sources">
+          <p class="section-label">Sources</p>
+          <h2>Watch and read further</h2>
+          <ul class="source-links">
+            <li><a href="https://www.youtube.com/watch?v=yVqMxBahjfA">How Uber Runs 60,000 AI Agent Tasks per Week with MCP</a> — original Agentic AI Foundation keynote and public captions.</li>
+            <li><a href="https://www.uber.com/us/en/blog/solving-the-agent-identity-crisis/">Solving the Identity Crisis for AI Agents</a> — Uber's technical discussion of identity, authorization, actor lineage, and agent governance.</li>
+            <li><a href="https://www.uber.com/lk/en/ai-solutions/resources/the-agentic-ai-tech-stack/">The Agentic AI Tech Stack</a> — Uber's broader enterprise framing for orchestration, governance, testing, and infrastructure.</li>
+          </ul>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Article contents">
+        <nav class="toc" aria-labelledby="toc-title">
+          <h2 id="toc-title">On this page</h2>
+          <ul>
+            <li><a href="#summary">Executive summary</a></li>
+            <li><a href="#scale">Reported scale</a></li>
+            <li><a href="#problems">Problem classes</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#security">Security</a></li>
+            <li><a href="#surfaces">Agent surfaces</a></li>
+            <li><a href="#reliability">Reliability</a></li>
+            <li><a href="#roadmap">Roadmap</a></li>
+            <li><a href="#chapters">Chapter notes</a></li>
+            <li><a href="#platform-translation">Platform translation</a></li>
+            <li><a href="#assessment">Critical assessment</a></li>
+            <li><a href="#sources">Sources</a></li>
+          </ul>
+        </nav>
+        <div class="note-card">
+          <h2>Source scope</h2>
+          <p>370 caption rows · approximately 2,243 words · 14:27 runtime · 21 source chapters. Summary prepared September 6, 2026.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer-note">Detailed paraphrase for study. No full transcript is reproduced.</footer>
+</body>
+</html>

@@ -1,0 +1,1015 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Hermes Architecture Explained - Memory, Context & Gateways - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #617079;
+      --paper: #fffef9;
+      --wash: #f4f6f3;
+      --line: #d8ded5;
+      --teal: #15746d;
+      --blue: #2f6385;
+      --coral: #c35446;
+      --gold: #a77a24;
+      --violet: #695b86;
+      --charcoal: #203039;
+      --shadow: 0 24px 62px rgb(23 33 38 / 12%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(21 116 109 / 8%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(47 99 133 / 7%) 1px, transparent 1px),
+        var(--wash);
+      background-size: 42px 42px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--coral), var(--gold));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 82%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 760;
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 850px;
+      margin-top: 24px;
+      color: #2f3940;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.16rem, 2.1vw, 1.55rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e8ede8;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 84%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: rgb(255 255 255 / 88%);
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .stat {
+      padding: 14px;
+      color: var(--ink);
+      background: #fff;
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--coral);
+      font-size: 1.65rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 238px minmax(0, 1fr);
+      gap: 40px;
+      align-items: start;
+      margin-top: 38px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 6px;
+      padding: 16px;
+      background: rgb(255 255 255 / 78%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .toc span {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 750;
+      text-decoration: none;
+      border-top: 1px solid rgb(216 222 213 / 76%);
+    }
+
+    .content {
+      display: grid;
+      gap: 28px;
+      min-width: 0;
+    }
+
+    .section {
+      min-width: 0;
+      padding: 34px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; padding-top: 0; }
+
+    .label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      max-width: 890px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 4.2vw, 3.45rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      max-width: 910px;
+      margin-top: 14px;
+      color: #2f3940;
+      font-size: 1.08rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      margin-bottom: 12px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .flow-step {
+      position: relative;
+      min-width: 0;
+      padding: 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 30px rgb(23 33 38 / 6%);
+    }
+
+    .flow-step::after {
+      content: none;
+    }
+
+    .flow-step:last-child::after { display: none; }
+
+    .flow-step b {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--coral);
+      font-size: 0.8rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .layers {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .layer {
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .layer-label {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      color: #fff;
+      background: var(--blue);
+      border-radius: 8px;
+      font-weight: 900;
+    }
+
+    .layer-body {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .node {
+      min-height: 96px;
+      padding: 14px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .node strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.98rem;
+    }
+
+    .node span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .table-wrap {
+      min-width: 0;
+      margin-top: 24px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: #fff;
+      background: var(--blue);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    td {
+      color: #344047;
+      font-size: 0.95rem;
+    }
+
+    .quote {
+      margin-top: 24px;
+      padding: 22px;
+      color: #fff;
+      background: var(--violet);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.25rem, 2.5vw, 1.9rem);
+      line-height: 1.35;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 14px 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 46px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .layout,
+      .layer {
+        grid-template-columns: 1fr;
+      }
+
+      .toc { position: static; }
+
+      .grid,
+      .two,
+      .tldr,
+      .layer-body {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .page { padding-inline: 16px; }
+
+      .hero {
+        padding-top: 36px;
+        gap: 28px;
+      }
+
+      h1 {
+        max-width: 10ch;
+        font-size: clamp(2.7rem, 14vw, 4.35rem);
+      }
+
+      .grid,
+      .two,
+      .tldr,
+      .layer-body {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        min-width: 0;
+        table-layout: fixed;
+      }
+
+      th, td {
+        padding: 11px 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/reading/">Reading room</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#context">Context Stack</a>
+      <a class="action-link" href="#gateway">Gateway</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=n32qq7Kwzh0">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Hermes Architecture</span>
+        <h1>Memory, Context, Gateways, and Cron Jobs</h1>
+        <p class="subtitle">
+          A readable architecture summary of Hugging Face's Hermes Agent walkthrough.
+          The talk explains how Hermes is built: a simple agent loop, markdown-based persona and memory files,
+          SQLite session history, optional external memory, messaging gateways, context compression, and a built-in scheduler.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> Hermes Architecture EXPLAINED: Memory, Context & Gateways</span>
+          <span><strong>Creator:</strong> Hugging Face</span>
+          <span><strong>Transcript:</strong> 6,343 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/n32qq7Kwzh0/hqdefault.jpg" alt="Video thumbnail for Hermes Architecture Explained Memory Context and Gateways">
+        <figcaption>
+          Source video from Hugging Face, focused on the internal architecture of Hermes Agent.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="quick-summary-title">
+      <div>
+        <h2 id="quick-summary-title">The Short Version</h2>
+        <p>
+          Hermes is described as a straightforward but well-composed agent runtime.
+          Users can reach the same agent through CLI, API, or messaging gateways. Each user message triggers a loop:
+          build context, call the LLM, execute tools if needed, return a final answer, then update memory.
+        </p>
+        <ul class="tldr">
+          <li>The agent's identity and long-term notes are mostly markdown files such as <strong>soul.md</strong>, <strong>user.md</strong>, and <strong>memory.md</strong>.</li>
+          <li>Gateway conversations reconstruct message history from SQLite so Telegram, Slack, email, and similar channels can feel continuous.</li>
+          <li>Cron jobs are stored as JSON and run through Hermes' own minute-by-minute scheduler loop.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>40m</strong><span>architecture walkthrough</span></div>
+        <div class="stat"><strong>50%</strong><span>default compression threshold</span></div>
+        <div class="stat"><strong>3</strong><span>memory layers explained</span></div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Table of contents">
+        <span>Read</span>
+        <a href="#birdseye">Bird's-eye view</a>
+        <a href="#agent-loop">Agent loop</a>
+        <a href="#context">Context stack</a>
+        <a href="#compression">Compression</a>
+        <a href="#gateway">Gateway</a>
+        <a href="#memory">Memory layers</a>
+        <a href="#cron">Cron jobs</a>
+        <a href="#platform">Platform takeaways</a>
+      </nav>
+
+      <article class="content">
+        <section class="section" id="birdseye">
+          <span class="label">Bird's-Eye View</span>
+          <h2>Hermes is a core agent surrounded by interfaces, tools, skills, memory, and schedulers</h2>
+          <p class="lead">
+            The architecture starts simple. The AI agent core is the agentic loop. Users can talk to it through CLI,
+            API, or gateways such as Telegram, email, Slack, Discord, WhatsApp, or SMS. The core agent then has access
+            to tools, skills, memory, files, and scheduled jobs.
+          </p>
+
+          <div class="layers" aria-label="Hermes architecture overview">
+            <div class="layer">
+              <div class="layer-label">Interfaces</div>
+              <div class="layer-body">
+                <div class="node"><strong>CLI</strong><span>Direct terminal chat by running Hermes</span></div>
+                <div class="node"><strong>Gateway</strong><span>Messaging channels such as Telegram or Slack</span></div>
+                <div class="node"><strong>API</strong><span>Programmatic access to the agent</span></div>
+                <div class="node"><strong>Home Channel</strong><span>Where scheduled notifications return</span></div>
+              </div>
+            </div>
+            <div class="layer">
+              <div class="layer-label">Agent Core</div>
+              <div class="layer-body">
+                <div class="node"><strong>Context Builder</strong><span>Assembles prompts, memory, tools, and messages</span></div>
+                <div class="node"><strong>LLM Call</strong><span>Generates responses and tool calls</span></div>
+                <div class="node"><strong>Tool Runner</strong><span>Executes selected tools and returns results</span></div>
+                <div class="node"><strong>Memory Update</strong><span>Stores useful learnings after the turn</span></div>
+              </div>
+            </div>
+            <div class="layer">
+              <div class="layer-label">State</div>
+              <div class="layer-body">
+                <div class="node"><strong>Markdown</strong><span>soul.md, user.md, memory.md</span></div>
+                <div class="node"><strong>SQLite</strong><span>Full session transcripts and message history</span></div>
+                <div class="node"><strong>External Memory</strong><span>Mem0, Supermemory, Honcho, or similar providers</span></div>
+                <div class="node"><strong>Cron JSON</strong><span>Scheduled jobs and run outputs</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="agent-loop">
+          <span class="label">Agent Loop</span>
+          <h2>The runtime loop is deliberately simple</h2>
+          <p class="lead">
+            The loop runs every time the user sends a message. Hermes builds context from system prompts, markdown files,
+            tool and skill descriptions, message history, and optionally external memory. Then the model can call tools until it is ready to answer.
+          </p>
+
+          <div class="flow" aria-label="Hermes agent loop">
+            <div class="flow-step"><b>Message</b><span>User sends a message through CLI, gateway, or API.</span></div>
+            <div class="flow-step"><b>Context</b><span>Hermes assembles prompts, files, tools, memory, and messages.</span></div>
+            <div class="flow-step"><b>LLM</b><span>The full context is sent to the selected model.</span></div>
+            <div class="flow-step"><b>Tools</b><span>The model may call tools repeatedly and receive results.</span></div>
+            <div class="flow-step"><b>Answer</b><span>The model returns a final response to the user.</span></div>
+            <div class="flow-step"><b>Remember</b><span>Hermes analyzes whether anything should be written to memory.</span></div>
+          </div>
+
+          <p class="quote">
+            The self-improving feel comes from the final memory-update pass, not from magic inside the LLM call itself.
+          </p>
+        </section>
+
+        <section class="section" id="context">
+          <span class="label">Context Stack</span>
+          <h2>Hermes treats context as a stack of files, history, tools, skills, and summaries</h2>
+          <p class="lead">
+            The speaker spends significant time on context because it is the main programming surface of this architecture.
+            Hermes uses a small set of markdown files plus generated runtime context rather than one giant hidden prompt.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Context item</th>
+                  <th>What it contains</th>
+                  <th>How it behaves</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>System prompt</td>
+                  <td>Baseline runtime instructions for Hermes.</td>
+                  <td>Always included when context is built.</td>
+                </tr>
+                <tr>
+                  <td>soul.md</td>
+                  <td>The agent's personality, tone, goals, and operating style.</td>
+                  <td>Usually empty after install unless the user writes or asks Hermes to write it.</td>
+                </tr>
+                <tr>
+                  <td>user.md</td>
+                  <td>Information about the user, learned from conversation.</td>
+                  <td>Hermes can update it automatically when it learns user facts.</td>
+                </tr>
+                <tr>
+                  <td>memory.md</td>
+                  <td>Arbitrary useful facts, workflows, notes, and tool-use lessons.</td>
+                  <td>Can be updated by Hermes or manually by the user.</td>
+                </tr>
+                <tr>
+                  <td>External memory results</td>
+                  <td>Relevant past conversations or memories retrieved from an external provider.</td>
+                  <td>Only appears if external memory is configured.</td>
+                </tr>
+                <tr>
+                  <td>Tools and skills</td>
+                  <td>Descriptions of available capabilities and how to call them.</td>
+                  <td>Included so the LLM knows what it can do.</td>
+                </tr>
+                <tr>
+                  <td>Message history</td>
+                  <td>Recent conversation turns or a compressed summary if the context is too large.</td>
+                  <td>Summarized after a threshold or on context-window errors.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="compression">
+          <span class="label">Compression</span>
+          <h2>Context compression keeps long conversations inside the model window</h2>
+          <p class="lead">
+            Hermes checks whether the conversation needs compression before each turn and when a context-window error occurs.
+            The default threshold is described as 50% of the model's context window, though it can be adjusted during setup.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Trigger</span>
+              <h3>Before every turn</h3>
+              <p>Before calling the model, Hermes estimates context size and decides whether to compress previous messages.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Fallback</span>
+              <h3>On context error</h3>
+              <p>If the provider returns a context-window error, Hermes checks context and summarizes aggressively.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Estimate</span>
+              <h3>Characters divided by four</h3>
+              <p>Before the first call, it uses a cheap token estimate rather than a full tokenizer. Later it can use provider usage data.</p>
+            </article>
+          </div>
+
+          <ul class="checklist">
+            <li>The compressor prompt creates sections such as goal, constraints, completed actions, active state, historical progress, blockers, decisions, resolved questions, relevant files, and critical context.</li>
+            <li>Previous messages are replaced by a summary, then that summary becomes part of future context.</li>
+            <li>The approach is richer than minimal summarize-history prompts, because Hermes tries to preserve operational state for tool-using work.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="gateway">
+          <span class="label">Gateway</span>
+          <h2>The gateway is what makes Hermes feel always reachable</h2>
+          <p class="lead">
+            The gateway is an always-running service that listens to messaging providers, normalizes incoming messages,
+            reconstructs the relevant conversation history, builds context, and sends it into the agent loop.
+            The speaker argues this is one reason Hermes became popular.
+          </p>
+
+          <div class="flow" aria-label="Gateway flow">
+            <div class="flow-step"><b>Listen</b><span>Telegram, Slack, Discord, email, SMS, WhatsApp, or similar channels.</span></div>
+            <div class="flow-step"><b>Normalize</b><span>Provider-specific webhooks, polling, or websockets become a standard message.</span></div>
+            <div class="flow-step"><b>Session</b><span>Gateway name and provider session ID identify the conversation.</span></div>
+            <div class="flow-step"><b>SQLite</b><span>Message history is loaded from local SQLite storage.</span></div>
+            <div class="flow-step"><b>Manage</b><span>Session manager decides whether to interrupt, steer, or queue.</span></div>
+            <div class="flow-step"><b>Agent</b><span>The reconstructed context is sent to the core Hermes agent.</span></div>
+          </div>
+
+          <div class="grid three">
+            <article class="card">
+              <span class="pill">Interrupt</span>
+              <h3>Stop the current run</h3>
+              <p>A gateway command such as slash interrupt can stop an active agent run.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Steer</span>
+              <h3>Change direction mid-run</h3>
+              <p>A steer command can guide an ongoing task without treating the message as a separate request.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Queue</span>
+              <h3>Wait for the active work</h3>
+              <p>A normal message may be queued if the agent is already handling another request.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="memory">
+          <span class="label">Memory Layers</span>
+          <h2>Hermes memory is not one thing; it is markdown, SQLite, and optional external recall</h2>
+          <p class="lead">
+            The video clarifies a useful distinction. Markdown files are always attached to context. SQLite stores session transcripts.
+            External memory providers, when configured, retrieve relevant older memories and feed them into future turns.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Memory layer</th>
+                  <th>Storage</th>
+                  <th>Purpose</th>
+                  <th>Platform lesson</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Profile memory</td>
+                  <td>soul.md, user.md, memory.md</td>
+                  <td>Identity, user facts, reusable notes, and learned workflow details.</td>
+                  <td>Keep high-value operating context human-readable and editable.</td>
+                </tr>
+                <tr>
+                  <td>Session memory</td>
+                  <td>Local SQLite database</td>
+                  <td>Full transcripts and message history across conversations and gateways.</td>
+                  <td>Every channel needs a durable session ID and trace store.</td>
+                </tr>
+                <tr>
+                  <td>Searchable text</td>
+                  <td>Bare-text SQLite table</td>
+                  <td>Simplifies similarity search over conversation text.</td>
+                  <td>Separate raw trace storage from retrieval-optimized indexes.</td>
+                </tr>
+                <tr>
+                  <td>External memory</td>
+                  <td>Providers such as Mem0, Supermemory, Honcho, or similar systems</td>
+                  <td>Retrieve relevant prior context after the first message of a topic.</td>
+                  <td>External recall improves continuity, but should be explicit and observable.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="quote">
+            Important behavior: external memory is queried after Hermes has enough topic context, so the first message may orient the system and the follow-up may benefit from recall.
+          </p>
+        </section>
+
+        <section class="section" id="cron">
+          <span class="label">Cron Jobs</span>
+          <h2>Hermes has its own scheduler loop, not just operating-system cron</h2>
+          <p class="lead">
+            Cron jobs let Hermes run scheduled work such as daily briefings, weekly reports, or recurring community updates.
+            The talk notes that Hermes cron is its own loop that ticks every minute, checks jobs, executes due work, and stores output.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Tick</span>
+              <h3>Runs every minute</h3>
+              <p>The scheduler loop calls a tick function every minute and checks whether any job is due.</p>
+            </article>
+            <article class="card">
+              <span class="pill">jobs.json</span>
+              <h3>Plain JSON job store</h3>
+              <p>The speaker says jobs are stored in a file such as <strong>.hermes/cron/jobs.json</strong>, not pulled from SQLite in his analysis.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Run Output</span>
+              <h3>Markdown per job run</h3>
+              <p>Job outputs are stored under cron output directories, with markdown records for individual runs.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Home Channel</span>
+              <h3>Notification target</h3>
+              <p>Cron results go to the configured home messaging integration rather than the agent calling a send-message tool manually.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Plain English</span>
+              <h3>User-friendly scheduling</h3>
+              <p>The user can ask Hermes to perform recurring work, and the system turns it into scheduled agent activity.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Audit</span>
+              <h3>Runs should be inspectable</h3>
+              <p>The output files create a place to inspect what each scheduled task actually did.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your agentic AI platform</h2>
+          <p class="lead">
+            This is one of the most directly useful videos for your Master Agent, Sub-Agent, Skill, Tool MCP, memory,
+            gateway, and Flow Markdown design. Hermes shows a concrete runtime architecture you can translate into BA-facing concepts.
+          </p>
+
+          <ul class="checklist">
+            <li><strong>Make the context builder explicit.</strong> A BA-authored flow should compile into system prompt, agent card, memory policy, tools, skills, recent messages, retrieved memory, and current task state.</li>
+            <li><strong>Separate agent identity from user memory.</strong> Use different artifacts for persona/role, user profile, workflow notes, and business facts.</li>
+            <li><strong>Keep important memory human-readable.</strong> Markdown-like memory is valuable because BAs and SMEs can inspect, edit, and approve it.</li>
+            <li><strong>Store full session traces separately.</strong> SQLite-style transcript storage should feed audit, replay, debugging, evaluation, and retrieval indexes.</li>
+            <li><strong>Design gateway sessions as first-class objects.</strong> Telegram, Line, Slack, webchat, and email should each map messages into a durable session with channel, user ID, permissions, and history.</li>
+            <li><strong>Add session controls.</strong> Interrupt, steer, queue, stop, retry, and escalate should be platform primitives, not hidden chat tricks.</li>
+            <li><strong>Expose context compression policy.</strong> Let advanced users configure when to summarize, what summary schema to use, and which artifacts must never be summarized away.</li>
+            <li><strong>Treat external memory as a provider layer.</strong> Memory providers should be swappable, observable, and evaluated for precision, recall, privacy, and cost.</li>
+            <li><strong>Use a deterministic scheduler for business flows.</strong> Recurring tasks should live in a job store with next run, owner, prompt, channel, output, approval rules, and run history.</li>
+            <li><strong>Build the dashboard around runtime truth.</strong> Show context stack, messages, tool calls, memory writes, gateway events, scheduled jobs, model usage, and errors in one trace view.</li>
+          </ul>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Hermes component</th>
+                  <th>BA-facing platform object</th>
+                  <th>Why it matters</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>soul.md</td>
+                  <td>Agent Persona Card</td>
+                  <td>Defines role, tone, boundaries, and operating principles.</td>
+                </tr>
+                <tr>
+                  <td>user.md</td>
+                  <td>User or customer profile memory</td>
+                  <td>Keeps personalization separate from agent identity.</td>
+                </tr>
+                <tr>
+                  <td>memory.md</td>
+                  <td>Workflow memory and lessons learned</td>
+                  <td>Captures reusable knowledge without hiding it inside vectors only.</td>
+                </tr>
+                <tr>
+                  <td>Gateway session ID</td>
+                  <td>Channel conversation record</td>
+                  <td>Lets the same agent continue across messaging surfaces.</td>
+                </tr>
+                <tr>
+                  <td>Context compression</td>
+                  <td>State summarization policy</td>
+                  <td>Protects long-running work from context-window failure.</td>
+                </tr>
+                <tr>
+                  <td>Cron jobs</td>
+                  <td>Scheduled Flow Markdown trigger</td>
+                  <td>Turns business recurrence into inspectable agent work.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="quote">
+            Strong opinion: for a BA-facing system, the architecture should make the invisible runtime visible: what context was built, which memory was read, which channel started the run, which job scheduled it, and what the agent wrote back.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for <strong>Hermes Architecture EXPLAINED: Memory, Context & Gateways</strong>. Source: Hugging Face. Video ID: n32qq7Kwzh0.
+  </footer>
+</body>
+</html>

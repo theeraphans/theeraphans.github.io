@@ -1,0 +1,1186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Jensen Huang on Open Agent Systems - Detailed Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #182128;
+      --muted: #5d6971;
+      --quiet: #7d878d;
+      --paper: #fffefa;
+      --canvas: #f5f7f1;
+      --line: #d8ded8;
+      --blue: #285f78;
+      --teal: #1d746a;
+      --green: #547c49;
+      --gold: #aa7524;
+      --coral: #be513f;
+      --plum: #65577d;
+      --sky: #e6eef4;
+      --mint: #e3f0ea;
+      --sand: #f6ecd7;
+      --rose: #f5e5df;
+      --shadow: 0 24px 68px rgb(24 33 40 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgb(255 255 255 / 92%), rgb(245 247 241 / 96%)),
+        var(--canvas);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--green), var(--blue), var(--teal), var(--gold), var(--coral), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 86%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.06fr) minmax(300px, 0.94fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.55rem, 5.75vw, 5.1rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 850px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: #e8ede7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 28px;
+      margin: 34px 0 0;
+      padding: 24px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .quick-summary h2,
+    .section h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.85rem, 3.2vw, 2.7rem);
+      font-weight: 740;
+      line-height: 1.06;
+      letter-spacing: 0;
+    }
+
+    .quick-summary p {
+      margin-top: 14px;
+      color: #303a41;
+      font-size: 1.04rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .summary-list li {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+      color: var(--muted);
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+    }
+
+    .stat {
+      display: grid;
+      min-height: 74px;
+      padding: 12px;
+      background: var(--mint);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat:nth-child(2) { background: var(--sky); }
+    .stat:nth-child(3) { background: var(--sand); }
+
+    .stat strong {
+      font-size: 1.4rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 820;
+      text-transform: uppercase;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 46px;
+      align-items: start;
+      padding-top: 38px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .sidebar-block,
+    .toc {
+      padding: 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .sidebar h2,
+    .toc h2 {
+      margin-bottom: 10px;
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .glance {
+      display: grid;
+      gap: 11px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: grid;
+      gap: 2px;
+      padding-bottom: 11px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .glance li:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .glance span {
+      color: var(--quiet);
+      font-size: 0.75rem;
+      font-weight: 820;
+      text-transform: uppercase;
+    }
+
+    .glance strong {
+      font-size: 0.95rem;
+    }
+
+    .toc {
+      display: grid;
+      gap: 8px;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--blue);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+      font-weight: 780;
+      text-decoration: none;
+    }
+
+    .content {
+      display: grid;
+      gap: 24px;
+    }
+
+    .section {
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .label {
+      display: inline-flex;
+      margin-bottom: 13px;
+      color: var(--coral);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .lead {
+      margin-top: 16px;
+      color: #303a41;
+      font-size: 1.12rem;
+      line-height: 1.72;
+    }
+
+    .section p:not(.lead),
+    .section ul,
+    .section ol {
+      margin-top: 15px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .section strong { color: var(--ink); }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card.mint { background: var(--mint); }
+    .card.sky { background: var(--sky); }
+    .card.sand { background: var(--sand); }
+    .card.rose { background: var(--rose); }
+
+    .card h3 {
+      margin-top: 10px;
+      font-size: 1.02rem;
+      line-height: 1.25;
+    }
+
+    .card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      color: #fff;
+      background: var(--blue);
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .pill.green { background: var(--green); }
+    .pill.gold { background: var(--gold); }
+    .pill.coral { background: var(--coral); }
+    .pill.plum { background: var(--plum); }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 112px minmax(0, 1fr);
+      gap: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .timeline-item:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .time {
+      color: var(--coral);
+      font-size: 0.8rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .timeline-item h3 {
+      font-size: 1.08rem;
+      line-height: 1.3;
+    }
+
+    .timeline-item p {
+      margin-top: 5px;
+      color: var(--muted);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .flow-step {
+      min-height: 132px;
+      padding: 14px;
+      background: var(--mint);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .flow-step:nth-child(2) { background: var(--sky); }
+    .flow-step:nth-child(3) { background: var(--sand); }
+    .flow-step:nth-child(4) { background: var(--rose); }
+    .flow-step:nth-child(5) { background: #ece8f2; }
+
+    .flow-step span {
+      color: var(--coral);
+      font-size: 0.76rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .flow-step strong {
+      display: block;
+      margin-top: 8px;
+      line-height: 1.25;
+    }
+
+    .flow-step p {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .quote-box {
+      margin-top: 20px;
+      padding: 18px;
+      color: #263138;
+      background: linear-gradient(90deg, rgb(29 116 106 / 11%), rgb(190 81 63 / 10%));
+      border-left: 5px solid var(--teal);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.16rem;
+      line-height: 1.55;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 13px 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .mini-spec {
+      margin: 20px 0 0;
+      padding: 18px;
+      overflow-x: auto;
+      color: #f7fbfb;
+      background: #1f2a30;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.88rem;
+      line-height: 1.58;
+      white-space: pre;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-left: 18px;
+    }
+
+    .note {
+      margin-top: 18px;
+      padding: 14px;
+      color: var(--muted);
+      background: var(--sky);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 26px 24px 38px;
+      color: var(--quiet);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .toc {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .toc h2 {
+        grid-column: 1 / -1;
+      }
+
+      .flow,
+      .three {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .page {
+        padding-inline: 18px;
+      }
+
+      .hero {
+        gap: 26px;
+        padding-top: 36px;
+      }
+
+      h1 {
+        font-size: clamp(2.25rem, 13vw, 3.2rem);
+      }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .two,
+      .three,
+      .flow,
+      .toc {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline-item {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+
+      .mini-spec {
+        white-space: pre-wrap;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/reading/">Reading room</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#thesis">Thesis</a>
+      <a class="action-link" href="#specialization">Specialization</a>
+      <a class="action-link" href="#harness">Harness</a>
+      <a class="action-link" href="#runtime">Runtime</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=Yy3JH6dDugc">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Open Agent Systems - Enterprise AI</span>
+        <h1>Jensen Huang on Why Companies Need Open Agent Systems</h1>
+        <p class="subtitle">
+          A detailed summary of Jensen Huang's conversation with LangChain on enterprise agents:
+          why the model is only one ingredient, why company-specific intelligence should remain under
+          company control, and why future business processes may become agent harnesses.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> Jensen Huang: Why companies need open agent systems</span>
+          <span><strong>Creator:</strong> LangChain</span>
+          <span><strong>Transcript:</strong> 4,652 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/Yy3JH6dDugc/hqdefault.jpg" alt="Video thumbnail for Jensen Huang open agent systems interview">
+        <figcaption>
+          The conversation is a strategy memo disguised as an interview: open models, open harnesses,
+          secure runtimes, proprietary knowledge, and enterprise feedback loops.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          Jensen's core argument is that AI is finally useful enough for every enterprise to ask how it should be applied.
+          His answer is not "buy one model." It is: build open, controllable agent systems around your own domain knowledge,
+          workflows, tools, data, memory, guardrails, evals, and runtime permissions.
+        </p>
+        <ul class="summary-list">
+          <li>The LLM is the enabling ingredient, but the useful product is the harness around it: retrieval, tools, memory, safeguards, iteration, evaluation, and runtime.</li>
+          <li>Companies should use frontier models, but they should also build proprietary domain agents for workflows that define their business.</li>
+          <li>Open agent stacks matter because the most valuable intelligence inside a company is specialized, private, and continuously improved through use.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>26m</strong><span>runtime</span></div>
+        <div class="stat"><strong>482</strong><span>caption rows</span></div>
+        <div class="stat"><strong>4,652</strong><span>words</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Main lens</span><strong>Open agent ecosystem</strong></li>
+            <li><span>Speaker</span><strong>Jensen Huang</strong></li>
+            <li><span>Host</span><strong>LangChain</strong></li>
+            <li><span>Best artifact</span><strong>Harness spec</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#thesis">Why AI Is Useful Now</a>
+          <a href="#open">Why Open Systems Matter</a>
+          <a href="#specialization">Specialization</a>
+          <a href="#cost">Cost and Iteration</a>
+          <a href="#frontier">Frontier and Owned Agents</a>
+          <a href="#harness">Business Process as Harness</a>
+          <a href="#runtime">Runtime and Security</a>
+          <a href="#humans">Humans, Jobs, and Evals</a>
+          <a href="#stack">The Proposed Stack</a>
+          <a href="#platform">Platform Takeaways</a>
+          <a href="#templates">Flow Markdown</a>
+          <a href="#sources">Sources</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="thesis">
+          <span class="label">Core Thesis</span>
+          <h2>AI became useful when models, tools, memory, safeguards, and iteration came together.</h2>
+          <p class="lead">
+            Jensen starts by saying that the last several months changed the practical usefulness of AI. The breakthrough is
+            not merely larger language models. It is the arrival of agentic systems that are grounded in information, connected
+            to tools, able to manage memory, protected by safeguards, and capable of iterating until work is done.
+          </p>
+          <p>
+            In his framing, LangChain's early role was to turn a large language model into a promptable API and then into RAG,
+            tool use, workflows, and eventually agents. This is why he keeps returning to the word "harness." The model matters,
+            but useful enterprise AI requires a surrounding system that can decide what information to use, which tools to call,
+            what state to preserve, what policy to obey, and how to evaluate progress.
+          </p>
+          <div class="flow" aria-label="Agent system layers">
+            <div class="flow-step">
+              <span>Layer 1</span>
+              <strong>Capable model</strong>
+              <p>The base intelligence must be good enough to reason, call tools, and recover from errors.</p>
+            </div>
+            <div class="flow-step">
+              <span>Layer 2</span>
+              <strong>Domain context</strong>
+              <p>The agent needs private knowledge, retrieval, documents, and workflow state.</p>
+            </div>
+            <div class="flow-step">
+              <span>Layer 3</span>
+              <strong>Tools and skills</strong>
+              <p>The system exposes APIs, MCP tools, code execution, search, optimization tools, and business actions.</p>
+            </div>
+            <div class="flow-step">
+              <span>Layer 4</span>
+              <strong>Runtime control</strong>
+              <p>Security, sandboxing, access control, policies, and deployment decide whether it can run in production.</p>
+            </div>
+            <div class="flow-step">
+              <span>Layer 5</span>
+              <strong>Feedback loop</strong>
+              <p>Evals, expert feedback, traces, benchmarks, and post-training improve the agent over time.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="open">
+          <span class="label">Open Ecosystem</span>
+          <h2>Open systems are necessary because AI is a fundamental technology, not one packaged use case.</h2>
+          <p class="lead">
+            NVIDIA's investment in open agent systems comes from a simple belief: AI becomes valuable only when it is applied
+            across many domains. Scientists, biologists, designers, roboticists, students, researchers, enterprise IT teams,
+            and operations teams all need different agent systems.
+          </p>
+          <p>
+            This variety cannot be solved by a single closed experience. Enterprises need to imbue agents with specialized
+            knowledge, private data, proprietary procedures, and unique success criteria. Jensen describes a flywheel where a
+            company uses an AI system, the system becomes more useful, the company uses it more, and the system improves again.
+            That flywheel is hardest to build if the core workflow is outside the company's control.
+          </p>
+          <div class="grid three">
+            <article class="card mint">
+              <span class="pill green">Control</span>
+              <h3>Domain knowledge stays owned</h3>
+              <p>Company-specific intelligence is not a generic commodity. It is part of the company's identity.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill">Portability</span>
+              <h3>Agents can run where the business needs</h3>
+              <p>The same pattern can run in cloud, on-prem, sandboxed runtime, workstation, or enterprise infrastructure.</p>
+            </article>
+            <article class="card sand">
+              <span class="pill gold">Improvement</span>
+              <h3>Use creates the next training signal</h3>
+              <p>Expert feedback, traces, eval results, and process outcomes become a continuous improvement loop.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="specialization">
+          <span class="label">Specialization</span>
+          <h2>Specialization starts with a good model, then the harness makes it useful for one job.</h2>
+          <p class="lead">
+            When asked how systems should specialize, Jensen does not say the answer is only fine-tuning. He says the model must
+            first be good enough, then the harness grounds it in domain-specific information and tools. A person becomes more
+            useful when given the right information, and an agent follows the same product logic.
+          </p>
+          <p>
+            The conversation uses NVIDIA Nemotron and LangChain Deep Agents as the example. The host says that adapting prompts,
+            tools, and harness behavior for Nemotron lifted performance close to Claude Opus on an internal Deep Agents benchmark,
+            while being much cheaper. The important lesson is broader than one benchmark: model capability and harness design
+            interact. A weaker harness can hide a model's potential; a task-specific harness can expose it.
+          </p>
+          <div class="quote-box">
+            The practical design pattern is not model versus harness. It is model plus harness plus domain context plus
+            improvement loop.
+          </div>
+          <div class="grid two">
+            <article class="card rose">
+              <span class="pill coral">Model side</span>
+              <h3>Reasoning quality must clear the threshold</h3>
+              <p>The model must be capable enough to follow long workflows, use tools, and recover from partial failure.</p>
+            </article>
+            <article class="card mint">
+              <span class="pill green">Harness side</span>
+              <h3>The environment shapes the result</h3>
+              <p>Prompt structure, tool availability, memory, retrieval, evals, and runtime policy decide whether capability becomes output.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="cost">
+          <span class="label">Cost and Search Space</span>
+          <h2>Cheaper intelligence changes behavior because builders use more of it.</h2>
+          <p class="lead">
+            Jensen's view of cost is not only about saving budget. Cost-effective intelligence lets agents search a larger space.
+            When a model is fast and computationally efficient, a workflow can try more plans, inspect more options, call more
+            tools, and revise more often before returning an answer.
+          </p>
+          <p>
+            This is one of the strongest practical points in the conversation. If an enterprise platform makes agent steps
+            expensive, users will make workflows short and brittle. If the platform makes useful agentic iteration affordable,
+            users will let the system explore more alternatives and produce better answers. Speed and cost are therefore product
+            features, not merely infrastructure metrics.
+          </p>
+          <div class="timeline">
+            <div class="timeline-item">
+              <span class="time">Input</span>
+              <div>
+                <h3>Fast, efficient model</h3>
+                <p>Lower latency and lower cost reduce the penalty for iteration.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="time">Behavior</span>
+              <div>
+                <h3>Agent explores more plans</h3>
+                <p>The workflow can sample, test, compare, and refine rather than stopping at the first plausible path.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="time">Outcome</span>
+              <div>
+                <h3>Better answer or stronger evidence</h3>
+                <p>The agent can produce a more defensible result because it had room to search.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="frontier">
+          <span class="label">Frontier and Owned Agents</span>
+          <h2>Use frontier models first, then specialize where the workflow becomes strategically important.</h2>
+          <p class="lead">
+            Jensen says he starts work with frontier models because they reveal what is possible and reduce time to result.
+            For many general tasks, there may be no need to replace them. They keep improving, and they are valuable as broad
+            intelligence that a company can rent when needed.
+          </p>
+          <p>
+            But the conversation changes when the task is a company-defining workflow. Jensen gives examples like supply-chain
+            optimization, chip-design optimization, and floor-planning optimization. These are not generic assistant tasks. They
+            require proprietary tools, proprietary data, specialized constraints, and teams dedicated to refinement. In those
+            cases, the company should build specialized "super sub-agents" for one job.
+          </p>
+          <div class="grid two">
+            <article class="card sky">
+              <span class="pill">Frontier model</span>
+              <h3>Best for discovery and general work</h3>
+              <p>Use it to understand potential, prototype workflows, orchestrate broad tasks, and handle generic skills like writing and coding.</p>
+            </article>
+            <article class="card sand">
+              <span class="pill gold">Owned domain agent</span>
+              <h3>Best for strategic workflows</h3>
+              <p>Build it when the workflow contains proprietary knowledge, repeated value, specialized tools, and long-term learning.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="harness">
+          <span class="label">Harness as Business Process</span>
+          <h2>Today's business processes may become tomorrow's agent harnesses.</h2>
+          <p class="lead">
+            One of the most important lines in the video is Jensen's claim that companies are currently built on business
+            processes, but future companies will be built on harnesses. This is a useful mental model for your own platform:
+            a harness is a business process that can reason, call tools, remember state, and improve.
+          </p>
+          <p>
+            In a traditional company, a workflow might be documented as SOP: intake, validate, route, investigate, decide, record,
+            escalate. In an agentic company, the same workflow becomes a harness: a Master Agent coordinates sub-agents, tools,
+            memory, data permissions, evals, guardrails, and human checkpoints. The SOP does not disappear. It becomes executable.
+          </p>
+          <div class="grid three">
+            <article class="card mint">
+              <span class="pill green">SOP</span>
+              <h3>What should happen</h3>
+              <p>Business flow, policy, responsibility, decision rules, and exception handling.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill">Harness</span>
+              <h3>How agents do it</h3>
+              <p>Prompts, routing, tools, context, memory, state, retries, approval gates, and traces.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Flywheel</span>
+              <h3>How it improves</h3>
+              <p>Evals, expert feedback, post-training, harness tuning, tool changes, and new data connectors.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="runtime">
+          <span class="label">Runtime and Security</span>
+          <h2>Without access control and sandboxing, enterprise agents cannot deploy.</h2>
+          <p class="lead">
+            Jensen and the host spend time on runtime because the enterprise problem is not only intelligence. Agents need a
+            place to run safely. They need sandboxing, privacy, security, policy-based guardrails, access control, and deployment
+            options that IT organizations can trust.
+          </p>
+          <p>
+            Jensen compares agent onboarding to employee onboarding. A company does not give every employee access to every file,
+            network, tool, and colleague. It gives each role the access needed for the job. Agent platforms need the same design:
+            mission, skills file, allowed tools, allowed data, allowed network, allowed actions, and audit trail.
+          </p>
+          <ul class="checklist">
+            <li><strong>Mission:</strong> what the agent exists to do, which business process it owns, and what success means.</li>
+            <li><strong>Skills:</strong> reusable cognitive and actionable capabilities, including tool-required skills.</li>
+            <li><strong>Permissions:</strong> data, API, filesystem, browser, code execution, and human approval boundaries.</li>
+            <li><strong>Runtime:</strong> where the agent executes, what is sandboxed, how policies are enforced, and how logs are captured.</li>
+            <li><strong>Evaluation:</strong> how subject matter experts judge quality, risk, compliance, and business value.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="humans">
+          <span class="label">Humans and Evals</span>
+          <h2>Agents are tools, and their rise creates more systems work for humans.</h2>
+          <p class="lead">
+            The host asks about anthropomorphizing agents. Jensen's answer is direct: agents are software, not conscious beings.
+            They can do work that looks autonomous, but they are still computational systems built by people. This matters because
+            enterprise agent design should avoid mysticism and focus on engineering surfaces that can be measured and improved.
+          </p>
+          <p>
+            Jensen also argues that the more AI NVIDIA uses, the more people it needs. Software engineers shift from typing code
+            toward building agent systems, evals, benchmarks, guardrails, and autonomous workflows. Subject matter experts become
+            crucial because they know whether an agent's output is actually good. The tedious parts can be automated, while humans
+            spend more attention on judgment, creativity, architecture, and new possibilities that were not practical before.
+          </p>
+          <div class="grid two">
+            <article class="card sand">
+              <span class="pill gold">SME role</span>
+              <h3>Quality signal provider</h3>
+              <p>Experts define good work, review edge cases, label failures, and convert tacit judgment into evals.</p>
+            </article>
+            <article class="card mint">
+              <span class="pill green">Engineer role</span>
+              <h3>Agent system builder</h3>
+              <p>Engineers build harnesses, runtime controls, observability, tests, guardrails, tools, and improvement loops.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="stack">
+          <span class="label">Stack Mentioned</span>
+          <h2>The proposed enterprise stack combines open models, open harnesses, secure runtime, and deployable blueprints.</h2>
+          <p class="lead">
+            Near the end, the conversation points to a full stack for building enterprise agents. The transcript references
+            Nemotron, LangChain Deep Agents, OpenShell, blueprints, acceleration stacks, and deployment across cloud, on-prem,
+            DGX Spark, DGX Station, or company infrastructure.
+          </p>
+          <p>
+            The exact product packaging can change, but the architecture pattern is durable: model plus harness plus blueprint
+            plus runtime plus infrastructure. For enterprise buyers, the blueprint lowers setup friction. For platform builders,
+            it is a reminder that agents do not become useful until they are packaged into repeatable deployment paths.
+          </p>
+          <div class="timeline">
+            <div class="timeline-item">
+              <span class="time">Model</span>
+              <div>
+                <h3>Nemotron and frontier models</h3>
+                <p>Open or frontier models provide reasoning, orchestration, research, coding, and domain-specific work.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="time">Harness</span>
+              <div>
+                <h3>LangChain Deep Agents</h3>
+                <p>The harness defines planning, tools, memory, context management, sub-agents, and workflow behavior.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="time">Runtime</span>
+              <div>
+                <h3>NVIDIA OpenShell</h3>
+                <p>The runtime gives agents a controlled execution environment with sandboxing and policy boundaries.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="time">Blueprint</span>
+              <div>
+                <h3>Repeatable deployment pattern</h3>
+                <p>Blueprints turn a pile of agent technologies into something teams can start from and adapt.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>How this maps to your Master Agent, Sub-Agent, Skill, and MCP platform.</h2>
+          <p class="lead">
+            This video is highly relevant to your platform work because it gives a strategic reason for your SOP problem.
+            The thing you are trying to standardize is not just "persona prompts." It is the enterprise harness: role,
+            context, tools, permissions, evals, runtime, and improvement loop.
+          </p>
+          <ul class="checklist">
+            <li><strong>Make the harness the main object.</strong> A Master Agent should not be only a prompt. It should be a versioned workflow asset with inputs, outputs, tools, policies, evals, and state rules.</li>
+            <li><strong>Separate general intelligence from domain agents.</strong> Use frontier models for discovery and orchestration, then specialize owned agents for workflows with repeated strategic value.</li>
+            <li><strong>Let BAs author business flow first.</strong> Convert SOP steps into Flow Markdown, then generate agent roles, skills, tool requirements, data permissions, and human gates.</li>
+            <li><strong>Define skills as reusable capabilities.</strong> Cognitive skills transform information. Actionable skills require tools, permissions, and runtime policy. Both need test cases.</li>
+            <li><strong>Attach every tool to a permission policy.</strong> MCP access should be scoped by role, data boundary, action type, approval requirement, and auditability.</li>
+            <li><strong>Add evals at the business-process level.</strong> Do not only test prompt output. Test whether the full harness completes the SOP correctly, safely, and measurably.</li>
+            <li><strong>Design the improvement loop from day one.</strong> Capture traces, SME feedback, failures, cost, latency, and accepted outputs so each harness can become better over time.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">Flow Markdown</span>
+          <h2>A practical open-agent harness spec you can adapt.</h2>
+          <p class="lead">
+            This template converts Jensen's argument into a platform artifact. It lets a BA describe a business process in a
+            structured way, then lets the technical side map it to Master Agent, Sub-Agent, skills, MCP tools, permissions,
+            evals, and runtime.
+          </p>
+          <pre class="mini-spec"># Open Agent Harness Spec: Enterprise Domain Agent
+
+goal: Build a controllable domain-specific agent system around a strategic business workflow.
+owner: Business Process Owner
+runtime_owner: Agent Platform Team
+status: draft
+
+business_context:
+  workflow_name: supply_chain_exception_review
+  why_it_matters: repeated strategic workflow with private data and expert judgment
+  current_sop_source: sop/supply-chain-exception-review.md
+  success_definition:
+    - reduce analyst review time
+    - preserve auditability
+    - improve decision consistency
+    - escalate uncertain cases clearly
+
+agent_architecture:
+  master_agent:
+    role: workflow_orchestrator
+    responsibilities:
+      - read case context
+      - route tasks to sub_agents
+      - enforce policy gates
+      - synthesize final recommendation
+      - prepare human review packet
+
+  sub_agents:
+    - id: retrieval_agent
+      purpose: gather relevant internal records and policy documents
+      skills: [enterprise_search, citation_builder]
+      tools_required: [knowledge_base_search_mcp, document_store_mcp]
+
+    - id: analysis_agent
+      purpose: compare exception against policy and historical outcomes
+      skills: [case_reasoning, pattern_matching]
+      tools_required: [data_warehouse_mcp]
+
+    - id: action_agent
+      purpose: draft permitted system updates after approval
+      skills: [action_planning, change_summary]
+      tools_required: [erp_mcp]
+      approval_required: true
+
+skills:
+  cognitive:
+    - policy_interpretation
+    - evidence_synthesis
+    - risk_assessment
+    - escalation_reasoning
+  actionable:
+    - enterprise_search
+    - erp_case_update
+    - notification_draft
+    - audit_log_write
+
+context_and_memory:
+  required_context:
+    - current_case
+    - relevant_policy
+    - prior_similar_cases
+    - user_role_permissions
+  memory_policy:
+    working_memory: per_case
+    long_term_memory: approved_patterns_only
+    pii_handling: redact_unless_role_allowed
+
+permissions:
+  data_access:
+    - policy_docs: read
+    - case_records: read
+    - erp_records: read_limited
+  actions:
+    - draft_update: allowed
+    - execute_update: human_approval_required
+    - external_message: human_approval_required
+  runtime:
+    sandbox: required
+    network: allowlisted_only
+    audit_traces: required
+
+evals:
+  unit_evals:
+    - policy_match_accuracy
+    - citation_completeness
+    - escalation_correctness
+  workflow_evals:
+    - sop_completion_rate
+    - false_action_rate
+    - human_acceptance_rate
+    - time_to_review_packet
+  sme_feedback:
+    reviewers: [operations_lead, compliance_owner]
+    cadence: weekly
+
+improvement_loop:
+  collect:
+    - traces
+    - tool_calls
+    - human_decisions
+    - rejected_recommendations
+    - cost_and_latency
+  improve:
+    - prompt_revision
+    - tool_policy_revision
+    - retrieval_source_update
+    - eval_dataset_expansion
+    - model_or_harness_tuning</pre>
+        </section>
+
+        <section class="section" id="sources">
+          <span class="label">Sources and Notes</span>
+          <h2>What this summary is based on.</h2>
+          <p class="lead">
+            The main summary was generated from the public YouTube captions for the LangChain video. I also checked official
+            NVIDIA and LangChain material to confirm naming around Agent Toolkit, AI-Q Blueprint, OpenShell, Nemotron, and
+            Deep Agents.
+          </p>
+          <ul class="source-list">
+            <li><a href="https://www.youtube.com/watch?v=Yy3JH6dDugc">Source video: Jensen Huang: Why companies need open agent systems</a></li>
+            <li><a href="https://nvidianews.nvidia.com/news/ai-agents">NVIDIA News: NVIDIA Agent Toolkit, AI-Q Blueprint, Nemotron, and OpenShell</a></li>
+            <li><a href="https://docs.langchain.com/oss/python/integrations/providers/nvidia">LangChain docs: NVIDIA provider integrations and OpenShell Deep Agent</a></li>
+            <li><a href="https://www.langchain.com/blog/nvidia-enterprise">LangChain blog: enterprise agentic AI platform with NVIDIA</a></li>
+          </ul>
+          <p class="note">
+            Product names in fast-moving agent stacks can change. Treat the strategic architecture as durable, and verify exact
+            packaging before using this as a technical implementation plan.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>Jensen Huang: Why companies need open agent systems</strong>.
+    Source: LangChain. Video ID: Yy3JH6dDugc.
+  </footer>
+</body>
+</html>

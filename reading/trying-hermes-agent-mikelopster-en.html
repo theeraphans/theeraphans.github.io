@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Trying Hermes Agent - Mikelopster - English Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #617079;
+      --paper: #fffef9;
+      --wash: #f4f5ef;
+      --line: #d9ddd1;
+      --teal: #14736d;
+      --blue: #2f6384;
+      --coral: #c35345;
+      --gold: #a77b24;
+      --violet: #6a5b86;
+      --charcoal: #203039;
+      --shadow: 0 24px 62px rgb(23 33 38 / 12%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(120deg, rgb(20 115 109 / 8%) 0 18%, transparent 18% 42%, rgb(47 99 132 / 7%) 42% 65%, transparent 65%),
+        var(--wash);
+      background-size: 46px 46px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--coral), var(--gold));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 82%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 760;
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 840px;
+      margin-top: 24px;
+      color: #2f3940;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.16rem, 2.1vw, 1.55rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e8ede8;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 84%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: rgb(255 255 255 / 88%);
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .stat {
+      padding: 14px;
+      color: var(--ink);
+      background: #fff;
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--coral);
+      font-size: 1.65rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 238px minmax(0, 1fr);
+      gap: 40px;
+      align-items: start;
+      margin-top: 38px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 6px;
+      padding: 16px;
+      background: rgb(255 255 255 / 78%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .toc span {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 750;
+      text-decoration: none;
+      border-top: 1px solid rgb(217 221 209 / 76%);
+    }
+
+    .content {
+      display: grid;
+      gap: 28px;
+      min-width: 0;
+    }
+
+    .section {
+      min-width: 0;
+      padding: 34px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; padding-top: 0; }
+
+    .label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      max-width: 880px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 4.2vw, 3.45rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      max-width: 900px;
+      margin-top: 14px;
+      color: #2f3940;
+      font-size: 1.08rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      margin-bottom: 12px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .flow-step {
+      position: relative;
+      min-width: 0;
+      padding: 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 30px rgb(23 33 38 / 6%);
+    }
+
+    .flow-step::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -10px;
+      width: 10px;
+      height: 2px;
+      background: var(--line);
+    }
+
+    .flow-step:last-child::after { display: none; }
+
+    .flow-step b {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--coral);
+      font-size: 0.8rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .table-wrap {
+      min-width: 0;
+      margin-top: 24px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: #fff;
+      background: var(--blue);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    td {
+      color: #344047;
+      font-size: 0.95rem;
+    }
+
+    .quote {
+      margin-top: 24px;
+      padding: 22px;
+      color: #fff;
+      background: var(--violet);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.25rem, 2.5vw, 1.9rem);
+      line-height: 1.35;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 14px 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 46px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .toc { position: static; }
+
+      .grid,
+      .two,
+      .tldr,
+      .flow {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .page { padding-inline: 16px; }
+
+      .hero {
+        padding-top: 36px;
+        gap: 28px;
+      }
+
+      h1 {
+        max-width: 10ch;
+        font-size: clamp(2.7rem, 14vw, 4.35rem);
+      }
+
+      .grid,
+      .two,
+      .tldr,
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-step::after {
+        top: auto;
+        right: auto;
+        left: 24px;
+        bottom: -10px;
+        width: 2px;
+        height: 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/reading/">Reading room</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#demo-flow">Demo Flow</a>
+      <a class="action-link" href="#platform">Platform Takeaways</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=H4pw5R_v54s">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Personal Agent</span>
+        <h1>Hermes Agent Is More Than a Coding Copilot</h1>
+        <p class="subtitle">
+          An English summary of Mikelopster's Thai walkthrough of Hermes Agent.
+          The video tests Hermes as a personal, persistent agent: secure tool use, memory, scheduled work, Telegram gateway, browser automation, dashboard control, and a small coding demo.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> ลองเล่น Hermes Agent กันน</span>
+          <span><strong>Creator:</strong> mikelopster</span>
+          <span><strong>Captions:</strong> Thai source, 2,396 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/H4pw5R_v54s/hqdefault.jpg" alt="Video thumbnail for Mikelopster trying Hermes Agent">
+        <figcaption>
+          Source video from mikelopster. Captions are Thai; this page translates and structures the key ideas in English.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="quick-summary-title">
+      <div>
+        <h2 id="quick-summary-title">The Short Version</h2>
+        <p>
+          The walkthrough positions Hermes Agent as an open-source, self-improving personal agent from Nous Research.
+          Compared with OpenClaw/OpenCode-style agents, the presenter sees Hermes as stronger in three practical areas:
+          safer secret handling, cleaner long-term memory, and more reliable scheduling through cron jobs.
+        </p>
+        <ul class="tldr">
+          <li>Hermes is framed as a persistent personal assistant, not only an AI coding terminal.</li>
+          <li>The demo uses OpenRouter with a DeepSeek model, then connects Hermes to Telegram and browser automation.</li>
+          <li>The biggest product lesson is that personal agents need permissions, memory, schedules, gateways, and observability.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>39m</strong><span>walkthrough runtime</span></div>
+        <div class="stat"><strong>$1</strong><span>demo model cost mentioned</span></div>
+        <div class="stat"><strong>1.74M</strong><span>tokens used in demo</span></div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Table of contents">
+        <span>Read</span>
+        <a href="#what-it-is">What Hermes is</a>
+        <a href="#differences">Core differences</a>
+        <a href="#setup">Setup path</a>
+        <a href="#demo-flow">Demo flow</a>
+        <a href="#browser">Browser and coding</a>
+        <a href="#cost">Cost and caution</a>
+        <a href="#platform">Platform takeaways</a>
+      </nav>
+
+      <article class="content">
+        <section class="section" id="what-it-is">
+          <span class="label">Definition</span>
+          <h2>Hermes is treated as a computer-operating personal agent</h2>
+          <p class="lead">
+            The presenter describes Hermes Agent as an AI agent that can control parts of your computer,
+            call tools, edit files, run scripts, use APIs/MCP-style integrations, operate through chat gateways,
+            and keep state across sessions. The framing is closer to a personal agent OS than a single-purpose coding assistant.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Persistent</span>
+              <h3>It remembers across work</h3>
+              <p>Hermes can store user and task memory, then use that memory to repeat or improve future work.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Tool-Using</span>
+              <h3>It operates your environment</h3>
+              <p>The video shows search, shell commands, scripts, Telegram, browser control, dashboard tools, and coding workflows.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Personal</span>
+              <h3>It is meant to run near your life</h3>
+              <p>Messaging gateways let the user talk to an agent running on their own machine or server while away from the computer.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="differences">
+          <span class="label">Core Differences</span>
+          <h2>The presenter highlights security, memory, scheduling, and self-learning as Hermes' edge</h2>
+          <p class="lead">
+            The talk compares Hermes with OpenClaw/OpenCode-style tools at a concept level.
+            The speaker repeatedly notes that his OpenClaw experience may be older, but he still finds Hermes' approach cleaner for personal-agent workflows.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Area</th>
+                  <th>What the video says</th>
+                  <th>Why it matters</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Security and secrets</td>
+                  <td>Hermes is described as more careful with secret injection and less likely to read raw config files directly.</td>
+                  <td>Personal agents may touch API keys, local files, and production services, so secret boundaries matter.</td>
+                </tr>
+                <tr>
+                  <td>Memory management</td>
+                  <td>Hermes is said to organize memory better, reduce duplication, and create map-like structures for retrieval.</td>
+                  <td>Long-running agents need clean memory, not piles of repeated markdown fragments.</td>
+                </tr>
+                <tr>
+                  <td>Cron scheduling</td>
+                  <td>Hermes uses cron-style jobs for scheduled tasks instead of relying only on an LLM heartbeat loop.</td>
+                  <td>Scheduled work becomes more deterministic, inspectable, and Unix-native.</td>
+                </tr>
+                <tr>
+                  <td>Self-learning</td>
+                  <td>The video calls Hermes a self-learning agent because it can turn completed work into reusable skills or memory.</td>
+                  <td>The agent becomes more useful after repeated workflows instead of staying stateless.</td>
+                </tr>
+                <tr>
+                  <td>Dashboard and logs</td>
+                  <td>The dashboard shows sessions, model config, gateway status, logs, skills, cron jobs, plugins, and settings.</td>
+                  <td>Operators need observability before trusting a personal agent with real actions.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="setup">
+          <span class="label">Setup</span>
+          <h2>The demo wires Hermes to OpenRouter, DeepSeek, and Telegram</h2>
+          <p class="lead">
+            The walkthrough starts from installing Hermes, running setup, selecting a provider, and choosing a model.
+            The presenter uses OpenRouter and a DeepSeek model because DeepSeek is comparatively cheap, then connects a Telegram bot through BotFather and restricts access by user ID.
+          </p>
+
+          <div class="flow" aria-label="Hermes setup path">
+            <div class="flow-step"><b>Install</b><span>Run the Hermes install command from the website.</span></div>
+            <div class="flow-step"><b>Provider</b><span>Choose OpenRouter and paste the API key.</span></div>
+            <div class="flow-step"><b>Model</b><span>Select a DeepSeek model for the demo workload.</span></div>
+            <div class="flow-step"><b>Mode</b><span>Run locally, while noting that safer machines or VMs may be better for experiments.</span></div>
+            <div class="flow-step"><b>Gateway</b><span>Create a Telegram bot and allow only the intended user ID.</span></div>
+            <div class="flow-step"><b>Tools</b><span>Enable web search, browser operation, code execution, image/video tools as needed.</span></div>
+          </div>
+
+          <p class="quote">
+            The useful mental model: Hermes is not just a chat UI. It is a local or server-side agent process with gateways, tools, memory, schedules, and approvals.
+          </p>
+        </section>
+
+        <section class="section" id="demo-flow">
+          <span class="label">Demo Flow</span>
+          <h2>The video tests Hermes across research, chat, dashboard, scheduling, and memory</h2>
+          <p class="lead">
+            The presenter uses practical tasks rather than a polished benchmark. The point is to see how Hermes behaves as a real personal agent:
+            how it asks for permission, how it logs actions, how it responds through Telegram, and how much model budget it consumes.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Research</span>
+              <h3>MacBook comparison</h3>
+              <p>Through Telegram, Hermes is asked to research MacBook Air M1-M4 pricing and summarize results as a table and chart.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Approval</span>
+              <h3>Command review loop</h3>
+              <p>Hermes asks for approval before running commands, with options such as session-level or persistent allow decisions.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Dashboard</span>
+              <h3>Operator view</h3>
+              <p>The dashboard exposes model config, sessions, gateway logs, cron jobs, skills, plugins, and settings.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Kanban</span>
+              <h3>Built-in plugin example</h3>
+              <p>The video creates a Kanban item such as a reminder to publish a Hermes Agent video, showing tool/plugin interaction.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Memory</span>
+              <h3>User memory files</h3>
+              <p>The presenter shows Hermes storing memory in its own home area, including user-level markdown memory.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Cron</span>
+              <h3>Reminder task</h3>
+              <p>When asked to remind the user tomorrow at 10:00, Hermes creates a cron job that can later send a Telegram message.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="browser">
+          <span class="label">Browser And Code</span>
+          <h2>Browser automation works, but the presenter warns that it can burn context quickly</h2>
+          <p class="lead">
+            Hermes can connect to a browser through Chrome DevTools Protocol. The demo opens a Google Form in a logged-in browser,
+            connects Hermes to the browser, then asks it to fill fields without submitting. The presenter notes this is powerful,
+            but browser snapshots and visual context can consume many tokens.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Demo</th>
+                  <th>Observed behavior</th>
+                  <th>Practical lesson</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Browser control</td>
+                  <td>Hermes connects to an already logged-in Chrome instance over CDP and fills a Google Form.</td>
+                  <td>Use browser automation for workflows that truly need UI state or authenticated browser context.</td>
+                </tr>
+                <tr>
+                  <td>Token pressure</td>
+                  <td>The presenter says browser work can grow context quickly, especially with snapshots or visual data.</td>
+                  <td>Prefer API, script, or Playwright-style structured extraction when possible.</td>
+                </tr>
+                <tr>
+                  <td>Simple coding</td>
+                  <td>Hermes plus DeepSeek builds a small Star Catcher game from a one-shot prompt.</td>
+                  <td>DeepSeek is cost-effective, but the presenter finds UI output weaker than stronger frontier models.</td>
+                </tr>
+                <tr>
+                  <td>Model choice</td>
+                  <td>DeepSeek is praised for cost, but not presented as universally best for UI-heavy tasks.</td>
+                  <td>Use model profiles: cheap models for routine work, stronger models for design, architecture, or complex coding.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="cost">
+          <span class="label">Cost And Caution</span>
+          <h2>The demo cost is low, but token management still matters</h2>
+          <p class="lead">
+            At the end, the presenter says the full demo cost about one US dollar using a DeepSeek model through OpenRouter.
+            The run included research, Telegram gateway use, browser control, coding, and cron/memory experiments.
+            He reports around 58 requests and about 1.74 million tokens.
+          </p>
+
+          <ul class="checklist">
+            <li>Cheap models make personal-agent experiments much easier, but long context can still make each request expensive.</li>
+            <li>Browser automation should be used selectively because it can inflate token usage and context size.</li>
+            <li>Agent workflows should support model profiles: cheap, fast, strong, UI-capable, code-capable, and review-focused models.</li>
+            <li>Security prompts should be read carefully. Do not approve everything blindly just because the tool asks often.</li>
+            <li>Even if an action was approved before, important files and sensitive operations should still trigger fresh review.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your agentic AI platform</h2>
+          <p class="lead">
+            This video is useful for your BA-facing platform because Hermes shows the pieces a real personal agent needs:
+            secure tool access, memory, scheduled tasks, gateways, observability, plugin surfaces, and explicit approvals.
+          </p>
+
+          <ul class="checklist">
+            <li><strong>Agent runtime is more than prompts.</strong> Your Master Agent/Sub-Agent model should include memory store, scheduler, gateway, tool permissions, logs, and recovery controls.</li>
+            <li><strong>Separate tool permission levels.</strong> BA users should understand read-only, write, local-file, network, browser, messaging, and scheduled-action permissions.</li>
+            <li><strong>Make secret handling explicit.</strong> Actionable Skills should declare which secrets are injected, where they are stored, whether they are readable, and how they are redacted in traces.</li>
+            <li><strong>Use deterministic infrastructure for schedules.</strong> A cron-style scheduler is easier to inspect than a pure LLM heartbeat. Flow Markdown should support scheduled triggers.</li>
+            <li><strong>Memory needs curation, not just storage.</strong> Add rules for deduplication, promotion, expiry, source linkage, and when a memory becomes a reusable skill.</li>
+            <li><strong>Gateways change the product shape.</strong> Telegram, Line, Slack, email, and webchat are not just channels; they are remote-control surfaces for the agent.</li>
+            <li><strong>Approvals need good UX.</strong> Allow once, allow for session, always allow, deny, explain command, and stop current run should be built into the platform.</li>
+            <li><strong>Browser control is expensive and risky.</strong> Prefer APIs and typed tools. Use browser automation only when the workflow truly depends on human UI state.</li>
+            <li><strong>Cost observability is a product feature.</strong> Show requests, tokens, model, estimated cost, and context growth per task.</li>
+            <li><strong>Support model profiles.</strong> Let BA-authored flows specify model intent: cheap routine agent, high-reasoning agent, UI builder, code reviewer, or compliance checker.</li>
+          </ul>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Hermes pattern</th>
+                  <th>Platform feature</th>
+                  <th>BA-facing wording</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Telegram gateway</td>
+                  <td>Channel connector with access policy</td>
+                  <td>Who may talk to this agent, and from which channel?</td>
+                </tr>
+                <tr>
+                  <td>Cron jobs</td>
+                  <td>Scheduled Flow Markdown trigger</td>
+                  <td>When should this flow run automatically?</td>
+                </tr>
+                <tr>
+                  <td>Memory files</td>
+                  <td>Memory policy and source-linked notes</td>
+                  <td>What should this agent remember, forget, or ask before storing?</td>
+                </tr>
+                <tr>
+                  <td>Secret injection</td>
+                  <td>Credential vault and redaction layer</td>
+                  <td>Which tools need credentials, and can the agent ever see them?</td>
+                </tr>
+                <tr>
+                  <td>Dashboard logs</td>
+                  <td>Run trace and approval history</td>
+                  <td>What did the agent do, why, with which tool, and who approved it?</td>
+                </tr>
+                <tr>
+                  <td>Model/cost dashboard</td>
+                  <td>Cost and context monitoring</td>
+                  <td>How much did this run cost, and which model handled each step?</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="quote">
+            Strong opinion: Hermes is interesting less because it is another agent, and more because it packages the operational primitives every serious personal-agent platform eventually needs.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from Thai public YouTube captions for <strong>ลองเล่น Hermes Agent กันน</strong>. Source: mikelopster. Product context cross-checked with Nous Research Hermes Agent documentation and GitHub.
+  </footer>
+</body>
+</html>

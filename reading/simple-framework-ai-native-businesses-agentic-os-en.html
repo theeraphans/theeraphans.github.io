@@ -1,0 +1,979 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>A Simple Framework for AI Native Businesses - Agentic OS - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5d6970;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f4f7f2;
+      --line: #d7ded6;
+      --charcoal: #24323a;
+      --teal: #166f68;
+      --blue: #315f86;
+      --coral: #bd503f;
+      --gold: #9e711e;
+      --violet: #665987;
+      --mint: #e2f0ec;
+      --sky: #e7eef6;
+      --sand: #f7eed8;
+      --rose: #f5e5df;
+      --shadow: 0 24px 62px rgb(23 33 38 / 11%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(22 111 104 / 7%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(49 95 134 / 6%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 46px 46px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--coral), var(--gold), var(--violet));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 84%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.85rem, 6.7vw, 5.8rem);
+      font-weight: 760;
+      line-height: 0.96;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2.05vw, 1.48rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e6ece7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 86%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: #f8fbf8;
+      background: rgb(255 255 255 / 9%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-height: 86px;
+      padding: 14px;
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: rgb(255 255 255 / 72%);
+      font-size: 0.84rem;
+      font-weight: 760;
+      text-transform: uppercase;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      gap: 42px;
+      align-items: start;
+      margin-top: 36px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 22px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .sidebar-block {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+    }
+
+    .sidebar-block h2,
+    .toc h2 {
+      margin-bottom: 12px;
+      color: var(--quiet);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .glance {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .glance strong {
+      color: var(--ink);
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .toc {
+      padding-left: 18px;
+      border-left: 4px solid var(--gold);
+    }
+
+    .toc a {
+      display: block;
+      padding: 7px 0;
+      color: var(--ink);
+      font-size: 0.94rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .content {
+      min-width: 0;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 8%);
+    }
+
+    .section {
+      padding: 34px 42px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; }
+
+    .label {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .section h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 3.3vw, 3.1rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .section h3 {
+      margin-top: 20px;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      margin-top: 16px;
+      color: #313d44;
+      font-size: 1.08rem;
+    }
+
+    .section p + p { margin-top: 14px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card.mint { background: var(--mint); }
+    .card.sky { background: var(--sky); }
+    .card.sand { background: var(--sand); }
+    .card.rose { background: var(--rose); }
+
+    .card h3 {
+      margin-top: 8px;
+      font-size: 1.02rem;
+    }
+
+    .card p {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.62;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pill.blue { background: var(--blue); }
+    .pill.coral { background: var(--coral); }
+    .pill.gold { background: var(--gold); }
+    .pill.violet { background: var(--violet); }
+
+    .note {
+      margin-top: 22px;
+      padding: 18px 20px;
+      background: #f8f3e6;
+      border-left: 5px solid var(--gold);
+      border-radius: 8px;
+      color: #3b3424;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(132px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+      align-items: stretch;
+    }
+
+    .flow-step {
+      min-height: 150px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .flow-step:nth-child(2) { border-top-color: var(--blue); }
+    .flow-step:nth-child(3) { border-top-color: var(--coral); }
+    .flow-step:nth-child(4) { border-top-color: var(--gold); }
+    .flow-step:nth-child(5) { border-top-color: var(--violet); }
+    .flow-step:nth-child(6) { border-top-color: var(--teal); }
+
+    .flow-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .pipeline-step {
+      min-height: 138px;
+      padding: 14px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .pipeline-step:nth-child(2) { background: var(--teal); }
+    .pipeline-step:nth-child(3) { background: var(--blue); }
+    .pipeline-step:nth-child(4) { background: var(--coral); }
+    .pipeline-step:nth-child(5) { background: var(--gold); }
+    .pipeline-step:nth-child(6) { background: var(--violet); }
+
+    .pipeline-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.92rem;
+      line-height: 1.3;
+    }
+
+    .pipeline-step span {
+      color: rgb(255 255 255 / 82%);
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    .compare {
+      width: 100%;
+      margin-top: 22px;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .compare th,
+    .compare td {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .compare th {
+      color: #fff;
+      background: var(--charcoal);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .compare td { background: #fff; }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+      color: #303b42;
+    }
+
+    .checklist li:nth-child(2n) { border-left-color: var(--blue); }
+    .checklist li:nth-child(3n) { border-left-color: var(--coral); }
+
+    .checklist strong { color: var(--ink); }
+
+    .quote-strip {
+      margin-top: 24px;
+      padding: 24px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      border-radius: 8px;
+    }
+
+    .quote-strip p {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.28rem, 2.8vw, 2.15rem);
+      line-height: 1.28;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1080px) {
+      .pipeline {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .grid,
+      .two {
+        grid-template-columns: 1fr;
+      }
+
+      .flow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .page {
+        padding-inline: 16px;
+      }
+
+      .hero {
+        gap: 28px;
+        padding-top: 38px;
+      }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .tldr,
+      .sidebar,
+      .flow,
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+
+      .compare {
+        table-layout: fixed;
+      }
+
+      .compare th,
+      .compare td {
+        padding: 11px 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/reading/">Reading room</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#foundation">Foundation</a>
+      <a class="action-link" href="#pipeline">Pipeline</a>
+      <a class="action-link" href="#audit">Audit</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=iwrh4TS9uS0">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Agentic OS Framework</span>
+        <h1>A Simple Framework for AI Native Businesses</h1>
+        <p class="subtitle">
+          A practical summary of Devin Kearns' framework for building AI-native operations:
+          do not start by scattering agents across the company. Start by capturing business events,
+          syncing clean context into the source of truth, auditing work against SOP checklists,
+          and only then building workflows or agents on top.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> A Simple Framework for AI Native Businesses</span>
+          <span><strong>Creator:</strong> Devin Kearns, CustomAI Studio</span>
+          <span><strong>Transcript:</strong> 3,706 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/iwrh4TS9uS0/hqdefault.jpg" alt="Video thumbnail for A Simple Framework for AI Native Businesses">
+        <figcaption>
+          The talk focuses on event-driven AI systems, source-of-truth synchronization, confidence gates,
+          workflow state machines, and audit layers before agent rollout.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          Devin argues that most companies should stop beginning AI transformation with a list of agents.
+          The first layer is an operating system for business context: capture the events where work actually happens,
+          clean and deduplicate them, match them to source-of-truth records, update those records, monitor work against
+          checklists, and then build automations or agents once the foundation is trustworthy.
+        </p>
+        <ul class="tldr">
+          <li>The real blocker is often not model capability. It is incomplete, stale, or unstructured business context.</li>
+          <li>Events from meetings, emails, and internal chat are the raw material for an AI-native operation.</li>
+          <li>Agents come later, after source-of-truth data, workflow state, confidence scoring, and audit loops exist.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>17m</strong><span>runtime</span></div>
+        <div class="stat"><strong>540</strong><span>caption rows</span></div>
+        <div class="stat"><strong>3</strong><span>event sources</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Main lens</span><strong>Agentic OS</strong></li>
+            <li><span>Starting point</span><strong>Event capture</strong></li>
+            <li><span>Core system</span><strong>Source of truth</strong></li>
+            <li><span>Best use</span><strong>AI-native roadmap</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#problem">The Problem</a>
+          <a href="#foundation">Foundation First</a>
+          <a href="#events">Event Sources</a>
+          <a href="#pipeline">Event Pipeline</a>
+          <a href="#workflow">Workflow State</a>
+          <a href="#audit">Checklist Audit</a>
+          <a href="#platform">Platform Takeaways</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="problem">
+          <span class="label">The Problem</span>
+          <h2>Business leaders ask for agents, but the operating environment is often not ready.</h2>
+          <p class="lead">
+            The talk starts with a pattern the speaker sees often: teams show up with a list of agents they want to build,
+            such as proposal generators, claims follow-up agents, CRM assistants, or project coordinators. The problem is that
+            the source-of-truth systems those agents need to rely on are usually incomplete, stale, or too thin to support autonomous work.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">False start</span>
+              <h3>A list of agents is not a strategy</h3>
+              <p>Building scattered agents in different environments creates fragmentation instead of an AI-native operation.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Real blocker</span>
+              <h3>Data readiness is a human workflow issue</h3>
+              <p>Humans compensate for missing CRM, project, case, or ATS context by asking each other and filling gaps manually.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Core risk</span>
+              <h3>Agents cannot take over from incomplete records</h3>
+              <p>If a human cannot confidently continue work from the source-of-truth record, an agent will struggle too.</p>
+            </article>
+          </div>
+          <p class="note">
+            The speaker's practical reframing is useful: the foundation is not "AI readiness" in the abstract.
+            It is whether the business captures enough real context for a person or agent to continue work without reconstructing history.
+          </p>
+        </section>
+
+        <section class="section" id="foundation">
+          <span class="label">Foundation First</span>
+          <h2>The Agentic OS starts by keeping the source of truth alive.</h2>
+          <p class="lead">
+            The source of truth might be a CRM for sales, project management software for delivery, case management software for legal,
+            or an applicant tracking system for recruiting. The first job of the AI system is not to run a fancy workflow.
+            It is to keep those records complete, current, and contextualized for both humans and future agents.
+          </p>
+          <div class="flow" aria-label="Foundation layers before agents">
+            <div class="flow-step">
+              <strong>Capture</strong>
+              <span>Listen where business context originates: meetings, email, and internal messages.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Contextualize</strong>
+              <span>Clean the event and determine which deal, case, project, candidate, or task it belongs to.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Sync</strong>
+              <span>Write the useful context back to the source-of-truth platform.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Monitor</strong>
+              <span>Audit work against checklists and workflow state before automating more of the work.</span>
+            </div>
+          </div>
+          <div class="quote-strip">
+            <p>Do not build agents on top of messy records. Build the context layer that makes records usable first.</p>
+          </div>
+        </section>
+
+        <section class="section" id="events">
+          <span class="label">Event Sources</span>
+          <h2>Meetings, emails, and internal chat are the main origination points for work context.</h2>
+          <p class="lead">
+            Devin narrows the starting inputs to three practical channels. Documents, files, and calendar events matter too,
+            but in many organizations they are created, shared, or announced through meetings, email, or chat. That makes these
+            channels the best first surface for event-driven capture.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Meetings</span>
+              <h3>Transcripts capture decisions and nuance</h3>
+              <p>Call transcripts can preserve why a deal moved, what a client asked for, and what next steps were agreed.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Email</span>
+              <h3>Threads carry external commitments</h3>
+              <p>Email is where proposals, approvals, requests, documents, notifications, and scheduling messages often arrive.</p>
+            </article>
+            <article class="card sand">
+              <span class="pill gold">Internal chat</span>
+              <h3>Team messages reveal work in motion</h3>
+              <p>Slack, Discord, Teams, or Google Chat often contain operational decisions that never reach a formal record.</p>
+            </article>
+          </div>
+          <p class="note">
+            This is also a behavior change. Once people know meetings and messages feed downstream systems,
+            they tend to become clearer, more explicit, and more generous with useful context.
+          </p>
+        </section>
+
+        <section class="section" id="pipeline">
+          <span class="label">Event Pipeline</span>
+          <h2>The event pipeline turns raw communication into trusted operational state.</h2>
+          <p class="lead">
+            The talk describes a repeatable high-level flow. An event happens, the system deduplicates it, cleans it,
+            matches it to a work item, checks confidence, escalates when uncertain, updates or creates records,
+            and then decides whether any workflow should run.
+          </p>
+          <div class="pipeline" aria-label="Event-driven agentic OS pipeline">
+            <div class="pipeline-step">
+              <strong>1. Event happens</strong>
+              <span>Email, meeting transcript, chat message, document notification, or signed document event arrives.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>2. Ingest and dedup</strong>
+              <span>Prevent duplicate events when several teammates receive the same thread or notification.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>3. Fetch and clean</strong>
+              <span>Remove messy HTML, signatures, images, and noise so the content is usable.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>4. Match work item</strong>
+              <span>Connect the event to a deal, case, project, candidate, job role, ticket, or other record.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>5. Confidence gate</strong>
+              <span>High confidence writes automatically. Low confidence routes to a human for help.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>6. Workflow match</strong>
+              <span>If the event advances a workflow state, the correct automation or agent can run.</span>
+            </div>
+          </div>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Decision Point</th>
+                <th>System Behavior</th>
+                <th>Why It Matters</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Low match confidence</strong></td>
+                <td>Escalate to a human to confirm the correct record.</td>
+                <td>Prevents the source-of-truth system from being polluted by wrong updates.</td>
+              </tr>
+              <tr>
+                <td><strong>High match confidence</strong></td>
+                <td>Update the existing source-of-truth record automatically.</td>
+                <td>Keeps humans and future agents working from current context.</td>
+              </tr>
+              <tr>
+                <td><strong>No existing match</strong></td>
+                <td>Create a new record when the business rules allow it, often with human review.</td>
+                <td>Lets the system capture new work without silently dropping context.</td>
+              </tr>
+              <tr>
+                <td><strong>Workflow match</strong></td>
+                <td>Run a workflow, deterministic automation, LLM step, or agent only after the context is matched.</td>
+                <td>Ensures the agent is acting on the right case, deal, project, or task state.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="workflow">
+          <span class="label">Workflow State</span>
+          <h2>Agents should run after the system knows what work item and workflow state the event belongs to.</h2>
+          <p class="lead">
+            A key insight is that the visible "agent" is only one part of the system. Around it sits a state machine that tracks
+            scheduling, communications, pending states, back-and-forth messages, and confidence for whether the event should advance a workflow.
+          </p>
+          <div class="grid two">
+            <article class="card mint">
+              <span class="pill">State machine</span>
+              <h3>The workflow knows what it is waiting for</h3>
+              <p>A response like "here are my available times" means something different depending on which case, stage, and communication workflow it belongs to.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Execution layer</span>
+              <h3>The workflow can be many different things</h3>
+              <p>It may be a deterministic automation, an LLM step, a two-step draft-and-review flow, or an agent with tools and instructions.</p>
+            </article>
+          </div>
+          <p class="note">
+            This distinction matters for platform design. The "agent" should not be the whole product object.
+            The durable object is the event, the work item, the workflow state, the confidence gate, and the execution policy.
+          </p>
+        </section>
+
+        <section class="section" id="audit">
+          <span class="label">Audit Layer</span>
+          <h2>Checklist monitoring tells you what to automate next.</h2>
+          <p class="lead">
+            Once records are being updated reliably, Devin adds a monitoring or audit workflow. Every case, deal, project, or work item
+            usually has a checklist, pipeline, or SOP even if it lives in people's heads. Extracting that checklist lets the system monitor
+            whether humans are doing the work, whether anything is falling through the cracks, and which steps are good candidates for automation.
+          </p>
+          <div class="flow" aria-label="Checklist audit to agent roadmap">
+            <div class="flow-step">
+              <strong>Extract checklist</strong>
+              <span>Turn implicit SOPs into explicit steps for deals, projects, cases, or roles.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Audit current work</strong>
+              <span>Compare source-of-truth records against what should have happened by now.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Reveal bottlenecks</strong>
+              <span>Find missed emails, missing updates, inefficient handoffs, and repeated manual work.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Build targeted workflows</strong>
+              <span>Automate the specific checklist items that are measurable, repetitive, and well-contextualized.</span>
+            </div>
+          </div>
+          <ul class="checklist">
+            <li><strong>It helps managers see work state.</strong> Leaders get better operational visibility without asking people for updates.</li>
+            <li><strong>It helps operators forget fewer things.</strong> The system becomes a lightweight managerial layer around real work.</li>
+            <li><strong>It clarifies the agent roadmap.</strong> The team can see what humans are doing to complete each checklist item before replacing pieces of that work.</li>
+            <li><strong>It reduces brittle automation.</strong> Workflows are built after the data and process are visible, not from guesses.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your BA-facing agentic AI platform</h2>
+          <p class="lead">
+            This video maps directly to your Master Agent, Sub-Agent, Skill, Tool MCP, and Flow Markdown problem. It suggests that the platform
+            should start with event capture and operational state, not with persona prompts alone. BAs should be able to define source-of-truth systems,
+            work items, matching rules, confidence gates, SOP checklists, and workflow triggers before composing agents.
+          </p>
+          <ul class="checklist">
+            <li><strong>Create an Event Source object.</strong> Meetings, email, and internal chat should each have connectors, normalization rules, deduplication rules, and privacy scopes.</li>
+            <li><strong>Create a Work Item object.</strong> Deal, case, project, ticket, candidate, claim, or task should be the unit that events attach to.</li>
+            <li><strong>Make Source of Truth explicit.</strong> Every flow should name where truth lives, such as CRM, case management, project management, ATS, or database.</li>
+            <li><strong>Add confidence gates to Flow Markdown.</strong> Matching, record creation, workflow routing, and tool execution should each have thresholds and human escalation paths.</li>
+            <li><strong>Separate sync workflows from action workflows.</strong> First keep records clean and contextualized; then run agents that act on that context.</li>
+            <li><strong>Represent workflow state machines directly.</strong> The platform should track pending states, waiting-for states, incoming response states, and next-action states.</li>
+            <li><strong>Turn SOPs into audit checklists.</strong> BA-authored SOPs should compile into monitoring rules before they compile into automation.</li>
+            <li><strong>Use audits to prioritize agents.</strong> Build agents where checklists show frequent, measurable, repetitive work and where source context is reliable.</li>
+            <li><strong>Allow multiple execution types.</strong> A step might be deterministic code, an LLM transformation, a human review, a tool call, or a full agent.</li>
+            <li><strong>Design for human behavior change.</strong> When teams know conversations feed downstream work, the platform should encourage clearer notes, decisions, and next-step language.</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>A Simple Framework for AI Native Businesses</strong>.
+    Source: Devin Kearns | CustomAI Studio. Video ID: iwrh4TS9uS0.
+  </footer>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Used written principles plus model-generated critiques, revisions, and preference labels to train a less harmful assistant with substantially less direct harmfulness labeling.">
+  <meta name="resource-file" content="2026-09-08-constitutional-ai-harmlessness-ai-feedback-en.html">
+  <title>Constitutional AI · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css">
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2212.08073">Read paper</a><a class="action-link" href="/reading/">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Instruction and Preference Alignment · Paper 18 of 37</p>
+        <h1>Constitutional AI: Harmlessness from AI Feedback</h1>
+        <p class="subtitle">Used written principles plus model-generated critiques, revisions, and preference labels to train a less harmful assistant with substantially less direct harmfulness labeling.</p>
+        <div class="meta"><span><strong>Yuntao Bai, Saurav Kadavath, Sandipan Kundu, Amanda Askell, Jackson Kernion, Andy Jones, Anna Chen, Anna Goldie, Azalia Mirhoseini, Cameron McKinnon, Carol Chen, Catherine Olsson, Christopher Olah, Danny Hernandez, Dawn Drain, Deep Ganguli, Dustin Li, Eli Tran-Johnson, Ethan Perez, Jamie Kerr, Jared Mueller, Jeffrey Ladish, Joshua Landau, Kamal Ndousse, Kamile Lukosuite, Liane Lovitt, Michael Sellitto, Nelson Elhage, Nicholas Schiefer, Noemi Mercado, Nova DasSarma, Robert Lasenby, Robin Larson, Sam Ringer, Scott Johnston, Shauna Kravec, Sheer El Showk, Stanislav Fort, Tamera Lanham, Timothy Telleen-Lawton, Tom Conerly, Tom Henighan, Tristan Hume, Samuel R. Bowman, Zac Hatfield-Dodds, Ben Mann, Dario Amodei, Nicholas Joseph, Sam McCandlish, Tom Brown, Jared Kaplan</strong></span><span>2022</span><span>Intermediate</span><span>13 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>Constitutional AI</h2><p>Anthropic</p><p><strong>Prerequisites:</strong> RLHF, supervised fine-tuning, reward models, and self-critique.</p><a href="https://arxiv.org/abs/2212.08073">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Intermediate</strong></div><div class="paper-fact"><span>Place in path</span><strong>18 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>RLHF requires people to inspect and rank potentially harmful content at scale. It can also hide the normative basis of labels inside examples and instructions rather than expose a concise statement of principles.</p>
+<p>Constitutional AI asks whether a model can supervise much of its own harmlessness training when guided by an explicit list of rules.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>In the supervised phase, elicit a harmful response, ask the model to critique it against a sampled constitutional principle, and ask for a revised answer. Fine-tune on the revisions.</p>
+<p>In the reinforcement phase, a model compares response pairs according to the constitution. Those AI preferences train a reward model, and reinforcement learning optimizes the assistant against it.</p><div class="equation">Principles → critique/revision data → AI preferences → RL policy, with humans choosing the constitution.</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>A red-team prompt produces an initial answer. A critique prompt names a principle and identifies violations. A revision prompt improves the answer. Repeating across principles creates harmlessness demonstrations.</p>
+<p>For RLAIF, response pairs are evaluated by a preference model prompted with principles. Helpfulness feedback can still come from humans, balancing refusal with useful engagement.</p><figure class="concept-flow" aria-label="Constitutional training loop">
+    <div class="flow-step"><span>Prompt</span><strong>Generate response</strong><p>Expose an unwanted behavior.</p></div>
+<div class="flow-step"><span>Principle</span><strong>Select a rule</strong><p>State the desired constraint.</p></div>
+<div class="flow-step"><span>Critique</span><strong>Find violations</strong><p>Explain conflict with the rule.</p></div>
+<div class="flow-step"><span>Revise</span><strong>Create better data</strong><p>Produce a safer useful answer.</p></div>
+<div class="flow-step"><span>Train</span><strong>SFT and RLAIF</strong><p>Learn from revisions and rankings.</p></div>
+    <figcaption>A written principle guides synthetic supervision; humans remain responsible for the principle and acceptance criteria.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>The method changes the data-generation process more than the base architecture. Chain-of-thought-style critiques provide a richer supervision trace than a binary safe/unsafe label.</p>
+<p>Principle sampling, critique quality, evaluator bias, and reward-model generalization determine the learned behavior. Self-supervision is not independent when actor and evaluator share training data or blind spots.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>The paper reported a Pareto improvement in helpfulness and harmlessness over RLHF baselines at sufficient scale, along with more transparent explanations for refusals. Scaling improved the model’s ability to apply principles.</p>
+<p>Evaluation still depends on model and human judgments. Results support the pipeline under the selected constitution, not universal moral agreement.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>Constitutional AI made written policy a first-class model-training artifact and popularized RLAIF. It influenced later self-improvement, critique, and scalable-oversight research.</p>
+<p>For organizations, it suggests a maintainable link between policy language, training data, automated evaluation, and observed behavior.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Version every principle with examples, scope, rationale, conflicts, and evaluation cases. Test whether revisions are genuinely safer or merely more verbose and evasive.</p>
+<p>Use independent checks for high-risk domains. A model judging a related model can share systematic errors, so constitutional supervision should complement external evidence and tool-level controls.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>A constitution can be incomplete, culturally narrow, internally inconsistent, or gamed. Model-generated preferences may amplify shared blind spots and give an appearance of objectivity.</p>
+<p>Harmlessness can overproduce refusals, while explanations can sound principled without reflecting the actual causal process. Production safety still needs monitoring and governance.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>Constitutional AI modifies InstructGPT’s feedback source while retaining preference modeling and RL. Self-Instruct similarly uses model-generated data, but targets task diversity rather than a safety constitution.</p><div class="article-nav"><a href="2026-09-08-instructgpt-rlhf-human-feedback-en.html">← InstructGPT</a><a href="2026-09-08-self-instruct-synthetic-instruction-tuning-en.html">Self-Instruct →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>Written principles make the supervision target more inspectable.</li><li>Models can generate critiques and revisions for training.</li><li>AI feedback reduces but does not remove human value choices.</li><li>Self-evaluation can share the actor model’s blind spots.</li><li>Helpful and harmless behavior must be balanced.</li><li>Policy versioning should connect to evals and deployment controls.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2212.08073">Constitutional AI: Harmlessness from AI Feedback</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>The constitution makes values more explicit but does not remove human choice. Humans still write principles, select models, design prompts, and decide evaluation.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

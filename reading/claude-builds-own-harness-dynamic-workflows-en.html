@@ -1,0 +1,1082 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Claude Builds Its Own Harness - Dynamic Workflows Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5d6970;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f4f7f2;
+      --line: #d7ded6;
+      --charcoal: #24323a;
+      --teal: #166f68;
+      --blue: #315f86;
+      --coral: #bd503f;
+      --gold: #9e711e;
+      --violet: #665987;
+      --mint: #e2f0ec;
+      --sky: #e7eef6;
+      --sand: #f7eed8;
+      --rose: #f5e5df;
+      --shadow: 0 24px 62px rgb(23 33 38 / 11%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(22 111 104 / 7%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(49 95 134 / 6%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 46px 46px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--coral), var(--gold), var(--violet));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 84%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.6rem, 6.25vw, 5.35rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2.05vw, 1.48rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e6ece7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 86%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: #f8fbf8;
+      background: rgb(255 255 255 / 9%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-height: 86px;
+      padding: 14px;
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: rgb(255 255 255 / 72%);
+      font-size: 0.84rem;
+      font-weight: 760;
+      text-transform: uppercase;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      gap: 42px;
+      align-items: start;
+      margin-top: 36px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 22px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .sidebar-block {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+    }
+
+    .sidebar-block h2,
+    .toc h2 {
+      margin-bottom: 12px;
+      color: var(--quiet);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .glance {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .glance strong {
+      color: var(--ink);
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .toc {
+      padding-left: 18px;
+      border-left: 4px solid var(--gold);
+    }
+
+    .toc a {
+      display: block;
+      padding: 7px 0;
+      color: var(--ink);
+      font-size: 0.94rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .content {
+      min-width: 0;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 8%);
+    }
+
+    .section {
+      padding: 34px 42px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; }
+
+    .label {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .section h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 3.3vw, 3.1rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .section h3 {
+      margin-top: 20px;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      margin-top: 16px;
+      color: #313d44;
+      font-size: 1.08rem;
+    }
+
+    .section p + p { margin-top: 14px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card.mint { background: var(--mint); }
+    .card.sky { background: var(--sky); }
+    .card.sand { background: var(--sand); }
+    .card.rose { background: var(--rose); }
+
+    .card h3 {
+      margin-top: 8px;
+      font-size: 1.02rem;
+    }
+
+    .card p {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.62;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pill.blue { background: var(--blue); }
+    .pill.coral { background: var(--coral); }
+    .pill.gold { background: var(--gold); }
+    .pill.violet { background: var(--violet); }
+
+    .note {
+      margin-top: 22px;
+      padding: 18px 20px;
+      background: #f8f3e6;
+      border-left: 5px solid var(--gold);
+      border-radius: 8px;
+      color: #3b3424;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(130px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+      align-items: stretch;
+    }
+
+    .flow-step {
+      min-height: 150px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .flow-step:nth-child(2) { border-top-color: var(--blue); }
+    .flow-step:nth-child(3) { border-top-color: var(--coral); }
+    .flow-step:nth-child(4) { border-top-color: var(--gold); }
+
+    .flow-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .pipeline-step {
+      min-height: 144px;
+      padding: 14px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .pipeline-step:nth-child(2) { background: var(--teal); }
+    .pipeline-step:nth-child(3) { background: var(--blue); }
+    .pipeline-step:nth-child(4) { background: var(--coral); }
+    .pipeline-step:nth-child(5) { background: var(--violet); }
+
+    .pipeline-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.92rem;
+      line-height: 1.3;
+    }
+
+    .pipeline-step span {
+      color: rgb(255 255 255 / 82%);
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    .compare {
+      width: 100%;
+      margin-top: 22px;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .compare th,
+    .compare td {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .compare th {
+      color: #fff;
+      background: var(--charcoal);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .compare td { background: #fff; }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+      color: #303b42;
+    }
+
+    .checklist li:nth-child(2n) { border-left-color: var(--blue); }
+    .checklist li:nth-child(3n) { border-left-color: var(--coral); }
+
+    .checklist strong { color: var(--ink); }
+
+    .quote-strip {
+      margin-top: 24px;
+      padding: 24px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      border-radius: 8px;
+    }
+
+    .quote-strip p {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.28rem, 2.8vw, 2.15rem);
+      line-height: 1.28;
+    }
+
+    .mini-spec {
+      margin-top: 22px;
+      padding: 18px;
+      color: #f8fbf8;
+      background: #1d2b32;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.9rem;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1000px) {
+      .flow,
+      .pipeline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .grid,
+      .two {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .page {
+        padding-inline: 16px;
+      }
+
+      .hero {
+        gap: 28px;
+        padding-top: 38px;
+      }
+
+      h1 {
+        font-size: clamp(2.35rem, 14vw, 3.35rem);
+      }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .tldr,
+      .sidebar,
+      .flow,
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+
+      .compare {
+        table-layout: fixed;
+      }
+
+      .compare th,
+      .compare td {
+        padding: 11px 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/reading/">Reading room</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#failures">Failures</a>
+      <a class="action-link" href="#workflow">Workflow</a>
+      <a class="action-link" href="#patterns">Patterns</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=l5rae4LMKBc">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Prompt Engineering - Dynamic Workflows</span>
+        <h1>Claude Can Build a Harness for Every Task</h1>
+        <p class="subtitle">
+          A concise summary of the video on Claude Code dynamic workflows:
+          why coding harnesses are not ideal for every knowledge-work task, how runtime-generated workflows split work across clean contexts,
+          and which six orchestration patterns Claude uses to build a task-specific harness.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> Claude Can Now Build Its Own Harness... For Every Task</span>
+          <span><strong>Channel:</strong> Prompt Engineering</span>
+          <span><strong>Transcript:</strong> 2,056 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/l5rae4LMKBc/hqdefault.jpg" alt="Video thumbnail for Claude Can Now Build Its Own Harness For Every Task">
+        <figcaption>
+          The video frames dynamic workflows as JavaScript harnesses that spawn Claude sub-agents,
+          run them in parallel or pipelines, and let a task choose the right orchestration pattern at runtime.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          Claude Code and Codex are excellent coding harnesses, but people increasingly force non-coding knowledge work through them.
+          The video's argument is that many messy tasks need their own harness: a temporary workflow that creates clean-context sub-agents,
+          assigns models and worktrees, runs parallel or serial stages, and synthesizes results without putting the entire job in one context window.
+        </p>
+        <ul class="tldr">
+          <li>Dynamic workflows create a task-specific harness instead of pushing every task through one generic coding loop.</li>
+          <li>Clean separate contexts reduce early quitting, self-grading bias, and drift away from the original goal.</li>
+          <li>The tradeoff is cost: panels of agents and repeated passes can burn through tokens quickly.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>13m</strong><span>runtime</span></div>
+        <div class="stat"><strong>316</strong><span>caption rows</span></div>
+        <div class="stat"><strong>6</strong><span>workflow patterns</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Main lens</span><strong>Dynamic workflows</strong></li>
+            <li><span>Core object</span><strong>Task-specific harness</strong></li>
+            <li><span>Key benefit</span><strong>Clean context windows</strong></li>
+            <li><span>Key risk</span><strong>Token cost</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#thesis">Thesis</a>
+          <a href="#failures">Failure Modes</a>
+          <a href="#workflow">Dynamic Workflow</a>
+          <a href="#patterns">Six Patterns</a>
+          <a href="#examples">Use Cases</a>
+          <a href="#operations">Operations</a>
+          <a href="#platform">Platform Takeaways</a>
+          <a href="#templates">Flow Markdown</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="thesis">
+          <span class="label">Main Thesis</span>
+          <h2>The harness should match the task, not the other way around.</h2>
+          <p class="lead">
+            The speaker starts from a practical observation: Claude Code and Codex were designed around coding,
+            but users now apply them to security review, resume ranking, strategy analysis, Slack archaeology,
+            support triage, and other knowledge-work tasks. A coding harness can do some of this work,
+            but it is not always the best structure.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Generic harness</span>
+              <h3>One context carries the whole job</h3>
+              <p>Everything the agent reads, writes, checks, and corrects lands in the same context window.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Dynamic harness</span>
+              <h3>The workflow is generated for the task</h3>
+              <p>Claude can write a small JavaScript workflow that creates the right agents, stages, and checks for the current job.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Design lesson</span>
+              <h3>Autonomy needs structure</h3>
+              <p>Better results come from the right orchestration pattern, not simply from asking one agent to try harder.</p>
+            </article>
+          </div>
+          <p class="note">
+            My read: this is very aligned with the direction of agentic platforms.
+            The valuable artifact is not a long prompt. It is an executable harness that decides who works, what context they see,
+            how their work is verified, and when the loop stops.
+          </p>
+        </section>
+
+        <section class="section" id="failures">
+          <span class="label">Failure Modes</span>
+          <h2>One giant context window creates three familiar problems.</h2>
+          <p class="lead">
+            The video names three failure modes that appear when one agent handles a large messy job inside one growing context.
+            These problems are especially relevant to BA-created multi-agent systems because business work often has unclear scope,
+            subjective quality, and a long trail of intermediate evidence.
+          </p>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Failure Mode</th>
+                <th>What It Means</th>
+                <th>Workflow Fix</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Agentic laziness</strong></td>
+                <td>The agent quits early and declares success after partial work, such as finishing 35 of 50 review tasks.</td>
+                <td>Use a loop-until-done gate that creates another pass while new findings still appear.</td>
+              </tr>
+              <tr>
+                <td><strong>Self-preferential bias</strong></td>
+                <td>The same agent grades its own output too generously because it is attached to the answer it created.</td>
+                <td>Use a separate critic, verifier, or judge with its own clean context and rubric.</td>
+              </tr>
+              <tr>
+                <td><strong>Goal drift</strong></td>
+                <td>The original brief leaks away as context grows, especially after compaction or many corrections.</td>
+                <td>Split the job into clean contexts and synthesize against the original objective.</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="quote-strip">
+            <p>Stop running the whole job in one context. Split work across clean contexts and synthesize the result.</p>
+          </div>
+        </section>
+
+        <section class="section" id="workflow">
+          <span class="label">Dynamic Workflow</span>
+          <h2>A dynamic workflow is a small team of Claudes inside a JavaScript harness.</h2>
+          <p class="lead">
+            The video describes a dynamic workflow as a JavaScript file with special primitives.
+            The workflow can spawn sub-agents, fan them out in parallel, stream items through a pipeline,
+            choose different models, decide whether agents need separate worktrees, and resume if interrupted.
+          </p>
+          <div class="flow" aria-label="Dynamic workflow primitives">
+            <div class="flow-step">
+              <strong>agent</strong>
+              <span>Spawns one sub-agent inside its own clean context window.</span>
+            </div>
+            <div class="flow-step">
+              <strong>parallel</strong>
+              <span>Fans out many agents at once and waits until all of them finish.</span>
+            </div>
+            <div class="flow-step">
+              <strong>pipeline</strong>
+              <span>Streams a list of items through a chain of stages, each with a specific job.</span>
+            </div>
+            <div class="flow-step">
+              <strong>runtime choices</strong>
+              <span>Selects model, worktree isolation, resume behavior, and cost boundaries.</span>
+            </div>
+          </div>
+          <p class="note">
+            The checkout-provider example shows why this matters.
+            A static workflow may turn the question into generic web research.
+            A dynamic workflow can read the billing code, price the new provider at real volume,
+            argue the other side, and return a task-specific recommendation.
+          </p>
+        </section>
+
+        <section class="section" id="patterns">
+          <span class="label">Six Patterns</span>
+          <h2>Claude uses reusable orchestration patterns to build a custom harness.</h2>
+          <p class="lead">
+            The video walks through six patterns. The important platform idea is that the harness should choose a pattern
+            based on the work shape: classification, independent research, adversarial review, taste selection,
+            pairwise ranking, or unknown-depth discovery.
+          </p>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Pattern</th>
+                <th>How It Works</th>
+                <th>Best Fit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Classify and act</strong></td>
+                <td>A classifier decides what kind of task arrived, then routes it to the right agent or output shape.</td>
+                <td>Triage, routing, ticket handling, bug vs question detection, final formatting.</td>
+              </tr>
+              <tr>
+                <td><strong>Fan out and synthesize</strong></td>
+                <td>Many agents work in separate contexts, then a synthesizer waits and merges results.</td>
+                <td>Research, security review, market analysis, claim extraction, evidence gathering.</td>
+              </tr>
+              <tr>
+                <td><strong>Worker and critic</strong></td>
+                <td>One agent produces output; another independent agent attacks it against a rubric.</td>
+                <td>Reducing self-grading bias, plan review, writing review, policy compliance, QA.</td>
+              </tr>
+              <tr>
+                <td><strong>Generate and filter</strong></td>
+                <td>Create many candidates, score or verify them, dedupe repeats, and keep the best.</td>
+                <td>Naming, design options, copywriting, hypotheses, subjective alternatives.</td>
+              </tr>
+              <tr>
+                <td><strong>Tournament</strong></td>
+                <td>Multiple agents solve the same task; a judge compares pairs and advances winners.</td>
+                <td>Ranking large lists, LLM-as-judge workflows, support ticket sorting, resume ranking.</td>
+              </tr>
+              <tr>
+                <td><strong>Loop until done</strong></td>
+                <td>The loop keeps creating passes while a gate says new findings still exist.</td>
+                <td>Unknown-depth audits, root cause work, backlog cleanup, open-ended discovery.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="examples">
+          <span class="label">Use Cases</span>
+          <h2>The interesting part is not coding. It is messy non-code work.</h2>
+          <p class="lead">
+            The speaker lists several examples where a custom harness can outperform a one-agent prompt.
+            The key is that each use case maps to one of the patterns above.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Hiring</span>
+              <h3>Rank many resumes</h3>
+              <p>Use tournament or generate-and-filter patterns to find the top candidates without fitting every resume in one prompt.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Strategy</span>
+              <h3>Attack a business plan from many angles</h3>
+              <p>Fan out critics across market, financial, operational, and risk lenses, then synthesize the strongest objections.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Operations</span>
+              <h3>Mine Slack for root causes</h3>
+              <p>Separate evidence piles, quarantine untrusted content, generate hypotheses, and let a classifier choose the next pass.</p>
+            </article>
+          </div>
+          <ul class="checklist">
+            <li><strong>Verification:</strong> one agent extracts claims from a document while another checks each claim.</li>
+            <li><strong>Triage plus quarantine:</strong> an agent can read untrusted content but cannot act directly on it.</li>
+            <li><strong>Support sorting:</strong> a pairwise tournament can rank large backlogs that would not fit in one prompt.</li>
+            <li><strong>Coding-agent improvement:</strong> mine past sessions and turn repeated corrections into Claude.md rules.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="operations">
+          <span class="label">Operations</span>
+          <h2>The power comes with practical knobs and rough edges.</h2>
+          <p class="lead">
+            The video mentions several operating details that matter for real teams.
+            You can trigger workflows from Claude, save a useful generated harness for reuse,
+            cap token spend in the prompt, and pair workflows with scheduled loops.
+            But the speaker also warns that token cost can become dramatic.
+          </p>
+          <div class="pipeline" aria-label="Operational flow for dynamic workflows">
+            <div class="pipeline-step">
+              <strong>Trigger</strong>
+              <span>Use a workflow keyword or high-effort setting to ask Claude to create a harness.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Generate</strong>
+              <span>Claude builds a JavaScript workflow customized to the current task.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Run and compare</strong>
+              <span>Try multiple harnesses when needed and inspect which one performs best.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Save</strong>
+              <span>Keep the best harness as a reusable artifact for that task class.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Budget</strong>
+              <span>Cap tokens, schedule runs, and avoid five-agent panels for simple work.</span>
+            </div>
+          </div>
+          <p class="note">
+            One UX warning from the video is worth keeping: using a normal word like "workflow" as a trigger can cause accidental activation.
+            Production platforms should use explicit controls, stable commands, or typed workflow objects rather than relying on ambiguous natural language triggers.
+          </p>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your Master Agent, Sub-Agent, Skill, and MCP platform</h2>
+          <p class="lead">
+            This video is almost a direct answer to your SOP problem.
+            Instead of asking BAs to write giant persona prompts, your platform can let them describe the business task,
+            then generate or select a harness pattern with clear context boundaries, sub-agent roles, tools, gates, and budgets.
+          </p>
+          <ul class="checklist">
+            <li><strong>Make "harness" a first-class artifact.</strong> A harness should declare agents, stages, tools, context boundaries, model choices, worktree needs, gates, and cost limits.</li>
+            <li><strong>Use patterns as BA-selectable templates.</strong> BAs should choose from classify, fan out, worker-critic, generate-filter, tournament, and loop-until-done without writing orchestration code.</li>
+            <li><strong>Separate cognitive and actionable skills.</strong> Cognitive skills classify, critique, synthesize, score, rank, and plan. Actionable skills call MCP tools, mutate systems, and need permissions.</li>
+            <li><strong>Do not let worker agents verify themselves.</strong> Use independent verifier contexts for quality, compliance, completeness, and output acceptance.</li>
+            <li><strong>Preserve the original goal across stages.</strong> Every sub-agent and synthesizer should receive the objective, success criteria, constraints, and output contract.</li>
+            <li><strong>Add quarantine for untrusted inputs.</strong> Agents reading Slack, tickets, docs, or user uploads should not directly execute tools without a controlled handoff.</li>
+            <li><strong>Expose token economics.</strong> Let BAs see estimated cost and choose between simple single-agent, bounded workflow, or high-compute panel modes.</li>
+            <li><strong>Turn good workflows into reusable assets.</strong> A generated harness should be reviewable, versioned, named, and reusable as a skill or flow template.</li>
+            <li><strong>Use explicit triggers.</strong> Avoid accidental workflow activation from normal words. Use typed commands, buttons, or structured Flow Markdown.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">Flow Markdown</span>
+          <h2>A BA-friendly Flow Markdown spec can pick the workflow pattern before tools run.</h2>
+          <p class="lead">
+            The practical artifact for your platform is a template that turns a messy business task into a structured harness.
+            The BA defines the objective and acceptance criteria; the platform maps the task to an orchestration pattern and tool policy.
+          </p>
+          <pre class="mini-spec"># Dynamic Workflow: Vendor Migration Recommendation
+
+goal: Decide whether checkout services should migrate to a new payment provider.
+workflow_type: dynamic_harness
+pattern:
+  primary: fan_out_and_synthesize
+  review: worker_and_critic
+  optional: tournament_for_final_options
+
+budget:
+  max_tokens: 100000
+  max_runtime_minutes: 45
+  max_parallel_agents: 5
+
+context_policy:
+  preserve_original_goal: true
+  isolate_sub_agent_contexts: true
+  quarantine_untrusted_inputs: true
+  summarization_required_before_synthesis: true
+
+sub_agents:
+  - name: Codebase Research Agent
+    skill: billing_code_research
+    tools: [repo_search, file_read]
+    output: relevant_files_and_flow_summary
+  - name: Pricing Agent
+    skill: provider_cost_modeling
+    tools: [spreadsheet, calculator, provider_docs]
+    output: cost_comparison_at_real_volume
+  - name: Counterargument Agent
+    skill: adversarial_business_review
+    tools: [document_read]
+    output: reasons_not_to_migrate
+  - name: Risk Agent
+    skill: compliance_and_operational_risk
+    tools: [policy_lookup, incident_history]
+    output: migration_risk_matrix
+
+synthesis:
+  required_output:
+    - recommendation
+    - assumptions
+    - evidence_table
+    - risks
+    - next_actions
+
+verification:
+  critic_context: clean
+  rubric:
+    - evidence_covers_code_cost_risk
+    - recommendation_matches_original_goal
+    - no_unchecked_tool_claims
+    - token_budget_respected
+
+termination:
+  done_when:
+    - no_new_findings
+    - verifier_passes
+    - recommendation_has_clear_confidence
+  otherwise: loop_until_done_or_escalate</pre>
+          <div class="grid two">
+            <article class="card sand">
+              <span class="pill gold">BA view</span>
+              <h3>Choose the work shape</h3>
+              <p>The BA chooses the goal, success criteria, risk tolerance, and whether the task needs ranking, critique, synthesis, or a loop.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Runtime view</span>
+              <h3>Generate the harness</h3>
+              <p>The platform turns the spec into agents, MCP tool bindings, clean contexts, gates, traces, and reusable workflow artifacts.</p>
+            </article>
+          </div>
+          <p class="note">
+            Summary generated from the public YouTube captions for this video. The transcript discusses Anthropic's dynamic workflow patterns,
+            but the implementation details should still be validated inside your own platform with evals, traces, and cost controls.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>Claude Can Now Build Its Own Harness... For Every Task</strong>.
+    Source: Prompt Engineering. Video ID: l5rae4LMKBc.
+  </footer>
+</body>
+</html>

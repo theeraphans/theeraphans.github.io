@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Studied how to allocate a fixed inference-compute budget across search and iterative response refinement, showing that the best strategy depends on prompt difficulty.">
+  <meta name="resource-file" content="2026-09-08-test-time-scaling-compute-optimal-inference-en.html">
+  <title>Test-Time Scaling · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css">
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2408.03314">Read paper</a><a class="action-link" href="/reading/">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Retrieval, Reasoning, and Agents · Paper 37 of 37</p>
+        <h1>Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters</h1>
+        <p class="subtitle">Studied how to allocate a fixed inference-compute budget across search and iterative response refinement, showing that the best strategy depends on prompt difficulty.</p>
+        <div class="meta"><span><strong>Charlie Snell, Jaehoon Lee, Kelvin Xu, Aviral Kumar</strong></span><span>2024</span><span>Advanced</span><span>15 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>Test-Time Scaling</h2><p>UC Berkeley and Google DeepMind</p><p><strong>Prerequisites:</strong> Sampling, process reward models, search, compute matching, and mathematical reasoning evaluation.</p><a href="https://arxiv.org/abs/2408.03314">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Inference-scaling research</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Advanced</strong></div><div class="paper-fact"><span>Place in path</span><strong>37 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Most scaling work spends more compute during pretraining, then uses a nearly fixed decode procedure for every prompt. Yet easy and hard questions need different effort, and additional samples or search can improve a fixed model.</p>
+<p>Prior test-time methods produced mixed results because they applied one strategy and budget uniformly.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Study two mechanisms: search over responses using a dense process-based verifier, and adaptive revision that changes the model’s response distribution. Measure their benefit across prompt difficulty and compute budgets.</p>
+<p>Allocate inference compute per prompt using a compute-optimal policy rather than fixed best-of-N. The right method can let a smaller model outperform a much larger one on suitable problems at matched FLOPs.</p><div class="equation">Choose inference strategy and budget b(x) per prompt x to maximize expected quality under total compute.</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Estimate problem difficulty from base-model success. Generate candidates or iterative revisions. Score intermediate or final work with a verifier, then select or continue based on the available budget.</p>
+<p>Compare strategies under equal inference FLOPs and derive an allocation curve that spends little on easy items, more on solvable hard items, and avoids waste on items beyond the method.</p><figure class="concept-flow" aria-label="Adaptive test-time compute">
+    <div class="flow-step"><span>01</span><strong>Inspect prompt</strong><p>Estimate difficulty and value.</p></div>
+<div class="flow-step"><span>02</span><strong>Choose strategy</strong><p>Direct, sample, search, or revise.</p></div>
+<div class="flow-step"><span>03</span><strong>Spend budget</strong><p>Generate bounded candidates.</p></div>
+<div class="flow-step"><span>04</span><strong>Verify</strong><p>Rank outcomes or reasoning steps.</p></div>
+<div class="flow-step"><span>05</span><strong>Stop adaptively</strong><p>Return when marginal value falls.</p></div>
+    <figcaption>A router assigns effort by estimated difficulty and expected marginal value rather than using one decode policy everywhere.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>Best-of-N improves only when samples are diverse and the verifier ranks correctness. Process reward models supply denser scores over reasoning steps but introduce evaluator error.</p>
+<p>FLOPs matching must include every sample, verifier call, and revision. Wall time can differ because parallel sampling and sequential refinement have different latency.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>The paper reported more than four-times efficiency over a best-of-N baseline with compute-optimal allocation. On problems where the smaller base model had nontrivial success, test-time compute could outperform a model 14 times larger at matched FLOPs.</p>
+<p>The experiments focus on mathematical reasoning with verifiers. The result is conditional: extremely easy or effectively impossible prompts often gain little.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>Test-time scaling created a second scaling axis alongside parameters and training tokens. It influenced reasoning models, inference products with effort controls, and research on verifiers plus adaptive budgets.</p>
+<p>It also makes serving policy part of model quality: two systems with the same checkpoint can differ substantially through search and allocation.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Expose an effort budget linked to task value and latency. Calibrate a router on real outcomes, not model confidence alone, and include verifier cost in accounting.</p>
+<p>Keep a direct fast path for easy tasks and a bounded escalation path for hard tasks. Track marginal quality per additional token, sample, second, and dollar.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>Verifier mistakes can select polished wrong answers. Sequential refinement increases latency, while broad sampling increases throughput demand.</p>
+<p>Results do not automatically transfer from verifiable math to open-ended writing, business decisions, or safety. More inference can amplify a flawed objective.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>Chain-of-Thought provides longer single-path computation; Tree of Thoughts supplies explicit search; GRPO uses sampled outcomes to update weights. Scaling Laws and Chinchilla optimize pretraining instead.</p><div class="article-nav"><a href="2026-09-08-react-reasoning-acting-language-models-en.html">← ReAct</a><a href="2026-09-08-ai-engineer-research-papers.html">Collection →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>Inference compute is a distinct scaling resource.</li><li>One fixed budget is inefficient across prompt difficulty.</li><li>Search requires a reliable verifier.</li><li>Small models can beat larger ones on suitable tasks at matched compute.</li><li>Parallel throughput and sequential latency must be separated.</li><li>More thinking is useful only when the objective and verifier are sound.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2408.03314">Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>The paper is about adaptive compute allocation, not simply “think longer.” Its strongest evidence is on problems where verifiers and difficulty estimates are useful.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

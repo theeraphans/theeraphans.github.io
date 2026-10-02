@@ -1,0 +1,965 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>The Multi-Agent Architecture That Actually Ships - Factory - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5f6e74;
+      --paper: #fffef9;
+      --canvas: #f4f6f1;
+      --line: #d7ded4;
+      --teal: #14716a;
+      --blue: #315f85;
+      --coral: #bd4e3e;
+      --gold: #a1741e;
+      --green: #476f3d;
+      --violet: #675a87;
+      --charcoal: #243039;
+      --soft-teal: #e3f0ed;
+      --soft-blue: #e6edf5;
+      --soft-gold: #f7efd8;
+      --shadow: 0 24px 62px rgb(23 33 38 / 11%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(20 113 106 / 7%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(49 95 133 / 6%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--green), var(--teal), var(--blue), var(--coral), var(--gold), var(--violet));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 84%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.04fr) minmax(300px, 0.96fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.9rem, 6.7vw, 5.85rem);
+      font-weight: 760;
+      line-height: 0.96;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      margin-top: 24px;
+      color: #303b41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2.05vw, 1.48rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e6ece7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 86%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: rgb(255 255 255 / 88%);
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .stat {
+      padding: 14px;
+      color: var(--ink);
+      background: #fff;
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--coral);
+      font-size: 1.65rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 238px minmax(0, 1fr);
+      gap: 40px;
+      align-items: start;
+      margin-top: 38px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 6px;
+      padding: 16px;
+      background: rgb(255 255 255 / 80%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .toc span {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 750;
+      text-decoration: none;
+      border-top: 1px solid rgb(215 222 214 / 76%);
+    }
+
+    .content {
+      display: grid;
+      gap: 28px;
+      min-width: 0;
+    }
+
+    .section {
+      min-width: 0;
+      padding: 34px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; padding-top: 0; }
+
+    .label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      max-width: 900px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.9rem, 4vw, 3.35rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      max-width: 920px;
+      margin-top: 14px;
+      color: #303b41;
+      font-size: 1.08rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      margin-bottom: 12px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .flow-step {
+      min-width: 0;
+      padding: 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 30px rgb(23 33 38 / 6%);
+    }
+
+    .flow-step b {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--coral);
+      font-size: 0.8rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .lanes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .lane {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .lane:nth-child(1) { background: var(--soft-teal); }
+    .lane:nth-child(2) { background: var(--soft-blue); }
+    .lane:nth-child(3) { background: var(--soft-gold); }
+
+    .lane h3 {
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 1.08rem;
+    }
+
+    .lane p {
+      color: #42505a;
+      font-size: 0.96rem;
+    }
+
+    .table-wrap {
+      min-width: 0;
+      margin-top: 24px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: #fff;
+      background: var(--blue);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    td {
+      color: #344047;
+      font-size: 0.95rem;
+    }
+
+    .quote {
+      margin-top: 24px;
+      padding: 22px;
+      color: #fff;
+      background: var(--violet);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.22rem, 2.4vw, 1.78rem);
+      line-height: 1.35;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 14px 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .checklist strong { color: var(--coral); }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .stack-row {
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .stack-label {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      color: #fff;
+      background: var(--blue);
+      border-radius: 8px;
+      font-weight: 900;
+    }
+
+    .stack-body {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .node {
+      min-height: 96px;
+      padding: 14px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .node strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.98rem;
+    }
+
+    .node span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 46px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .layout,
+      .stack-row {
+        grid-template-columns: 1fr;
+      }
+
+      .toc { position: static; }
+
+      .grid,
+      .two,
+      .tldr,
+      .lanes,
+      .stack-body {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .page { padding-inline: 16px; }
+
+      .hero {
+        padding-top: 36px;
+        gap: 28px;
+      }
+
+      h1 {
+        max-width: 10ch;
+        font-size: clamp(2.55rem, 13vw, 4.15rem);
+      }
+
+      .quick-summary { padding: 22px; }
+
+      .grid,
+      .two,
+      .tldr,
+      .lanes,
+      .stack-body {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        min-width: 0;
+        table-layout: fixed;
+      }
+
+      th, td {
+        padding: 11px 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/reading/">Reading room</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#taxonomy">Taxonomy</a>
+      <a class="action-link" href="#missions">Missions</a>
+      <a class="action-link" href="#validation">Validation</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=ow1we5PzK-o">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Factory Missions</span>
+        <h1>The Multi-Agent Architecture That Actually Ships</h1>
+        <p class="subtitle">
+          A readable summary of Luke Alvoeiro's AI Engineer talk about Factory's Missions system.
+          The talk argues that modern software engineering is limited less by model intelligence and more by human attention,
+          then shows how orchestrators, workers, validators, structured handoffs, and validation contracts let agent teams run for days.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> The Multi-Agent Architecture That Actually Ships</span>
+          <span><strong>Speaker:</strong> Luke Alvoeiro, Factory</span>
+          <span><strong>Transcript:</strong> 3,028 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/ow1we5PzK-o/hqdefault.jpg" alt="Video thumbnail for The Multi-Agent Architecture That Actually Ships">
+        <figcaption>
+          Source video from AI Engineer, focused on Factory Missions, multi-agent taxonomy, validation contracts, handoffs, model routing, and production software agents.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="quick-summary-title">
+      <div>
+        <h2 id="quick-summary-title">The Short Version</h2>
+        <p>
+          Factory's claim is that the bottleneck in software engineering is now human attention. Models can attempt many tasks,
+          but humans cannot supervise all of them at once. Missions is Factory's answer: a multi-agent workflow where a human scopes the goal,
+          approves the plan, and then an ecosystem of agents executes, validates, writes handoffs, corrects failures, and reports progress over hours or days.
+        </p>
+        <ul class="tldr">
+          <li>Missions combine delegation, creator-verifier, broadcast, and negotiation into one production workflow.</li>
+          <li>The validation contract is written before coding, so correctness is defined independently from implementation.</li>
+          <li>Factory favors serial feature execution with targeted internal parallelism because correctness compounds over multi-day runs.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>18m</strong><span>runtime</span></div>
+        <div class="stat"><strong>534</strong><span>caption rows</span></div>
+        <div class="stat"><strong>3.0k</strong><span>transcript words</span></div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Table of contents">
+        <span>Read</span>
+        <a href="#attention">Attention bottleneck</a>
+        <a href="#taxonomy">Five framework patterns</a>
+        <a href="#missions">Missions architecture</a>
+        <a href="#validation">Validation contract</a>
+        <a href="#handoffs">Structured handoffs</a>
+        <a href="#execution">Execution strategy</a>
+        <a href="#models">Model routing</a>
+        <a href="#platform">Platform takeaways</a>
+      </nav>
+
+      <article class="content">
+        <section class="section" id="attention">
+          <span class="label">Attention Bottleneck</span>
+          <h2>The talk starts from a product thesis: humans can choose goals, but agents should carry execution</h2>
+          <p class="lead">
+            Luke's opening claim is that software engineering is no longer limited only by model intelligence.
+            The hard limit is human attention. A strong engineer may have a backlog of 50 useful tasks, but can only drive a few forward per day.
+            The question is: what if the human decides what to build and a system figures out how to do it?
+          </p>
+
+          <div class="lanes" aria-label="Attention bottleneck">
+            <article class="lane">
+              <h3>Human Role</h3>
+              <p>Scope the goal, make strategic decisions, approve the plan, and inspect outcomes when the system needs judgment.</p>
+            </article>
+            <article class="lane">
+              <h3>Agent Role</h3>
+              <p>Break work into features, implement, validate, write handoffs, catch problems, and keep moving across milestones.</p>
+            </article>
+            <article class="lane">
+              <h3>System Role</h3>
+              <p>Maintain shared state, enforce validation, preserve context, block progress on unresolved issues, and expose mission status.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="taxonomy">
+          <span class="label">Taxonomy</span>
+          <h2>Factory frames multi-agent systems as five reusable communication patterns</h2>
+          <p class="lead">
+            The speaker says the multi-agent field has too much inconsistent terminology, so he proposes a simple taxonomy.
+            These patterns are the building blocks, but the talk's key move is that Missions compose several of them into a durable workflow.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Pattern</th>
+                  <th>What it means</th>
+                  <th>Risk or value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Delegation</td>
+                  <td>One agent spawns another agent to perform focused work and return a result.</td>
+                  <td>Simple and common, especially for coding sub-agents.</td>
+                </tr>
+                <tr>
+                  <td>Creator-verifier</td>
+                  <td>One agent builds; another fresh agent checks the work.</td>
+                  <td>Separates implementation bias from review, similar to human code review.</td>
+                </tr>
+                <tr>
+                  <td>Direct communication</td>
+                  <td>Agents communicate without a central coordinator.</td>
+                  <td>Flexible but can fragment state because there is no single source of truth.</td>
+                </tr>
+                <tr>
+                  <td>Negotiation</td>
+                  <td>Agents coordinate over shared resources such as APIs, code areas, or plan scope.</td>
+                  <td>Best when there is a positive-sum trade, not only adversarial conflict.</td>
+                </tr>
+                <tr>
+                  <td>Broadcast</td>
+                  <td>One agent sends updates, constraints, or shared context to many agents.</td>
+                  <td>Less flashy, but critical for coherence in long-running tasks.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="missions">
+          <span class="label">Missions Architecture</span>
+          <h2>Missions use orchestrators, workers, and validators as separate roles</h2>
+          <p class="lead">
+            A mission is not one chat session. It is an ecosystem of agents that communicate through structured handoffs and shared state.
+            The user describes a goal, scopes it with the orchestrator, approves a plan, and then the system executes for hours or days.
+          </p>
+
+          <div class="stack" aria-label="Factory Missions role architecture">
+            <div class="stack-row">
+              <div class="stack-label">Orchestrator</div>
+              <div class="stack-body">
+                <div class="node"><strong>Clarifies</strong><span>Asks strategic questions and resolves ambiguous requirements.</span></div>
+                <div class="node"><strong>Plans</strong><span>Produces features, milestones, and work sequence.</span></div>
+                <div class="node"><strong>Contracts</strong><span>Writes the validation contract before implementation.</span></div>
+                <div class="node"><strong>Rescopes</strong><span>Creates follow-up work when validators find issues.</span></div>
+              </div>
+            </div>
+            <div class="stack-row">
+              <div class="stack-label">Workers</div>
+              <div class="stack-body">
+                <div class="node"><strong>Clean context</strong><span>Each worker starts with focused requirements and no accumulated baggage.</span></div>
+                <div class="node"><strong>Implements</strong><span>Builds the assigned feature against the current codebase.</span></div>
+                <div class="node"><strong>Commits</strong><span>Commits through Git so the next worker inherits a clean slate.</span></div>
+                <div class="node"><strong>Handoff</strong><span>Writes what changed, what remains, commands run, and issues found.</span></div>
+              </div>
+            </div>
+            <div class="stack-row">
+              <div class="stack-label">Validators</div>
+              <div class="stack-body">
+                <div class="node"><strong>Scrutiny</strong><span>Runs tests, type checks, lint, and dedicated code review agents.</span></div>
+                <div class="node"><strong>User testing</strong><span>Acts like QA, launches the app, clicks flows, and checks behavior.</span></div>
+                <div class="node"><strong>Fresh eyes</strong><span>Validators have not seen the code before and are adversarial by design.</span></div>
+                <div class="node"><strong>Milestones</strong><span>Run at milestone boundaries to catch drift and scope fixes.</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="validation">
+          <span class="label">Validation Contract</span>
+          <h2>The validation contract is the part that keeps a multi-day agent run honest</h2>
+          <p class="lead">
+            The speaker warns that tests written after implementation often confirm the agent's decisions instead of checking the real goal.
+            Missions avoid this by writing a validation contract during planning, before coding. The contract defines what "done" means independently of the implementation.
+          </p>
+
+          <div class="flow" aria-label="Validation contract lifecycle">
+            <div class="flow-step"><b>Scope</b><span>User and orchestrator clarify the intended outcome.</span></div>
+            <div class="flow-step"><b>Contract</b><span>The orchestrator writes correctness assertions before work starts.</span></div>
+            <div class="flow-step"><b>Assign</b><span>Each feature receives one or more assertions it must satisfy.</span></div>
+            <div class="flow-step"><b>Validate</b><span>Scrutiny and user testing validators check the milestone.</span></div>
+            <div class="flow-step"><b>Repair</b><span>Failures create follow-up features or rescoping work.</span></div>
+          </div>
+
+          <ul class="checklist">
+            <li><strong>Correctness comes before code.</strong> The contract prevents implementation-shaped tests from becoming the definition of success.</li>
+            <li><strong>Behavior matters.</strong> Missions do not stop at lint, typecheck, tests, or review; user testing validators interact with the live app.</li>
+            <li><strong>Validation is adversarial.</strong> A fresh validator with separate context is more likely to catch mistakes than the agent that wrote the code.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="handoffs">
+          <span class="label">Structured Handoffs</span>
+          <h2>Long-running agent systems do not trust memory; they force agents to write state down</h2>
+          <p class="lead">
+            When a worker finishes, it does not simply say "done." It fills out a structured handoff.
+            This handoff explains what was completed, what was left undone, what commands ran, what the exit codes were,
+            which issues appeared, and whether the worker followed the procedures defined by the orchestrator.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Completed</span>
+              <h3>What changed</h3>
+              <p>The worker records implemented features, touched areas, and meaningful architectural decisions.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Evidence</span>
+              <h3>Commands and exits</h3>
+              <p>Tests, lint, type checks, local runs, and command exit codes become part of the mission state.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Issues</span>
+              <h3>Self-healing inputs</h3>
+              <p>Problems found by workers or validators create structured follow-up work instead of disappearing in chat history.</p>
+            </article>
+          </div>
+
+          <p class="quote">
+            The system self-heals by catching issues at milestone boundaries, scoping corrective work, and pulling the mission back on track.
+          </p>
+        </section>
+
+        <section class="section" id="execution">
+          <span class="label">Execution Strategy</span>
+          <h2>Factory chooses serial execution with targeted internal parallelism</h2>
+          <p class="lead">
+            The obvious answer is to run many agents in parallel, but Factory found that broad parallelism creates conflicts:
+            agents step on each other's changes, duplicate work, and make inconsistent architectural decisions.
+            Missions run features serially, while parallelizing read-only work such as search, research, and code review.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Choice</th>
+                  <th>Why it matters</th>
+                  <th>Tradeoff</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>One active worker or validator</td>
+                  <td>Reduces conflicts, duplicate work, and inconsistent architecture.</td>
+                  <td>Looks slower on paper, but has lower error compounding.</td>
+                </tr>
+                <tr>
+                  <td>Parallel read-only operations</td>
+                  <td>Search, API research, and code review can fan out safely.</td>
+                  <td>Requires clear boundaries between read-only and mutating work.</td>
+                </tr>
+                <tr>
+                  <td>Mission Control UI</td>
+                  <td>Shows active worker, progress, budget burn, handoff summaries, and validator findings.</td>
+                  <td>Long-running agents need a project-management surface, not only chat.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="models">
+          <span class="label">Model Routing</span>
+          <h2>The right model belongs in the right seat</h2>
+          <p class="lead">
+            The talk calls this skill "droid whispering": mentally modeling how different LLMs behave,
+            where they fail, and how those failures compound over a multi-day run. Planning, implementation,
+            and validation benefit from different model traits, so a model-agnostic architecture becomes an advantage.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Planning</span>
+              <h3>Slow careful reasoning</h3>
+              <p>The orchestrator benefits from strategic questioning, ambiguity handling, and plan decomposition.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Implementation</span>
+              <h3>Fast code fluency</h3>
+              <p>Workers need strong coding ability, creativity, and speed inside focused feature scopes.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Validation</span>
+              <h3>Precise instruction following</h3>
+              <p>Validators may even use a different provider to reduce shared blind spots from the implementation model.</p>
+            </article>
+          </div>
+
+          <ul class="checklist">
+            <li><strong>Model diversity reduces weak links.</strong> Locking into one provider means the system inherits that provider's weakest capability.</li>
+            <li><strong>Structure can compensate for weaker models.</strong> Validation contracts and milestone checkpoints can make open-weight models more usable.</li>
+            <li><strong>The architecture should improve with model releases.</strong> Factory keeps most orchestration logic in prompts and skills rather than a hard-coded state machine.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your agentic AI platform</h2>
+          <p class="lead">
+            This is one of the most directly useful videos for a BA-facing Master Agent, Sub-Agent, Skill, Tool MCP,
+            and Flow Markdown platform. The main lesson is that multi-agent architecture needs contracts, handoffs,
+            validators, model routing, and a mission dashboard, not just many agents talking.
+          </p>
+
+          <ul class="checklist">
+            <li><strong>Make "Mission" a platform object.</strong> A mission should have goal, scope, owner, plan, milestones, validation contract, budget, agents, state, and final report.</li>
+            <li><strong>Compile Flow Markdown into contracts.</strong> BA-authored flows should produce acceptance assertions before any agent starts implementation.</li>
+            <li><strong>Separate builder and verifier personas.</strong> Creator-verifier should be a default architecture for risky work, not an optional prompt trick.</li>
+            <li><strong>Use structured handoffs between every agent step.</strong> Handoffs should capture completed work, evidence, commands, failures, open questions, and next state.</li>
+            <li><strong>Add milestone gates.</strong> Progress should pause when validator findings, handoff issues, or unaddressed contract failures exist.</li>
+            <li><strong>Make user testing a first-class validator.</strong> For software workflows, the platform should test behavior through browser or computer use, not only code inspection.</li>
+            <li><strong>Prefer controlled serial mutation.</strong> Let agents parallelize research and review, but serialize code-changing work unless conflict management is explicit.</li>
+            <li><strong>Route models by role.</strong> BAs can choose autonomy level, while engineers configure planner, worker, validator, and reviewer model defaults.</li>
+            <li><strong>Expose mission control.</strong> Users need progress, budget burn, current agent activity, handoff summaries, validator findings, and follow-up features in one dashboard.</li>
+            <li><strong>Keep orchestration prompt-native where possible.</strong> Thin deterministic infrastructure plus prompts, skills, and agent-readable docs lets the system improve as models improve.</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>The Multi-Agent Architecture That Actually Ships - Luke Alvoeiro, Factory</strong>.
+    Source: AI Engineer. Video ID: ow1we5PzK-o.
+  </footer>
+</body>
+</html>

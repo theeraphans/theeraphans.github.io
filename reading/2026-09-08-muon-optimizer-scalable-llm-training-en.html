@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Scaled the Muon matrix optimizer to language-model training by orthogonalizing momentum updates, adding weight decay, and calibrating update scale.">
+  <meta name="resource-file" content="2026-09-08-muon-optimizer-scalable-llm-training-en.html">
+  <title>Muon Optimizer · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css">
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2502.16982">Read paper</a><a class="action-link" href="/reading/">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Efficient Adaptation and Training · Paper 27 of 37</p>
+        <h1>Muon is Scalable for LLM Training</h1>
+        <p class="subtitle">Scaled the Muon matrix optimizer to language-model training by orthogonalizing momentum updates, adding weight decay, and calibrating update scale.</p>
+        <div class="meta"><span><strong>Jingyuan Liu, Jianlin Su, Xingcheng Yao, Zhejun Jiang, Guokun Lai, Yulun Du, Yidao Qin, Weixin Xu, Enzhe Lu, Junjie Yan, Yanru Chen, Huabin Zheng, Yibo Liu, Shaowei Liu, Bohong Yin, Weiran He, Han Zhu, Yuzhi Wang, Jianzhou Wang, Mengnan Dong, Zheng Zhang, Yongsheng Kang, Hao Zhang, Xinran Xu, Yutao Zhang, Yuxin Wu, Xinyu Zhou, Zhilin Yang</strong></span><span>2025</span><span>Advanced</span><span>14 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>Muon Optimizer</h2><p>Moonshot AI and collaborators</p><p><strong>Prerequisites:</strong> Momentum optimization, matrix norms, Newton-Schulz iteration, AdamW, and distributed training.</p><a href="https://arxiv.org/abs/2502.16982">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Optimizer research</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Advanced</strong></div><div class="paper-fact"><span>Place in path</span><strong>27 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>AdamW treats coordinates largely independently and keeps two moment estimates per parameter. Muon proposed geometry-aware updates for 2D weight matrices but had not been validated at large language-model scale.</p>
+<p>Scaling requires stable weight decay, comparable update magnitude across differently shaped tensors, and efficient distributed orthogonalization.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Build momentum for each hidden weight matrix, then approximately orthogonalize that update with Newton-Schulz iterations. This gives singular directions more balanced update magnitude than raw momentum.</p>
+<p>Use AdamW for embeddings, normalization, biases, and other non-matrix parameters. Add decoupled weight decay and a shape-aware scale so Muon works across model sizes.</p><div class="equation">Muon update ≈ NewtonSchulz( momentum_matrix ), scaled per parameter and combined with weight decay.</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Compute gradients and momentum. Normalize the matrix, run several Newton-Schulz polynomial iterations using matrix multiplications, rescale the result, apply weight decay, and update the weight.</p>
+<p>Shard or communicate updates with an implementation designed to avoid storing unnecessary full optimizer state.</p><figure class="concept-flow" aria-label="Muon update pipeline">
+    <div class="flow-step"><span>01</span><strong>Gradient</strong><p>Compute a matrix-shaped signal.</p></div>
+<div class="flow-step"><span>02</span><strong>Momentum</strong><p>Accumulate direction over steps.</p></div>
+<div class="flow-step"><span>03</span><strong>Orthogonalize</strong><p>Run Newton-Schulz iterations.</p></div>
+<div class="flow-step"><span>04</span><strong>Scale + decay</strong><p>Calibrate shape and regularize.</p></div>
+<div class="flow-step"><span>05</span><strong>Update</strong><p>Apply to matrix weights.</p></div>
+    <figcaption>Matrix weights receive geometry-aware momentum updates; vector-like parameters remain on a conventional optimizer.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>Orthogonalization is approximate and chosen because matrix multiplications map efficiently to accelerators. Update-scale calibration is critical: an orthogonal matrix’s entry and spectral statistics differ from Adam-normalized updates.</p>
+<p>Muon reduces some optimizer-state requirements but adds matrix-multiplication work. Its cost depends on shape, parallelism, precision, and Newton-Schulz iteration count.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>The paper’s scaling-law experiments reported about two-times compute efficiency versus AdamW under its compute-optimal setup and trained the Moonlight 3B/16B MoE model on 5.7T tokens.</p>
+<p>Those results are substantial but come from one training stack and model family. Independent evidence across architectures and data regimes is still developing.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>Muon reopened optimizer design as a major LLM scaling lever and demonstrated that matrix geometry can be exploited with accelerator-friendly operations.</p>
+<p>It also encouraged teams to benchmark training loss per FLOP rather than compare optimizer steps or wall time without systems context.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Start with a small scaling sweep and match total tokens, FLOPs, and data order against AdamW. Monitor update RMS, spectral norms, loss spikes, and per-parameter category.</p>
+<p>Keep an explicit parameter partition: matrix weights on Muon, vectors and special parameters on AdamW. Validate distributed numerical agreement and checkpoint resume.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>Evidence is newer than AdamW’s broad deployment history. Orthogonalization assumptions fit matrix weights better than all parameter types, and kernel or communication overhead can erase gains.</p>
+<p>Hyperparameter transfer, very small matrices, fine-tuning, multimodal models, and long-horizon stability need workload-specific validation.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>Muon complements scaling-law work by changing optimization efficiency rather than model/data allocation. It sits beside MoE methods that reduce active compute through architecture.</p><div class="article-nav"><a href="2026-09-08-deepseekmoe-expert-specialization-en.html">← DeepSeekMoE</a><a href="2026-09-08-flashattention-io-aware-exact-attention-en.html">FlashAttention →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>Muon orthogonalizes momentum updates for matrix parameters.</li><li>Newton-Schulz uses accelerator-friendly matrix multiplications.</li><li>Weight decay and update scaling enabled larger runs.</li><li>Not every parameter should use Muon.</li><li>Compare loss per total FLOP under controlled data.</li><li>Current evidence is promising but still young.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2502.16982">Muon is Scalable for LLM Training</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>Muon is newer evidence, not a universal AdamW replacement. Understand which parameters receive matrix updates and which remain on AdamW.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

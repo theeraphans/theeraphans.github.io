@@ -1,0 +1,1291 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>OpenAI Design in the AI Era - Ian Silber Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5b6870;
+      --quiet: #7a858b;
+      --paper: #fffefa;
+      --canvas: #f4f7f2;
+      --line: #d8dfd7;
+      --red: #c94c3b;
+      --teal: #1d766c;
+      --blue: #2c6682;
+      --green: #5b7d51;
+      --gold: #a97925;
+      --plum: #665987;
+      --wash-red: #f8e5df;
+      --wash-teal: #e2f0ec;
+      --wash-blue: #e5eff6;
+      --wash-green: #e9f1df;
+      --wash-gold: #f7edd8;
+      --shadow: 0 24px 68px rgb(23 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(29 118 108 / 6%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(44 102 130 / 5%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 46px 46px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--red), var(--teal), var(--blue), var(--green), var(--gold), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure, blockquote, pre { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td, code { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 88%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.96fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--red);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 13ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.45rem, 5.9vw, 5.25rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      margin-top: 24px;
+      color: #303b42;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      object-fit: contain;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+      gap: 24px;
+      margin: 28px 0;
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 7%);
+    }
+
+    .quick-summary h2,
+    .section h2,
+    .sidebar h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-weight: 760;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+    }
+
+    .quick-summary p,
+    .section p,
+    .section li {
+      color: #334047;
+      font-size: 1.01rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .stats-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat {
+      display: grid;
+      align-content: space-between;
+      min-height: 112px;
+      padding: 16px;
+      background: var(--wash-teal);
+      border: 1px solid rgb(29 118 108 / 18%);
+      border-radius: 8px;
+    }
+
+    .stat:nth-child(2) { background: var(--wash-blue); border-color: rgb(44 102 130 / 18%); }
+    .stat:nth-child(3) { background: var(--wash-gold); border-color: rgb(169 121 37 / 18%); }
+    .stat:nth-child(4) { background: var(--wash-green); border-color: rgb(91 125 81 / 18%); }
+
+    .stat strong {
+      color: var(--ink);
+      font-size: 1.25rem;
+      line-height: 1.05;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .content {
+      display: grid;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .section {
+      padding: 32px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 7%);
+    }
+
+    .section h2 {
+      margin-bottom: 16px;
+      font-size: clamp(1.75rem, 3vw, 2.45rem);
+    }
+
+    .section h3 {
+      margin-bottom: 8px;
+      color: #1f2a31;
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+
+    .section p + p { margin-top: 14px; }
+
+    .section ul,
+    .section ol {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+      padding-left: 22px;
+    }
+
+    .callout,
+    .quote-box,
+    .verdict {
+      margin-top: 20px;
+      padding: 18px 20px;
+      background: var(--wash-teal);
+      border: 1px solid rgb(29 118 108 / 20%);
+      border-radius: 8px;
+    }
+
+    .callout.gold { background: var(--wash-gold); border-color: rgb(169 121 37 / 22%); }
+    .callout.red { background: var(--wash-red); border-color: rgb(201 76 59 / 20%); }
+    .quote-box { color: #24333a; font-family: ui-serif, Georgia, "Times New Roman", serif; font-size: 1.16rem; }
+    .verdict { background: #1f2b32; border-color: #1f2b32; }
+    .verdict h3,
+    .verdict p { color: #fff; }
+
+    .card-grid,
+    .evidence-grid,
+    .metric-grid,
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .card,
+    .evidence-item,
+    .metric-card,
+    .template-card {
+      min-width: 0;
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .metric-card:nth-child(1) { background: var(--wash-red); }
+    .metric-card:nth-child(2) { background: var(--wash-teal); }
+    .metric-card:nth-child(3) { background: var(--wash-blue); }
+    .metric-card:nth-child(4) { background: var(--wash-gold); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .flow li {
+      display: grid;
+      gap: 8px;
+      min-height: 174px;
+      padding: 16px;
+      color: #334047;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .step-number {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 50%;
+      font-weight: 900;
+    }
+
+    .map {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .map-node {
+      display: grid;
+      gap: 8px;
+      min-height: 136px;
+      padding: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-left: 6px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .map-node:nth-child(2) { border-left-color: var(--blue); }
+    .map-node:nth-child(3) { border-left-color: var(--gold); }
+    .map-node:nth-child(4) { border-left-color: var(--green); }
+    .map-node:nth-child(5) { border-left-color: var(--red); }
+    .map-node:nth-child(6) { border-left-color: var(--plum); }
+
+    .table-wrap {
+      width: 100%;
+      margin-top: 20px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 720px;
+      border-collapse: collapse;
+      background: #fff;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: var(--ink);
+      background: var(--wash-blue);
+      font-size: 0.82rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+    td { color: #344047; font-size: 0.95rem; }
+
+    pre {
+      max-width: 100%;
+      margin-top: 12px;
+      padding: 16px;
+      overflow-x: auto;
+      color: #eaf3f3;
+      background: #1f2b32;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      line-height: 1.58;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .toc,
+    .source-box {
+      padding: 20px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 14px 32px rgb(23 33 38 / 6%);
+    }
+
+    .toc h2,
+    .source-box h2 {
+      margin-bottom: 12px;
+      color: var(--quiet);
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .toc nav {
+      display: grid;
+      gap: 6px;
+    }
+
+    .toc a {
+      color: var(--ink);
+      font-size: 0.92rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--red); }
+
+    .source-box p {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .tag {
+      display: inline-flex;
+      min-height: 30px;
+      align-items: center;
+      padding: 0 10px;
+      color: var(--ink);
+      background: var(--wash-green);
+      border: 1px solid rgb(91 125 81 / 20%);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .footer-note {
+      margin-top: 28px;
+      color: var(--quiet);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar { position: static; }
+      h1 { max-width: 14ch; }
+      .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .map,
+      .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .action-link { flex: 1 1 auto; }
+      .page { padding: 0 18px 56px; }
+      .hero { padding: 36px 0 34px; }
+      .quick-summary,
+      .section { padding: 20px; }
+      .stats-panel,
+      .card-grid,
+      .evidence-grid,
+      .metric-grid,
+      .template-grid,
+      .flow,
+      .map {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">Video Notes Library</a>
+    <div class="top-actions">
+      <a class="action-link" href="./index.html">All summaries</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=BV0hy6NET-U">Watch source</a>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="kicker">Lenny's Podcast OpenAI design summary</p>
+        <h1 id="page-title">OpenAI Design In The AI Era</h1>
+        <p class="subtitle">A detailed reading guide to Lenny Rachitsky's conversation with Ian Silber, Head of Product Design at OpenAI, on why this may be the best time in history to be a designer, how AI changes the design process, and what it means to design adaptive agentic products like ChatGPT and Codex.</p>
+        <div class="meta">
+          <span><strong>Source:</strong> Lenny's Podcast</span>
+          <span><strong>Guest:</strong> Ian Silber, OpenAI</span>
+          <span><strong>Length:</strong> about 72 minutes</span>
+          <span><strong>Transcript:</strong> 1,937 caption rows, about 13,879 words</span>
+        </div>
+      </div>
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/BV0hy6NET-U/hqdefault.jpg" alt="YouTube thumbnail for Ian Silber on Lenny's Podcast">
+        <figcaption>Source video thumbnail. This page summarizes the public captions and converts the conversation into a design and agent-platform playbook.</figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" id="executive-summary">
+      <div>
+        <h2>Executive Summary</h2>
+        <p>Ian Silber's central message is optimistic: designers are anxious because the role is changing quickly, but the opportunity is larger than the fear. AI does not remove design. It changes what designers should spend attention on. When anyone can generate software, the scarce work becomes taste, user understanding, systems thinking, adaptive interface design, and knowing which problems deserve deep craft versus fast public experimentation.</p>
+        <ul class="summary-list">
+          <li><strong>Designers feel uncertain:</strong> the expected role is unclear because engineering has already seen dramatic AI leverage while design remains messy, iterative, and feedback-heavy.</li>
+          <li><strong>Design is still a human leverage point:</strong> when anyone can make software, products that deeply understand users and feel delightful stand out more.</li>
+          <li><strong>AI is already a strong product-design collaborator:</strong> it helps generate ideas, prototypes, alternate directions, and operational support, but humans still provide point of view and user empathy.</li>
+          <li><strong>Roles blur but do not disappear:</strong> PM, design, and engineering overlap more, yet great products still need different hats and responsibilities.</li>
+          <li><strong>Systems thinking is rising:</strong> designers need composable primitives, design systems, and durable product patterns that the model and product can reason across.</li>
+          <li><strong>The interface is becoming adaptive:</strong> ChatGPT is not just a text box. It is evolving toward richer blocks, tools, voice, proactive suggestions, workflow memory, and context-specific affordances.</li>
+        </ul>
+      </div>
+      <div class="stats-panel" aria-label="Summary stats">
+        <div class="stat"><strong>72 min</strong><span>Interview length</span></div>
+        <div class="stat"><strong>13.9k</strong><span>Transcript words</span></div>
+        <div class="stat"><strong>2 modes</strong><span>Craft and speed</span></div>
+        <div class="stat"><strong>1 thesis</strong><span>Design matters more</span></div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <article class="content">
+        <section class="section" id="core-thesis">
+          <h2>Core Thesis</h2>
+          <p>The episode begins with a surprising finding from Lenny's tech sentiment survey: designers and user researchers are among the most anxious, overwhelmed, and pessimistic groups in tech. Silber says this makes sense because the role expectation is unclear. Designers see engineers getting 10x or 100x leverage from coding agents, while the design process still involves taste, exploration, user feedback, alignment, and throwing away bad ideas.</p>
+          <p>His answer is not that designers should panic. His answer is that this is the best time in history to be a designer because the tools make it easier to move from idea to working artifact, try more directions, and express creative intent. Designers are not behind if they start now. The field is still early and nobody has the final process figured out.</p>
+          <div class="callout">
+            <p><strong>Best one-line read:</strong> AI compresses production time, but the messy loop of judgment, user understanding, taste, and iteration remains the heart of design.</p>
+          </div>
+        </section>
+
+        <section class="section" id="designer-anxiety">
+          <h2>Why Designers Feel Anxious</h2>
+          <p>Silber identifies a mismatch. Engineering has already changed visibly: coding agents can implement, refactor, and ship faster than before. Designers are watching that shift and wondering whether they are expected to code every day, abandon their classical training, or change everything about their process.</p>
+          <p>But design does not become binary in the same way. A coding agent can often either complete a request or not. A design idea can be technically implemented and still be wrong. You may need to try many ideas, test them, get internal feedback, see how real users react, and then throw most of them away. AI helps produce more options, but it does not eliminate the need to judge which option should exist.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Source of anxiety</th>
+                  <th>Silber's framing</th>
+                  <th>Practical response</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Role expectations are changing.</td>
+                  <td>Nobody has the final answer yet.</td>
+                  <td>Explore new workflows instead of waiting for a fixed definition.</td>
+                </tr>
+                <tr>
+                  <td>Engineers appear much faster.</td>
+                  <td>Design also gets faster, but not in the same measurable way.</td>
+                  <td>Use AI to expand idea space and shorten prototyping loops.</td>
+                </tr>
+                <tr>
+                  <td>Design process still takes time.</td>
+                  <td>Messiness is part of the craft, not a failure.</td>
+                  <td>Choose which work deserves depth and which work can ship-and-learn.</td>
+                </tr>
+                <tr>
+                  <td>AI confidence theater is noisy.</td>
+                  <td>Many people are still figuring it out.</td>
+                  <td>Stay humble, curious, and hands-on with the tools.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="best-time">
+          <h2>Why This Is The Best Time To Be A Designer</h2>
+          <p>Silber's optimism comes from access. When he was learning design, the path involved view-source, early web tools, and slow feedback cycles. Today, a designer can take a thought and get a working artifact in minutes. This changes who can participate and how fast a designer can learn.</p>
+          <p>The opportunity is not just speed. As software creation becomes more accessible, the human element of design becomes more valuable. If many products can be produced cheaply, the differentiator becomes whether the product understands users, feels coherent, has character, and solves a real unmet need. That is the designer's work.</p>
+          <div class="metric-grid">
+            <div class="metric-card">
+              <h3>More agency</h3>
+              <p>Designers can move from idea to prototype without waiting on every engineering cycle.</p>
+            </div>
+            <div class="metric-card">
+              <h3>More exploration</h3>
+              <p>Bad ideas become cheaper, so teams can test more directions before committing.</p>
+            </div>
+            <div class="metric-card">
+              <h3>More expression</h3>
+              <p>Designers can visualize, simulate, and communicate ideas with richer artifacts.</p>
+            </div>
+            <div class="metric-card">
+              <h3>More differentiation</h3>
+              <p>When everyone can build, great design becomes a stronger signal, not a weaker one.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="roles">
+          <h2>Roles Blur, But The Hats Still Matter</h2>
+          <p>The episode revisits the idea that PMs, engineers, and designers might all become generic builders. Silber agrees that the lines are blurring, but he does not think the functions disappear. At larger companies, different responsibilities still matter: a PM can rally teams and sharpen the problem space, an engineer can ensure the system is sound, and a designer can shape the experience and product feel.</p>
+          <p>The better metaphor is not that every role collapses into one job. It is that more people can wear more hats, and teams should be built around complementary strengths rather than rigid silos. Startups may hire extreme generalists. Larger products still benefit from people who are accountable for different parts of the outcome.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Hat</th>
+                  <th>What AI expands</th>
+                  <th>What remains accountable</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Designer</td>
+                  <td>Prototyping, variation, visualizing ideas, exploring interaction patterns.</td>
+                  <td>Point of view, user empathy, product taste, coherence, and delight.</td>
+                </tr>
+                <tr>
+                  <td>Engineer</td>
+                  <td>Implementation speed, refactoring, experimentation, agent-assisted coding.</td>
+                  <td>System quality, reliability, integration, and maintainability.</td>
+                </tr>
+                <tr>
+                  <td>PM</td>
+                  <td>Synthesis, planning, drafts, analysis, faster alignment artifacts.</td>
+                  <td>Problem framing, team alignment, sequencing, and business judgment.</td>
+                </tr>
+                <tr>
+                  <td>Researcher</td>
+                  <td>Summaries, test scripts, interview synthesis, pattern finding.</td>
+                  <td>Knowing what people actually need and why behavior changes.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="ai-designer">
+          <h2>AI Is Already A Product Design Collaborator</h2>
+          <p>When asked whether AI will become an excellent product designer, Silber says it already is a great collaborator. It may not be the best visual designer, information architect, typographer, or interaction designer yet, but it is already useful for generating directions and helping people work through product ideas.</p>
+          <p>The important question is what humans still contribute. Silber names understanding what people need, watching humans use things, inventing new interaction paradigms, and bringing a point of view. Great design often means doing something that did not have training data yet: multi-touch, Instagram's mobile-native social behavior, Snapchat's unconventional interaction model, or now conversational and agentic interfaces.</p>
+          <div class="callout gold">
+            <p><strong>Human advantage:</strong> the more AI can generate competent options, the more valuable it becomes to know which option should exist, for whom, and why.</p>
+          </div>
+        </section>
+
+        <section class="section" id="hiring">
+          <h2>What OpenAI Looks For In Designers</h2>
+          <p>Silber does not say OpenAI needs designers with long AI resumes. He says curiosity matters more. The technology changes too quickly for static expertise to be the main filter. Designers need high aptitude for jumping in, learning the tools, and thinking about how to help more people use them.</p>
+          <p>He also values prototyping, strategic product thinking, visual craft, brand expression, systems thinking, and a team made of complementary strengths. Not every designer needs to check every box. The team should include generalists, visual designers, brand designers, prototypers, product strategists, and people who obsess over the edge of the technology.</p>
+          <div class="evidence-grid">
+            <div class="evidence-item">
+              <h3>Curiosity</h3>
+              <p>Designers should be eager to understand AI tools and how users might use them.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Prototyping</h3>
+              <p>The ability to make ideas tangible becomes more important when tools make it cheaper.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Systems thinking</h3>
+              <p>Designers need to think in primitives, reusable building blocks, and product coherence.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Point of view</h3>
+              <p>AI can generate options, but designers still need taste and conviction.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="systems-thinking">
+          <h2>Systems Thinking And Composable Primitives</h2>
+          <p>One of the most important sections for your work is Silber's point about systems thinking. OpenAI is building products around a super-intelligent model with many capabilities. Designers cannot keep creating isolated one-off experiences. They need underlying primitives that can build on each other, feel cohesive, and be reasoned about by both the product and the model.</p>
+          <p>He compares this to Notion's early building-block approach. The idea is to avoid a product made of disconnected features. Instead, build primitives, components, and interaction patterns that can combine into many use cases. This is especially relevant for agentic AI platforms because the agent needs to understand the available objects, tools, and states well enough to act coherently.</p>
+          <div class="map" aria-label="Composable design system map">
+            <div class="map-node">
+              <h3>Primitives</h3>
+              <p>Core objects such as messages, files, tasks, tools, blocks, workflows, and approvals.</p>
+            </div>
+            <div class="map-node">
+              <h3>Affordances</h3>
+              <p>Actions the user or agent can take: edit, approve, refine, branch, share, run, or inspect.</p>
+            </div>
+            <div class="map-node">
+              <h3>Model Context</h3>
+              <p>What the model knows about the user, task, state, and product surface.</p>
+            </div>
+            <div class="map-node">
+              <h3>Adaptive UI</h3>
+              <p>Interfaces that change based on intent, expertise, modality, and task type.</p>
+            </div>
+            <div class="map-node">
+              <h3>Governance</h3>
+              <p>Boundaries, permissions, safety checks, and default paths for risky actions.</p>
+            </div>
+            <div class="map-node">
+              <h3>Coherence</h3>
+              <p>The user should feel one product, not a pile of unrelated agent features.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="do-less">
+          <h2>Do Less: Design The Durable Parts</h2>
+          <p>Silber says his advice to designers is sometimes "do less." That does not mean design is less important. It means that in a fast-moving product, the designer should ask whether a new thing really needs to be designed from scratch. Maybe there is an existing component. Maybe the feature should be an extension of a current pattern. Maybe the product does not need the feature at all.</p>
+          <p>This is an important reversal. In older product cycles, designers might be rewarded for making a complete new flow. In AI products, where engineering can ship many changes quickly, designers protect coherence by refusing unnecessary surface area. The craft moves upstream into deciding where not to add complexity.</p>
+          <div class="quote-box">The new design leverage is not only making more screens. It is deciding which screens, controls, modes, and prompts should not exist.</div>
+        </section>
+
+        <section class="section" id="process">
+          <h2>Two Design Modes: Deep Craft And Build-In-Public</h2>
+          <p>Silber rejects a single universal process. Some parts of ChatGPT require deep craft: the team tries many directions, throws almost all away, dogfoods, researches, and sweats the details. Other products, such as Codex or experimental surfaces, can move faster, take bigger swings, ship publicly, and learn from immediate feedback.</p>
+          <p>The key is knowing which mode applies. Durable experiences that shape the core product, such as how ChatGPT becomes embedded in someone's personal life, deserve deep thinking. Fast-changing surfaces where the technology may shift tomorrow may benefit from faster iteration and public learning.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Deep craft mode</th>
+                  <th>Build-in-public mode</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Core durable experience.</td>
+                  <td>New capability or uncertain interaction.</td>
+                </tr>
+                <tr>
+                  <td>High user expectation and broad impact.</td>
+                  <td>Early adopter audience that wants the edge.</td>
+                </tr>
+                <tr>
+                  <td>Research, dogfooding, AB tests, detailed iteration.</td>
+                  <td>Fast prototype, external feedback, rapid adjustment.</td>
+                </tr>
+                <tr>
+                  <td>Optimize for long-term coherence.</td>
+                  <td>Optimize for learning speed.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="chatgpt-spectrum">
+          <h2>Designing For The Widest User Spectrum</h2>
+          <p>Silber says one of the hardest parts of designing ChatGPT is the enormous range of use cases. One person asks for dinner ideas or a haircut. Another uses the system to transform a farm workflow, generate presentations, create images, write software, or run complex work. This creates a design problem that few products have had at this scale.</p>
+          <p>The product must be simple enough for new users and powerful enough for experts. OpenAI can expose cutting-edge tools to people who care, such as desktop apps, Codex, or work surfaces, but the broad consumer experience eventually needs to distill that power into something that does not require mode-switching or model literacy.</p>
+          <div class="callout">
+            <p><strong>Design tension:</strong> keep the default experience simple while still making frontier capability available to users who want it.</p>
+          </div>
+        </section>
+
+        <section class="section" id="adaptive-interface">
+          <h2>The Interface Is Becoming Adaptive</h2>
+          <p>The blank chat box is powerful because language works across a wide range of intelligence and intent. But Silber says the transcript no longer has to be pure text. ChatGPT can include writing blocks, image tools, follow-up questions, interactive outputs, and special affordances based on context.</p>
+          <p>The future he sketches is more adaptive: the product helps users express intent, asks clarifying questions when needed, gives different affordances to designers, data scientists, casual users, or power users, and eventually feels like one universal input that knows whether to answer quickly, have a conversation, or go do work.</p>
+          <div class="flow" aria-label="Adaptive interface flow">
+            <li><span class="step-number">1</span><strong>Intent</strong><span>User starts with natural language, voice, file, image, or rough goal.</span></li>
+            <li><span class="step-number">2</span><strong>Clarify</strong><span>The system asks lightweight follow-up questions when intent is underspecified.</span></li>
+            <li><span class="step-number">3</span><strong>Choose mode</strong><span>The product decides whether to answer, edit, generate, run tools, or create a workflow.</span></li>
+            <li><span class="step-number">4</span><strong>Render surface</strong><span>Output becomes text, block, canvas, image tool, task, code change, or approval.</span></li>
+            <li><span class="step-number">5</span><strong>Reuse</strong><span>Durable workflows and context reduce starting from scratch each time.</span></li>
+          </div>
+        </section>
+
+        <section class="section" id="future">
+          <h2>Where ChatGPT And Codex May Go</h2>
+          <p>Silber points toward several product directions: more proactivity, richer voice, richer visual outputs, context from tools such as calendar and Slack, and more durable workflows. The broad vision is that users should not need to think about which model, speed, or mode is right for the job. The product should route the experience.</p>
+          <p>This is a major design challenge. The product needs to know when to stay simple, when to expose control, when to ask questions, when to get out of the way, and when to go do work. For your agentic AI platform, that maps directly to Master Agent routing, tool affordances, approval design, and stateful workflow design.</p>
+        </section>
+
+        <section class="section" id="advice">
+          <h2>Advice For Designers Who Feel Behind</h2>
+          <p>Silber's advice is humane: feeling overwhelmed is rational. The industry is changing quickly, and many confident posts online hide the fact that most people are also figuring it out. His recommendation is to explore, have fun, prototype more, try different tools, and focus on the outcome rather than the tool ritual.</p>
+          <p>The goal is not to token-max, use every AI product, or perform process theater. The goal is to make great software that people love. AI is useful only if it helps with that outcome. Designers still steer, direct, decide, and bring taste to the work.</p>
+          <div class="evidence-grid">
+            <div class="evidence-item">
+              <h3>Start now</h3>
+              <p>It is early enough that starting today still gives a meaningful advantage.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Try a new workflow</h3>
+              <p>Put a rough idea into ChatGPT, Codex, or another agent and see what changes.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Focus on output</h3>
+              <p>The point is not using AI. The point is creating a better product.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Share process</h3>
+              <p>AI design workflows are opaque. Sharing how people work helps the community learn.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="failure">
+          <h2>Failure, Feedback, And Fixing Forward</h2>
+          <p>Silber's failure story is useful because it is not a single dramatic mistake. He describes feeling like he was learning every day at OpenAI, including how to build and hire a design team in a fast-growing research company. He also mentions Instagram examples such as IGTV failing and Reels emerging after the team corrected assumptions and constraints.</p>
+          <p>The lesson is to become hardened to feedback without becoming numb. The important thing is not whether one shipped thing failed. It is how the team reacts, fixes forward, listens to users, and keeps iterating. That lesson fits AI product work especially well because many interactions, models, and capabilities will change quickly.</p>
+        </section>
+
+        <section class="section" id="platform-translation">
+          <h2>Translation For Your Agentic AI Platform</h2>
+          <p>This episode is useful for your platform because it frames design as systems work. A BA or product builder should not only configure agents. They need to shape the experience: what the user sees, what the agent can do, how the interface adapts, when the system asks for clarification, and which workflows become durable reusable objects.</p>
+          <ol class="flow" aria-label="Agentic design operating model">
+            <li><span class="step-number">1</span><strong>Intent</strong><span>Capture the user's job, skill level, goal, context, and desired output.</span></li>
+            <li><span class="step-number">2</span><strong>Primitive</strong><span>Map the work to reusable objects: task, file, approval, tool, memory, block, or workflow.</span></li>
+            <li><span class="step-number">3</span><strong>Affordance</strong><span>Expose only the right actions for this role, risk level, and workflow stage.</span></li>
+            <li><span class="step-number">4</span><strong>Agent route</strong><span>Decide whether to answer, ask, generate, run a tool, create a draft, or escalate.</span></li>
+            <li><span class="step-number">5</span><strong>Feedback</strong><span>Use dogfood, analytics, user reaction, and traces to improve the design system.</span></li>
+          </ol>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Silber idea</th>
+                  <th>Your platform object</th>
+                  <th>BA-friendly meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Do less</td>
+                  <td>Reusable flow and component library</td>
+                  <td>Start from approved patterns instead of inventing every workflow from scratch.</td>
+                </tr>
+                <tr>
+                  <td>Composable primitives</td>
+                  <td>Agent object model</td>
+                  <td>Tasks, approvals, tools, records, memories, and outputs should fit together.</td>
+                </tr>
+                <tr>
+                  <td>Adaptive interface</td>
+                  <td>Context-aware UX policy</td>
+                  <td>The same agent can show different controls to novice, expert, reviewer, or operator.</td>
+                </tr>
+                <tr>
+                  <td>Build in public</td>
+                  <td>Sandbox lane</td>
+                  <td>Experiment with new workflows safely before promoting them to production.</td>
+                </tr>
+                <tr>
+                  <td>Deep craft</td>
+                  <td>Durable experience review</td>
+                  <td>Core flows need design review, evals, accessibility, and product coherence.</td>
+                </tr>
+                <tr>
+                  <td>Focus on outcome</td>
+                  <td>Workflow success metric</td>
+                  <td>Measure whether the agent helps users complete valuable work, not whether it used AI.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="templates">
+          <h2>Reusable Templates</h2>
+          <p>These templates translate the episode into artifacts for agentic product and BA-side workflow design.</p>
+          <div class="template-grid">
+            <div class="template-card">
+              <h3>Agentic Design Brief</h3>
+              <pre><code># Agentic Design Brief: &lt;workflow or product surface&gt;
+
+User:
+- Primary persona:
+- Expertise level:
+- Context:
+
+Outcome:
+- Job to be done:
+- Success metric:
+- Failure signal:
+
+Intent capture:
+- Inputs accepted:
+- Clarifying questions:
+- Missing context behavior:
+
+Primitives:
+- Task:
+- Record:
+- File:
+- Tool:
+- Approval:
+- Memory:
+- Output block:
+
+Affordances:
+- User actions:
+- Agent actions:
+- Reviewer actions:
+- Disabled or hidden actions:
+
+Design mode:
+- Deep craft | Build in public
+- Why:
+
+Guardrails:
+- Permission:
+- Safety:
+- Human approval:
+- Fallback path:
+
+Feedback loop:
+- Dogfood group:
+- Analytics:
+- Trace review:
+- Iteration cadence:</code></pre>
+            </div>
+            <div class="template-card">
+              <h3>Adaptive UI Policy</h3>
+              <pre><code># Adaptive UI Policy: &lt;agent surface&gt;
+
+Default experience:
+- What most users see:
+- What should stay hidden:
+
+Context rules:
+- If novice user:
+  - Show:
+  - Ask:
+  - Avoid:
+- If expert user:
+  - Show:
+  - Allow:
+  - Shortcut:
+- If high-risk action:
+  - Require:
+  - Explain:
+  - Escalate:
+
+Output surfaces:
+- Text:
+- Writing block:
+- Table:
+- Canvas:
+- Tool result:
+- Approval card:
+- Workflow state:
+
+Agent routing:
+- Answer directly when:
+- Ask clarification when:
+- Use tool when:
+- Create durable workflow when:
+- Escalate when:
+
+Evaluation:
+- Usability check:
+- Task completion:
+- Error rate:
+- User confidence:
+- Coherence with design system:</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="flow-markdown">
+          <h2>Business Flow Markdown Pattern</h2>
+          <p>This template helps a BA describe an adaptive agent workflow without starting from raw persona prompts.</p>
+          <pre><code># Business Flow: &lt;flow name&gt;
+
+Business outcome:
+- &lt;what the user or business should accomplish&gt;
+
+Users:
+- Novice:
+- Expert:
+- Reviewer:
+- Operator:
+
+Core primitives:
+- Input:
+- Work object:
+- Tool:
+- Approval:
+- Output:
+- Memory:
+
+Flow:
+1. User intent:
+   - Accepted input:
+   - Clarifying question:
+   - Agent route:
+2. Agent work:
+   - Master Agent:
+   - Sub-Agent:
+   - Skill:
+   - Tool/MCP:
+   - Evidence:
+3. UI response:
+   - Surface type:
+   - Controls:
+   - Next action:
+4. Quality gate:
+   - Validation:
+   - Human approval:
+   - Fallback:
+5. Feedback:
+   - Trace:
+   - User rating:
+   - Failure category:
+   - Improvement backlog:
+
+Design mode:
+- Deep craft for:
+- Build in public for:
+
+Definition of done:
+- User completes:
+- Agent proves:
+- Reviewer sees:
+- System logs:</code></pre>
+        </section>
+
+        <section class="section" id="timeline">
+          <h2>Structured Timeline</h2>
+          <p>The interview is long, so this timeline gives a fast path back into the key sections.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Topic</th>
+                  <th>What to listen for</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>00:00</td>
+                  <td>Designer anxiety</td>
+                  <td>Survey shows designers are struggling with uncertainty in the AI era.</td>
+                </tr>
+                <tr>
+                  <td>03:18</td>
+                  <td>Why the role feels unclear</td>
+                  <td>Engineering has obvious AI acceleration; design remains messy and feedback-heavy.</td>
+                </tr>
+                <tr>
+                  <td>06:02</td>
+                  <td>OpenAI design culture</td>
+                  <td>Research-lab DNA, curiosity, and exploration reduce pressure.</td>
+                </tr>
+                <tr>
+                  <td>10:00</td>
+                  <td>Patterns of designers doing well</td>
+                  <td>Adaptability, community, trying new workflows, using Codex or other agents.</td>
+                </tr>
+                <tr>
+                  <td>13:46</td>
+                  <td>Best time in history to be a designer</td>
+                  <td>Fast learning, idea-to-working-artifact speed, and greater creative agency.</td>
+                </tr>
+                <tr>
+                  <td>18:45</td>
+                  <td>Roles are blurring</td>
+                  <td>PM, engineering, and design overlap more but still require different hats.</td>
+                </tr>
+                <tr>
+                  <td>22:25</td>
+                  <td>AI as product designer</td>
+                  <td>AI is already a useful product-design collaborator, but not a full replacement.</td>
+                </tr>
+                <tr>
+                  <td>24:05</td>
+                  <td>Human value</td>
+                  <td>User understanding, feedback loops, invention, point of view, and taste.</td>
+                </tr>
+                <tr>
+                  <td>27:35</td>
+                  <td>Hiring designers</td>
+                  <td>Curiosity, prototyping, strategic thinking, and well-rounded team composition.</td>
+                </tr>
+                <tr>
+                  <td>30:21</td>
+                  <td>Systems thinking</td>
+                  <td>Composable building blocks, product primitives, and avoiding one-off features.</td>
+                </tr>
+                <tr>
+                  <td>32:09</td>
+                  <td>Do less</td>
+                  <td>Designers should reuse systems and avoid unnecessary new surface area.</td>
+                </tr>
+                <tr>
+                  <td>33:28</td>
+                  <td>Design process changes</td>
+                  <td>Some work needs deep craft; other work should build in public and learn fast.</td>
+                </tr>
+                <tr>
+                  <td>38:38</td>
+                  <td>Balancing billions of users and innovation</td>
+                  <td>ChatGPT must serve novice users and power users across a huge capability spectrum.</td>
+                </tr>
+                <tr>
+                  <td>42:04</td>
+                  <td>The blank box problem</td>
+                  <td>Designing an interface that can shapeshift into many tools.</td>
+                </tr>
+                <tr>
+                  <td>44:10</td>
+                  <td>Expressing intent and richer outputs</td>
+                  <td>Follow-up questions, writing blocks, image tools, and contextual affordances.</td>
+                </tr>
+                <tr>
+                  <td>46:26</td>
+                  <td>Future of ChatGPT and Codex</td>
+                  <td>Proactivity, voice, richer outputs, durable workflows, and one universal input.</td>
+                </tr>
+                <tr>
+                  <td>49:27</td>
+                  <td>Advice to day-one Ian</td>
+                  <td>It is early, learn openly, and find people going through similar transitions.</td>
+                </tr>
+                <tr>
+                  <td>53:41</td>
+                  <td>Advice for overwhelmed designers</td>
+                  <td>Explore, prototype, focus on outcomes, and have fun with it.</td>
+                </tr>
+                <tr>
+                  <td>55:24</td>
+                  <td>Using AI in design work</td>
+                  <td>Use ChatGPT, Codex, and cloud work to visualize ideas and support operations.</td>
+                </tr>
+                <tr>
+                  <td>58:13</td>
+                  <td>Failure and fixing forward</td>
+                  <td>Learning while building, IGTV to Reels, listening to feedback, and iterating.</td>
+                </tr>
+                <tr>
+                  <td>65:07</td>
+                  <td>Career motto</td>
+                  <td>Have fun, try stuff, stay fluid, and build great products.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="my-read">
+          <h2>My Read</h2>
+          <p>This is one of the clearest design-side complements to the Dianne Penn and Elizabeth Stone episodes. Penn's lesson was that evals are becoming product artifacts. Stone's lesson was that systems thinking matters more as AI accelerates execution. Silber's lesson is that design becomes the connective tissue that decides what the user should actually experience when intelligence, tools, and workflows become fluid.</p>
+          <p>For your agentic AI platform, the biggest lesson is to treat UI and agent behavior as one system. A Master Agent is not only a prompt router. It also determines what the user sees, what choices are exposed, when clarification happens, when a tool call becomes visible, when an approval appears, and when a one-off task becomes a durable workflow.</p>
+          <p>I would borrow three ideas directly: build composable primitives, decide which flows are deep-craft versus build-in-public, and make the interface adaptive to user skill, task risk, and workflow state. This is how a BA-side builder can assemble agents without producing a chaotic pile of one-off screens and prompts.</p>
+          <div class="verdict">
+            <h3>Bottom line</h3>
+            <p>AI makes more software possible. Design decides which software should exist, how it should behave, and how intelligence becomes understandable enough for humans to trust and use.</p>
+          </div>
+        </section>
+
+        <section class="section" id="sources">
+          <h2>Sources And Confidence</h2>
+          <p>This page is based primarily on the extracted public captions from the YouTube video, with additional source links for the show, OpenAI design context, and related public discussion of Ian Silber's AI design work.</p>
+          <ul>
+            <li><a href="https://www.youtube.com/watch?v=BV0hy6NET-U">OpenAI's Head of Design: This is the best time in history to be a designer - Ian Silber</a> - Lenny's Podcast on YouTube.</li>
+            <li><a href="https://www.youtube.com/@LennysPodcast">Lenny's Podcast YouTube channel</a>.</li>
+            <li><a href="https://rogerwong.me/2026/04/designing-at-openai-ian-silber">Roger Wong: What it's like designing at OpenAI - Ian Silber</a> - public notes on Ian Silber's OpenAI design perspective.</li>
+            <li><a href="https://www.dive.club/deep-dives/ian-silber">Dive Club: Ian Silber - What it's like designing at OpenAI</a> - related public interview context.</li>
+            <li><a href="https://openai.com/sam-and-jony/">OpenAI: A letter from Sam and Jony</a> - official public context on OpenAI's broader design ambitions.</li>
+          </ul>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Page navigation">
+        <section class="toc">
+          <h2>Read Path</h2>
+          <nav>
+            <a href="#executive-summary">Executive Summary</a>
+            <a href="#core-thesis">Core Thesis</a>
+            <a href="#designer-anxiety">Designer Anxiety</a>
+            <a href="#best-time">Best Time</a>
+            <a href="#roles">Roles</a>
+            <a href="#ai-designer">AI Designer</a>
+            <a href="#hiring">Hiring</a>
+            <a href="#systems-thinking">Systems Thinking</a>
+            <a href="#do-less">Do Less</a>
+            <a href="#process">Design Process</a>
+            <a href="#chatgpt-spectrum">User Spectrum</a>
+            <a href="#adaptive-interface">Adaptive Interface</a>
+            <a href="#future">Future</a>
+            <a href="#advice">Advice</a>
+            <a href="#failure">Failure</a>
+            <a href="#platform-translation">Platform Translation</a>
+            <a href="#templates">Templates</a>
+            <a href="#flow-markdown">Flow Markdown</a>
+            <a href="#timeline">Timeline</a>
+            <a href="#my-read">My Read</a>
+            <a href="#sources">Sources</a>
+          </nav>
+        </section>
+        <section class="source-box">
+          <h2>Useful Lens</h2>
+          <p>For every agentic product surface, ask: should this be a new UI, a reused primitive, a model context change, or no surface at all?</p>
+          <div class="tag-grid">
+            <span class="tag">AI design</span>
+            <span class="tag">OpenAI</span>
+            <span class="tag">ChatGPT</span>
+            <span class="tag">Codex</span>
+            <span class="tag">Adaptive UI</span>
+            <span class="tag">Agent platform</span>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <p class="footer-note">Generated as a reading-focused resource page for the YouTube extractor and summarizer project.</p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Demonstrated that a larger language model trained on diverse web text can perform several tasks from natural-language context without task-specific gradient updates.">
+  <meta name="resource-file" content="2026-09-08-gpt-2-scaling-zero-shot-language-models-en.html">
+  <title>GPT-2 · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css">
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">Read paper</a><a class="action-link" href="/reading/">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Transformer Foundations · Paper 4 of 37</p>
+        <h1>Language Models are Unsupervised Multitask Learners</h1>
+        <p class="subtitle">Demonstrated that a larger language model trained on diverse web text can perform several tasks from natural-language context without task-specific gradient updates.</p>
+        <div class="meta"><span><strong>Alec Radford, Jeffrey Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever</strong></span><span>2019</span><span>Foundation</span><span>12 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>GPT-2</h2><p>OpenAI</p><p><strong>Prerequisites:</strong> GPT-style causal language modeling, zero-shot evaluation, and distribution shift.</p><a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Foundation</strong></div><div class="paper-fact"><span>Place in path</span><strong>4 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>The first GPT still fine-tuned on labeled examples for each task. A more general system would infer the task from language itself and perform it without changing parameters.</p>
+<p>Earlier datasets and models were also too narrow to reliably expose latent task behavior. GPT-2 tests whether increasing model capacity and training on varied natural documents moves toward unsupervised multitask learning.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Train a 1.5-billion-parameter causal Transformer on WebText, a broad corpus derived from outbound links on highly rated Reddit posts. If documents naturally contain demonstrations, explanations, translations, and question-answer pairs, next-token prediction can implicitly learn those tasks.</p>
+<p>At evaluation time, prompts and formatting specify the task. The model completes the sequence rather than invoking a separately trained classifier.</p><div class="equation">P(x) = Πᵢ P(sᵢ | s₁, …, sᵢ₋₁)</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Web documents are cleaned and deduplicated at the document level. Byte-pair encoding provides a practical open-vocabulary representation. The Transformer predicts every next token across long stretches of text.</p>
+<p>Zero-shot evaluations convert tasks into language-model scoring or completion: summarize an article, answer a question from context, translate after an English cue, or estimate which completion is more probable.</p><figure class="concept-flow" aria-label="Zero-shot task execution">
+    <div class="flow-step"><span>01</span><strong>Curate WebText</strong><p>Collect diverse linked documents.</p></div>
+<div class="flow-step"><span>02</span><strong>Pretrain once</strong><p>Optimize causal next-token likelihood.</p></div>
+<div class="flow-step"><span>03</span><strong>Describe task</strong><p>Provide text, cue, or scoring format.</p></div>
+<div class="flow-step"><span>04</span><strong>Complete</strong><p>Generate or score candidate tokens.</p></div>
+<div class="flow-step"><span>05</span><strong>Evaluate</strong><p>Compare without updating weights.</p></div>
+    <figcaption>No task gradient update occurs; the prompt turns a benchmark into a continuation problem.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>The architecture follows GPT with modifications such as moving layer normalization and scaling residual initialization. Four model sizes allow the report to inspect trends with capacity. Context length grows to 1024 tokens.</p>
+<p>Because there is no gradient update for the target task, the exact prompt and scoring procedure become part of the evaluation. A result may reflect learned task inference, memorized web patterns, or both.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>GPT-2 improved zero-shot results on several language-modeling datasets and showed recognizable behavior on reading comprehension, summarization, and translation. Results often improved smoothly with model size.</p>
+<p>It remained far below specialized supervised systems on many tasks. The report is evidence that task-like behavior can emerge from broad next-token training, not that supervision or adaptation had become unnecessary.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>GPT-2 made prompting and emergent behavior central research questions and foreshadowed GPT-3’s in-context learning. It also triggered a prominent debate about staged model release, misuse, and how research labs communicate capability risk.</p>
+<p>Web-scale pretraining became standard, along with the need to document dataset provenance, contamination, toxicity, and representational bias.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Zero-shot evaluation needs explicit baselines and prompt sensitivity checks. Test multiple reasonable formulations, report selection rules, and avoid tuning on the test set through repeated prompt iteration.</p>
+<p>Data quality is architecture. Source selection changes language, viewpoints, tasks, and failure modes the model can reproduce. A larger crawl is not automatically a more representative corpus.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>WebText is selected through Reddit behavior and excludes many communities. The model can generate plausible falsehoods, stereotypes, and memorized passages. Its context window and factual consistency are limited.</p>
+<p>The phrase “unsupervised multitask learner” can overstate what likelihood training guarantees. Tasks represented in web text provide indirect supervision, and evaluation design supplies additional structure.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>GPT-2 extends GPT from supervised transfer toward zero-shot completion. GPT-3 scales the same broad idea and adds explicit few-shot examples inside the context. The Pile later offers a documented alternative data mixture.</p><div class="article-nav"><a href="2026-09-08-gpt-generative-pretraining-language-understanding-en.html">← GPT</a><a href="2026-09-08-rope-rotary-position-embedding-roformer-en.html">RoPE →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>Broad next-token training can induce task-like behavior.</li><li>Model scale improved zero-shot results before reliable instruction following existed.</li><li>Prompt format becomes part of the evaluation interface.</li><li>Training-data selection embeds human and platform choices.</li><li>Zero-shot performance was promising but inconsistent.</li><li>Capability release and misuse entered the engineering conversation.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">Language Models are Unsupervised Multitask Learners</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>Read “zero-shot” precisely: tasks are expressed through text and scored without fine-tuning, but performance is uneven and the web dataset embeds substantial selection bias.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

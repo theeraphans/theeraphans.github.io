@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Established generative autoregressive pretraining followed by supervised fine-tuning as a general route to transferable language understanding.">
+  <meta name="resource-file" content="2026-09-08-gpt-generative-pretraining-language-understanding-en.html">
+  <title>GPT · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css">
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf">Read paper</a><a class="action-link" href="/reading/">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Transformer Foundations · Paper 3 of 37</p>
+        <h1>Improving Language Understanding by Generative Pre-Training</h1>
+        <p class="subtitle">Established generative autoregressive pretraining followed by supervised fine-tuning as a general route to transferable language understanding.</p>
+        <div class="meta"><span><strong>Alec Radford, Karthik Narasimhan, Tim Salimans, and Ilya Sutskever</strong></span><span>2018</span><span>Foundation</span><span>11 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>GPT</h2><p>OpenAI</p><p><strong>Prerequisites:</strong> Transformer decoders, language-model likelihood, and supervised classification.</p><a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Foundation</strong></div><div class="paper-fact"><span>Place in path</span><strong>3 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Supervised NLP systems depended on large labeled datasets and architectures specialized for each task. Unlabeled text was abundant, but earlier transfer methods often produced fixed features or required task-specific changes.</p>
+<p>The paper sought a common model that could learn broad linguistic regularities from raw text and then adapt to classification, entailment, similarity, and question-answering tasks.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>First train a left-to-right Transformer language model to predict the next token over a large unlabeled corpus. Then reuse the parameters and fine-tune on labeled tasks, representing structured inputs as token sequences the same model can process.</p>
+<p>A small auxiliary language-model loss during supervised fine-tuning helps preserve the general representation and improves optimization.</p><div class="equation">L₁(U) = Σᵢ log P(uᵢ | u₁, …, uᵢ₋₁; Θ)</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>The model uses a decoder-style Transformer with masked self-attention. BooksCorpus supplies long contiguous text for generative pretraining. During adaptation, delimiters and start/end tokens turn different task formats into one sequence interface.</p>
+<p>The final hidden state is fed to a task-specific linear layer. Multiple-choice questions concatenate context with each candidate; entailment and similarity arrange the relevant segments in defined orders.</p><figure class="concept-flow" aria-label="GPT transfer recipe">
+    <div class="flow-step"><span>01</span><strong>Collect raw text</strong><p>Use long unlabeled sequences.</p></div>
+<div class="flow-step"><span>02</span><strong>Predict next tokens</strong><p>Train a causal Transformer decoder.</p></div>
+<div class="flow-step"><span>03</span><strong>Format a task</strong><p>Express inputs as one token sequence.</p></div>
+<div class="flow-step"><span>04</span><strong>Add output layer</strong><p>Map a final state to task labels.</p></div>
+<div class="flow-step"><span>05</span><strong>Fine-tune jointly</strong><p>Optimize task and auxiliary LM losses.</p></div>
+    <figcaption>General language modeling supplies the initialization; task data shapes the final decision surface.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>The reported model has 12 layers and roughly 117 million parameters. The unsupervised objective factorizes sequence probability from left to right. The supervised objective is combined with the language-model objective using a tunable coefficient.</p>
+<p>Unlike BERT, the token representation cannot inspect future tokens at a position. The benefit is that the same causal objective directly supports generation.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>The paper evaluated twelve NLP tasks and reported improvements over previous systems on nine. Ablations supported the value of Transformer pretraining and the auxiliary language-model objective.</p>
+<p>Results came from a particular corpus, modest model scale, and then-current benchmarks. The study established a promising transfer recipe, not zero-shot generality.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>GPT made generative pretraining the foundation of a model family that would later scale into in-context learners and assistants. It also encouraged task unification through text formatting rather than bespoke neural modules.</p>
+<p>Modern decoder-only systems retain the causal objective while changing normalization, position methods, data scale, optimization, context length, and alignment stages.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Treat pretraining and adaptation as separate data contracts. Pretraining learns broad token statistics; fine-tuning teaches task behavior and output conventions. Evaluate forgetting and overfitting when labeled data is small.</p>
+<p>Sequence formatting is part of the model interface. Delimiters, order, and target masking can materially change what gradient signal the model receives.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>Left-to-right context is less natural for token-level understanding where both sides are available. Full fine-tuning duplicates model weights per task, and the model still requires labeled examples for the reported downstream behavior.</p>
+<p>Later GPT papers reduce explicit task fine-tuning and rely more on prompts and in-context examples, but that shift also introduces sensitivity to wording and demonstrations.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>GPT and BERT expose the decoder-versus-encoder fork after the Transformer. GPT-2 removes most supervised task adaptation and asks whether scale plus broad data can produce zero-shot behavior.</p><div class="article-nav"><a href="2026-09-08-bert-bidirectional-transformer-pretraining-en.html">← BERT</a><a href="2026-09-08-gpt-2-scaling-zero-shot-language-models-en.html">GPT-2 →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>Generative pretraining can transfer to understanding tasks.</li><li>A causal decoder provides one architecture for both representation and generation.</li><li>Text formatting can replace task-specific network structures.</li><li>Supervised adaptation still supplies behavioral direction.</li><li>The auxiliary LM objective helps retain pretrained knowledge.</li><li>This paper begins the GPT recipe; it is not yet few-shot prompting.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf">Improving Language Understanding by Generative Pre-Training</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>The first GPT paper is primarily a transfer-learning result. Its importance lies in the training recipe and decoder architecture, not model size by modern standards.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

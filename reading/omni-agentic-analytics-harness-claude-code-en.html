@@ -1,0 +1,1116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Omni Agentic Analytics Harness with Claude Code - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5d6970;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f4f7f2;
+      --line: #d7ded6;
+      --charcoal: #24323a;
+      --teal: #166f68;
+      --blue: #315f86;
+      --coral: #bd503f;
+      --gold: #9e711e;
+      --violet: #665987;
+      --mint: #e2f0ec;
+      --sky: #e7eef6;
+      --sand: #f7eed8;
+      --rose: #f5e5df;
+      --shadow: 0 24px 62px rgb(23 33 38 / 11%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(22 111 104 / 7%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(49 95 134 / 6%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 46px 46px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--coral), var(--gold), var(--violet));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 84%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.6rem, 6.25vw, 5.35rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2.05vw, 1.48rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e6ece7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 86%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: #f8fbf8;
+      background: rgb(255 255 255 / 9%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-height: 86px;
+      padding: 14px;
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: rgb(255 255 255 / 72%);
+      font-size: 0.84rem;
+      font-weight: 760;
+      text-transform: uppercase;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      gap: 42px;
+      align-items: start;
+      margin-top: 36px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 22px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .sidebar-block {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+    }
+
+    .sidebar-block h2,
+    .toc h2 {
+      margin-bottom: 12px;
+      color: var(--quiet);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .glance {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .glance strong {
+      color: var(--ink);
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .toc {
+      padding-left: 18px;
+      border-left: 4px solid var(--gold);
+    }
+
+    .toc a {
+      display: block;
+      padding: 7px 0;
+      color: var(--ink);
+      font-size: 0.94rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .content {
+      min-width: 0;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 8%);
+    }
+
+    .section {
+      padding: 34px 42px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; }
+
+    .label {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .section h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 3.3vw, 3.1rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .section h3 {
+      margin-top: 20px;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      margin-top: 16px;
+      color: #313d44;
+      font-size: 1.08rem;
+    }
+
+    .section p + p { margin-top: 14px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card.mint { background: var(--mint); }
+    .card.sky { background: var(--sky); }
+    .card.sand { background: var(--sand); }
+    .card.rose { background: var(--rose); }
+
+    .card h3 {
+      margin-top: 8px;
+      font-size: 1.02rem;
+    }
+
+    .card p {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.62;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pill.blue { background: var(--blue); }
+    .pill.coral { background: var(--coral); }
+    .pill.gold { background: var(--gold); }
+    .pill.violet { background: var(--violet); }
+
+    .note {
+      margin-top: 22px;
+      padding: 18px 20px;
+      background: #f8f3e6;
+      border-left: 5px solid var(--gold);
+      border-radius: 8px;
+      color: #3b3424;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(130px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+      align-items: stretch;
+    }
+
+    .flow-step {
+      min-height: 150px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .flow-step:nth-child(2) { border-top-color: var(--blue); }
+    .flow-step:nth-child(3) { border-top-color: var(--coral); }
+    .flow-step:nth-child(4) { border-top-color: var(--gold); }
+
+    .flow-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .pipeline-step {
+      min-height: 144px;
+      padding: 14px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .pipeline-step:nth-child(2) { background: var(--teal); }
+    .pipeline-step:nth-child(3) { background: var(--blue); }
+    .pipeline-step:nth-child(4) { background: var(--coral); }
+    .pipeline-step:nth-child(5) { background: var(--violet); }
+
+    .pipeline-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.92rem;
+      line-height: 1.3;
+    }
+
+    .pipeline-step span {
+      color: rgb(255 255 255 / 82%);
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    .compare {
+      width: 100%;
+      margin-top: 22px;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .compare th,
+    .compare td {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .compare th {
+      color: #fff;
+      background: var(--charcoal);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .compare td { background: #fff; }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+      color: #303b42;
+    }
+
+    .checklist li:nth-child(2n) { border-left-color: var(--blue); }
+    .checklist li:nth-child(3n) { border-left-color: var(--coral); }
+
+    .checklist strong { color: var(--ink); }
+
+    .quote-strip {
+      margin-top: 24px;
+      padding: 24px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      border-radius: 8px;
+    }
+
+    .quote-strip p {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.28rem, 2.8vw, 2.15rem);
+      line-height: 1.28;
+    }
+
+    .mini-spec {
+      margin-top: 22px;
+      padding: 18px;
+      color: #f8fbf8;
+      background: #1d2b32;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.9rem;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 20px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .source-list li {
+      padding: 12px 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1000px) {
+      .flow,
+      .pipeline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .grid,
+      .two {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .page {
+        padding-inline: 16px;
+      }
+
+      .hero {
+        gap: 28px;
+        padding-top: 38px;
+      }
+
+      h1 {
+        font-size: clamp(2.35rem, 14vw, 3.35rem);
+      }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .tldr,
+      .sidebar,
+      .flow,
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+
+      .compare {
+        table-layout: fixed;
+      }
+
+      .compare th,
+      .compare td {
+        padding: 11px 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/reading/">Reading room</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#semantic-layer">Semantic Layer</a>
+      <a class="action-link" href="#architecture">Architecture</a>
+      <a class="action-link" href="#evals">Evals</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=K4-flzsPraE">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Code w/ Claude - Omni</span>
+        <h1>Building an Agentic Analytics Harness</h1>
+        <p class="subtitle">
+          A blog-style summary of Chris Merrick's session on Omni's Blobby analytics agent:
+          how a semantic layer gives Claude business context, why the architecture moved away from split-brain sub-agents,
+          and how error recovery, SQL, observability, and evals make the harness production-worthy.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> Building the best agentic analytics harness</span>
+          <span><strong>Speaker:</strong> Chris Merrick, Omni</span>
+          <span><strong>Runtime:</strong> 26m 46s</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/K4-flzsPraE/hqdefault.jpg" alt="Video thumbnail for Building the best agentic analytics harness">
+        <figcaption>
+          YouTube captions were unavailable for this video. This page is synthesized from the official session metadata,
+          YouTube page metadata, and public recap sources listed at the bottom.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          Omni's lesson is that an analytics agent cannot be a generic chat wrapper over a database.
+          It needs a domain harness: curated data access, business definitions near the data, tool design that matches model strengths,
+          recovery paths when queries fail, raw traces for debugging, and evals that turn confusing failures into fixable engineering work.
+        </p>
+        <ul class="tldr">
+          <li>Put business context near data definitions, not only in one giant global prompt.</li>
+          <li>Avoid split-brain designs where one agent knows the plan and another isolated agent owns execution.</li>
+          <li>Use evals and traces as an improvement system, not just a scoreboard.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>99%</strong><span>platform code with Claude Code</span></div>
+        <div class="stat"><strong>45</strong><span>tools in harness</span></div>
+        <div class="stat"><strong>50</strong><span>outer-loop iteration budget</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Main lens</span><strong>Domain-specific agent</strong></li>
+            <li><span>Product</span><strong>Blobby analytics agent</strong></li>
+            <li><span>Core substrate</span><strong>Semantic layer</strong></li>
+            <li><span>Best use</span><strong>BA agent platform design</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#caveat">Source Note</a>
+          <a href="#problem">Problem</a>
+          <a href="#semantic-layer">Semantic Layer</a>
+          <a href="#blobby">Blobby</a>
+          <a href="#architecture">Architecture</a>
+          <a href="#sql">SQL Shift</a>
+          <a href="#evals">Evals</a>
+          <a href="#platform">Platform Takeaways</a>
+          <a href="#templates">Flow Markdown</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="caveat">
+          <span class="label">Source Note</span>
+          <h2>This is not a raw caption transcript summary.</h2>
+          <p class="lead">
+            The project's normal caption extractor returned that transcripts are disabled for this YouTube video.
+            So this page uses the official Claude session page, the YouTube metadata embedded in the video page,
+            and public recap material that summarizes the talk. It is still useful as a structured reading note,
+            but it should not be treated as a verbatim transcript.
+          </p>
+          <ul class="source-list">
+            <li><a href="https://claude.com/code-with-claude/session/ldn-ext-building-the-best-agentic-analytics-harness-powered-by-claude-built-with-claude-code">Official Code w/ Claude session page</a> - session title, date, speaker, and abstract.</li>
+            <li><a href="https://www.youtube.com/watch?v=K4-flzsPraE">YouTube source video</a> - title, channel, duration, and description metadata.</li>
+            <li><a href="https://lattifai.com/hi/podcasts?channel=Claude">Lattifai recap listing</a> - section-level recap with timestamps.</li>
+            <li><a href="https://ai-heartland.com/agent/omni-agentic-analytics-harness/">AI Heartland recap</a> - detailed public article about the architecture and design decisions.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="problem">
+          <span class="label">The Problem</span>
+          <h2>Business analytics agents fail when they do not understand the business.</h2>
+          <p class="lead">
+            A user can ask a simple-looking question such as "how were online sales last quarter?"
+            but every word hides business-specific ambiguity. Which business unit is "our"?
+            Does "online" include mobile app purchases or buy-online-pickup-in-store orders?
+            Does "sales" include returns, cancellations, discounts, or only booked revenue?
+            Does "last quarter" mean calendar quarter or fiscal quarter?
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Data sprawl</span>
+              <h3>Warehouses contain too many possible tables</h3>
+              <p>An agent needs curation so it chooses the trusted business model instead of grabbing a misleading table with a familiar name.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Business terms</span>
+              <h3>Natural language is not self-defining</h3>
+              <p>The platform needs definitions for fiscal periods, regions, sales concepts, ownership, permissions, and field usage.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Executive trust</span>
+              <h3>Analytics has a low tolerance for plausible wrongness</h3>
+              <p>The output must be explainable and recoverable because users make business decisions from the answer.</p>
+            </article>
+          </div>
+          <p class="note">
+            The key product lesson: analytics agents are domain-specific systems. The real product is not only the model call.
+            It is the harness that binds the model to trusted definitions, tools, permissions, and observability.
+          </p>
+        </section>
+
+        <section class="section" id="semantic-layer">
+          <span class="label">Semantic Layer</span>
+          <h2>Omni uses the semantic layer as the agent's business memory.</h2>
+          <p class="lead">
+            The semantic layer is described as more than a translation layer from natural language to SQL.
+            It curates which data matters, supplies business context, enforces permissions, and creates a feedback surface
+            for improving how the agent understands company-specific data.
+          </p>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Function</th>
+                <th>What It Does</th>
+                <th>Agent Design Lesson</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Curation</strong></td>
+                <td>Guides the agent toward approved tables, metrics, and topics instead of every raw warehouse object.</td>
+                <td>BA builders need a "use this, ignore that" layer for data and tools.</td>
+              </tr>
+              <tr>
+                <td><strong>Context</strong></td>
+                <td>Stores field definitions, business terms, example usage, and model-facing guidance close to the data.</td>
+                <td>Context should be local to the object it explains, not only buried in a global persona prompt.</td>
+              </tr>
+              <tr>
+                <td><strong>Permissions</strong></td>
+                <td>Prevents users and agents from seeing data they are not allowed to access.</td>
+                <td>Tool permissioning belongs in the harness, not in model goodwill.</td>
+              </tr>
+              <tr>
+                <td><strong>Feedback loop</strong></td>
+                <td>Lets definitions and behavior improve as real user questions expose gaps.</td>
+                <td>The platform should treat failures as updates to context, rules, evals, or tools.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="note">
+            The connection to Claude Code is useful: CLAUDE.md gives Claude context for code;
+            Omni's semantic layer gives Claude context for business data.
+          </p>
+        </section>
+
+        <section class="section" id="blobby">
+          <span class="label">Blobby</span>
+          <h2>Blobby evolved from Q&A into an agentic analytics worker.</h2>
+          <p class="lead">
+            Omni's agent, Blobby, started as a simple question-answering experience and matured over roughly 18 months
+            into an agentic system that can plan, select data, generate queries, recover from errors,
+            create visualizations, and summarize the result.
+          </p>
+          <div class="flow" aria-label="Blobby analytics flow">
+            <div class="flow-step">
+              <strong>User question</strong>
+              <span>A user asks a business question in natural language, often with domain-specific ambiguity.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Semantic grounding</strong>
+              <span>The harness maps the question to topics, fields, definitions, values, and permissions.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Query and validation</strong>
+              <span>The agent generates SQL, executes tools, checks results, and retries with useful error context.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Workbook output</strong>
+              <span>The product returns charts, summaries, and UI artifacts that users can inspect and refine.</span>
+            </div>
+          </div>
+          <div class="grid two">
+            <article class="card sand">
+              <span class="pill gold">Metadata expansion</span>
+              <h3>Labels alone were not enough</h3>
+              <p>Omni added AI-specific context, sample queries, and allowed values so Claude could infer how a field should be used.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Error recovery</span>
+              <h3>High-quality errors improved the loop</h3>
+              <p>When failures explain what happened and how to fix it, the agent can revise its next step instead of getting stuck.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="architecture">
+          <span class="label">Architecture</span>
+          <h2>The strongest design move was consolidating the agent brain.</h2>
+          <p class="lead">
+            One early architecture separated an outer planning agent from a query-generation sub-agent.
+            That sounded modular, but it created a "split brain": the planner knew what data was relevant,
+            while the executor knew what one query could actually retrieve. The mismatch caused back-and-forth failures.
+          </p>
+          <div class="pipeline" aria-label="Architecture evolution">
+            <div class="pipeline-step">
+              <strong>Initial Q&A</strong>
+              <span>Answer simple questions with labels and descriptions in the semantic layer.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Agentic loop</strong>
+              <span>Add task planning, retry budgets, tool execution, checkpoints, and error recovery.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Split-brain issue</strong>
+              <span>Outer planning and inner query generation did not share enough operational context.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Brain consolidation</strong>
+              <span>Move query, dashboard, validation, visualization, and modeling tools into one harness.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Two-loop system</strong>
+              <span>Use an outer durable loop and inner parallel tool loop with observability across spans.</span>
+            </div>
+          </div>
+          <p class="note">
+            This does not mean sub-agents are bad. It means sub-agents are dangerous when they separate planning knowledge
+            from execution knowledge. If the task requires tight reasoning over data availability, query feasibility,
+            and presentation, a unified harness can be more reliable than role decomposition.
+          </p>
+        </section>
+
+        <section class="section" id="sql">
+          <span class="label">SQL Shift</span>
+          <h2>Omni leaned into what Claude already knows: SQL and CTEs.</h2>
+          <p class="lead">
+            Another major design decision was moving away from a proprietary JSON query format toward SQL generation.
+            The reason is strategic: Claude already has broad training-time familiarity with SQL, especially common table expressions.
+            A custom JSON query language requires prompt budget and repeated instruction, while SQL lets the model use a format it already handles well.
+          </p>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Before</th>
+                <th>After</th>
+                <th>Why It Matters</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Custom JSON query format</strong></td>
+                <td><strong>SQL generation with parsing</strong></td>
+                <td>Lower prompt overhead and better fit with model priors.</td>
+              </tr>
+              <tr>
+                <td><strong>Multiple chained attempts</strong></td>
+                <td><strong>More one-pass query construction</strong></td>
+                <td>Reduces retry loops, latency, and unpredictable intermediate states.</td>
+              </tr>
+              <tr>
+                <td><strong>Model must learn Omni's format</strong></td>
+                <td><strong>Harness adapts to model strengths</strong></td>
+                <td>Good harness engineering designs tools around what the model is naturally good at.</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="quote-strip">
+            <p>Good agent tooling is not just exposing tools. It is shaping the tool interface so the model can use it reliably.</p>
+          </div>
+        </section>
+
+        <section class="section" id="evals">
+          <span class="label">Evals and Observability</span>
+          <h2>Omni treats evals as a debugging system for product quality.</h2>
+          <p class="lead">
+            The talk's eval lesson is especially relevant for production agents.
+            Omni uses benchmark questions, LLM-as-judge style assessment, daily review of real sessions,
+            and raw traces of tool spans so failures can be diagnosed instead of dismissed as "LLM unpredictability."
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Benchmarks</span>
+              <h3>Run regular quality checks</h3>
+              <p>Use curated questions that cover realistic, difficult, and semantically ambiguous analytics scenarios.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Trace review</span>
+              <h3>Inspect the raw path</h3>
+              <p>Read tool inputs, outputs, errors, retries, and validation signals to find the actual failure point.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Daily triage</span>
+              <h3>Turn user sessions into fixes</h3>
+              <p>Use real failed sessions to improve semantic definitions, prompts, tools, and eval questions.</p>
+            </article>
+          </div>
+          <ul class="checklist">
+            <li><strong>Evaluate answer quality.</strong> Does the final output answer the user's business question?</li>
+            <li><strong>Evaluate data choice.</strong> Did the agent pick the correct table, topic, field, and filter?</li>
+            <li><strong>Evaluate ambiguity handling.</strong> Did it resolve or ask about fiscal periods, region terms, and metric definitions?</li>
+            <li><strong>Evaluate tool behavior.</strong> Did the loop recover from errors with bounded retries and clear state?</li>
+            <li><strong>Evaluate UI validation.</strong> Can users inspect, troubleshoot, and refine the generated workbook?</li>
+          </ul>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your Master Agent, Sub-Agent, Skill, and MCP platform</h2>
+          <p class="lead">
+            This video is a very strong case study for your BA-facing agentic platform.
+            It shows that high-performing agents need domain-specific harnesses, not generic persona prompts.
+            The builder should guide BAs to define business semantics, tool boundaries, validation criteria,
+            and feedback loops in the same place where they define business flow.
+          </p>
+          <ul class="checklist">
+            <li><strong>Create a semantic layer object.</strong> Let BAs define terms, metrics, examples, allowed values, data owners, and permission rules close to the data or tool they affect.</li>
+            <li><strong>Make context local and inspectable.</strong> Context should attach to fields, APIs, documents, SOP steps, and business policies instead of living only in one master prompt.</li>
+            <li><strong>Prefer unified brains for tightly coupled work.</strong> If planning and execution require the same context, expose tools directly to one agent rather than splitting into sub-agents too early.</li>
+            <li><strong>Use sub-agents for bounded probes.</strong> Sub-agents are still useful when they explore, validate, or review a slice and return compact evidence.</li>
+            <li><strong>Design tool interfaces around model strengths.</strong> If the model is already strong in SQL, Markdown, JSON Schema, or a domain DSL, use that advantage instead of inventing unnecessary formats.</li>
+            <li><strong>Invest in recoverable errors.</strong> Every MCP tool should return errors that explain what happened, what can be retried, and what information is missing.</li>
+            <li><strong>Build traces into every span.</strong> Log inputs, outputs, retries, costs, latency, permission checks, and eval scores at both root-flow and sub-step level.</li>
+            <li><strong>Use evals to improve the harness.</strong> Failed sessions should update semantic definitions, benchmark questions, tool contracts, or BA review rules.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">Flow Markdown</span>
+          <h2>A BA-friendly Flow Markdown spec should include semantic context and evals.</h2>
+          <p class="lead">
+            For your platform, the practical artifact is a reusable flow template.
+            It should make BAs declare the meaning of business terms, not just the sequence of tasks.
+          </p>
+          <pre class="mini-spec"># Agent Flow: Agentic Analytics Request
+
+goal: Answer a business analytics question with trusted data, explainable logic, and a reviewable workbook.
+owner: Analytics Master Agent
+domain: revenue_analytics
+loop_type: durable_agentic_harness
+
+semantic_context:
+  terms:
+    - name: online_sales
+      definition: Includes web and mobile app orders, excludes store pickup unless specified.
+    - name: last_quarter
+      definition: Use fiscal quarter for Sales users, calendar quarter for Product users.
+  fields:
+    - name: revenue
+      ai_context: Net revenue after returns and discounts.
+      allowed_values: [gross, net, booked]
+    - name: region
+      allowed_values: [NAM, EMEA, APAC]
+
+permissions:
+  enforce_row_level_security: true
+  restricted_metrics:
+    - executive_compensation
+    - unreleased_forecast
+
+agent_harness:
+  outer_loop:
+    max_iterations: 50
+    checkpoint_each_step: true
+  inner_loop:
+    allow_parallel_tools: true
+    tools:
+      - semantic_model_lookup
+      - sql_generator
+      - sql_executor
+      - visualization_builder
+      - workbook_validator
+
+error_recovery:
+  on_sql_error: return_fixable_error_context
+  on_ambiguous_term: ask_clarifying_question_or_use_role_default
+  on_permission_denied: explain_safe_alternative
+
+evals:
+  benchmark_questions:
+    - covers_ambiguous_time_periods
+    - covers_metric_definition_conflicts
+    - covers_multi_table_questions
+  scoring:
+    - answer_correctness
+    - data_source_choice
+    - ambiguity_resolution
+    - visualization_usefulness
+    - trace_completeness
+
+human_review:
+  required_when:
+    - low_confidence
+    - executive_metric
+    - new_semantic_definition_needed</pre>
+          <div class="grid two">
+            <article class="card sand">
+              <span class="pill gold">BA view</span>
+              <h3>Define business meaning</h3>
+              <p>The BA controls terminology, ownership, default assumptions, risk rules, and approval conditions.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Engineering view</span>
+              <h3>Bind runtime behavior</h3>
+              <p>Engineering maps semantic terms to data models, tools, MCP permissions, trace spans, eval scores, and UI validation.</p>
+            </article>
+          </div>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from YouTube metadata and public recap sources because captions were unavailable for
+    <strong>Building the best agentic analytics harness: Powered by Claude, built with Claude Code</strong>.
+    Source: Claude / Anthropic. Video ID: K4-flzsPraE.
+  </footer>
+</body>
+</html>

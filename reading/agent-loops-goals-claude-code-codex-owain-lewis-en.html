@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Agent Loops and Goals with Claude Code and Codex - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202522;
+      --muted: #626b67;
+      --quiet: #7a8580;
+      --line: #d9dfd8;
+      --paper: #ffffff;
+      --canvas: #f6f8f2;
+      --soft: #edf4ea;
+      --accent: #c74435;
+      --accent-dark: #9e3128;
+      --blue: #276176;
+      --green: #557d54;
+      --gold: #ad7928;
+      --shadow: 0 22px 60px rgb(32 37 34 / 11%);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgb(255 255 255 / 92%), rgb(246 248 242 / 96%)),
+        var(--canvas);
+      font-family:
+        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 6px;
+      background: linear-gradient(90deg, var(--accent), var(--blue), var(--green), var(--gold));
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    h1,
+    h2,
+    h3,
+    p,
+    figure {
+      margin: 0;
+    }
+
+    p,
+    li,
+    td,
+    th {
+      line-height: 1.7;
+    }
+
+    .site-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 22px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.82rem;
+      font-weight: 850;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 0 12px;
+      color: var(--blue);
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 22px 72px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 430px);
+      gap: 40px;
+      align-items: end;
+      padding: 48px 0 42px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      display: inline-flex;
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--accent-dark);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 11ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 8vw, 6.3rem);
+      font-weight: 760;
+      line-height: 0.92;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 760px;
+      margin-top: 24px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2vw, 1.45rem);
+      line-height: 1.62;
+      color: #313a36;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .meta strong {
+      color: var(--ink);
+    }
+
+    .hero-card {
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.84rem;
+    }
+
+    .nav-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 18px 0 0;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 48px;
+      align-items: start;
+      padding-top: 34px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .stat-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .stat {
+      display: grid;
+      min-height: 72px;
+      padding: 12px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      font-size: 1.35rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .note-card {
+      padding: 14px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .article {
+      display: grid;
+      gap: 28px;
+    }
+
+    .section {
+      padding: 26px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 14px 38px rgb(32 37 34 / 7%);
+    }
+
+    .section h2 {
+      max-width: 780px;
+      font-size: clamp(1.55rem, 3vw, 2.4rem);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .section h3 {
+      margin-top: 18px;
+      font-size: 1.02rem;
+      line-height: 1.3;
+    }
+
+    .section p {
+      margin-top: 14px;
+      color: var(--muted);
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, 310px);
+      gap: 22px;
+      align-items: start;
+      background: #fffaf2;
+      border-color: rgb(173 121 40 / 24%);
+    }
+
+    .tldr,
+    .check-list {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 18px 0 0;
+      list-style: none;
+    }
+
+    .tldr li,
+    .check-list li {
+      padding: 12px;
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .tldr strong,
+    .check-list strong {
+      color: var(--ink);
+    }
+
+    .mini-stats {
+      display: grid;
+      gap: 10px;
+    }
+
+    .mini-stat {
+      padding: 13px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .mini-stat strong {
+      display: block;
+      color: var(--accent-dark);
+      font-size: 1.2rem;
+    }
+
+    .mini-stat span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .comparison {
+      width: 100%;
+      margin-top: 18px;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .comparison th,
+    .comparison td {
+      padding: 12px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .comparison th {
+      color: var(--ink);
+      background: var(--soft);
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .comparison tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .flow-step {
+      min-height: 118px;
+      padding: 14px;
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .flow-step b {
+      display: block;
+      color: var(--blue);
+      font-size: 0.92rem;
+    }
+
+    .flow-step span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .map {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .node {
+      min-height: 112px;
+      padding: 14px;
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .node strong {
+      display: block;
+      color: var(--green);
+    }
+
+    .node span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .callout {
+      margin-top: 18px;
+      padding: 16px;
+      color: #26322d;
+      background: rgb(39 97 118 / 8%);
+      border: 1px solid rgb(39 97 118 / 22%);
+      border-radius: 8px;
+    }
+
+    .footer-note {
+      margin-top: 28px;
+      color: var(--quiet);
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .content-grid,
+      .quick-summary {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        max-width: 13ch;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .stat-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .flow,
+      .map {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .site-bar {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 14px;
+      }
+
+      .page {
+        padding: 0 12px 48px;
+      }
+
+      .hero {
+        gap: 22px;
+        padding: 34px 0 28px;
+      }
+
+      h1 {
+        font-size: clamp(2.55rem, 15vw, 4rem);
+      }
+
+      .nav-strip {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .action-link {
+        width: 100%;
+      }
+
+      .section {
+        padding: 18px;
+      }
+
+      .stat-grid,
+      .flow,
+      .map {
+        grid-template-columns: 1fr;
+      }
+
+      .comparison {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="site-bar">
+    <a class="brand" href="index.html">Summary Library</a>
+    <a class="action-link primary" href="https://www.youtube.com/watch?v=WRkVuebZqLU">Watch Source</a>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Owain Lewis - Agent Loops</span>
+        <h1>Goals Turn Agents Into Background Workers</h1>
+        <p class="subtitle">
+          A practical summary of Owain Lewis' workflow for using Claude Code and Codex goals,
+          loops, and scheduled automations to maintain codebases, watch production systems, triage issues,
+          and run longer development tasks with clear success criteria.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> How I use agent loops and goals (Claude Code + Codex).</span>
+          <span><strong>Channel:</strong> Owain Lewis</span>
+          <span><strong>Transcript:</strong> 3,107 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/WRkVuebZqLU/hqdefault.jpg" alt="Video thumbnail for How I use agent loops and goals with Claude Code and Codex">
+        <figcaption>
+          The video frames goals as a shift from step-by-step prompting to outcome-based delegation with measurable completion checks.
+        </figcaption>
+      </figure>
+    </section>
+
+    <nav class="nav-strip" aria-label="Page sections">
+      <a class="action-link" href="#short-version">Short Version</a>
+      <a class="action-link" href="#primitives">Primitives</a>
+      <a class="action-link" href="#examples">Examples</a>
+      <a class="action-link" href="#safety">Safety</a>
+      <a class="action-link" href="#platform">Platform Notes</a>
+      <a class="action-link" href="#checklist">Checklist</a>
+    </nav>
+
+    <div class="content-grid">
+      <aside class="sidebar" aria-label="Summary metadata">
+        <div class="stat-grid">
+          <div class="stat"><strong>13m 41s</strong><span>runtime</span></div>
+          <div class="stat"><strong>3.1k</strong><span>transcript words</span></div>
+          <div class="stat"><strong>Agent runtime</strong><span>category</span></div>
+        </div>
+        <div class="note-card">
+          This page is a synthesis of the public YouTube captions. It is a structured summary, not a verbatim transcript.
+        </div>
+      </aside>
+
+      <article class="article">
+        <section class="section quick-summary" id="short-version">
+          <div>
+            <h2>The Short Version</h2>
+            <p>
+              The video argues that goals, loops, and schedules make coding agents useful beyond one-off prompts.
+              Instead of micromanaging every step, you define the target state, success criteria, constraints, and cadence,
+              then let the agent work through tool calls, checks, pull requests, and follow-up until the work is done or blocked.
+            </p>
+            <ul class="tldr">
+              <li><strong>Goals:</strong> outcome-based delegation where the agent keeps working until a defined success condition is met.</li>
+              <li><strong>Loops:</strong> interval-based checking, such as watching a pull request for review feedback and responding.</li>
+              <li><strong>Schedules:</strong> cron-like automations for recurring maintenance, documentation checks, issue triage, or production log scans.</li>
+            </ul>
+          </div>
+          <div class="mini-stats">
+            <div class="mini-stat"><strong>Daily</strong><span>production log and documentation checks</span></div>
+            <div class="mini-stat"><strong>PRs</strong><span>as the reviewable output unit</span></div>
+            <div class="mini-stat"><strong>Goals</strong><span>replace manual prompt-by-prompt steering</span></div>
+          </div>
+        </section>
+
+        <section class="section" id="primitives">
+          <h2>The useful distinction is loop, goal, and schedule</h2>
+          <p>
+            The talk starts by untangling the overloaded phrase "agent loops." A normal agent already runs in a loop:
+            it receives a message, calls tools repeatedly, and returns a response. The newer primitives add more structure around time and completion.
+          </p>
+          <table class="comparison">
+            <thead>
+              <tr>
+                <th>Primitive</th>
+                <th>What it does</th>
+                <th>Good fit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Goal</td>
+                <td>Defines the end state and success checks, then lets the agent keep working toward it.</td>
+                <td>Deploy a small app, process a backlog, or complete a well-specified development phase.</td>
+              </tr>
+              <tr>
+                <td>Loop</td>
+                <td>Runs a repeated check on an interval.</td>
+                <td>Monitor PR feedback, wait for CI, retry blocked work, or watch an external signal.</td>
+              </tr>
+              <tr>
+                <td>Schedule</td>
+                <td>Runs work at a recurring time, like a cron job.</td>
+                <td>Daily log scans, weekly issue triage, recurring documentation drift checks.</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            The management analogy matters: goals are less like micromanagement and more like giving a capable teammate a clear result and definition of done.
+          </div>
+        </section>
+
+        <section class="section" id="examples">
+          <h2>The strongest examples are maintenance jobs that humans avoid</h2>
+          <p>
+            The high-value use cases in the video are not flashy demos. They are repetitive, evidence-driven maintenance tasks
+            where agents can improve quality over time and produce reviewable artifacts.
+          </p>
+          <div class="map">
+            <div class="node"><strong>Production log scan</strong><span>Run every morning, identify errors, reproduce bugs, add tests, and open a pull request.</span></div>
+            <div class="node"><strong>Deploy a small app</strong><span>Use a goal to deploy a personal SaaS app to Google Cloud, set up CI/CD, and verify health checks.</span></div>
+            <div class="node"><strong>Issue backlog sweep</strong><span>Work through ready issues one at a time, run tests, open PRs, and stop with evidence when blocked.</span></div>
+            <div class="node"><strong>Issue triage</strong><span>Label open tasks, close duplicates with comments, mark quick wins, and surface items needing maintainer judgment.</span></div>
+            <div class="node"><strong>Documentation drift</strong><span>Compare docs against code daily and open a PR when commands, facts, or behavior are stale.</span></div>
+            <div class="node"><strong>Long-running phases</strong><span>Hand off a planned development phase and let the agent follow a workflow across many tickets.</span></div>
+          </div>
+        </section>
+
+        <section class="section" id="safety">
+          <h2>Goals work best when the work is scoped, mechanical, and checkable</h2>
+          <p>
+            The video is not saying every production system should be changed unattended. Lewis explicitly narrows the risk:
+            personal projects, proof-of-concepts, well-specified tasks, and mechanical work are safer places to start.
+            Mission-critical systems need stricter gates, human review, and a much clearer approval policy.
+          </p>
+          <div class="flow">
+            <div class="flow-step"><b>Define scope</b><span>Limit the repos, issues, files, environments, and tools the agent can touch.</span></div>
+            <div class="flow-step"><b>Define success</b><span>Use health endpoints, tests, CI, browser checks, or evidence requirements.</span></div>
+            <div class="flow-step"><b>Use PRs</b><span>Make pull requests the boundary where humans review and merge the work.</span></div>
+            <div class="flow-step"><b>Stop on risk</b><span>Require the agent to report blocked, unsafe, or ambiguous states instead of forcing progress.</span></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>The cost objection depends on what the agent is replacing</h2>
+          <p>
+            Lewis pushes back on the idea that loops automatically waste tokens. His argument is that many goals are work he would otherwise do manually,
+            step by step. If the agent runs longer inside a goal but replaces repeated manual prompting, the total cost may not increase much.
+            He also says some production automations can cost only a small monthly amount when the task is narrow and high-value.
+          </p>
+          <table class="comparison">
+            <thead>
+              <tr>
+                <th>Bad pattern</th>
+                <th>Better pattern</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Let an agent run with vague instructions and no boundary.</td>
+                <td>Give it a goal, scope, stop condition, and expected artifact.</td>
+              </tr>
+              <tr>
+                <td>Measure only token spend.</td>
+                <td>Measure the work avoided, defects found, PRs opened, and review time saved.</td>
+              </tr>
+              <tr>
+                <td>Use loops because they sound advanced.</td>
+                <td>Use loops where repeated checking is genuinely useful.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="platform">
+          <h2>What this implies for an agentic coding platform</h2>
+          <p>
+            For product design, the video points toward an agent runtime where goals and schedules are first-class objects.
+            The user should be able to see what goal is running, why it is still running, what evidence it collected,
+            what it changed, what it plans next, and where human review is required.
+          </p>
+          <ul class="check-list">
+            <li><strong>Make goals explicit.</strong> Store goal text, success criteria, scope, cadence, budget, and stop conditions as structured fields.</li>
+            <li><strong>Expose run history.</strong> Each scheduled or goal run should show tool calls, commits, PRs, test output, screenshots, and final status.</li>
+            <li><strong>Prefer reviewable artifacts.</strong> Pull requests, issues, reports, labels, and documentation diffs make background work auditable.</li>
+            <li><strong>Support generated automations.</strong> The user can ask the agent to write the automation prompt, then review and activate it.</li>
+            <li><strong>Separate personal projects from critical systems.</strong> Risk posture, permissions, and approval gates should change with the blast radius.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="checklist">
+          <h2>A practical checklist before using a goal</h2>
+          <table class="comparison">
+            <thead>
+              <tr>
+                <th>Question</th>
+                <th>Why it matters</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Can the agent verify success without guessing?</td>
+                <td>Goals need objective checks such as tests, health endpoints, CI, or clear evidence.</td>
+              </tr>
+              <tr>
+                <td>Is the work scoped to a safe environment?</td>
+                <td>Background agents are more useful when the blast radius is bounded.</td>
+              </tr>
+              <tr>
+                <td>Will the output be reviewed?</td>
+                <td>Pull requests and reports keep unattended work accountable.</td>
+              </tr>
+              <tr>
+                <td>Should it repeat?</td>
+                <td>Recurring checks are ideal for logs, docs, issues, dependencies, and maintenance drift.</td>
+              </tr>
+              <tr>
+                <td>What should happen when it is blocked?</td>
+                <td>A good goal includes an explicit blocked state instead of endless retries.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="footer-note">
+            Generated from public YouTube captions for product and architecture planning. This page summarizes the video and should be validated against your own codebase, permissions, review policy, and deployment risk.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

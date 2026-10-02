@@ -1,0 +1,1074 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Loop Engineering and Hermes Agents - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5d6970;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f4f7f2;
+      --line: #d7ded6;
+      --charcoal: #24323a;
+      --teal: #166f68;
+      --blue: #315f86;
+      --coral: #bd503f;
+      --gold: #9e711e;
+      --violet: #665987;
+      --mint: #e2f0ec;
+      --sky: #e7eef6;
+      --sand: #f7eed8;
+      --rose: #f5e5df;
+      --shadow: 0 24px 62px rgb(23 33 38 / 11%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(22 111 104 / 7%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(49 95 134 / 6%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 46px 46px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--coral), var(--gold), var(--violet));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 84%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.7rem, 6.4vw, 5.45rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2.05vw, 1.48rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e6ece7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 86%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: #f8fbf8;
+      background: rgb(255 255 255 / 9%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-height: 86px;
+      padding: 14px;
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: rgb(255 255 255 / 72%);
+      font-size: 0.84rem;
+      font-weight: 760;
+      text-transform: uppercase;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      gap: 42px;
+      align-items: start;
+      margin-top: 36px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 22px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .sidebar-block {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+    }
+
+    .sidebar-block h2,
+    .toc h2 {
+      margin-bottom: 12px;
+      color: var(--quiet);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .glance {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .glance strong {
+      color: var(--ink);
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .toc {
+      padding-left: 18px;
+      border-left: 4px solid var(--gold);
+    }
+
+    .toc a {
+      display: block;
+      padding: 7px 0;
+      color: var(--ink);
+      font-size: 0.94rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .content {
+      min-width: 0;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 8%);
+    }
+
+    .section {
+      padding: 34px 42px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; }
+
+    .label {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .section h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 3.3vw, 3.1rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .section h3 {
+      margin-top: 20px;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      margin-top: 16px;
+      color: #313d44;
+      font-size: 1.08rem;
+    }
+
+    .section p + p { margin-top: 14px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card.mint { background: var(--mint); }
+    .card.sky { background: var(--sky); }
+    .card.sand { background: var(--sand); }
+    .card.rose { background: var(--rose); }
+
+    .card h3 {
+      margin-top: 8px;
+      font-size: 1.02rem;
+    }
+
+    .card p {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.62;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pill.blue { background: var(--blue); }
+    .pill.coral { background: var(--coral); }
+    .pill.gold { background: var(--gold); }
+    .pill.violet { background: var(--violet); }
+
+    .note {
+      margin-top: 22px;
+      padding: 18px 20px;
+      background: #f8f3e6;
+      border-left: 5px solid var(--gold);
+      border-radius: 8px;
+      color: #3b3424;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(126px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+      align-items: stretch;
+    }
+
+    .flow-step {
+      min-height: 150px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .flow-step:nth-child(2) { border-top-color: var(--blue); }
+    .flow-step:nth-child(3) { border-top-color: var(--coral); }
+    .flow-step:nth-child(4) { border-top-color: var(--gold); }
+    .flow-step:nth-child(5) { border-top-color: var(--violet); }
+
+    .flow-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .pipeline-step {
+      min-height: 144px;
+      padding: 14px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .pipeline-step:nth-child(2) { background: var(--teal); }
+    .pipeline-step:nth-child(3) { background: var(--blue); }
+    .pipeline-step:nth-child(4) { background: var(--coral); }
+    .pipeline-step:nth-child(5) { background: var(--violet); }
+
+    .pipeline-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.92rem;
+      line-height: 1.3;
+    }
+
+    .pipeline-step span {
+      color: rgb(255 255 255 / 82%);
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    .compare {
+      width: 100%;
+      margin-top: 22px;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .compare th,
+    .compare td {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .compare th {
+      color: #fff;
+      background: var(--charcoal);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .compare td { background: #fff; }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+      color: #303b42;
+    }
+
+    .checklist li:nth-child(2n) { border-left-color: var(--blue); }
+    .checklist li:nth-child(3n) { border-left-color: var(--coral); }
+
+    .checklist strong { color: var(--ink); }
+
+    .quote-strip {
+      margin-top: 24px;
+      padding: 24px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      border-radius: 8px;
+    }
+
+    .quote-strip p {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.28rem, 2.8vw, 2.15rem);
+      line-height: 1.28;
+    }
+
+    .mini-spec {
+      margin-top: 22px;
+      padding: 18px;
+      color: #f8fbf8;
+      background: #1d2b32;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.9rem;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1100px) {
+      .flow,
+      .pipeline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .grid,
+      .two {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .page {
+        padding-inline: 16px;
+      }
+
+      .hero {
+        gap: 28px;
+        padding-top: 38px;
+      }
+
+      h1 {
+        font-size: clamp(2.4rem, 15vw, 3.35rem);
+      }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .tldr,
+      .sidebar,
+      .flow,
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+
+      .compare {
+        table-layout: fixed;
+      }
+
+      .compare th,
+      .compare td {
+        padding: 11px 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/reading/">Reading room</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#loop">Loop</a>
+      <a class="action-link" href="#primitives">Primitives</a>
+      <a class="action-link" href="#deterministic">Deterministic</a>
+      <a class="action-link" href="#nondeterministic">Non-Deterministic</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=AQRDjI5owZI">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">AI LABS - Hermes Agents</span>
+        <h1>Loop Engineering for Always-Running Agents</h1>
+        <p class="subtitle">
+          A concise, blog-style summary of the video "Loop Engineering Totally 10x Hermes agents":
+          the shift from writing prompts to designing autonomous feedback loops, why Hermes is framed as a good runtime for them,
+          and how deterministic and non-deterministic loops should be built.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> Loop Engineering Totally 10x Hermes agents</span>
+          <span><strong>Creator:</strong> AI LABS</span>
+          <span><strong>Transcript:</strong> 2,916 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/AQRDjI5owZI/hqdefault.jpg" alt="Video thumbnail for Loop Engineering Totally 10x Hermes agents">
+        <figcaption>
+          The video argues that the next step after prompt engineering is loop engineering:
+          build a system that checks state, acts, gathers feedback, verifies completion, and keeps improving without constant human prompting.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          The video's central claim is simple: prompt engineering controls one decision at a time,
+          while loop engineering designs the full operating cycle around an agent. A good loop tells the agent what goal matters,
+          lets it choose actions, gives it high-quality feedback, blocks false completion, handles tool failures,
+          and stores state outside the chat so the work can continue over time.
+        </p>
+        <ul class="tldr">
+          <li>Loop engineering moves the human from "write every prompt" to "define the goal, gates, feedback, and state model."</li>
+          <li>Deterministic loops work best when done can be checked by tests, builds, schemas, or deployment health.</li>
+          <li>Non-deterministic loops need a separate verifier, reviewer rubric, or skill that can judge quality and update itself.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>13m</strong><span>runtime</span></div>
+        <div class="stat"><strong>427</strong><span>caption rows</span></div>
+        <div class="stat"><strong>5</strong><span>loop stages</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Main lens</span><strong>Agent loops</strong></li>
+            <li><span>Runtime focus</span><strong>Hermes</strong></li>
+            <li><span>Core risk</span><strong>False done</strong></li>
+            <li><span>Best use</span><strong>Platform design</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#thesis">Main Thesis</a>
+          <a href="#loop">Five-Step Loop</a>
+          <a href="#primitives">Engineering Primitives</a>
+          <a href="#deterministic">Deterministic Loops</a>
+          <a href="#nondeterministic">Non-Deterministic Loops</a>
+          <a href="#hermes">Hermes Pattern</a>
+          <a href="#platform">Platform Takeaways</a>
+          <a href="#templates">Flow Markdown</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="thesis">
+          <span class="label">Main Thesis</span>
+          <h2>Loop engineering is system design for agents, not just better prompting.</h2>
+          <p class="lead">
+            The speaker frames loop engineering as the next abstraction above prompt engineering.
+            In prompt engineering, the human writes the instruction that drives the next model response.
+            In loop engineering, the human designs the system that repeatedly creates those instructions,
+            evaluates progress, and decides whether the agent should continue.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Old role</span>
+              <h3>You were the loop</h3>
+              <p>You checked output, noticed failures, reprompted, and decided when the task was complete.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">New role</span>
+              <h3>You define the operating contract</h3>
+              <p>Your leverage moves to goals, constraints, feedback sources, verification gates, and memory.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Hard part</span>
+              <h3>Autonomy magnifies weak specs</h3>
+              <p>If done is vague, feedback is poor, or state is lost, the loop can stop too early or keep spending tokens.</p>
+            </article>
+          </div>
+          <p class="note">
+            My read: the video is directionally useful, but the "10x" framing should be treated as a product claim.
+            The durable idea is not the number. It is the design pattern: goals plus feedback plus gates plus state.
+          </p>
+        </section>
+
+        <section class="section" id="loop">
+          <span class="label">Five-Step Loop</span>
+          <h2>The loop is a repeated cycle from state to action to feedback.</h2>
+          <p class="lead">
+            The video describes a loop as a process where the agent is given an end goal,
+            then figures out the steps by checking the current state, choosing an action, acting with tools,
+            reading feedback, and deciding whether the task is actually done.
+          </p>
+          <div class="flow" aria-label="Loop engineering cycle">
+            <div class="flow-step">
+              <strong>1. Check state</strong>
+              <span>Read the project, task file, logs, tests, UI, or previous progress to understand where the work is now.</span>
+            </div>
+            <div class="flow-step">
+              <strong>2. Decide action</strong>
+              <span>Choose the next move based on the goal and the latest evidence instead of waiting for a human reprompt.</span>
+            </div>
+            <div class="flow-step">
+              <strong>3. Act with tools</strong>
+              <span>Run commands, edit files, call tools, open PRs, inspect screenshots, or invoke sub-agents.</span>
+            </div>
+            <div class="flow-step">
+              <strong>4. Gather feedback</strong>
+              <span>Collect tests, build output, runtime errors, screenshots, review notes, traces, and score results.</span>
+            </div>
+            <div class="flow-step">
+              <strong>5. Verify done</strong>
+              <span>Decide whether the completion condition is met. If not, loop again with the new state.</span>
+            </div>
+          </div>
+          <div class="quote-strip">
+            <p>Prompt engineering controls the decision. Loop engineering controls the whole operating cycle.</p>
+          </div>
+        </section>
+
+        <section class="section" id="primitives">
+          <span class="label">Engineering Primitives</span>
+          <h2>A production loop needs context, feedback, gates, termination, errors, and state.</h2>
+          <p class="lead">
+            The most useful part of the video is the list of things that make autonomous loops work in practice.
+            These are the controls that prevent a long-running agent from drifting, forgetting the target,
+            or calling a task complete without evidence.
+          </p>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Primitive</th>
+                <th>What It Means</th>
+                <th>Platform Implication</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Context management</strong></td>
+                <td>Control what the agent sees each turn because recent tool output can bury the original intent.</td>
+                <td>Expose curated context packs, not raw unlimited history.</td>
+              </tr>
+              <tr>
+                <td><strong>Feedback quality</strong></td>
+                <td>Give the agent useful evidence: tests, logs, screenshots, trace scores, and reviewer comments.</td>
+                <td>Turn every flow into an observable workflow with structured feedback channels.</td>
+              </tr>
+              <tr>
+                <td><strong>Verification gates</strong></td>
+                <td>Translate feedback into a verdict so the agent cannot just declare success.</td>
+                <td>Let BAs and engineers define pass/fail criteria per step, sub-agent, and tool call.</td>
+              </tr>
+              <tr>
+                <td><strong>Termination condition</strong></td>
+                <td>Define when to stop, retry, escalate, or hand off to a human.</td>
+                <td>Add budgets for iterations, time, cost, risk, and confidence.</td>
+              </tr>
+              <tr>
+                <td><strong>Error handling</strong></td>
+                <td>Tell the loop what to do when a tool call fails or returns ambiguous output.</td>
+                <td>Model tool failures as first-class states with retries and fallback paths.</td>
+              </tr>
+              <tr>
+                <td><strong>External state</strong></td>
+                <td>Store progress outside the chat so long tasks survive context limits and compaction.</td>
+                <td>Use task files, memory records, trace stores, and versioned flow state.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="note">
+            This maps directly to your agentic AI platform problem: a BA-facing builder should not only ask for a persona prompt.
+            It should ask for the loop contract that controls how the persona behaves over time.
+          </p>
+        </section>
+
+        <section class="section" id="deterministic">
+          <span class="label">Deterministic Loops</span>
+          <h2>Use deterministic loops when done has an objective check.</h2>
+          <p class="lead">
+            A deterministic loop is useful when the system can clearly verify completion.
+            In the video, examples include tests passing, code compiling, deployment checks staying healthy,
+            or a production regression being fixed. The agent can keep working until the gate passes.
+          </p>
+          <div class="pipeline" aria-label="Deterministic loop workflow">
+            <div class="pipeline-step">
+              <strong>Monitor</strong>
+              <span>Watch a deployed app, repo, test suite, or production health signal.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Detect breakage</strong>
+              <span>Identify failed tests, build errors, broken checks, or production incidents.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Launch worker</strong>
+              <span>Start a coding agent in a non-interactive mode with a clear target.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Loop until green</strong>
+              <span>Edit, run tests, inspect failures, and repeat until the objective gate passes.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Commit or escalate</strong>
+              <span>Create a PR when checks pass, or escalate if budget or risk limits are reached.</span>
+            </div>
+          </div>
+          <ul class="checklist">
+            <li><strong>Good fit:</strong> test failures, schema validation, compile errors, integration checks, SLA thresholds, and deployment smoke tests.</li>
+            <li><strong>Bad fit:</strong> brand taste, UX polish, ambiguous product judgment, or anything where humans disagree on what good means.</li>
+            <li><strong>Platform rule:</strong> deterministic loops should have explicit gates, retry limits, and a clean artifact at the end, such as a PR or incident note.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="nondeterministic">
+          <span class="label">Non-Deterministic Loops</span>
+          <h2>When done is subjective, build an adversarial verifier loop.</h2>
+          <p class="lead">
+            The video's second loop type covers tasks that cannot be checked with a simple test.
+            The example is UI quality: the builder may create a working interface, but another judge must decide whether it looks generic,
+            has weak layout patterns, or violates quality standards.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Builder</span>
+              <h3>One model creates the work</h3>
+              <p>The builder agent implements the UI, feature, or workflow based on the goal and current state.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Verifier</span>
+              <h3>A different model reviews the work</h3>
+              <p>The verifier uses a rubric or skill to detect quality issues the builder may miss.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Skill update</span>
+              <h3>The rubric evolves</h3>
+              <p>When humans notice a new failure pattern, the skill can be updated so the next loop catches it earlier.</p>
+            </article>
+          </div>
+          <p class="note">
+            This is a strong pattern for BA-built multi-agent systems: subjective quality should not be hidden inside a persona prompt.
+            It should be captured as a review skill with named criteria, examples, and escalation rules.
+          </p>
+        </section>
+
+        <section class="section" id="hermes">
+          <span class="label">Hermes Pattern</span>
+          <h2>Hermes is presented as an always-running coordinator with self-evolving skills.</h2>
+          <p class="lead">
+            The speaker argues that Hermes is a good place to run these loops because it can keep monitoring workflows,
+            trigger other coding agents, and evolve skills as it learns from repeated work. In the deterministic example,
+            Hermes watches an app and asks a coding agent to fix failures until tests pass. In the non-deterministic example,
+            Hermes uses an "AI slop detector" style skill to review UI output and refine the skill when new patterns are found.
+          </p>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Hermes Role</th>
+                <th>What It Does In The Video</th>
+                <th>Design Lesson</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Monitor</strong></td>
+                <td>Runs continuously and watches for workflow triggers, failures, or quality signals.</td>
+                <td>The master agent should be event-driven, not only chat-driven.</td>
+              </tr>
+              <tr>
+                <td><strong>Coordinator</strong></td>
+                <td>Starts other agents or tools, such as a coding agent in non-interactive mode.</td>
+                <td>Separate orchestration from execution so each agent has a clear role.</td>
+              </tr>
+              <tr>
+                <td><strong>Skill manager</strong></td>
+                <td>Loads and evolves skills based on recurring workflow needs and review feedback.</td>
+                <td>Skills should be versioned operating procedures with examples, tools, and gates.</td>
+              </tr>
+              <tr>
+                <td><strong>Verifier</strong></td>
+                <td>Uses a different model or skill to review work created by the builder.</td>
+                <td>Builder and verifier should have different prompts, tools, and incentives.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for a Master Agent, Sub-Agent, Skill, and MCP platform</h2>
+          <p class="lead">
+            The video is useful for your platform because it shifts the design object from "agent prompt" to "agent loop."
+            A BA should be able to assemble a multi-agent system by defining business goals, steps, tools, feedback,
+            gates, escalation paths, and state rules in a structured builder.
+          </p>
+          <ul class="checklist">
+            <li><strong>Make the Master Agent a loop owner.</strong> It should hold the end goal, business constraints, budgets, routing rules, and completion policy.</li>
+            <li><strong>Make Sub-Agents role-specific workers.</strong> Each sub-agent should have a narrow purpose, tool permissions, input contract, output schema, and done condition.</li>
+            <li><strong>Separate cognitive skills from actionable skills.</strong> Cognitive skills guide reasoning, review, diagnosis, and classification. Actionable skills require tools, permissions, retries, and audit logs.</li>
+            <li><strong>Turn SOPs into executable loop specs.</strong> A business SOP should become stages, triggers, evidence, decisions, tool calls, exceptions, and escalation paths.</li>
+            <li><strong>Require feedback channels per stage.</strong> Every step should say what evidence proves progress: test result, API response, human approval, generated artifact, or trace score.</li>
+            <li><strong>Design for false-done prevention.</strong> Completion should be decided by gates, reviewers, or scores, not by the worker agent's confidence alone.</li>
+            <li><strong>Persist state outside the chat.</strong> Store current objective, completed steps, open issues, tool outputs, reviewer notes, and next action candidates.</li>
+            <li><strong>Use adversarial review for subjective work.</strong> Let a verifier agent or human rubric review the builder output before the loop ends.</li>
+            <li><strong>Expose all of this in BA language.</strong> Instead of asking BAs to write giant prompts, ask them to fill in goals, rules, data, checks, owners, and fallback decisions.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">Flow Markdown</span>
+          <h2>A BA-friendly loop spec can be written as structured Flow Markdown.</h2>
+          <p class="lead">
+            The most practical artifact to build from this video is a reusable template that captures the loop contract.
+            It should be readable by BAs, executable by the platform, and strict enough for engineers to attach tools and evaluations.
+          </p>
+          <pre class="mini-spec"># Agent Loop: Production Issue Fix
+
+goal: Restore the app to a passing deployment state.
+owner: Master Agent
+loop_type: deterministic
+max_iterations: 5
+budget:
+  max_runtime_minutes: 45
+  max_tool_cost_usd: 10
+
+state:
+  reads:
+    - failing_check_summary
+    - recent_commits
+    - test_logs
+    - deployment_status
+  writes:
+    - issue_diagnosis
+    - attempted_fixes
+    - final_pr_link
+
+sub_agents:
+  - name: Diagnosis Agent
+    skill: root_cause_analysis
+    output: issue_diagnosis
+  - name: Coding Agent
+    skill: test_driven_fix
+    tools_required:
+      - git
+      - package_manager
+      - test_runner
+  - name: Verification Agent
+    skill: release_gate_review
+
+gates:
+  - npm_test_passes
+  - build_passes
+  - no_new_console_errors
+  - pr_contains_summary
+
+failure_policy:
+  on_tool_error: retry_once_then_escalate
+  on_budget_exceeded: stop_and_request_human_review
+  on_gate_failure: continue_loop_with_latest_feedback</pre>
+          <div class="grid two">
+            <article class="card sand">
+              <span class="pill gold">BA view</span>
+              <h3>Write the business contract</h3>
+              <p>The BA defines the goal, business rule, success evidence, approval owner, and exception handling in domain language.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Engineering view</span>
+              <h3>Attach runtime adapters</h3>
+              <p>Engineering maps each skill to tools, MCP servers, permissions, schemas, traces, evals, and deployment gates.</p>
+            </article>
+          </div>
+          <p class="note">
+            The page summary comes from the public captions for the video. Claims about specific tools, performance gains,
+            and future model behavior should be validated in your own platform with evals before becoming product assumptions.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>Loop Engineering Totally 10x Hermes agents</strong>.
+    Source: AI LABS. Video ID: AQRDjI5owZI.
+  </footer>
+</body>
+</html>

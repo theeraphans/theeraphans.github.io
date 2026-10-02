@@ -1,0 +1,837 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>MCP vs API - The Protocol Every Developer Needs to Know - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5f6d73;
+      --paper: #fffef9;
+      --canvas: #f4f7f2;
+      --line: #d7ded6;
+      --teal: #14716a;
+      --blue: #315f85;
+      --coral: #bd4e3e;
+      --gold: #a1741e;
+      --violet: #675a87;
+      --charcoal: #243039;
+      --soft-teal: #e3f0ed;
+      --soft-blue: #e6edf5;
+      --soft-gold: #f7efd8;
+      --shadow: 0 24px 62px rgb(23 33 38 / 11%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(20 113 106 / 7%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(49 95 133 / 6%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--coral), var(--gold), var(--violet));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 84%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.04fr) minmax(300px, 0.96fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.9rem, 6.7vw, 5.85rem);
+      font-weight: 760;
+      line-height: 0.96;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      margin-top: 24px;
+      color: #303b41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2.05vw, 1.48rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e6ece7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 86%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: rgb(255 255 255 / 88%);
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .stat {
+      padding: 14px;
+      color: var(--ink);
+      background: #fff;
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--coral);
+      font-size: 1.65rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 238px minmax(0, 1fr);
+      gap: 40px;
+      align-items: start;
+      margin-top: 38px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 6px;
+      padding: 16px;
+      background: rgb(255 255 255 / 80%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .toc span {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 750;
+      text-decoration: none;
+      border-top: 1px solid rgb(215 222 214 / 76%);
+    }
+
+    .content {
+      display: grid;
+      gap: 28px;
+      min-width: 0;
+    }
+
+    .section {
+      min-width: 0;
+      padding: 34px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; padding-top: 0; }
+
+    .label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      max-width: 900px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.9rem, 4vw, 3.35rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      max-width: 920px;
+      margin-top: 14px;
+      color: #303b41;
+      font-size: 1.08rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      margin-bottom: 12px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .flow-step {
+      min-width: 0;
+      padding: 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 30px rgb(23 33 38 / 6%);
+    }
+
+    .flow-step b {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--coral);
+      font-size: 0.8rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .lanes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .lane {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .lane:nth-child(1) { background: var(--soft-teal); }
+    .lane:nth-child(2) { background: var(--soft-blue); }
+    .lane:nth-child(3) { background: var(--soft-gold); }
+
+    .lane h3 {
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 1.08rem;
+    }
+
+    .lane p {
+      color: #42505a;
+      font-size: 0.96rem;
+    }
+
+    .table-wrap {
+      min-width: 0;
+      margin-top: 24px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: #fff;
+      background: var(--blue);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    td {
+      color: #344047;
+      font-size: 0.95rem;
+    }
+
+    .quote {
+      margin-top: 24px;
+      padding: 22px;
+      color: #fff;
+      background: var(--violet);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.22rem, 2.4vw, 1.78rem);
+      line-height: 1.35;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 14px 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .checklist strong { color: var(--coral); }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 46px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .toc { position: static; }
+
+      .grid,
+      .two,
+      .tldr,
+      .lanes {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .page { padding-inline: 16px; }
+
+      .hero {
+        padding-top: 36px;
+        gap: 28px;
+      }
+
+      h1 {
+        max-width: 10ch;
+        font-size: clamp(2.55rem, 13vw, 4.15rem);
+      }
+
+      .quick-summary { padding: 22px; }
+
+      .grid,
+      .two,
+      .tldr,
+      .lanes {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        min-width: 0;
+        table-layout: fixed;
+      }
+
+      th, td {
+        padding: 11px 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/reading/">Reading room</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#difference">Difference</a>
+      <a class="action-link" href="#underhood">Under the Hood</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=185XGEMefgc">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">MCP vs API</span>
+        <h1>The Protocol Layer for Model-Native Tools</h1>
+        <p class="subtitle">
+          A readable summary of Google Cloud Tech's explanation of Model Context Protocol.
+          The video argues that APIs remain the foundation of software integration, while MCP adds a model-facing layer
+          that lets AI agents discover tools, understand schemas, and reason about which capability to use.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> MCP vs API: The protocol every developer needs to know</span>
+          <span><strong>Creator:</strong> Google Cloud Tech</span>
+          <span><strong>Transcript:</strong> 1,697 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/185XGEMefgc/hqdefault.jpg" alt="Video thumbnail for MCP vs API">
+        <figcaption>
+          Source video from Google Cloud Tech, focused on APIs, Model Context Protocol, MCP servers, schemas, tool discovery, security, and model-native software architecture.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="quick-summary-title">
+      <div>
+        <h2 id="quick-summary-title">The Short Version</h2>
+        <p>
+          APIs are still how systems actually do work, but they were designed for programs that already know which endpoint to call.
+          MCP is designed for models that need context about available tools, inputs, outputs, and permissions before deciding what to do.
+          So the right framing is not "MCP versus API"; it is MCP as a semantic layer on top of APIs.
+        </p>
+        <ul class="tldr">
+          <li>APIs expose deterministic endpoints; MCP exposes model-readable capabilities and schemas.</li>
+          <li>An MCP server translates tools or existing APIs into a self-describing interface for models.</li>
+          <li>The big shift is from endpoint integration to model-native context, discovery, and tool use.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>12m</strong><span>runtime</span></div>
+        <div class="stat"><strong>268</strong><span>caption rows</span></div>
+        <div class="stat"><strong>1.7k</strong><span>transcript words</span></div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Table of contents">
+        <span>Read</span>
+        <a href="#problem">Why APIs feel awkward for agents</a>
+        <a href="#difference">API vs MCP</a>
+        <a href="#example">Support ticket example</a>
+        <a href="#underhood">Under the hood</a>
+        <a href="#relationship">MCP on top of APIs</a>
+        <a href="#challenges">Challenges</a>
+        <a href="#platform">Platform takeaways</a>
+      </nav>
+
+      <article class="content">
+        <section class="section" id="problem">
+          <span class="label">Problem</span>
+          <h2>APIs assume a caller already knows exactly what to call</h2>
+          <p class="lead">
+            The video starts from a familiar point: APIs were the glue of software integration for decades.
+            A developer defines an endpoint, sends a structured request, and receives a predictable response.
+            That works well for deterministic programs, but LLM agents often need to reason across many tools,
+            chain calls together, handle messy data, and decide what to do based on context.
+          </p>
+
+          <div class="lanes" aria-label="API and model mismatch">
+            <article class="lane">
+              <h3>Traditional App</h3>
+              <p>Knows the endpoint, payload shape, auth method, and expected response before it makes a call.</p>
+            </article>
+            <article class="lane">
+              <h3>Language Model</h3>
+              <p>Needs to discover what tools exist, what inputs they require, and which tool fits the user's goal.</p>
+            </article>
+            <article class="lane">
+              <h3>Integration Gap</h3>
+              <p>Without a protocol, developers hardcode wrappers and repeatedly explain tool behavior through prompts.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="difference">
+          <span class="label">Core Difference</span>
+          <h2>APIs are code-level contracts; MCP is a semantic protocol between a model and its environment</h2>
+          <p class="lead">
+            APIs expose endpoints to software. MCP exposes capabilities to models.
+            Instead of teaching the model every endpoint through custom prompts, MCP gives the model a standardized,
+            machine-readable map of what a tool can do, what inputs it expects, and what outputs it returns.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>API</th>
+                  <th>MCP</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Primary client</td>
+                  <td>Program, app, backend service, or developer-written integration.</td>
+                  <td>Language model or agent runtime.</td>
+                </tr>
+                <tr>
+                  <td>Interface style</td>
+                  <td>Endpoints, routes, JSON payloads, auth keys, docs, and versions.</td>
+                  <td>Capabilities, tool descriptions, input schemas, output schemas, and resources.</td>
+                </tr>
+                <tr>
+                  <td>Assumption</td>
+                  <td>The caller knows exactly what request to make.</td>
+                  <td>The model can discover what is available and reason about which tool to use.</td>
+                </tr>
+                <tr>
+                  <td>Developer work</td>
+                  <td>Read docs, wrap each endpoint, map payloads, handle edge cases manually.</td>
+                  <td>Expose a self-describing MCP interface that compatible models can use.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="example">
+          <span class="label">Example</span>
+          <h2>A support agent with Gmail, Notion, and Jira shows why MCP matters</h2>
+          <p class="lead">
+            The video uses a support-ticket agent as the practical example.
+            With APIs, developers would build custom integration code for Gmail, Notion, and Jira, handle pagination,
+            OAuth, rate limits, errors, and then prompt the model with detailed instructions for which endpoint to call.
+            With MCP, each service exposes a compatible interface and the model discovers available tools as part of its environment.
+          </p>
+
+          <div class="flow" aria-label="MCP support-ticket agent flow">
+            <div class="flow-step"><b>User Goal</b><span>Manage or resolve a support ticket.</span></div>
+            <div class="flow-step"><b>Discover</b><span>The model sees Gmail, Notion, Jira, and their capabilities through MCP.</span></div>
+            <div class="flow-step"><b>Reason</b><span>The model decides which tool fits the current step.</span></div>
+            <div class="flow-step"><b>Call Tool</b><span>Inputs follow the tool schema instead of a guessed prompt format.</span></div>
+            <div class="flow-step"><b>Continue</b><span>The agent can chain tools and ask follow-up questions with better context.</span></div>
+          </div>
+        </section>
+
+        <section class="section" id="underhood">
+          <span class="label">Under the Hood</span>
+          <h2>An MCP server is a lightweight translator between a model and a tool or data source</h2>
+          <p class="lead">
+            The video describes an MCP server as a lightweight process that sits next to a service or data source.
+            It describes what the service can do using schemas and metadata. The model connects through a standard interface,
+            receives metadata about available resources, and can call functions using that self-describing structure.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Server</span>
+              <h3>Describes capabilities</h3>
+              <p>The MCP server lists tools, resources, input fields, output shapes, and meaning.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Schema</span>
+              <h3>Machine-readable contract</h3>
+              <p>JSON schemas help the model know required inputs and expected response types.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Transport</span>
+              <h3>Standard connection</h3>
+              <p>The model or host connects through a standardized interface such as HTTP or WebSocket.</p>
+            </article>
+          </div>
+
+          <p class="quote">
+            The key property is self-description: the model should not have to guess a payload or rely on a long hand-written prompt.
+          </p>
+        </section>
+
+        <section class="section" id="relationship">
+          <span class="label">Relationship</span>
+          <h2>MCP does not kill APIs; it changes how models access them</h2>
+          <p class="lead">
+            The video is careful about this distinction. APIs are not going away. They remain the backend foundation.
+            MCP sits one layer above them and replaces some of the custom middleware between a model and an API.
+            It changes who the client is: instead of a normal program, the client is the model or agent.
+          </p>
+
+          <div class="flow" aria-label="MCP on top of APIs">
+            <div class="flow-step"><b>Existing API</b><span>Your backend still performs the real action.</span></div>
+            <div class="flow-step"><b>MCP Server</b><span>Wraps or exposes the API as model-readable tools.</span></div>
+            <div class="flow-step"><b>Agent Runtime</b><span>Discovers tools and selects calls based on context.</span></div>
+            <div class="flow-step"><b>Model</b><span>Reasons over capabilities instead of static routes.</span></div>
+            <div class="flow-step"><b>User Outcome</b><span>The user experiences more flexible tool use and less hardcoded integration logic.</span></div>
+          </div>
+        </section>
+
+        <section class="section" id="challenges">
+          <span class="label">Challenges</span>
+          <h2>The hard parts are adoption, security, and developer mindset</h2>
+          <p class="lead">
+            MCP is promising, but the video emphasizes that it is still early. For MCP to become a true interoperability layer,
+            tools, clients, and servers need to converge on the same standards. Developers also need to design in terms of capabilities
+            and context, not only endpoints and routes.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Adoption</span>
+              <h3>Network effects matter</h3>
+              <p>MCP becomes more valuable as more services expose compatible servers and more agents can consume them.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Security</span>
+              <h3>Tool use needs guardrails</h3>
+              <p>Models calling tools need scopes, authentication, permissions, and safe controls for side effects.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Mindset</span>
+              <h3>Design capabilities, not just routes</h3>
+              <p>Developers must describe what a system can do in a way models can reason about.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your agentic AI platform</h2>
+          <p class="lead">
+            For your Master Agent, Sub-Agent, Skill, Tool MCP, and Flow Markdown work, this video reinforces the idea
+            that MCP should be treated as the tool capability layer. Business users should not need to think in endpoint-level API details.
+            They should assemble capabilities with permissions, schemas, and policies.
+          </p>
+
+          <ul class="checklist">
+            <li><strong>Separate API implementation from MCP capability design.</strong> Engineers can own backend APIs while the platform exposes model-readable tool contracts.</li>
+            <li><strong>Make tools self-describing.</strong> Every Tool MCP should include purpose, inputs, outputs, examples, permissions, side effects, and failure behavior.</li>
+            <li><strong>Think in capabilities, not endpoints.</strong> A BA should choose "create ticket" or "summarize customer history", not a REST route.</li>
+            <li><strong>Attach permissions to capability use.</strong> Read-only tools, write tools, destructive tools, and external-message tools need different approval policies.</li>
+            <li><strong>Let the Master Agent discover tools by context.</strong> A flow should compile into available capabilities, schemas, and constraints rather than a giant prompt of endpoint instructions.</li>
+            <li><strong>Keep APIs as the system of execution.</strong> MCP should wrap and govern API access, not erase existing backend architecture.</li>
+            <li><strong>Make tool traces audit-friendly.</strong> Every MCP call should record which agent called it, with what schema, under which permission, and what result came back.</li>
+            <li><strong>Design for interoperability.</strong> A good internal MCP contract should be reusable across agents, workflows, UI surfaces, and eventually external model clients.</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>MCP vs API: The protocol every developer needs to know</strong>.
+    Source: Google Cloud Tech. Video ID: 185XGEMefgc.
+  </footer>
+</body>
+</html>
