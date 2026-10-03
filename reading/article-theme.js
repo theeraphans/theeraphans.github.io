@@ -50,12 +50,30 @@
     const summary = document.createElement("summary");
     const nav = document.createElement("nav");
     const list = toc.querySelector("ul, ol");
+    const links = toc.querySelectorAll('a[href^="#"]');
 
     mobileToc.className = "mobile-toc";
     summary.textContent = "Table of contents";
-    if (list) nav.append(list.cloneNode(true));
-    mobileToc.append(summary, nav);
-    document.querySelector(".layout, .article-layout, .article-grid, .content-grid")?.before(mobileToc);
+    if (list) {
+      nav.append(list.cloneNode(true));
+    } else if (links.length) {
+      const mobileList = document.createElement("ul");
+
+      links.forEach((link) => {
+        const item = document.createElement("li");
+        item.append(link.cloneNode(true));
+        mobileList.append(item);
+      });
+      nav.append(mobileList);
+    }
+
+    if (nav.childElementCount) {
+      nav.addEventListener("click", (event) => {
+        if (event.target.closest("a")) mobileToc.open = false;
+      });
+      mobileToc.append(summary, nav);
+      document.querySelector(".layout, .article-layout, .article-grid, .content-grid")?.before(mobileToc);
+    }
   }
 
   const button = document.createElement("button");
