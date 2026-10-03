@@ -1,4 +1,53 @@
 (() => {
+  const hero = document.querySelector(".hero");
+  const article = document.querySelector("article.content, article.article, .content, .article");
+  const toc = document.querySelector(".toc");
+
+  if (hero && article) {
+    const words = article.textContent.trim().split(/\s+/).filter(Boolean).length;
+    const minutes = Math.max(1, Math.ceil(words / 220));
+    const actions = document.createElement("div");
+    const readTime = document.createElement("span");
+    const share = document.createElement("button");
+
+    actions.className = "article-actions";
+    readTime.textContent = `${minutes} min read`;
+    share.type = "button";
+    share.textContent = "Share ↗";
+    share.setAttribute("aria-label", "Share this article");
+    actions.append(readTime, share);
+    hero.append(actions);
+
+    share.addEventListener("click", async () => {
+      const data = { title: document.title, url: window.location.href };
+      try {
+        if (navigator.share) await navigator.share(data);
+        else {
+          await navigator.clipboard.writeText(data.url);
+          share.textContent = "Link copied";
+          window.setTimeout(() => {
+            share.textContent = "Share ↗";
+          }, 1800);
+        }
+      } catch (error) {
+        if (error?.name !== "AbortError") share.textContent = "Share unavailable";
+      }
+    });
+  }
+
+  if (toc) {
+    const mobileToc = document.createElement("details");
+    const summary = document.createElement("summary");
+    const nav = document.createElement("nav");
+    const list = toc.querySelector("ul, ol");
+
+    mobileToc.className = "mobile-toc";
+    summary.textContent = "Table of contents";
+    if (list) nav.append(list.cloneNode(true));
+    mobileToc.append(summary, nav);
+    document.querySelector(".layout, .article-layout, .article-grid, .content-grid")?.before(mobileToc);
+  }
+
   const button = document.createElement("button");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
