@@ -1013,7 +1013,7 @@ footer,
 :root {
   --article-width: 760px;
   --article-rail: 240px;
-  --article-gap: clamp(2.5rem, 5vw, 5.5rem);
+  --article-gap: clamp(1.5rem, 2.25vw, 2.5rem);
 }
 
 body {
