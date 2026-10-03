@@ -1204,8 +1204,8 @@ h1,
 .article-layout,
 .content-grid,
 .layout {
-  grid-template-columns: var(--article-rail) minmax(0, var(--article-width)) minmax(0, 1fr) !important;
-  gap: var(--article-gap) !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, var(--article-width)) minmax(0, 1fr) !important;
+  gap: 0 !important;
 }
 
 .content,
@@ -1236,6 +1236,8 @@ article.article {
 .content-grid > .toc,
 .content-grid > nav.toc {
   grid-column: 1 !important;
+  justify-self: start !important;
+  width: min(var(--article-rail), calc(100% - var(--article-gap))) !important;
   top: 92px !important;
   max-height: calc(100dvh - 116px) !important;
   overflow-y: auto !important;
