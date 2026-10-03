@@ -146,6 +146,7 @@ a { color:inherit; }
 .console-bar > span { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.2); }
 .console-bar > span:nth-child(2) { background:rgba(200,241,105,.5); }
 .console-bar strong { margin-left:auto; color:rgba(255,255,255,.45); font:700 .58rem ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.12em; }
+.console-caption { margin:0; padding:14px 20px; border-top:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.7); font-size:.75rem; }
 .console-body { min-height:470px; display:grid; grid-template-columns:180px 1fr; }
 .console-body aside { padding:26px 16px; display:flex; flex-direction:column; gap:8px; border-right:1px solid rgba(255,255,255,.1); background:#0c2c23; }
 .console-body aside b { width:38px; height:38px; margin:0 0 20px 8px; display:grid; place-items:center; border-radius:50%; background:var(--lime); color:var(--forest); }

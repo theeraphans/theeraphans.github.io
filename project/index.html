@@ -253,10 +253,10 @@
 
         <div class="platform-heading hermes-heading">
           <h2>Hermes Enterprise AI Workspace.</h2>
-          <p>A secure enterprise layer around Hermes Agent for governed conversations, observable tool use, persistent context, and controlled operating cost.</p>
+          <p>A locally developed AI workspace and agent factory around Hermes Agent, with versioned agents, runtime teams, approval workflows, and knowledge and memory controls.</p>
         </div>
 
-        <div class="role-block hermes-role"><span>My role</span><p>Designing and implementing the Next.js portal and FastAPI security boundary, including authentication, session ownership, SSE streaming, tool traces, attachments, configurable personas, and usage visibility.</p></div>
+        <div class="role-block hermes-role"><span>My role</span><p>Designing and implementing the Next.js portal and FastAPI backend, including authentication and session ownership, agent lifecycle controls, runtime teams, approval workflows, and workspace tools.</p></div>
 
         <div class="hermes-showcase">
           <div class="hermes-console" aria-label="Conceptual preview of the Hermes Enterprise Portal">
@@ -271,17 +271,18 @@
                 <div class="chat-input"><span>Ask Hermes anything…</span><b>↑</b></div>
               </div>
             </div>
+            <p class="console-caption">Conceptual interface preview</p>
           </div>
 
           <div class="hermes-brief">
             <article><span>Why</span><p>Teams need the power of an autonomous agent without exposing credentials, losing session ownership, or operating without usage visibility.</p></article>
-            <article><span>What</span><p>A full-stack workspace that adds identity, streaming chat, tool traces, file handling, configurable personas, and cost monitoring around Hermes.</p></article>
-            <article><span>Current focus</span><p>Hardening the proof of concept into a reliable multi-user enterprise architecture with persistent memory and production-ready controls.</p></article>
+            <article><span>What</span><p>A local workspace for versioned agent specifications, validation, publishing and rollback, runtime teams, task tracking, scheduled runs, and knowledge and memory controls.</p></article>
+            <article><span>Current focus</span><p>Enterprise SSO, broader role-based access control, multi-user reliability validation, and production hardening remain ongoing.</p></article>
           </div>
         </div>
 
         <div class="hermes-architecture">
-          <div class="architecture-title"><span>System architecture</span><strong>Protected from browser to agent runtime</strong></div>
+          <div class="architecture-title"><span>System architecture</span><strong>Authentication and ownership controls at the backend boundary</strong></div>
           <div class="hermes-flow" aria-label="Hermes enterprise architecture flow">
             <article><small>Experience</small><b>Enterprise Portal</b><span>Next.js · TypeScript</span></article>
             <i aria-hidden="true">→</i>
@@ -292,19 +293,19 @@
             <article><small>Persistent context</small><b>Honcho Memory</b><span>Memory · retrieval · continuity</span></article>
           </div>
           <div class="hermes-capabilities">
-            <article><b>Identity &amp; isolation</b><span>Signed access tokens and user-owned sessions</span></article>
-            <article><b>Live execution</b><span>Streaming responses, reasoning, and tool lifecycle events</span></article>
-            <article><b>Workspace controls</b><span>Personas, attachments, conversation history, and previews</span></article>
-            <article><b>Usage visibility</b><span>Tokens, caching, API calls, and estimated model cost</span></article>
+            <article><b>Agent lifecycle</b><span>Versioned specifications, validation, publishing, and rollback</span></article>
+            <article><b>Runtime teams</b><span>Compose published agents into teams with approval workflows</span></article>
+            <article><b>Workspace controls</b><span>Task tracking, scheduled runs, and knowledge and memory controls</span></article>
+            <article><b>Identity &amp; ownership</b><span>Signed access tokens and user-owned sessions</span></article>
           </div>
         </div>
 
         <div class="outcome-grid hermes-outcome">
-          <div><p class="mini-label">Current stage</p><div class="big-stat"><strong>POC → Platform</strong><span>actively evolving toward an enterprise-ready workspace</span></div></div>
+          <div><p class="mini-label">Current stage</p><div class="big-stat"><strong>Local development</strong><span>AI workspace and agent factory; production hardening ongoing</span></div></div>
           <ul><li>Keeps the Hermes API credential out of the browser</li><li>Separates portal identities and conversation ownership</li><li>Makes agent behavior, tools, and cost inspectable</li></ul>
           <div class="stack"><span>Next.js</span><span>TypeScript</span><span>FastAPI</span><span>Python</span><span>SSE</span><span>SQLite</span><span>Hermes Agent</span><span>Honcho</span></div>
         </div>
-        <div class="evidence-note hermes-evidence"><span>Prototype status &amp; limitations</span><p>A working portal and backend prototype exists locally. Public repository and recorded demo are not yet released. Planned hardening includes enterprise SSO, RBAC, multi-user reliability testing, and deployment documentation.</p></div>
+        <div class="evidence-note hermes-evidence"><span>Prototype status &amp; limitations</span><p>Hermes Enterprise is a locally developed AI workspace and agent factory built with Next.js, FastAPI, and Hermes Agent. It supports versioned agent specifications, validation, publishing and rollback, runtime teams, approval workflows, task tracking, scheduled runs, and knowledge and memory controls. Enterprise SSO, broader role-based access control, multi-user reliability validation, and production hardening remain ongoing. Local setup documentation exists. The enterprise repository and recorded demo are not yet publicly released.</p></div>
       </div>
     </section>
 
