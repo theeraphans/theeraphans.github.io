@@ -1057,9 +1057,10 @@ section.hero {
 }
 
 .hero-copy {
-  grid-column: 2 !important;
+  grid-column: 1 / -1 !important;
   display: flex !important;
   flex-direction: column !important;
+  width: 100% !important;
 }
 
 .hero-copy .kicker,
@@ -1078,6 +1079,7 @@ section.hero {
 
 .hero-copy h1 {
   order: 3;
+  max-width: 1080px !important;
 }
 
 .hero-copy .subtitle,
@@ -1085,6 +1087,7 @@ section.hero {
 .hero-copy .lead,
 .hero-copy .description {
   order: 4;
+  max-width: 900px !important;
 }
 
 h1,
@@ -1111,7 +1114,7 @@ h1,
 .hero-card,
 .hero-media,
 .hero-panel {
-  grid-column: 2 !important;
+  grid-column: 1 / -1 !important;
   width: 100% !important;
   margin-top: 0.25rem !important;
 }
@@ -1123,7 +1126,7 @@ h1,
 }
 
 .article-actions {
-  grid-column: 2 !important;
+  grid-column: 1 / -1 !important;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
