@@ -32,15 +32,20 @@ const state = { mode: "all", topic: "All", query: "", sort: "new", limit: 12 };
 const sidebarKey = "reading-room-sidebar-collapsed";
 const sidebarToggle = $("#sidebar-toggle");
 const sidebarReveal = $("#sidebar-reveal");
+const sidebar = $("#library-sidebar");
 let sidebarCollapsed = false;
 
 try {
-  sidebarCollapsed = localStorage.getItem(sidebarKey) === "true";
+  sidebarCollapsed = window.matchMedia("(max-width: 700px)").matches
+    ? true
+    : localStorage.getItem(sidebarKey) === "true";
 } catch {}
 
 function setSidebarCollapsed(collapsed, persist = true) {
   sidebarCollapsed = collapsed;
   document.body.classList.toggle("sidebar-collapsed", collapsed);
+  sidebar.inert = collapsed;
+  sidebar.setAttribute("aria-hidden", String(collapsed));
   sidebarToggle.setAttribute("aria-expanded", String(!collapsed));
   sidebarToggle.setAttribute(
     "aria-label",
@@ -149,12 +154,18 @@ document.addEventListener("click", (e) => {
       state.topic === topic.dataset.topic ? "All" : topic.dataset.topic;
     state.limit = 12;
     render();
+    if (window.matchMedia("(max-width: 700px)").matches) {
+      setSidebarCollapsed(true);
+    }
   }
   if (mode) {
     state.mode = mode.dataset.mode;
     state.topic = "All";
     state.limit = 12;
     render();
+    if (window.matchMedia("(max-width: 700px)").matches) {
+      setSidebarCollapsed(true);
+    }
   }
   if (save) {
     const id = save.dataset.save;
@@ -169,6 +180,11 @@ document.addEventListener("click", (e) => {
   }
 });
 document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !sidebarCollapsed) {
+    setSidebarCollapsed(true);
+    sidebarReveal.focus();
+    return;
+  }
   if (
     e.key === "/" &&
     !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)
