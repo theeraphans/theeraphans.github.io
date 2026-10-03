@@ -281,16 +281,50 @@
           </div>
         </div>
 
-        <div class="hermes-architecture">
-          <div class="architecture-title"><span>System architecture</span><strong>Authentication and ownership controls at the backend boundary</strong></div>
-          <div class="hermes-flow" aria-label="Hermes enterprise architecture flow">
-            <article><small>Experience</small><b>Enterprise Portal</b><span>Next.js · TypeScript</span></article>
-            <i aria-hidden="true">→</i>
-            <article class="gateway"><small>Security boundary</small><b>FastAPI BFF</b><span>Auth · ownership · SSE proxy</span></article>
-            <i aria-hidden="true">→</i>
-            <article><small>Agent runtime</small><b>Hermes Agent</b><span>Reasoning · tools · execution</span></article>
-            <i aria-hidden="true">→</i>
-            <article><small>Persistent context</small><b>Honcho Memory</b><span>Memory · retrieval · continuity</span></article>
+        <section class="hermes-architecture" id="hermes-architecture" aria-labelledby="hermes-architecture-title">
+          <div class="architecture-title"><span>System architecture</span><strong id="hermes-architecture-title">From agent design to a running conversation</strong></div>
+          <p class="hermes-architecture-intro">The portal is the user interface. FastAPI owns identity, workspace data, and orchestration. Hermes executes the agent work. Agent configuration and request execution are separate paths.</p>
+
+          <figure class="hermes-system-map" aria-labelledby="hermes-map-caption">
+            <div class="hermes-map-lane">
+              <h3><span>01 / Configure</span>Design and publish an agent</h3>
+              <div class="hermes-map-flow">
+                <article class="hermes-map-node"><small>Next.js portal</small><h4>Agent Factory UI</h4><p>Define the agent specification and review validation and sandbox results.</p></article>
+                <div class="hermes-map-edge"><span>Specification</span><b aria-hidden="true">→</b></div>
+                <article class="hermes-map-node hermes-map-backend"><small>FastAPI backend</small><h4>Agent lifecycle</h4><p>Store versions, validate policy, require a passing sandbox to publish, and support rollback.</p></article>
+                <div class="hermes-map-edge"><span>Published version</span><b aria-hidden="true">→</b></div>
+                <article class="hermes-map-node"><small>Workspace configuration</small><h4>Runtime team</h4><p>Select published agents for a team. The backend resolves their profiles and execution policies.</p></article>
+              </div>
+              <p class="hermes-map-note">Sandbox runs use the Hermes runtime. Publishing makes a version available for selection; it does not start every future conversation automatically.</p>
+            </div>
+
+            <div class="hermes-map-lane">
+              <h3><span>02 / Execute</span>Run a conversation with the selected team</h3>
+              <div class="hermes-map-flow">
+                <article class="hermes-map-node"><small>Browser boundary</small><h4>Next.js portal</h4><p>Send the user request and show streamed answers, tool activity, and approval prompts.</p></article>
+                <div class="hermes-map-edge"><span>Authenticated request</span><b aria-hidden="true">→</b></div>
+                <article class="hermes-map-node hermes-map-backend"><small>Application boundary</small><h4>FastAPI backend</h4><p>Check session ownership, retrieve relevant knowledge, and forward the request with the session’s team configuration.</p></article>
+                <div class="hermes-map-edge"><span>Context + policy</span><b aria-hidden="true">→</b></div>
+                <article class="hermes-map-node"><small>Execution boundary</small><h4>Hermes runtime</h4><p>Run the main agent, delegate to configured team profiles when needed, and execute allowed tools.</p></article>
+              </div>
+              <p class="hermes-stream-path"><b>Response path</b> Hermes events → FastAPI SSE relay → portal. The backend records conversation and activity state.</p>
+              <div class="hermes-context-services">
+                <article><small>Backend ↔ knowledge service</small><h4>Document knowledge / Cognee</h4><p>The backend searches user-owned documents and adds relevant matches to the request context.</p></article>
+                <article><small>Runtime ↔ memory service</small><h4>Persistent memory / Honcho</h4><p>The configured Hermes memory provider retrieves and maintains context across conversations.</p></article>
+              </div>
+            </div>
+            <figcaption id="hermes-map-caption">High-level view of the local implementation. Knowledge and memory are separate integrations, used when configured; they are not a mandatory chain for every request. Service credentials stay behind the backend and runtime boundaries.</figcaption>
+          </figure>
+
+          <div class="hermes-developer-guide">
+            <h3>Follow one chat request</h3>
+            <ol>
+              <li><b>Send.</b> The portal sends the message using the signed-in user’s session.</li>
+              <li><b>Prepare.</b> FastAPI checks ownership, searches document knowledge, and attaches the session’s agent instructions and delegation policy.</li>
+              <li><b>Execute.</b> Hermes runs the agent and may delegate to team members, use tools, or consult its configured memory provider.</li>
+              <li><b>Return.</b> FastAPI relays SSE events to the portal and records activity. Approval requests are presented for human review.</li>
+            </ol>
+            <p><b>Development status:</b> These components exist in local development. Enterprise SSO, broader RBAC, multi-user reliability validation, and production hardening remain ongoing. Local setup documentation is available; the enterprise repository and recorded demo remain unreleased.</p>
           </div>
           <div class="hermes-capabilities">
             <article><b>Agent lifecycle</b><span>Versioned specifications, validation, publishing, and rollback</span></article>
@@ -298,7 +332,7 @@
             <article><b>Workspace controls</b><span>Task tracking, scheduled runs, and knowledge and memory controls</span></article>
             <article><b>Identity &amp; ownership</b><span>Signed access tokens and user-owned sessions</span></article>
           </div>
-        </div>
+        </section>
 
         <div class="outcome-grid hermes-outcome">
           <div><p class="mini-label">Current stage</p><div class="big-stat"><strong>Local development</strong><span>AI workspace and agent factory; production hardening ongoing</span></div></div>
