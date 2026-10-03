@@ -23,16 +23,50 @@ const thumbnail = (i) =>
   (i.videoId
     ? `https://i.ytimg.com/vi/${encodeURIComponent(i.videoId)}/hqdefault.jpg`
     : "");
+const sourceType = (i) => {
+  const sourceUrl = String(i.watchUrl || "").toLowerCase();
+  const sourceName = String(i.source || "").toLowerCase();
+  if (
+    i.videoId ||
+    /(youtube\.com|youtu\.be|facebook\.com\/.+videos|instagram\.com\/reel|x\.com\/.+video)/.test(
+      sourceUrl,
+    )
+  )
+    return "video";
+  if (
+    /(arxiv\.org|\.pdf(?:$|\?)|openreview\.net|aclanthology\.org)/.test(
+      sourceUrl,
+    ) || /\bpaper\b/.test(sourceName)
+  )
+    return "paper";
+  return "article";
+};
+const sourceLabel = (i) =>
+  ({ video: "Video", article: "Article", paper: "Paper" })[sourceType(i)];
 let saved = new Set();
 try {
   const value = JSON.parse(localStorage.getItem("reading-room-saved") || "[]");
   if (Array.isArray(value)) saved = new Set(value);
 } catch {}
-const state = { mode: "all", topic: "All", query: "", sort: "new", limit: 12 };
+const viewKey = "reading-room-view";
+const state = {
+  mode: "all",
+  topic: "All",
+  source: "all",
+  query: "",
+  sort: "new",
+  limit: 12,
+  view: "grid",
+};
+try {
+  const preferredView = localStorage.getItem(viewKey);
+  if (["grid", "list"].includes(preferredView)) state.view = preferredView;
+} catch {}
 const sidebarKey = "reading-room-sidebar-collapsed";
 const sidebarToggle = $("#sidebar-toggle");
 const sidebarReveal = $("#sidebar-reveal");
 const sidebar = $("#library-sidebar");
+const filterToggle = $("#filter-toggle");
 let sidebarCollapsed = false;
 
 try {
@@ -56,6 +90,7 @@ function setSidebarCollapsed(collapsed, persist = true) {
     collapsed ? "Expand sidebar" : "Collapse sidebar",
   );
   sidebarReveal.setAttribute("aria-expanded", String(!collapsed));
+  filterToggle.setAttribute("aria-expanded", String(!collapsed));
   if (persist) {
     try {
       localStorage.setItem(sidebarKey, String(collapsed));
@@ -72,22 +107,23 @@ sidebarReveal.addEventListener("click", () => {
 });
 setSidebarCollapsed(sidebarCollapsed, false);
 
+filterToggle.addEventListener("click", () => {
+  setSidebarCollapsed(false);
+  $("#topics").focus();
+});
+
 $("#total").textContent = catalog.length;
-$("#collection-note").textContent =
-  `${catalog.length} summaries. A growing collection.`;
 const topics = [...new Set(catalog.map((i) => i.category))].sort();
+$("#topics").tabIndex = -1;
 $("#topics").innerHTML = topics
   .map((t) => `<button class="topic" data-topic="${esc(t)}">${esc(t)}</button>`)
   .join("");
-const latest = [...catalog].sort((a, b) => stamp(b) - stamp(a))[0];
-if (latest)
-  $("#featured").innerHTML =
-    `<div class="feature-copy"><span class="feature-label">Fresh from the collection · ${esc(latest.source)}</span><h2><a href="${url(latest)}">${esc(latest.title)}</a></h2><p>${esc(latest.description)}</p><a class="read-link" href="${url(latest)}">Read the summary &nbsp; ↗</a></div><a class="feature-image" href="${url(latest)}" aria-label="${esc(latest.title)}">${thumbnail(latest) ? `<img src="${thumbnail(latest)}" alt="" fetchpriority="high">` : ""}</a>`;
 function render() {
   let items = catalog.filter(
     (i) =>
       (state.mode !== "saved" || saved.has(key(i))) &&
       (state.topic === "All" || i.category === state.topic) &&
+      (state.source === "all" || sourceType(i) === state.source) &&
       `${i.title} ${i.description} ${i.source} ${i.category}`
         .toLowerCase()
         .includes(state.query),
@@ -102,18 +138,15 @@ function render() {
   $("#saved-count").textContent = catalog.filter((i) =>
     saved.has(key(i)),
   ).length;
-  $("#collection-title").textContent =
-    state.mode === "saved" ? "Saved for later" : "Explore the library";
   $("#result-count").textContent =
-    `${items.length} ${items.length === 1 ? "summary" : "summaries"}${state.query ? " matching your search" : " to spark your next idea"}`;
+    `${items.length} ${items.length === 1 ? "summary" : "summaries"}${state.mode === "saved" ? " saved for later" : ""}${state.query ? " matching your search" : ""}`;
   $("#active-topic").textContent = state.topic === "All" ? "" : state.topic;
-  $("#featured").hidden =
-    state.mode === "saved" || state.topic !== "All" || !!state.query;
+  $("#catalog-grid").dataset.view = state.view;
   $("#catalog-grid").innerHTML = items
     .slice(0, state.limit)
     .map(
       (i) =>
-        `<article class="summary"><a class="thumbnail" href="${url(i)}" aria-label="Read ${esc(i.title)}">${thumbnail(i) ? `<img src="${thumbnail(i)}" alt="" loading="lazy">` : ""}</a><div class="summary-meta"><span class="category">${esc(i.category)}</span><button class="save" data-save="${esc(key(i))}" aria-pressed="${saved.has(key(i))}" aria-label="${saved.has(key(i)) ? "Unsave" : "Save"} ${esc(i.title)}">${saved.has(key(i)) ? "♥" : "♡"}</button></div><h3><a href="${url(i)}">${esc(i.title)}</a></h3><p>${esc(i.description)}</p><div class="byline"><span>${esc(i.source)}</span><span>${date(i)}</span></div>${i.pages.length > 1 ? `<div class="byline">${i.pages.map((p) => `<a href="${encodeURI(p.file)}">${esc(p.label)} ↗</a>`).join("")}</div>` : ""}</article>`,
+        `<article class="summary"><a class="thumbnail" href="${url(i)}" aria-label="Read ${esc(i.title)}">${thumbnail(i) ? `<img src="${thumbnail(i)}" alt="" loading="lazy">` : ""}</a><button class="save" data-save="${esc(key(i))}" aria-pressed="${saved.has(key(i))}" aria-label="${saved.has(key(i)) ? "Unsave" : "Save"} ${esc(i.title)}">${saved.has(key(i)) ? "♥" : "♡"}</button><div class="card-body"><h3><a href="${url(i)}">${esc(i.title)}</a></h3><div class="card-meta"><span>${sourceLabel(i)}</span><span>${date(i)}</span></div><p>${esc(i.description)}</p><div class="card-source">${esc(i.category)} · ${esc(i.source)}</div>${i.pages.length > 1 ? `<div class="byline">${i.pages.map((p) => `<a href="${encodeURI(p.file)}">${esc(p.label)} ↗</a>`).join("")}</div>` : ""}</div></article>`,
     )
     .join("");
   $("#empty").hidden = items.length > 0;
@@ -125,6 +158,16 @@ function render() {
   document.querySelectorAll("[data-topic]").forEach((b) => {
     b.classList.toggle("active", b.dataset.topic === state.topic);
     b.setAttribute("aria-pressed", b.dataset.topic === state.topic);
+  });
+  document.querySelectorAll("[data-source]").forEach((b) => {
+    const active = b.dataset.source === state.source;
+    b.classList.toggle("active", active);
+    b.setAttribute("aria-selected", String(active));
+  });
+  document.querySelectorAll(".view-button[data-view]").forEach((b) => {
+    const active = b.dataset.view === state.view;
+    b.classList.toggle("active", active);
+    b.setAttribute("aria-pressed", String(active));
   });
 }
 $("#catalog-search").addEventListener("input", (e) => {
@@ -141,13 +184,20 @@ $("#load-more").addEventListener("click", () => {
   render();
 });
 $("#clear").addEventListener("click", () => {
-  Object.assign(state, { topic: "All", query: "", limit: 12 });
+  Object.assign(state, {
+    topic: "All",
+    source: "all",
+    query: "",
+    limit: 12,
+  });
   $("#catalog-search").value = "";
   render();
 });
 document.addEventListener("click", (e) => {
   const topic = e.target.closest("[data-topic]"),
     mode = e.target.closest("[data-mode]"),
+    source = e.target.closest("[data-source]"),
+    view = e.target.closest(".view-button[data-view]"),
     save = e.target.closest("[data-save]");
   if (topic) {
     state.topic =
@@ -166,6 +216,18 @@ document.addEventListener("click", (e) => {
     if (window.matchMedia("(max-width: 700px)").matches) {
       setSidebarCollapsed(true);
     }
+  }
+  if (source) {
+    state.source = source.dataset.source;
+    state.limit = 12;
+    render();
+  }
+  if (view) {
+    state.view = view.dataset.view;
+    try {
+      localStorage.setItem(viewKey, state.view);
+    } catch {}
+    render();
   }
   if (save) {
     const id = save.dataset.save;

@@ -8,7 +8,7 @@
       content="Your personal library of ideas, video summaries, and practical insights."
     />
     <title>Reading Room · Summary Library</title>
-    <link rel="stylesheet" href="library.css?v=20261003-6" />
+    <link rel="stylesheet" href="library.css?v=20261003-7" />
   </head>
   <body>
     <a class="skip" href="#main">Skip to library</a>
@@ -69,39 +69,69 @@
     </button>
     <main id="main">
       <header class="topbar">
-        <span>Your personal learning library</span
+        <span>Loki Reading</span
         ><a href="/">Add a summary ↗</a>
       </header>
-      <section class="intro">
-        <div>
-          <p class="edition">THE READING ROOM</p>
-          <h1>Good ideas.<br />Worth keeping.</h1>
-          <p>
-            A place for everything you’re learning.<br />Find the insight. Keep
-            the perspective.
-          </p>
-        </div>
-        <div class="intro-note">
-          <span class="note-symbol">✳</span>
-          <p>Less watching.<br />More understanding.</p>
-          <span id="collection-note"></span>
-        </div>
+      <section class="library-header">
+        <p class="library-kicker">PERSONAL KNOWLEDGE ARCHIVE</p>
+        <h1>Library</h1>
+        <p>Video summaries, research papers, and ideas worth keeping.</p>
       </section>
-      <section id="featured" aria-label="Featured summary"></section>
       <section class="collection" aria-labelledby="collection-title">
-        <div class="collection-heading">
-          <div>
-            <h2 id="collection-title">Explore the library</h2>
-            <p id="result-count" role="status" aria-live="polite"></p>
+        <h2 id="collection-title" class="sr-only">Browse the library</h2>
+        <div class="catalog-toolbar">
+          <div class="source-tabs" role="tablist" aria-label="Source type">
+            <button class="source-tab active" data-source="all" role="tab" type="button">
+              All
+            </button>
+            <button class="source-tab" data-source="video" role="tab" type="button">
+              Videos
+            </button>
+            <button class="source-tab" data-source="article" role="tab" type="button">
+              Articles
+            </button>
+            <button class="source-tab" data-source="paper" role="tab" type="button">
+              Papers
+            </button>
           </div>
-          <label class="sort-label"
-            >Sort by
-            <select id="sort">
-              <option value="new">Newest first</option>
-              <option value="old">Oldest first</option>
-              <option value="title">Title A–Z</option>
-            </select></label
-          >
+          <div class="toolbar-actions">
+            <button
+              id="filter-toggle"
+              class="control-button"
+              type="button"
+              aria-controls="library-sidebar"
+            >
+              Filter <span aria-hidden="true">☷</span>
+            </button>
+            <label class="sort-label"
+              >Sort
+              <select id="sort">
+                <option value="new">Newest first</option>
+                <option value="old">Oldest first</option>
+                <option value="title">Title A–Z</option>
+              </select></label
+            >
+            <div class="view-toggle" aria-label="Display style">
+              <button
+                class="view-button active"
+                data-view="grid"
+                type="button"
+                aria-label="Grid view"
+                title="Grid view"
+              >
+                <span aria-hidden="true">▦</span>
+              </button>
+              <button
+                class="view-button"
+                data-view="list"
+                type="button"
+                aria-label="List view"
+                title="List view"
+              >
+                <span aria-hidden="true">☷</span>
+              </button>
+            </div>
+          </div>
         </div>
         <div class="search-row">
           <label class="search"
@@ -114,7 +144,10 @@
             /><kbd>/</kbd></label
           ><button id="clear" class="clear">Reset filters</button>
         </div>
-        <div id="active-topic"></div>
+        <div class="catalog-status">
+          <p id="result-count" aria-live="polite"></p>
+          <div id="active-topic"></div>
+        </div>
         <div id="catalog-grid"></div>
         <div id="empty" hidden>
           <h3>No summaries here yet.</h3>
@@ -2323,6 +2356,6 @@
         }
       ]
     </script>
-    <script src="library.js?v=20261003-3"></script>
+    <script src="library.js?v=20261003-4"></script>
   </body>
 </html>
