@@ -351,6 +351,7 @@ h1,
   color: var(--quiet) !important;
   font-size: 0.86rem !important;
   line-height: 1.45 !important;
+  text-align: center !important;
 }
 
 .quick-summary {
