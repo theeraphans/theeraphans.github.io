@@ -285,12 +285,51 @@
           <div class="architecture-title"><span>System architecture</span><strong id="hermes-architecture-title">From agent design to a running conversation</strong></div>
           <p class="hermes-architecture-intro">The portal is the user interface. FastAPI owns identity, workspace data, and orchestration. Hermes executes the agent work. Agent configuration and request execution are separate paths.</p>
 
-          <figure class="hermes-system-map" aria-labelledby="hermes-map-caption">
-            <a class="hermes-image-link" href="media/hermes-enterprise-architecture.svg" target="_blank" rel="noopener" aria-label="Open full-size Hermes architecture diagram">
-              <img src="media/hermes-enterprise-architecture.svg" alt="Hermes architecture: configure agents in the Next.js portal, validate and publish versions through FastAPI, then execute requests through backend identity and ownership checks to Hermes runtime teams. FastAPI retrieves Cognee document knowledge; the runtime uses Honcho memory. Responses stream back through FastAPI SSE to the portal." width="1600" height="1360" loading="lazy" decoding="async">
-            </a>
-            <figcaption id="hermes-map-caption">Agent configuration and runtime execution are separate paths. Knowledge is retrieved by the backend; memory is integrated with the runtime. Both are used when configured.</figcaption>
-            <p class="hermes-image-downloads"><a href="media/hermes-enterprise-architecture.svg" target="_blank" rel="noopener">Open full-size SVG ↗</a><a href="media/hermes-enterprise-architecture.png" download>Download PNG ↓</a><span>Open the full-size diagram to zoom on mobile.</span></p>
+          <figure class="hermes-system-map hermes-interactive" aria-labelledby="hermes-map-caption">
+            <div class="hermes-mode-controls" role="group" aria-label="Architecture flow" hidden>
+              <button type="button" data-hermes-mode="build" aria-controls="hermes-build-flow" aria-pressed="false">01 / Build an agent</button>
+              <button type="button" data-hermes-mode="execute" aria-controls="hermes-execute-flow" aria-pressed="true">02 / Run a request</button>
+            </div>
+            <p class="hermes-interaction-help" hidden>Select a component to expand its role and highlight its connections. Select it again to collapse.</p>
+            <p class="hermes-mode-status" aria-live="polite" aria-atomic="true" hidden></p>
+            <noscript><p>Both architecture flows and all component details are shown below. Enable JavaScript to switch flows and explore one component at a time.</p></noscript>
+            <div class="hermes-graph-pane" id="hermes-execute-flow" data-hermes-flow="execute" aria-labelledby="hermes-execute-heading">
+              <h3 id="hermes-execute-heading"><small>Request flow</small>From message to agent execution</h3>
+              <div class="hermes-graph-grid"><div class="hermes-component-group"><div class="hermes-component ">
+                  <button type="button" class="hermes-node" data-hermes-node="portal" aria-expanded="false" aria-controls="hermes-detail-portal" disabled><small>Browser / user interface</small><strong>Next.js portal</strong><span>Send a message. Review answers and approvals.</span><em class="hermes-node-action" aria-hidden="true">Explore component +</em></button>
+                  <div class="hermes-node-detail" id="hermes-detail-portal"><p>The portal sends authenticated requests only to the backend. It renders response deltas, tool events and approval prompts; it does not receive service credentials.</p></div>
+                </div></div><div class="hermes-connection" data-hermes-connect="portal backend"><span>Signed request</span><svg viewBox="0 0 100 20" aria-hidden="true"><path d="M1 10H96"/><path d="M88 3L97 10L88 17"/></svg></div><div class="hermes-component-group"><div class="hermes-component hermes-backend-node">
+                  <button type="button" class="hermes-node" data-hermes-node="backend" aria-expanded="false" aria-controls="hermes-detail-backend" disabled><small>API / ownership boundary</small><strong>FastAPI backend</strong><span>Verify identity. Prepare context and team policy.</span><em class="hermes-node-action" aria-hidden="true">Explore component +</em></button>
+                  <div class="hermes-node-detail" id="hermes-detail-backend"><p>The backend verifies the signed identity and session ownership, retrieves relevant user-owned knowledge, and forwards the session’s agent instructions and delegation policy. It relays SSE events and stores activity.</p></div>
+                </div><div class="hermes-connection hermes-branch" data-hermes-connect="backend knowledge"><span>Document retrieval</span><svg viewBox="0 0 100 20" aria-hidden="true"><path d="M1 10H96"/><path d="M88 3L97 10L88 17"/></svg></div><div class="hermes-component hermes-context-node">
+                  <button type="button" class="hermes-node" data-hermes-node="knowledge" aria-expanded="false" aria-controls="hermes-detail-knowledge" disabled><small>Backend ↔ knowledge service</small><strong>Document knowledge</strong><span>Cognee integration for user-owned documents.</span><em class="hermes-node-action" aria-hidden="true">Explore component +</em></button>
+                  <div class="hermes-node-detail" id="hermes-detail-knowledge"><p>The backend searches document knowledge and adds relevant matches to the message context. Cognee is a separate configurable provider; the browser never calls it directly.</p></div>
+                </div></div><div class="hermes-connection" data-hermes-connect="backend runtime"><span>Context + policy</span><svg viewBox="0 0 100 20" aria-hidden="true"><path d="M1 10H96"/><path d="M88 3L97 10L88 17"/></svg></div><div class="hermes-component-group"><div class="hermes-component ">
+                  <button type="button" class="hermes-node" data-hermes-node="runtime" aria-expanded="false" aria-controls="hermes-detail-runtime" disabled><small>Execution boundary</small><strong>Hermes runtime teams</strong><span>Run the main agent, delegated profiles and tools.</span><em class="hermes-node-action" aria-hidden="true">Explore component +</em></button>
+                  <div class="hermes-node-detail" id="hermes-detail-runtime"><p>Hermes executes the main agent, delegates to configured team profiles when needed, and enforces their execution policies. Published factory agents can be included in the team; delegation is not required for every request.</p></div>
+                </div><div class="hermes-connection hermes-branch" data-hermes-connect="runtime memory"><span>Read / maintain context</span><svg viewBox="0 0 100 20" aria-hidden="true"><path d="M1 10H96"/><path d="M88 3L97 10L88 17"/></svg></div><div class="hermes-component hermes-context-node">
+                  <button type="button" class="hermes-node" data-hermes-node="memory" aria-expanded="false" aria-controls="hermes-detail-memory" disabled><small>Runtime ↔ memory service</small><strong>Honcho memory</strong><span>Persistent context when the provider is configured.</span><em class="hermes-node-action" aria-hidden="true">Explore component +</em></button>
+                  <div class="hermes-node-detail" id="hermes-detail-memory"><p>The configured Hermes memory provider retrieves and maintains context across conversations. Persistent memory is separate from document retrieval and from the backend’s conversation history.</p></div>
+                </div></div></div><p class="hermes-return-flow" data-hermes-connect="runtime backend portal"><b>Streamed response</b><span>Hermes events → FastAPI SSE relay + activity storage → Next.js portal</span></p>
+              <p class="hermes-flow-note">Knowledge and memory are separate optional integrations. They are not a mandatory serial chain.</p>
+            </div>
+            <div class="hermes-graph-pane" id="hermes-build-flow" data-hermes-flow="build" aria-labelledby="hermes-build-heading">
+              <h3 id="hermes-build-heading"><small>Agent lifecycle</small>From specification to a published team member</h3>
+              <div class="hermes-graph-grid"><div class="hermes-component-group"><div class="hermes-component ">
+                  <button type="button" class="hermes-node" data-hermes-node="factory-ui" aria-expanded="false" aria-controls="hermes-detail-factory-ui" disabled><small>Next.js / user interface</small><strong>Agent Factory UI</strong><span>Define a versioned agent and review its results.</span><em class="hermes-node-action" aria-hidden="true">Explore component +</em></button>
+                  <div class="hermes-node-detail" id="hermes-detail-factory-ui"><p>The portal lets the user define agent specifications and review validation and sandbox results. Agent design is separate from sending a chat request.</p></div>
+                </div></div><div class="hermes-connection" data-hermes-connect="factory-ui factory"><span>Specification</span><svg viewBox="0 0 100 20" aria-hidden="true"><path d="M1 10H96"/><path d="M88 3L97 10L88 17"/></svg></div><div class="hermes-component-group"><div class="hermes-component hermes-backend-node">
+                  <button type="button" class="hermes-node" data-hermes-node="factory" aria-expanded="false" aria-controls="hermes-detail-factory" disabled><small>FastAPI / lifecycle boundary</small><strong>Agent Factory backend</strong><span>Validate, sandbox, publish and roll back versions.</span><em class="hermes-node-action" aria-hidden="true">Explore component +</em></button>
+                  <div class="hermes-node-detail" id="hermes-detail-factory"><p>The backend stores versioned specifications, validates tools and policy, and requires a passing sandbox for the current specification before publishing. A changed draft must pass the gates again. Published versions can be rolled back.</p></div>
+                </div><div class="hermes-connection hermes-branch" data-hermes-connect="factory sandbox"><span>Sandbox run → result</span><svg viewBox="0 0 100 20" aria-hidden="true"><path d="M1 10H96"/><path d="M88 3L97 10L88 17"/></svg></div><div class="hermes-component hermes-context-node">
+                  <button type="button" class="hermes-node" data-hermes-node="sandbox" aria-expanded="false" aria-controls="hermes-detail-sandbox" disabled><small>Hermes / test execution</small><strong>Sandbox runtime</strong><span>Execute the draft and return evaluation results.</span><em class="hermes-node-action" aria-hidden="true">Explore component +</em></button>
+                  <div class="hermes-node-detail" id="hermes-detail-sandbox"><p>Sandbox execution uses Hermes with the draft’s runtime and policy configuration. The factory records the result and specification digest. This is a development gate, not proof of production safety or comprehensive model quality.</p></div>
+                </div></div><div class="hermes-connection" data-hermes-connect="factory team"><span>Published version</span><svg viewBox="0 0 100 20" aria-hidden="true"><path d="M1 10H96"/><path d="M88 3L97 10L88 17"/></svg></div><div class="hermes-component-group"><div class="hermes-component ">
+                  <button type="button" class="hermes-node" data-hermes-node="team" aria-expanded="false" aria-controls="hermes-detail-team" disabled><small>Workspace configuration</small><strong>Published team profiles</strong><span>Select agent versions for the runtime team.</span><em class="hermes-node-action" aria-hidden="true">Explore component +</em></button>
+                  <div class="hermes-node-detail" id="hermes-detail-team"><p>The backend resolves accessible published factory versions into team profiles and execution policies. The selected team configuration is used by runtime execution. Publishing makes a version available; it does not automatically start a conversation.</p></div>
+                </div></div></div><p class="hermes-return-flow"><b>Next step</b><span>Use the selected team in a conversation. Switch to “Run a request” to follow execution.</span></p></div>
+            <figcaption id="hermes-map-caption">The diagram describes the local implementation. Solid arrows show request or configuration flow; context branches connect each service to its caller. Agent building and live execution are separate paths.</figcaption>
+            <p class="hermes-image-downloads"><span>Static reference:</span><a href="media/hermes-enterprise-architecture.svg" target="_blank" rel="noopener">Full-size SVG ↗</a><a href="media/hermes-enterprise-architecture.png" download>Download PNG ↓</a></p>
           </figure>
 
           <div class="hermes-developer-guide">
@@ -329,6 +368,6 @@
   </main>
 
   <footer><div><strong>Theeraphan Sukchok</strong><span>Senior AI Engineer · Bangkok, Thailand</span></div><a href="mailto:theeraphan.sukchok@gmail.com">Start a conversation ↗</a><p>© <span id="year">2026</span></p></footer>
-  <script src="project.js"></script>
+  <script src="project.js?v=hermes-interactive-1"></script>
 </body>
 </html>
