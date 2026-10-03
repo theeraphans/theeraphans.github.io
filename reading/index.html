@@ -8,20 +8,48 @@
       content="Your personal library of ideas, video summaries, and practical insights."
     />
     <title>Reading Room · Summary Library</title>
-    <link rel="stylesheet" href="library.css" />
+    <link rel="stylesheet" href="library.css?v=20261003-2" />
   </head>
   <body>
     <a class="skip" href="#main">Skip to library</a>
-    <aside class="sidebar">
-      <a class="brand" href="/resource/"
-        ><span class="brand-mark">r.</span> reading room</a
-      >
+    <aside class="sidebar" id="library-sidebar">
+      <div class="sidebar-head">
+        <a class="brand" href="/resource/"
+          ><span class="brand-mark">r.</span
+          ><span class="brand-name">Loki</span></a
+        >
+        <button
+          class="sidebar-toggle"
+          id="sidebar-toggle"
+          type="button"
+          aria-controls="library-sidebar"
+          aria-expanded="true"
+          aria-label="Collapse sidebar"
+          title="Collapse sidebar"
+        >
+          <span aria-hidden="true">‹</span>
+        </button>
+      </div>
       <p class="sidebar-label">Your knowledge, collected.</p>
       <nav aria-label="Library">
-        <button class="nav-item active" data-mode="all">
-          <span>▤</span> All summaries <b id="total"></b></button
-        ><button class="nav-item" data-mode="saved">
-          <span>♡</span> Saved for later <b id="saved-count">0</b>
+        <button
+          class="nav-item active"
+          data-mode="all"
+          aria-label="All summaries"
+          title="All summaries"
+        >
+          <span class="nav-icon" aria-hidden="true">▤</span
+          ><span class="nav-label">All summaries</span>
+          <b id="total"></b></button
+        ><button
+          class="nav-item"
+          data-mode="saved"
+          aria-label="Saved for later"
+          title="Saved for later"
+        >
+          <span class="nav-icon" aria-hidden="true">♡</span
+          ><span class="nav-label">Saved for later</span>
+          <b id="saved-count">0</b>
         </button>
       </nav>
       <div class="topics-heading">Explore topics</div>
@@ -31,6 +59,17 @@
         <a href="/">＋ Add a video <span>↗</span></a>
       </div>
     </aside>
+    <button
+      class="sidebar-reveal"
+      id="sidebar-reveal"
+      type="button"
+      aria-controls="library-sidebar"
+      aria-expanded="false"
+      aria-label="Show sidebar"
+      title="Show sidebar"
+    >
+      <span aria-hidden="true">›</span>
+    </button>
     <main id="main">
       <header class="topbar">
         <span>Your personal learning library</span
@@ -2287,6 +2326,6 @@
         }
       ]
     </script>
-    <script src="library.js"></script>
+    <script src="library.js?v=20261003-2"></script>
   </body>
 </html>
