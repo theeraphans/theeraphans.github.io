@@ -286,34 +286,11 @@
           <p class="hermes-architecture-intro">The portal is the user interface. FastAPI owns identity, workspace data, and orchestration. Hermes executes the agent work. Agent configuration and request execution are separate paths.</p>
 
           <figure class="hermes-system-map" aria-labelledby="hermes-map-caption">
-            <div class="hermes-map-lane">
-              <h3><span>01 / Configure</span>Design and publish an agent</h3>
-              <div class="hermes-map-flow">
-                <article class="hermes-map-node"><small>Next.js portal</small><h4>Agent Factory UI</h4><p>Define the agent specification and review validation and sandbox results.</p></article>
-                <div class="hermes-map-edge"><span>Specification</span><b aria-hidden="true">→</b></div>
-                <article class="hermes-map-node hermes-map-backend"><small>FastAPI backend</small><h4>Agent lifecycle</h4><p>Store versions, validate policy, require a passing sandbox to publish, and support rollback.</p></article>
-                <div class="hermes-map-edge"><span>Published version</span><b aria-hidden="true">→</b></div>
-                <article class="hermes-map-node"><small>Workspace configuration</small><h4>Runtime team</h4><p>Select published agents for a team. The backend resolves their profiles and execution policies.</p></article>
-              </div>
-              <p class="hermes-map-note">Sandbox runs use the Hermes runtime. Publishing makes a version available for selection; it does not start every future conversation automatically.</p>
-            </div>
-
-            <div class="hermes-map-lane">
-              <h3><span>02 / Execute</span>Run a conversation with the selected team</h3>
-              <div class="hermes-map-flow">
-                <article class="hermes-map-node"><small>Browser boundary</small><h4>Next.js portal</h4><p>Send the user request and show streamed answers, tool activity, and approval prompts.</p></article>
-                <div class="hermes-map-edge"><span>Authenticated request</span><b aria-hidden="true">→</b></div>
-                <article class="hermes-map-node hermes-map-backend"><small>Application boundary</small><h4>FastAPI backend</h4><p>Check session ownership, retrieve relevant knowledge, and forward the request with the session’s team configuration.</p></article>
-                <div class="hermes-map-edge"><span>Context + policy</span><b aria-hidden="true">→</b></div>
-                <article class="hermes-map-node"><small>Execution boundary</small><h4>Hermes runtime</h4><p>Run the main agent, delegate to configured team profiles when needed, and execute allowed tools.</p></article>
-              </div>
-              <p class="hermes-stream-path"><b>Response path</b> Hermes events → FastAPI SSE relay → portal. The backend records conversation and activity state.</p>
-              <div class="hermes-context-services">
-                <article><small>Backend ↔ knowledge service</small><h4>Document knowledge / Cognee</h4><p>The backend searches user-owned documents and adds relevant matches to the request context.</p></article>
-                <article><small>Runtime ↔ memory service</small><h4>Persistent memory / Honcho</h4><p>The configured Hermes memory provider retrieves and maintains context across conversations.</p></article>
-              </div>
-            </div>
-            <figcaption id="hermes-map-caption">High-level view of the local implementation. Knowledge and memory are separate integrations, used when configured; they are not a mandatory chain for every request. Service credentials stay behind the backend and runtime boundaries.</figcaption>
+            <a class="hermes-image-link" href="media/hermes-enterprise-architecture.svg" target="_blank" rel="noopener" aria-label="Open full-size Hermes architecture diagram">
+              <img src="media/hermes-enterprise-architecture.svg" alt="Hermes architecture: configure agents in the Next.js portal, validate and publish versions through FastAPI, then execute requests through backend identity and ownership checks to Hermes runtime teams. FastAPI retrieves Cognee document knowledge; the runtime uses Honcho memory. Responses stream back through FastAPI SSE to the portal." width="1600" height="1360" loading="lazy" decoding="async">
+            </a>
+            <figcaption id="hermes-map-caption">Agent configuration and runtime execution are separate paths. Knowledge is retrieved by the backend; memory is integrated with the runtime. Both are used when configured.</figcaption>
+            <p class="hermes-image-downloads"><a href="media/hermes-enterprise-architecture.svg" target="_blank" rel="noopener">Open full-size SVG ↗</a><a href="media/hermes-enterprise-architecture.png" download>Download PNG ↓</a><span>Open the full-size diagram to zoom on mobile.</span></p>
           </figure>
 
           <div class="hermes-developer-guide">
