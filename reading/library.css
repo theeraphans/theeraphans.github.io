@@ -12,6 +12,7 @@
 }
 body {
   margin: 0;
+  padding-left: 260px;
   background: var(--bg);
   color: var(--ink);
   font:
@@ -182,7 +183,7 @@ a:hover {
   background: #ededed;
 }
 main {
-  margin-left: 260px;
+  margin-inline: auto;
   padding: 0 56px;
   max-width: 1700px;
 }
@@ -503,14 +504,14 @@ footer {
   }
 }
 @media (max-width: 1100px) {
+  body {
+    padding-left: 248px;
+  }
   main {
     padding-inline: 30px;
   }
   .sidebar {
     width: 248px;
-  }
-  main {
-    margin-left: 248px;
   }
   #catalog-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -529,6 +530,9 @@ footer {
   }
 }
 @media (max-width: 700px) {
+  body {
+    padding-left: 0;
+  }
   .sidebar {
     width: min(300px, calc(100vw - 48px));
     max-width: 100%;
@@ -628,10 +632,10 @@ footer {
 }
 
 .sidebar,
-main {
+body {
   transition:
     transform 180ms ease,
-    margin-left 180ms ease;
+    padding-left 180ms ease;
 }
 
 .sidebar-head {
@@ -688,8 +692,8 @@ body.sidebar-collapsed .sidebar {
   pointer-events: none;
 }
 
-body.sidebar-collapsed main {
-  margin-left: 0;
+body.sidebar-collapsed {
+  padding-left: 0;
 }
 
 body.sidebar-collapsed .sidebar-reveal {
@@ -701,8 +705,7 @@ body.sidebar-collapsed .topbar {
 }
 
 @media (max-width: 700px) {
-  main,
-  body.sidebar-collapsed main {
-    margin-left: 0;
+  main {
+    margin-inline: auto;
   }
 }
