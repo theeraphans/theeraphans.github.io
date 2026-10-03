@@ -90,7 +90,9 @@ img {
 
 code,
 pre {
-  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+  font-family:
+    SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace !important;
 }
 
 code {
@@ -118,9 +120,17 @@ pre {
   min-height: 54px !important;
   margin: 0 !important;
   padding-top: max(0.65rem, env(safe-area-inset-top)) !important;
-  padding-right: max(1rem, env(safe-area-inset-right), calc((100vw - 1140px) / 2 + 1.5rem)) !important;
+  padding-right: max(
+    1rem,
+    env(safe-area-inset-right),
+    calc((100vw - 1140px) / 2 + 1.5rem)
+  ) !important;
   padding-bottom: 0.65rem !important;
-  padding-left: max(1rem, env(safe-area-inset-left), calc((100vw - 1140px) / 2 + 1.5rem)) !important;
+  padding-left: max(
+    1rem,
+    env(safe-area-inset-left),
+    calc((100vw - 1140px) / 2 + 1.5rem)
+  ) !important;
   color: var(--paper) !important;
   background: var(--ink) !important;
   border: 0 !important;
@@ -838,6 +848,57 @@ footer,
   padding: 0 1.5rem !important;
   color: var(--quiet) !important;
   font-size: 0.9rem !important;
+}
+
+.scroll-top {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 50;
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  place-items: center;
+  color: #fffef8;
+  font: inherit;
+  font-size: 1.35rem;
+  line-height: 1;
+  background: #171712;
+  border: 1px solid #171712;
+  border-radius: 50%;
+  box-shadow: 0 5px 18px rgb(23 23 18 / 18%);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.5rem);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease,
+    visibility 160ms ease;
+}
+
+.scroll-top[data-visible="true"] {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.scroll-top:hover {
+  color: #fffef8;
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.scroll-top:focus-visible {
+  outline: 3px solid #f2b84b;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-top {
+    transition: none;
+  }
 }
 
 @media (max-width: 920px) {
