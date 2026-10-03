@@ -8,65 +8,10 @@
       content="Your personal library of ideas, video summaries, and practical insights."
     />
     <title>Reading Room · Summary Library</title>
-    <link rel="stylesheet" href="library.css?v=20261003-7" />
+    <link rel="stylesheet" href="library.css?v=20261003-8" />
   </head>
   <body>
     <a class="skip" href="#main">Skip to library</a>
-    <aside class="sidebar" id="library-sidebar">
-      <div class="sidebar-head">
-        <a class="brand" href="./"
-          ><span class="brand-name">Loki Reading</span></a
-        >
-        <button
-          class="sidebar-toggle"
-          id="sidebar-toggle"
-          type="button"
-          aria-controls="library-sidebar"
-          aria-expanded="true"
-          aria-label="Collapse sidebar"
-          title="Collapse sidebar"
-        >
-          <span aria-hidden="true">‹</span>
-        </button>
-      </div>
-      <nav aria-label="Library">
-        <button
-          class="nav-item active"
-          data-mode="all"
-          aria-label="All summaries"
-          title="All summaries"
-        >
-          <span class="nav-icon" aria-hidden="true">▤</span
-          ><span class="nav-label">All summaries</span>
-          <b id="total"></b></button
-        ><button
-          class="nav-item"
-          data-mode="saved"
-          aria-label="Saved for later"
-          title="Saved for later"
-        >
-          <span class="nav-icon" aria-hidden="true">♡</span
-          ><span class="nav-label">Saved for later</span>
-          <b id="saved-count">0</b>
-        </button>
-      </nav>
-      <div class="topics-heading">Topics</div>
-      <div id="topics"></div>
-      <div class="sidebar-bottom">
-        <a href="/"><span aria-hidden="true">＋</span> Add a summary</a>
-      </div>
-    </aside>
-    <button
-      class="sidebar-reveal"
-      id="sidebar-reveal"
-      type="button"
-      aria-controls="library-sidebar"
-      aria-expanded="false"
-      aria-label="Show sidebar"
-      title="Show sidebar"
-    >
-      <span aria-hidden="true">›</span>
-    </button>
     <main id="main">
       <header class="topbar">
         <span>Loki Reading</span
@@ -99,9 +44,11 @@
               id="filter-toggle"
               class="control-button"
               type="button"
-              aria-controls="library-sidebar"
+              aria-controls="filter-panel"
+              aria-expanded="false"
             >
-              Filter <span aria-hidden="true">☷</span>
+              Filter <span id="filter-count" class="filter-count" hidden></span>
+              <span aria-hidden="true">☷</span>
             </button>
             <label class="sort-label"
               >Sort
@@ -132,6 +79,51 @@
               </button>
             </div>
           </div>
+        </div>
+        <div id="filter-backdrop" class="filter-backdrop" hidden>
+          <section
+            id="filter-panel"
+            class="filter-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="filter-title"
+          >
+            <header class="filter-panel-head">
+              <h2 id="filter-title">Filter the library</h2>
+              <button
+                id="filter-close"
+                class="filter-close"
+                type="button"
+                aria-label="Close filters"
+                title="Close filters"
+              >
+                ×
+              </button>
+            </header>
+            <div class="filter-columns">
+              <fieldset class="filter-group collection-filter">
+                <legend>Collection</legend>
+                <label class="filter-option">
+                  <input type="radio" name="collection" data-mode="all" checked />
+                  <span>All summaries</span>
+                  <b id="total"></b>
+                </label>
+                <label class="filter-option">
+                  <input type="radio" name="collection" data-mode="saved" />
+                  <span>Saved for later</span>
+                  <b id="saved-count">0</b>
+                </label>
+              </fieldset>
+              <fieldset class="filter-group topic-filter">
+                <legend>Topic</legend>
+                <div id="topics" class="filter-options"></div>
+              </fieldset>
+            </div>
+            <footer class="filter-panel-actions">
+              <button id="filter-reset" type="button">Reset</button>
+              <button id="filter-done" type="button">Done</button>
+            </footer>
+          </section>
         </div>
         <div class="search-row">
           <label class="search"
@@ -2356,6 +2348,6 @@
         }
       ]
     </script>
-    <script src="library.js?v=20261003-4"></script>
+    <script src="library.js?v=20261003-5"></script>
   </body>
 </html>

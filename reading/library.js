@@ -51,7 +51,7 @@ try {
 const viewKey = "reading-room-view";
 const state = {
   mode: "all",
-  topic: "All",
+  topics: new Set(),
   source: "all",
   query: "",
   sort: "new",
@@ -62,67 +62,35 @@ try {
   const preferredView = localStorage.getItem(viewKey);
   if (["grid", "list"].includes(preferredView)) state.view = preferredView;
 } catch {}
-const sidebarKey = "reading-room-sidebar-collapsed";
-const sidebarToggle = $("#sidebar-toggle");
-const sidebarReveal = $("#sidebar-reveal");
-const sidebar = $("#library-sidebar");
 const filterToggle = $("#filter-toggle");
-let sidebarCollapsed = false;
+const filterBackdrop = $("#filter-backdrop");
+const filterClose = $("#filter-close");
 
-try {
-  sidebarCollapsed = window.matchMedia("(max-width: 700px)").matches
-    ? true
-    : localStorage.getItem(sidebarKey) === "true";
-} catch {}
-
-function setSidebarCollapsed(collapsed, persist = true) {
-  sidebarCollapsed = collapsed;
-  document.body.classList.toggle("sidebar-collapsed", collapsed);
-  sidebar.inert = collapsed;
-  sidebar.setAttribute("aria-hidden", String(collapsed));
-  sidebarToggle.setAttribute("aria-expanded", String(!collapsed));
-  sidebarToggle.setAttribute(
-    "aria-label",
-    collapsed ? "Expand sidebar" : "Collapse sidebar",
-  );
-  sidebarToggle.setAttribute(
-    "title",
-    collapsed ? "Expand sidebar" : "Collapse sidebar",
-  );
-  sidebarReveal.setAttribute("aria-expanded", String(!collapsed));
-  filterToggle.setAttribute("aria-expanded", String(!collapsed));
-  if (persist) {
-    try {
-      localStorage.setItem(sidebarKey, String(collapsed));
-    } catch {}
-  }
+function setFilterOpen(open) {
+  filterBackdrop.hidden = !open;
+  document.body.classList.toggle("filter-open", open);
+  filterToggle.setAttribute("aria-expanded", String(open));
+  if (open) filterClose.focus();
+  else filterToggle.focus();
 }
 
-sidebarToggle.addEventListener("click", () => {
-  setSidebarCollapsed(!sidebarCollapsed);
-});
-sidebarReveal.addEventListener("click", () => {
-  setSidebarCollapsed(false);
-  sidebarToggle.focus();
-});
-setSidebarCollapsed(sidebarCollapsed, false);
-
-filterToggle.addEventListener("click", () => {
-  setSidebarCollapsed(false);
-  $("#topics").focus();
+filterToggle.addEventListener("click", () => setFilterOpen(true));
+filterClose.addEventListener("click", () => setFilterOpen(false));
+$("#filter-done").addEventListener("click", () => setFilterOpen(false));
+filterBackdrop.addEventListener("click", (event) => {
+  if (event.target === filterBackdrop) setFilterOpen(false);
 });
 
 $("#total").textContent = catalog.length;
 const topics = [...new Set(catalog.map((i) => i.category))].sort();
-$("#topics").tabIndex = -1;
 $("#topics").innerHTML = topics
-  .map((t) => `<button class="topic" data-topic="${esc(t)}">${esc(t)}</button>`)
+  .map((t) => `<label class="filter-option"><input type="checkbox" data-topic="${esc(t)}"><span>${esc(t)}</span><b>${catalog.filter((i) => i.category === t).length}</b></label>`)
   .join("");
 function render() {
   let items = catalog.filter(
     (i) =>
       (state.mode !== "saved" || saved.has(key(i))) &&
-      (state.topic === "All" || i.category === state.topic) &&
+      (!state.topics.size || state.topics.has(i.category)) &&
       (state.source === "all" || sourceType(i) === state.source) &&
       `${i.title} ${i.description} ${i.source} ${i.category}`
         .toLowerCase()
@@ -140,7 +108,10 @@ function render() {
   ).length;
   $("#result-count").textContent =
     `${items.length} ${items.length === 1 ? "summary" : "summaries"}${state.mode === "saved" ? " saved for later" : ""}${state.query ? " matching your search" : ""}`;
-  $("#active-topic").textContent = state.topic === "All" ? "" : state.topic;
+  $("#active-topic").textContent = [...state.topics].join(" · ");
+  const filterCount = (state.mode === "saved" ? 1 : 0) + state.topics.size;
+  $("#filter-count").hidden = filterCount === 0;
+  $("#filter-count").textContent = filterCount;
   $("#catalog-grid").dataset.view = state.view;
   $("#catalog-grid").innerHTML = items
     .slice(0, state.limit)
@@ -152,12 +123,10 @@ function render() {
   $("#empty").hidden = items.length > 0;
   $("#load-more").hidden = items.length <= state.limit;
   document.querySelectorAll("[data-mode]").forEach((b) => {
-    b.classList.toggle("active", b.dataset.mode === state.mode);
-    b.setAttribute("aria-pressed", b.dataset.mode === state.mode);
+    b.checked = b.dataset.mode === state.mode;
   });
   document.querySelectorAll("[data-topic]").forEach((b) => {
-    b.classList.toggle("active", b.dataset.topic === state.topic);
-    b.setAttribute("aria-pressed", b.dataset.topic === state.topic);
+    b.checked = state.topics.has(b.dataset.topic);
   });
   document.querySelectorAll("[data-source]").forEach((b) => {
     const active = b.dataset.source === state.source;
@@ -185,12 +154,18 @@ $("#load-more").addEventListener("click", () => {
 });
 $("#clear").addEventListener("click", () => {
   Object.assign(state, {
-    topic: "All",
+    topics: new Set(),
     source: "all",
     query: "",
     limit: 12,
   });
   $("#catalog-search").value = "";
+  render();
+});
+$("#filter-reset").addEventListener("click", () => {
+  state.mode = "all";
+  state.topics.clear();
+  state.limit = 12;
   render();
 });
 document.addEventListener("click", (e) => {
@@ -200,22 +175,16 @@ document.addEventListener("click", (e) => {
     view = e.target.closest(".view-button[data-view]"),
     save = e.target.closest("[data-save]");
   if (topic) {
-    state.topic =
-      state.topic === topic.dataset.topic ? "All" : topic.dataset.topic;
+    topic.checked
+      ? state.topics.add(topic.dataset.topic)
+      : state.topics.delete(topic.dataset.topic);
     state.limit = 12;
     render();
-    if (window.matchMedia("(max-width: 700px)").matches) {
-      setSidebarCollapsed(true);
-    }
   }
   if (mode) {
     state.mode = mode.dataset.mode;
-    state.topic = "All";
     state.limit = 12;
     render();
-    if (window.matchMedia("(max-width: 700px)").matches) {
-      setSidebarCollapsed(true);
-    }
   }
   if (source) {
     state.source = source.dataset.source;
@@ -242,9 +211,8 @@ document.addEventListener("click", (e) => {
   }
 });
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !sidebarCollapsed) {
-    setSidebarCollapsed(true);
-    sidebarReveal.focus();
+  if (e.key === "Escape" && !filterBackdrop.hidden) {
+    setFilterOpen(false);
     return;
   }
   if (
