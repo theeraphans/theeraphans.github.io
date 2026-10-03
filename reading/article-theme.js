@@ -6,16 +6,26 @@
   if (hero && article) {
     const words = article.textContent.trim().split(/\s+/).filter(Boolean).length;
     const minutes = Math.max(1, Math.ceil(words / 220));
+    const heroCopy = hero.querySelector(".hero-copy") ?? hero;
+    const category = heroCopy.querySelector(".kicker, .eyebrow");
+    const metadata = heroCopy.querySelector(".meta, .byline");
     const actions = document.createElement("div");
+    const context = document.createElement("div");
+    const tools = document.createElement("div");
     const readTime = document.createElement("span");
     const share = document.createElement("button");
 
     actions.className = "article-actions";
+    context.className = "article-context";
+    tools.className = "article-tools";
     readTime.textContent = `${minutes} min read`;
     share.type = "button";
     share.textContent = "Share ↗";
     share.setAttribute("aria-label", "Share this article");
-    actions.append(readTime, share);
+    if (category) context.append(category);
+    if (metadata) context.append(metadata);
+    tools.append(readTime, share);
+    actions.append(context, tools);
     hero.append(actions);
 
     share.addEventListener("click", async () => {
