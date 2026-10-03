@@ -1270,6 +1270,16 @@ article.article {
   border-radius: 0 !important;
 }
 
+@media (max-width: 1400px) {
+  .visual,
+  .diagram,
+  .chart,
+  .media-wide {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
 .mobile-toc {
   display: none;
 }
