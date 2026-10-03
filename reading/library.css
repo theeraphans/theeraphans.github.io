@@ -82,18 +82,7 @@ a:hover {
   letter-spacing: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
   white-space: nowrap;
-}
-.brand-mark {
-  background: var(--accent);
-  color: white;
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  display: grid;
-  place-items: center;
-  font: italic 21px Georgia;
 }
 .sidebar nav {
   margin-top: 12px;
@@ -647,10 +636,6 @@ body {
 
 .brand {
   min-width: 0;
-}
-
-.brand-mark {
-  flex: 0 0 auto;
 }
 
 .sidebar-toggle,
