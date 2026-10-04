@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>Katie Dill: Raise the Ceiling of AI-Made Products</title>
+    <meta name="description" content="A detailed guide to Katie Dill's argument for avoiding zombie UI: define a point of view, encode intent into systems, edit beyond the first build, and use AI to expand creative possibility." />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .visual { margin: 1.7rem 0 2rem; }
+      .visual img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 4px; }
+      .visual figcaption { margin-top: .65rem; color: var(--muted); font-size: .88rem; line-height: 1.55; text-align: center; }
+      .callout { margin: 1.5rem 0; padding: 1rem !important; border-left: 3px solid var(--green) !important; background: var(--surface) !important; }
+      .callout.warning { border-left-color: #8a6417 !important; }
+      .callout p:last-child { margin-bottom: 0; }
+      .watch-grid, .recommendation-grid, .system-grid { display: grid; gap: 1px; margin: 1.5rem 0; background: var(--line); border: 1px solid var(--line); }
+      .watch-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .recommendation-grid, .system-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .watch-grid > div, .recommendation-grid > div, .system-grid > div { padding: 1rem; background: var(--paper); }
+      .watch-grid h3, .recommendation-grid h3, .system-grid h3 { margin: 0 0 .45rem; font-size: 1rem; }
+      .watch-grid p, .recommendation-grid p, .system-grid p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.55; }
+      .comparison { width: 100%; min-width: 0 !important; margin: 1.5rem 0; table-layout: fixed; border-collapse: collapse; }
+      .comparison th, .comparison td { padding: .78rem .55rem; text-align: left; vertical-align: top; overflow-wrap: anywhere; border-bottom: 1px solid var(--line); }
+      .comparison th { font-weight: 600; }
+      .chapter-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 1.25rem 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
+      .chapter-list li { border-bottom: 1px solid var(--line); }
+      .chapter-list a { display: flex; gap: .7rem; min-height: 100%; padding: .8rem .45rem; color: var(--ink); text-decoration: none; }
+      .chapter-list time { flex: 0 0 3.4rem; color: var(--green); font-variant-numeric: tabular-nums; }
+      @media (max-width: 750px) {
+        .watch-grid, .recommendation-grid, .system-grid, .chapter-list { grid-template-columns: 1fr; }
+        .comparison { font-size: .84rem; }
+        .comparison thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+        .comparison, .comparison tbody, .comparison tr, .comparison td { display: block; width: 100%; }
+        .comparison tr { padding: .55rem 0; border-bottom: 1px solid var(--line); }
+        .comparison td { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: .6rem; padding: .32rem .2rem; border: 0; }
+        .comparison td::before { color: var(--muted); font-weight: 600; }
+        .comparison td:nth-child(1)::before { content: "Question"; }
+        .comparison td:nth-child(2)::before { content: "Weak signal"; }
+        .comparison td:nth-child(3)::before { content: "Stronger signal"; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Reading room</a>
+      <div class="top-actions"><a class="action-link" href="https://www.youtube.com/watch?v=GLvFTMtw4Jk">Watch video</a></div>
+    </nav>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">AI product design · Quality systems</p>
+          <h1>Raise the Ceiling of AI-Made Products</h1>
+          <p class="subtitle">Katie Dill's warning is not that AI makes design impossible. It is that abundant production can strip away intent. The new advantage is a clear point of view, standards encoded into the means of production, disciplined editing after the build, and enough ambition to invent what the model cannot retrieve from the past.</p>
+          <div class="meta"><span>21:48 video</span><span>Auto-generated English captions</span><span>Published September 25, 2026</span><span>Summary run: October 4, 2026 · 12:03 ICT</span></div>
+        </div>
+        <figure class="hero-card">
+          <img src="2026-10-04-katie-dill-zombie-ui-hero.webp" alt="Katie Dill on stage with the words Stop building zombie UIs" />
+          <figcaption>When software becomes cheap to produce, polish is no longer evidence of thought. The differentiator is whether the product carries context, judgment, and care.</figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="eyebrow">Executive summary</p>
+            <h2>AI lowers the cost of building, but it does not supply a reason to build</h2>
+            <p>Stripe Head of Design Katie Dill compares the current AI product boom with the construction boom after World War II. Modernism originally carried principles and a point of view. Under pressure to build quickly, its visible patterns were copied without the thinking that made them coherent. The result, in Dill's framing, was a landscape of generic “zombie buildings.” AI creates the same risk for software: a model can reproduce familiar forms, a polished interface can appear almost instantly, and the low cost of production can make the work feel disposable.</p>
+            <p>Her answer is not to reject AI or slow every team down. It is to relocate design work. When implementation becomes abundant, the scarce activities are deciding what the product should stand for, turning that intent into an executable system, judging the assembled experience, and pushing beyond familiar patterns. AI should raise the ceiling of what a team can imagine and refine, not merely raise the floor of acceptable output.</p>
+            <div class="recommendation-grid">
+              <div><h3>1. Have a point of view</h3><p>Define who the product is for, what the brand believes, and what “good” means before the model fills the vacuum with a probable answer.</p></div>
+              <div><h3>2. Encode standards</h3><p>Move intent into components, templates, flows, documentation, tools, and constraints that are available at the moment of construction.</p></div>
+              <div><h3>3. Edit after building</h3><p>Cheap prototypes remove the old pre-build filter. Restore quality through end-to-end judgment, pruning, and repeated refinement.</p></div>
+              <div><h3>4. Unleash artistry</h3><p>Use AI to explore new interactions, aesthetics, and combinations rather than manufacturing more of what already exists.</p></div>
+            </div>
+            <div class="callout warning"><p><strong>Evidence boundary.</strong> This article is grounded in Dill's conference talk and its auto-generated transcript. Statements about Stripe's internal CLI and design workflow are her public description, not an independent technical audit. The practical framework and organisational implications below are interpretations derived from the talk.</p></div>
+          </section>
+
+          <section id="boom">
+            <p class="eyebrow">The central analogy</p>
+            <h2>The AI building boom can copy form while losing intent</h2>
+            <figure class="visual"><img src="2026-10-04-katie-dill-ai-building-boom.jpg" alt="A collage of repetitive post-war buildings shown during Katie Dill's talk" loading="lazy" /><figcaption><strong>From the video at 01:54.</strong> Dill uses repetitive post-war architecture as a warning: once a style is separated from its principles and copied under pressure, only generic patterns remain.</figcaption></figure>
+            <p>Dill begins with architecture because buildings expose a distinction that software often hides: a style is not the same thing as a design philosophy. Early modernist work had a response to materials, industrial production, living conditions, and ornament. Later builders could copy flat surfaces, simple geometry, and monochrome palettes without carrying forward the reasoning behind those choices. The surface survived while the intent thinned out.</p>
+            <p>Generative AI is exceptionally good at the surface layer. It predicts plausible continuations from prior examples. That makes it efficient at producing recognisable patterns, but probability is not specificity. A model can generate a credible SaaS landing page for a Korean barbecue restaurant because it has found a statistically safe visual answer. The output may be polished, responsive, and technically complete while saying almost nothing about the restaurant, its customers, or the experience it wants to create.</p>
+            <p>The analogy matters because “generic” is not merely an aesthetic complaint. A context-free interface can misrepresent the product, hide the user's real task, and make every company converge on the same interaction model. The deeper failure is abdication: the team accepts an inherited pattern without being able to explain why it belongs here.</p>
+          </section>
+
+          <section id="watchpoints">
+            <p class="eyebrow">Three watchpoints</p>
+            <h2>Probability, premature completion, and disposability reinforce one another</h2>
+            <div class="watch-grid">
+              <div><h3>The probable answer</h3><p>Models are trained on what existed. Without strong context, they return conventions, fashions, and common solutions rather than a distinctive answer for this user and brand.</p></div>
+              <div><h3>The temptation of done</h3><p>A prompt becomes an interface in seconds. Rounded corners and a clean composition create the feeling of completion before the problem has been tested.</p></div>
+              <div><h3>Disposable work</h3><p>When output is easy to regenerate, teams may stop asking who owns it, who maintains it, and what downstream decisions it creates.</p></div>
+            </div>
+            <p>Dill's microwave-burrito metaphor captures the second watchpoint. Speed can make a mediocre result feel impressive because the comparison is with having nothing moments earlier. The correct comparison, however, is not “nothing versus a generated screen.” It is “the user's problem versus the complete experience.” Does the product actually work? Does it form a coherent journey? Does it differentiate? Does it remain understandable and maintainable after the demo?</p>
+            <p>These risks compound. A probable answer arrives quickly, apparent finish suppresses scrutiny, and disposability weakens ownership. That combination produces “zombie UI”: software that is visually competent but vacant, monotonous, or uncared for. Dill contrasts it with small signs of attention—a calendar tab that displays the current date, an animation that gives a product character, or an agent wallet that anticipates the failure modes of an automated buyer. Care becomes visible when the product acknowledges its context.</p>
+          </section>
+
+          <section id="point-of-view">
+            <p class="eyebrow">Recommendation one</p>
+            <h2>If you do not provide a point of view, the model will provide an average</h2>
+            <p>A point of view is not a mood board or a list of adjectives. It links the organisation's beliefs to product decisions. Who are we to the customer? What do they value? What should the experience make easier, safer, or more possible? Which qualities should remain recognisable across copy, colour, motion, interaction, and prioritisation?</p>
+            <p>Dill uses optimism at Stripe as an example. It affects not only visual language but also what the company writes about and what products it builds for entrepreneurs. The practical role of a point of view is to create a basis for standards when authorship becomes distributed across designers, engineers, product managers, and agents. Without that shared basis, each contributor optimises locally and coherence becomes accidental.</p>
+            <p>Her design-crit story makes the quality bar explicit. A cross-functional partner asked what standard should apply when an advertisement was made with AI. Dill's answer is that the method is irrelevant to the customer. The output is either good enough for the intended experience or it is not. The team then left with seventeen specific improvements. AI does not earn a discount on quality because it produced the draft quickly.</p>
+            <div class="callout"><p><strong>How to develop taste.</strong> Dill recommends practising “noticing”: observe what users need beyond what they say, identify why one product feels great and another merely adequate, and draw references from art, science, architecture, and other domains. Taste becomes useful when it can name the difference and convert it into decisions others can apply.</p></div>
+          </section>
+
+          <section id="encode">
+            <p class="eyebrow">Recommendation two</p>
+            <h2>The object of design is no longer only the screen; it is the system that produces screens</h2>
+            <figure class="visual"><img src="2026-10-04-katie-dill-encode-standards.jpg" alt="Slide reading Encode your standards into the machine" loading="lazy" /><figcaption><strong>From the video at 09:02.</strong> As construction becomes distributed and agentic, standards must survive even when a designer is not present to fill in the blanks.</figcaption></figure>
+            <p>Traditional design systems scaled consistency: approved components, tokens, and usage guidance made it easier for teams to produce interfaces that looked related. Dill argues that the AI-era system must scale intent. Components alone describe pieces; they do not explain how the product should behave, how a workflow unfolds, which states matter, or why one composition is appropriate and another is not.</p>
+            <p>Her Gutenberg example illustrates the required precision. Movable type did not succeed by reducing language to a minimal alphabet. Gutenberg created hundreds of character variants, widths, abbreviations, and ligatures so machine-set pages could retain the visual quality of hand-made work. The system was extensible, but also opinionated enough to protect the result. Automation did not eliminate craft; craft was embedded into the production mechanism.</p>
+            <div class="system-grid">
+              <div><h3>Components and tokens</h3><p>Define legal visual primitives, interaction states, spacing, typography, motion, and accessible defaults.</p></div>
+              <div><h3>Templates and flows</h3><p>Capture how complete tasks work: information hierarchy, sequence, decision points, error recovery, and completion states.</p></div>
+              <div><h3>Contextual guidance</h3><p>Deliver relevant documentation at the moment of construction instead of loading a giant static manual into every prompt.</p></div>
+              <div><h3>Executable constraints</h3><p>Use tools, validation, linting, and generation paths to make compliant work easier and drift observable.</p></div>
+            </div>
+            <figure class="visual"><img src="2026-10-04-katie-dill-stripe-cli.jpg" alt="A Stripe design CLI demonstrated during Katie Dill's talk" loading="lazy" /><figcaption><strong>From the video at 11:30.</strong> Dill says Stripe moved beyond an MCP that only understood documentation to a CLI-based harness that consumes guidance in context and includes opinionated templates and flows.</figcaption></figure>
+            <p>Stripe's reported path is instructive. The team first created an MCP grounded in design documentation, but results remained inconsistent: the same prompt could produce materially different outputs. Dill says they evolved toward a CLI built on the design system. It sits where builders work, supplies documentation at the relevant time to reduce context rot, and includes complete patterns rather than only atomic pieces. In her language, standards are embedded into the “means of production.”</p>
+            <p>This does not mean every design decision should become a rigid rule. Christopher Alexander's warning, as paraphrased in the talk, is that a system can satisfy its rules and still feel dead. The system establishes a coherent baseline. It cannot replace the judgment that recognises when the baseline is insufficient.</p>
+          </section>
+
+          <section id="editing">
+            <p class="eyebrow">Recommendation three</p>
+            <h2>When the pre-build filter disappears, editing becomes a first-class role</h2>
+            <figure class="visual"><img src="2026-10-04-katie-dill-done-vs-good.jpg" alt="Slide reading Refuse to confuse done with good" loading="lazy" /><figcaption><strong>From the video at 12:26.</strong> AI can build twenty ideas that a team once lacked capacity to staff. Selection has not disappeared; it has moved to a more psychologically difficult point after something tangible exists.</figcaption></figure>
+            <p>Scarcity used to filter product ideas throughout development. A team might have twenty proposals and staff one. Constraints forced prioritisation before code existed, and each later stage provided another opportunity to challenge or prune the work. AI weakens that filter. Teams can build all twenty, handle the real object instead of debating hypotheticals, and learn faster. But they also become attached to what now exists.</p>
+            <p>The editor's job is not simply to approve or reject isolated screens. It is to experience the product like a user and judge the whole: Does it solve the problem? Does its structure match the user's mental model? Do the pieces form a coherent journey? Is the work fully formed, or merely rendered? What needs to be removed, connected, or pushed further?</p>
+            <table class="comparison">
+              <thead><tr><th>Question</th><th>Weak signal</th><th>Stronger signal</th></tr></thead>
+              <tbody>
+                <tr><td>Is it finished?</td><td>The UI renders and resembles the prompt.</td><td>The complete user journey works, including empty, error, recovery, and maintenance states.</td></tr>
+                <tr><td>Is it coherent?</td><td>Each screen looks polished in isolation.</td><td>Language, hierarchy, behaviour, and transitions support one understandable model.</td></tr>
+                <tr><td>Is it distinctive?</td><td>It follows current best practices.</td><td>Its choices trace back to this user's context and this organisation's point of view.</td></tr>
+                <tr><td>Is it cared for?</td><td>No obvious visual defects remain.</td><td>Small details anticipate needs and feel deliberately chosen rather than interchangeable.</td></tr>
+              </tbody>
+            </table>
+            <p>Dill connects this to Nabeel Qureshi's essay on great art. Surprise, deeper meaning, and recurring themes make a work difficult to substitute. AI slop offends because details appear arbitrary: a cup is green but could just as easily be blue. An editor takes responsibility for why the cup is green—and for removing it if it contributes nothing.</p>
+            <figure class="visual"><img src="2026-10-04-katie-dill-56-iterations.jpg" alt="A grid of many generated campfire animation iterations" loading="lazy" /><figcaption><strong>From the video at 15:52.</strong> Stripe's summit animation reached its final form after 56 iterations. AI expanded the number of viewpoints the team could explore; scrutiny and repeated selection produced the finished quality.</figcaption></figure>
+            <p>The summit animation is the talk's clearest example. A designer began with a 3D scene, used AI for animation, and found that the first result was interesting but physically and compositionally off. The team did not treat generation as completion. After 56 iterations, the result had more realism, life, and subtlety. AI opened the possibility space, while human judgment navigated it.</p>
+          </section>
+
+          <section id="artistry">
+            <p class="eyebrow">Recommendation four</p>
+            <h2>Use AI to invent interactions, not only to reproduce interfaces faster</h2>
+            <figure class="visual"><img src="2026-10-04-katie-dill-creativity-artistry.jpg" alt="Slide reading Unleash your creativity and artistry" loading="lazy" /><figcaption><strong>From the video at 16:35.</strong> Dill's final recommendation reframes AI as a creative catalyst: an opportunity to develop new interface patterns and aesthetics rather than mass-produce familiar ones.</figcaption></figure>
+            <p>Dill rejects the idea that today's chat windows, charts, and command-line interfaces are the final form of human-computer interaction. People can speak to computers; systems can generate and adapt in real time; interfaces can become responsive to context in ways static software could not. The best practices for this medium have not yet been written.</p>
+            <p>She compares the moment to multi-touch and the synthesizer. Both enabled forms that were not simple faster versions of their predecessors. The interesting work was not making the old interaction cheaper. It was discovering gestures and sounds that had not previously been practical. In the same way, a team misses AI's creative value if it only asks how to produce the current backlog with fewer people.</p>
+            <p>At Stripe, Dill describes combining a human marbler's physical craft with AI refinement for a publication cover. The human supplied material knowledge and judgment; AI helped tune colour and line details across iterations. The example positions AI neither as autonomous artist nor as irrelevant automation. It is leverage applied to authored intent.</p>
+          </section>
+
+          <section id="practice">
+            <p class="eyebrow">Operating model</p>
+            <h2>Scale judgment as deliberately as you scale generation</h2>
+            <p>The talk can be converted into a practical operating loop without reducing taste to a checklist:</p>
+            <ol>
+              <li><strong>Write the point of view.</strong> State the user, desired relationship, product belief, and non-negotiable quality in language specific enough to reject plausible alternatives.</li>
+              <li><strong>Collect evidence of taste.</strong> Maintain examples of good, great, and wrong—plus the reasoning behind each judgment. Include references beyond the immediate product category.</li>
+              <li><strong>Encode the baseline.</strong> Turn stable decisions into tokens, components, templates, flows, validation, and contextual tooling. Preserve room for intentional exceptions.</li>
+              <li><strong>Generate plural options.</strong> Use lower production cost to explore genuinely different directions, not twenty cosmetic variants of the same average answer.</li>
+              <li><strong>Review the journey.</strong> Evaluate the experience in context with real tasks. Do not approve from isolated screenshots or a model's self-assessment.</li>
+              <li><strong>Stress the output.</strong> Ask adversarial agents and humans to find incoherence, generic choices, missing states, and details that could be substituted without consequence.</li>
+              <li><strong>Refine until the decisions accumulate.</strong> Each pass should add information, improve coherence, or remove arbitrary detail. Iteration count alone is not quality.</li>
+              <li><strong>Feed learning back into the system.</strong> Update templates and constraints when a lesson should apply broadly; preserve one-off judgment when it should not.</li>
+            </ol>
+            <div class="callout"><p><strong>Management implication.</strong> Telling a team to “use AI more” optimises adoption, not originality. Leaders must also protect exploration, allow apparently strange directions to survive long enough to be evaluated, and spend part of the efficiency gain on work that makes the product more specific and meaningful.</p></div>
+          </section>
+
+          <section id="take">
+            <p class="eyebrow">My take</p>
+            <h2>The new bottleneck is accountable taste</h2>
+            <p>Dill's argument is strongest when read as a production-system thesis. AI changes who can build and how quickly, but quality still depends on decisions that form a coherent whole. The design system, CLI, templates, editor, and cultural permission to explore are not separate recommendations. Together they are an architecture for preserving authorship when execution is distributed.</p>
+            <p>There is also a useful tension in the talk. Standards must be explicit enough for machines to follow, yet living products cannot be generated by rules alone. The practical goal is not to encode taste completely. It is to encode the repeatable baseline so human attention can move to context, exceptions, coherence, and invention. A rigid system with no editor produces consistent deadness; unconstrained generation produces inconsistent noise.</p>
+            <p>For product and agent-platform teams, the message goes beyond visual design. A persona prompt is not a point of view, and an MCP server is not a quality system. Intent must connect to business rules, tools, workflow states, evidence, evaluation, and human ownership. The machine should be able to retrieve and execute standards, while people remain accountable for whether those standards produce a worthwhile product.</p>
+            <p>The phrase “raise the ceiling, not just the floor” is the best summary. AI's least interesting use is making acceptable work cheaper. Its larger opportunity is allowing a small team to investigate more directions, create richer systems, and care about details that previous constraints made unaffordable. Efficiency becomes meaningful when some of it is reinvested in ambition.</p>
+          </section>
+
+          <section id="map">
+            <p class="eyebrow">Video map</p>
+            <h2>Where the main ideas appear</h2>
+            <ul class="chapter-list">
+              <li><a href="https://www.youtube.com/watch?v=GLvFTMtw4Jk&t=8s"><time>00:08</time><span>Post-war building boom and copied modernism</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=GLvFTMtw4Jk&t=114s"><time>01:54</time><span>The AI building boom</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=GLvFTMtw4Jk&t=138s"><time>02:18</time><span>Probable answers are not specific answers</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=GLvFTMtw4Jk&t=178s"><time>02:58</time><span>The temptation of done</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=GLvFTMtw4Jk&t=238s"><time>03:58</time><span>Easy work becomes disposable work</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=GLvFTMtw4Jk&t=345s"><time>05:45</time><span>Recommendation 1: have a point of view</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=GLvFTMtw4Jk&t=441s"><time>07:21</time><span>The quality bar should not depend on how it was made</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=GLvFTMtw4Jk&t=542s"><time>09:02</time><span>Recommendation 2: encode standards</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=GLvFTMtw4Jk&t=597s"><time>09:57</time><span>The system becomes the object of design</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=GLvFTMtw4Jk&t=688s"><time>11:28</time><span>Stripe's CLI-based design harness</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=GLvFTMtw4Jk&t=746s"><time>12:26</time><span>Recommendation 3: refuse to confuse done with good</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=GLvFTMtw4Jk&t=797s"><time>13:17</time><span>The editor as a critical AI-era role</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=GLvFTMtw4Jk&t=952s"><time>15:52</time><span>Fifty-six iterations of the summit animation</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=GLvFTMtw4Jk&t=993s"><time>16:33</time><span>Recommendation 4: unleash creativity</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=GLvFTMtw4Jk&t=1120s"><time>18:40</time><span>Improve inputs and stress outputs</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=GLvFTMtw4Jk&t=1170s"><time>19:30</time><span>Culture: protect the strange</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=GLvFTMtw4Jk&t=1210s"><time>20:10</time><span>Raise the ceiling, not just the floor</span></a></li>
+            </ul>
+          </section>
+
+          <section id="sources">
+            <p class="eyebrow">Sources</p>
+            <h2>Primary talk and referenced material</h2>
+            <ol>
+              <li><a href="https://www.youtube.com/watch?v=GLvFTMtw4Jk">Lenny's Podcast — Katie Dill: How to scale intent, quality, and artistry with AI</a>. Primary 21-minute conference talk and auto-generated English transcript.</li>
+              <li><a href="https://nabeelqu.substack.com/p/what-makes-art-great">Nabeel S. Qureshi — What Makes Art Great?</a>. The essay Dill cites for surprise, deeper meaning, recurring themes, and why arbitrary details make generated work feel disposable.</li>
+              <li><a href="https://stripe.com/about">Stripe — About</a>. Public company context for Stripe's mission and products; it does not document the internal design CLI described in the talk.</li>
+            </ol>
+            <p class="source-note">Source review completed October 4, 2026. The video title spells “AI” as “Al” in some metadata; this article normalises it to AI. The transcript's wording was checked against timestamps, but auto-generated captions may still contain minor name or punctuation errors.</p>
+          </section>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <p>On this page</p>
+          <nav>
+            <a href="#summary">Executive summary</a><a href="#boom">Building boom</a><a href="#watchpoints">Three watchpoints</a><a href="#point-of-view">Point of view</a><a href="#encode">Encode standards</a><a href="#editing">Editing</a><a href="#artistry">Creativity and artistry</a><a href="#practice">Operating model</a><a href="#take">My take</a><a href="#map">Video map</a><a href="#sources">Sources</a>
+          </nav>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>
