@@ -114,6 +114,7 @@
           <section id="verification">
             <p class="eyebrow">Critical infrastructure</p>
             <h2>Verification is what turns a sequence into a loop</h2>
+            <figure class="visual"><img src="2026-10-04-lauren-tan-verification-frame.jpg" alt="Matt Pocock and Lauren Tan discussing verification skills at 16 minutes 10 seconds" loading="lazy" /><figcaption><strong>From the video at 16:10.</strong> Tan calls verification the most important skill in the toolkit: agents need “hands and eyes” to run the product, observe the outcome, and iterate without a human acting as the proxy.</figcaption></figure>
             <p>The interview's strongest technical claim is that verification should be the first serious skill a team builds. A prompt that says “check your work” is not enough. The agent needs a product-specific way to launch the system, navigate features, reproduce a report, inspect logs and traces, take screenshots or snapshots, measure performance, run focused tests, and compare the observed result against a finish condition.</p>
             <p>Tan gives hill climbing as an example. If performance can be measured, an agent can propose a change, collect the same metric, retain an improvement, reject a regression, and repeat. The loop exists because there is an external signal that can disagree with the model. Without that signal, “iterate until good” becomes repeated generation judged by the same system that produced it.</p>
             <table class="comparison">
@@ -156,6 +157,7 @@
           <section id="loops">
             <p class="eyebrow">System architecture</p>
             <h2>High throughput comes from connecting the outer and inner loops</h2>
+            <figure class="visual"><img src="2026-10-04-lauren-tan-inner-outer-loop-frame.jpg" alt="Lauren Tan explaining the inner and outer agent loops at 35 minutes 25 seconds" loading="lazy" /><figcaption><strong>From the video at 35:25.</strong> Tan distinguishes an outer loop that gathers changing organisational context from an inner loop that executes engineering work against a current snapshot of intent.</figcaption></figure>
             <p>A coding agent normally begins with a snapshot of intent: a task, repository state, and whatever context the operator supplied. That snapshot goes stale. New bug reports arrive in Slack or Linear, customers reveal related symptoms, infrastructure constraints surface, and product priorities change. If the agent cannot retrieve those signals, the human remains a “context courier” between the organisation and the coding loop.</p>
             <div class="loop-grid">
               <div>
@@ -185,6 +187,7 @@
           <section id="review">
             <p class="eyebrow">Quality at scale</p>
             <h2>Sample outputs, then repair the production system</h2>
+            <figure class="visual"><img src="2026-10-04-lauren-tan-review-sampling-frame.jpg" alt="Matt Pocock and Lauren Tan discussing sampling-based review at 49 minutes 15 seconds" loading="lazy" /><figcaption><strong>From the video at 49:15.</strong> The conversation turns to the obvious review problem: nobody can inspect every one of 2,500 PRs deeply, so quality control moves toward rigorous sampling and correcting the environment when patterns repeat.</figcaption></figure>
             <p>No person can deeply review every line produced by thousands of PRs. Tan's answer is not to stop reviewing. It is to change the unit of review. She samples pull requests and code, looks rigorously for repeated shortcuts or workarounds, then modifies the environment—skills, types, lint rules, tests, and architecture—so the same class of defect becomes harder to produce.</p>
             <div class="review-grid">
               <div><h3>Blocking review</h3><p>Inspect each change before merge. Appropriate when verification is weak, consequences are high, or the change is difficult to reverse.</p></div>
