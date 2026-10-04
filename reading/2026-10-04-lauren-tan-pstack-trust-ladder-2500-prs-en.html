@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>Lauren Tan: The System Behind 2,500 Agent-Written PRs</title>
+    <meta name="description" content="A detailed guide to Lauren Tan's trust ladder for coding agents: verification, constrained environments, pstack skills, inner and outer loops, coordinator agents, sampling-based review, and responsible autonomy." />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .visual { margin: 1.7rem 0 2rem; }
+      .visual img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 4px; }
+      .visual figcaption { margin-top: .65rem; color: var(--muted); font-size: .88rem; line-height: 1.55; text-align: center; }
+      .callout { margin: 1.5rem 0; padding: 1rem !important; border-left: 3px solid var(--green) !important; background: var(--surface) !important; }
+      .callout.warning { border-left-color: #8a6417 !important; }
+      .callout p:last-child { margin-bottom: 0; }
+      .trust-ladder, .role-grid, .loop-grid, .review-grid { display: grid; gap: 1px; margin: 1.5rem 0; background: var(--line); border: 1px solid var(--line); }
+      .trust-ladder { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .role-grid, .review-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .loop-grid { grid-template-columns: minmax(0, 1fr) 2.5rem minmax(0, 1fr); align-items: stretch; }
+      .trust-ladder > div, .role-grid > div, .loop-grid > div, .review-grid > div { padding: 1rem; background: var(--paper); }
+      .trust-ladder h3, .role-grid h3, .loop-grid h3, .review-grid h3 { margin: 0 0 .45rem; font-size: 1rem; }
+      .trust-ladder p, .role-grid p, .loop-grid p, .review-grid p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.55; }
+      .loop-grid .arrow { display: grid; place-items: center; padding: 0; color: var(--ink); font-size: 1.3rem; }
+      .signal-list { display: flex; flex-wrap: wrap; gap: .4rem; margin: .8rem 0 0; padding: 0; list-style: none; }
+      .signal-list li { padding: .28rem .45rem; border: 1px solid var(--line); color: var(--muted); font-size: .78rem; }
+      .comparison { width: 100%; min-width: 0 !important; margin: 1.5rem 0; table-layout: fixed; border-collapse: collapse; }
+      .comparison th, .comparison td { padding: .78rem .55rem; text-align: left; vertical-align: top; overflow-wrap: anywhere; border-bottom: 1px solid var(--line); }
+      .comparison th { font-weight: 600; }
+      .chapter-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 1.25rem 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
+      .chapter-list li { border-bottom: 1px solid var(--line); }
+      .chapter-list a { display: flex; gap: .7rem; min-height: 100%; padding: .8rem .45rem; color: var(--ink); text-decoration: none; }
+      .chapter-list time { flex: 0 0 3.4rem; color: var(--green); font-variant-numeric: tabular-nums; }
+      @media (max-width: 750px) {
+        .trust-ladder, .role-grid, .review-grid, .chapter-list { grid-template-columns: 1fr; }
+        .loop-grid { grid-template-columns: 1fr; }
+        .loop-grid .arrow { min-height: 2.5rem; transform: rotate(90deg); }
+        .comparison { font-size: .84rem; }
+        .comparison thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+        .comparison, .comparison tbody, .comparison tr, .comparison td { display: block; width: 100%; }
+        .comparison tr { padding: .55rem 0; border-bottom: 1px solid var(--line); }
+        .comparison td { display: grid; grid-template-columns: 6.7rem minmax(0, 1fr); gap: .6rem; padding: .32rem .2rem; border: 0; }
+        .comparison td::before { color: var(--muted); font-weight: 600; }
+        .comparison td:nth-child(1)::before { content: "Layer"; }
+        .comparison td:nth-child(2)::before { content: "Encode as"; }
+        .comparison td:nth-child(3)::before { content: "Why"; }
+        .comparison td:nth-child(4)::before { content: "Evidence"; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Reading room</a>
+      <div class="top-actions"><a class="action-link" href="https://www.youtube.com/watch?v=MN9dGgmLyso">Watch video</a></div>
+    </nav>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Agentic engineering · Software delivery</p>
+          <h1>The System Behind 2,500 Agent-Written PRs</h1>
+          <p class="subtitle">Lauren Tan's real lesson is not “run more agents.” High autonomy is the output of a deliberately engineered environment: observable work, executable verification, narrow conventions, external context loops, and a review process that fixes the system rather than correcting the same agent mistake forever.</p>
+          <div class="meta"><span>1:05:36 video</span><span>Auto-generated English captions</span><span>Published October 2, 2026</span><span>Summary run: October 4, 2026 · 08:04 ICT</span></div>
+        </div>
+        <figure class="hero-card">
+          <img src="2026-10-04-lauren-tan-pstack-trust-ladder-hero.jpg" alt="Matt Pocock interviewing Lauren Tan about pstack and high-volume agent engineering" />
+          <figcaption>The headline number is the visible output. The interview is really about the verification and environment work required before agents can operate safely at that volume.</figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="eyebrow">Executive summary</p>
+            <h2>Parallelism is the reward for trust, not the starting technique</h2>
+            <p>Lauren Tan, known online as Poteto, describes how her work moved from micromanaging one coding agent to supervising many autonomous projects that can open and sometimes merge their own pull requests. The transition did not come from a clever orchestration prompt. It came from repeatedly removing the reasons an agent needed her: giving it tools to run and inspect the real application, encoding deterministic operations in scripts, constraining the codebase so the correct path is easier than the wrong path, and connecting external signals such as bug reports back into the development loop.</p>
+            <p>The viral “2,500 PRs in a month” claim needs context. Tan explicitly says those were not 2,500 product features. Much of the volume was gardening: maintenance, cleanup, pattern correction, performance work, bug triage, and improvements to the environment shared by agents and human engineers. PR count is therefore evidence of throughput, not proof of impact or quality. The interesting question is not how to reproduce the number. It is how to build a system in which high throughput does not multiply bad decisions.</p>
+            <ul>
+              <li><strong>Verification creates the agent loop.</strong> An agent cannot improve its own work if it cannot run the product, observe behaviour, collect traces, compare results, and decide whether the change satisfied the task.</li>
+              <li><strong>Move mechanical work out of language.</strong> Stable operations belong in scripts, CLIs, type systems, linters, and repository structure. Reserve model judgment for work that actually requires interpretation.</li>
+              <li><strong>The codebase is part of the harness.</strong> Conventional architecture and narrow legal paths reduce the search space for humans and agents alike.</li>
+              <li><strong>Connect the outer loop to the inner loop.</strong> Agents need current context from users, issue trackers, Slack, email, telemetry, and product decisions rather than a stale snapshot of intent.</li>
+              <li><strong>Review by sampling and system correction.</strong> At scale, inspect representative outputs, identify repeated failure patterns, then change constraints and verification so the whole fleet improves.</li>
+              <li><strong>Autonomy must match reversibility.</strong> Auto-merge is more defensible for well-tested, reversible work. One-way doors and weakly verifiable domains require tighter human gates.</li>
+            </ul>
+            <div class="callout warning"><p><strong>Evidence boundary.</strong> The operating details in this article come from Tan's interview and public pstack material. They are not an independent audit of SpaceXAI's production systems, PR quality, business impact, or security posture. Internal systems named in the conversation are described only at the level Tan disclosed publicly.</p></div>
+          </section>
+
+          <section id="origin">
+            <p class="eyebrow">Origin story</p>
+            <h2>The trust ladder began with noticing the human bottleneck</h2>
+            <p>Tan traces the approach to a side project after leaving Meta. She was already using AI to write code, but she was spending hours directing a single agent and could not tell whether a new skill actually improved the result. That pattern continued when she joined Cursor and worked on the agent interface and what the transcript calls “Grokbot.” During performance investigations, she became a manual bridge between the agent and Chrome DevTools: the agent changed code, but she had to inspect heap snapshots, traces, and runtime behaviour.</p>
+            <p>That is the first rung of the trust ladder: the model may generate code, yet the human still performs all observation and judgment. It feels faster than typing, but it does not scale because every feedback cycle waits for the same person. Tan's first major unlock was a verification skill that gave the agent “hands and eyes”—the ability to operate the application, inspect the result, and iterate without asking a person to relay every signal.</p>
+            <div class="trust-ladder">
+              <div><h3>1. Assisted</h3><p>The agent proposes code. A human runs it, interprets failures, and supplies the next instruction.</p></div>
+              <div><h3>2. Self-verifying</h3><p>The agent can launch the real product, interact with it, collect evidence, and repair observable defects.</p></div>
+              <div><h3>3. Coordinated</h3><p>Long-lived projects delegate work to multiple agents while preserving shared intent and dependencies.</p></div>
+              <div><h3>4. Autonomous</h3><p>Bounded work can be completed and merged under rigorous checks, with humans auditing results and improving the system.</p></div>
+            </div>
+            <p>The ladder is not a maturity badge for an entire company. A single repository can occupy several rungs at once. A reversible UI cleanup may run autonomously while a schema migration, payment change, or security policy remains human-gated. Trust attaches to a task, environment, and verification contract—not to “AI” in the abstract.</p>
+          </section>
+
+          <section id="kitchen">
+            <p class="eyebrow">Operating metaphor</p>
+            <h2>A Michelin kitchen preserves craft while scaling execution</h2>
+            <p>Tan prefers “Michelin kitchen” to “software factory.” A factory suggests interchangeable output and volume for its own sake. A kitchen makes the relationship between craft and coordination visible. A home cook performs preparation, cooking, timing, plating, and cleanup. Adding more people without roles or shared conventions can make the kitchen slower. Scale appears only when tools, stations, recipes, quality standards, and responsibility are designed together.</p>
+            <p>The engineer becomes closer to the executive chef or technical lead. They may write less code directly, but remain accountable for what leaves the kitchen. Their work shifts toward arranging the environment: defining the menu, preparing ingredients, creating stations, teaching the process, choosing where judgment is required, tasting results, and improving the operation when quality drifts.</p>
+            <div class="role-grid">
+              <div><h3>Human responsibilities</h3><p>Choose outcomes, define acceptable risk, design architecture, create verification, sample quality, interpret ambiguous evidence, and own the consequence.</p></div>
+              <div><h3>Agent responsibilities</h3><p>Explore the code, execute bounded tasks, run tools, collect evidence, propose and test changes, document decisions, and escalate uncertainty.</p></div>
+            </div>
+            <p>This framing avoids a common mistake: multiplying agents before designing how work is divided. Parallelism only helps when tasks have clean boundaries, the environment makes correct choices discoverable, and the outputs can be verified independently. Otherwise, the team creates coordination debt faster than code.</p>
+          </section>
+
+          <section id="verification">
+            <p class="eyebrow">Critical infrastructure</p>
+            <h2>Verification is what turns a sequence into a loop</h2>
+            <p>The interview's strongest technical claim is that verification should be the first serious skill a team builds. A prompt that says “check your work” is not enough. The agent needs a product-specific way to launch the system, navigate features, reproduce a report, inspect logs and traces, take screenshots or snapshots, measure performance, run focused tests, and compare the observed result against a finish condition.</p>
+            <p>Tan gives hill climbing as an example. If performance can be measured, an agent can propose a change, collect the same metric, retain an improvement, reject a regression, and repeat. The loop exists because there is an external signal that can disagree with the model. Without that signal, “iterate until good” becomes repeated generation judged by the same system that produced it.</p>
+            <table class="comparison">
+              <thead><tr><th>Layer</th><th>Encode as</th><th>Why</th><th>Evidence</th></tr></thead>
+              <tbody>
+                <tr><td>Product operation</td><td>Verification skill and feature map</td><td>Teach the agent how a user reaches and exercises the behaviour.</td><td>Runtime state, screenshots, traces, logs, visible output.</td></tr>
+                <tr><td>Mechanical change</td><td>Script, CLI, codemod, formatter</td><td>Avoid rebuilding the same deterministic procedure in every context window.</td><td>Repeatable command output and idempotent diffs.</td></tr>
+                <tr><td>Local invariant</td><td>Type, schema, lint rule, assertion</td><td>Reject a known bad state at the point where it is created.</td><td>Compiler, linter, or runtime failure.</td></tr>
+                <tr><td>User outcome</td><td>Scenario test or observable rubric</td><td>Compilation proves syntax, not that the workflow works for a person.</td><td>End-to-end behaviour and literal expected result.</td></tr>
+                <tr><td>Ambiguous quality</td><td>Human review plus calibrated evaluators</td><td>Some properties require judgment and cannot be reduced to one mechanical check.</td><td>Examples, ratings, disagreement, and sampled transcripts.</td></tr>
+              </tbody>
+            </table>
+            <p>Public pstack documentation now exposes this emphasis directly through skills for creating and maintaining a verification skill. That public repo supports the interview's general philosophy, but it does not reveal the complete internal verification environment discussed in the video.</p>
+          </section>
+
+          <section id="determinism">
+            <p class="eyebrow">Control allocation</p>
+            <h2>Use models for judgment and software for invariants</h2>
+            <p>Tan describes a gradient between work that genuinely requires judgment and work that is mechanical. A model is useful when it must integrate scattered evidence, interpret intent, generate alternatives, or reason about an unfamiliar failure. It is wasteful when every run must rediscover how to open DevTools, transform an AST, enumerate features, or apply a known migration.</p>
+            <p>Her response is to extract deterministic portions into a CLI or script and keep the skill as a thin workflow wrapper. That improves speed, reduces context consumption, and—more importantly—makes different agents execute the same operation the same way. The point is not that a CLI is sophisticated. The point is that the team retains a successful procedure instead of paying each agent to reinvent and debug it.</p>
+            <div class="callout"><p><strong>Design test.</strong> When a rule appears in a skill for the second time, ask whether it should become structure. If a bad state can be made impossible with a type, directory convention, lint rule, generated registry, or idempotent script, that is stronger than another paragraph asking the model to remember.</p></div>
+          </section>
+
+          <section id="environment">
+            <p class="eyebrow">The codebase as harness</p>
+            <h2>The new engineering work is shaping the environment</h2>
+            <p>Low trust creates a trap. The engineer micromanages the agent because the environment provides weak guidance. Micromanagement consumes the time that could have improved the environment, so trust remains low. Tan compares this to cutting everything with a dull knife while deadlines leave no time to sharpen it.</p>
+            <p>Her alternative is to spend deliberate time making the repository easy to change correctly. In the interview she describes an internal framework called Dune, roughly an internal Next.js-like framework for Electron applications. Its value is not novelty. Restrictive lint rules and conventional feature directories create one obvious path. Early versions of the application had several enormous “god files”; the framework and conventions prevent agents from repeatedly extending that failure mode.</p>
+            <p>The general pattern is more important than Dune:</p>
+            <ol>
+              <li>Observe a recurring agent failure in real work.</li>
+              <li>Find the environmental condition that allowed it.</li>
+              <li>Encode the preferred path in architecture, types, tooling, or checks.</li>
+              <li>Run the same class of work again and verify that the failure becomes rarer.</li>
+              <li>Keep the constraint only if it improves the system without blocking legitimate variation.</li>
+            </ol>
+            <p>This is fleet-level learning. Correcting one generated file fixes one output. Changing the environment alters the probability distribution of every future agent and every new human contributor.</p>
+          </section>
+
+          <section id="loops">
+            <p class="eyebrow">System architecture</p>
+            <h2>High throughput comes from connecting the outer and inner loops</h2>
+            <p>A coding agent normally begins with a snapshot of intent: a task, repository state, and whatever context the operator supplied. That snapshot goes stale. New bug reports arrive in Slack or Linear, customers reveal related symptoms, infrastructure constraints surface, and product priorities change. If the agent cannot retrieve those signals, the human remains a “context courier” between the organisation and the coding loop.</p>
+            <div class="loop-grid">
+              <div>
+                <h3>Outer loop: changing reality</h3>
+                <p>Connectors and routines observe external systems, collect new signals, group related work, and decide what deserves investigation.</p>
+                <ul class="signal-list"><li>Slack</li><li>Linear</li><li>Email</li><li>User reports</li><li>Telemetry</li><li>Repository</li></ul>
+              </div>
+              <div class="arrow" aria-hidden="true">→</div>
+              <div>
+                <h3>Inner loop: engineering execution</h3>
+                <p>Coordinator agents preserve shared intent, delegate tasks, reproduce problems, modify code, verify outcomes, and prepare or land changes.</p>
+                <ul class="signal-list"><li>Projects</li><li>Subagents</li><li>Tests</li><li>Runtime QA</li><li>PRs</li><li>Evidence</li></ul>
+              </div>
+            </div>
+            <p>Tan describes personal or connector agents monitoring services and sending relevant work to long-lived Cursor projects. A project acts like a chief of staff: it coordinates rather than performing every task itself. If thirty related performance reports arrive, the coordinator can preserve the thread between them, assign investigations, and search for one upstream cause instead of spawning thirty isolated fixes that duplicate work.</p>
+            <p>This is the architectural explanation for the large PR count. Tan is not manually opening thousands of chats. Persistent loops discover work, acquire context, group it, and feed coordinated projects that can delegate to subagents. The number of agents is downstream of that information architecture.</p>
+          </section>
+
+          <section id="gardening">
+            <p class="eyebrow">What the metric hides</p>
+            <h2>2,500 PRs does not mean 2,500 features</h2>
+            <p>At 46 minutes, Tan explicitly corrects the headline interpretation. A substantial share of the work is “gardening”: scanning for repeated bad patterns, improving maintainability, resolving bugs, tightening conventions, reducing performance problems, and preparing a better environment for the whole team. These changes can be small and atomic, which naturally increases PR count.</p>
+            <p>One routine searches for React footguns but does not immediately fix each occurrence. It appends findings to a document. After several days, a human or higher-level agent can inspect the buffer, recognise that many instances share one cause, and choose a systemic correction. The queue prevents a fleet of agents from executing locally plausible but globally repetitive work.</p>
+            <div class="callout warning"><p><strong>Metric warning.</strong> PR count has no denominator for scope, risk, acceptance, reverts, defects, review burden, or customer outcome. Use it to understand operating scale, not as a productivity target. A healthier dashboard would pair throughput with lead time, escaped defects, rollback rate, repeated failure classes, human intervention, and measurable product impact.</p></div>
+          </section>
+
+          <section id="review">
+            <p class="eyebrow">Quality at scale</p>
+            <h2>Sample outputs, then repair the production system</h2>
+            <p>No person can deeply review every line produced by thousands of PRs. Tan's answer is not to stop reviewing. It is to change the unit of review. She samples pull requests and code, looks rigorously for repeated shortcuts or workarounds, then modifies the environment—skills, types, lint rules, tests, and architecture—so the same class of defect becomes harder to produce.</p>
+            <div class="review-grid">
+              <div><h3>Blocking review</h3><p>Inspect each change before merge. Appropriate when verification is weak, consequences are high, or the change is difficult to reverse.</p></div>
+              <div><h3>Sampling review</h3><p>Allow bounded work through strong checks, then audit representative outputs and fleet-level trends. Appropriate only after trust has been earned.</p></div>
+            </div>
+            <p>Tan describes a “full autopilot” mode in which multiple verifier agents exercise the application, search for regressions, fix discovered problems, and repeat before a pull request lands. She also emphasises that reaching this point takes sustained effort. Installing pstack does not create a dark factory. The repository, verification loop, task boundaries, and risk controls must already support it.</p>
+            <p>The strongest insight is that post-merge review can still be active governance when the system is designed for reversibility. The human inspects history, samples results, reverts or modifies failures, and converts patterns into new constraints. But this model becomes irresponsible when rollback is incomplete, the verification signal is weak, or failures harm users before discovery.</p>
+          </section>
+
+          <section id="risk">
+            <p class="eyebrow">Autonomy boundary</p>
+            <h2>One-way doors expose the limit of the method</h2>
+            <p>Matt Pocock asks about medical, legal, financial, and other changes that cannot be cheaply undone. Tan's answer is appropriately bounded: autonomy depends on verifiability. Software engineering often provides compilers, tests, runtime inspection, staged rollout, and version control. Other domains—or particular software changes—may not offer a signal strong enough to justify autonomous execution.</p>
+            <p>Formal methods may turn some apparent one-way doors into safer decisions, and Tan points to languages that combine programming with proofs. But she does not claim that every domain can reach the same autonomy. A passing test suite is not proof that a policy is fair, a medical recommendation is safe, a migration preserves every record, or a security boundary has no unseen path.</p>
+            <ul>
+              <li><strong>Reversible and observable:</strong> automate progressively, retain evidence, and sample.</li>
+              <li><strong>Reversible but weakly observable:</strong> keep review until outcome signals improve.</li>
+              <li><strong>Irreversible but strongly specified:</strong> require independent verification and explicit approval.</li>
+              <li><strong>Irreversible and ambiguous:</strong> do not treat agent confidence as permission to act.</li>
+            </ul>
+          </section>
+
+          <section id="skills">
+            <p class="eyebrow">Skills as process memory</p>
+            <h2>Your corrections are the raw material for your own skill library</h2>
+            <p>The closing discussion rejects the idea that users must choose one person's skill collection wholesale. Skills are workflows expressed in language. They can be combined, shortened, forked, or replaced. What matters is whether the operator understands and trusts the process they encode.</p>
+            <p>Tan recommends mining prior agent transcripts for repeated interventions: moments when the user corrected an assumption, supplied missing context, rejected a shortcut, or explained how to verify a result. Those conversations are not merely logs. They are observed process. A repeated correction can become a skill; a mechanical instruction can become a script; a forbidden pattern can become a lint rule; a useful investigation path can become a recall workflow.</p>
+            <p>Her public pstack repository reflects this direction. Its current skills emphasise verification, investigation, review, reflection, and principles rather than giant collections of implementation trivia. Tan predicts that stronger models will make skills smaller: they will preserve the workflow and the decision boundary while leaving ordinary implementation details to the model.</p>
+          </section>
+
+          <section id="adoption">
+            <p class="eyebrow">Practical adoption</p>
+            <h2>Climb one rung with one closed loop</h2>
+            <p>A team should not begin by copying the final architecture or chasing thousands of PRs. Start where the human is visibly relaying information or repeating checks. Choose one narrow, frequent, reversible task and make its finish condition observable.</p>
+            <ol>
+              <li><strong>Record the current loop.</strong> Capture the task request, human interventions, tools used, evidence inspected, and decision to accept or reject.</li>
+              <li><strong>Build real verification.</strong> Give the agent a repeatable path to run the actual system and observe the user-facing result.</li>
+              <li><strong>Extract determinism.</strong> Replace repeated language instructions with scripts, types, linters, fixtures, and repository conventions.</li>
+              <li><strong>Measure failure classes.</strong> Track why humans intervene, not only how many tasks complete.</li>
+              <li><strong>Increase authority narrowly.</strong> Let the agent perform one additional reversible action when evidence shows the loop is reliable.</li>
+              <li><strong>Add coordination last.</strong> Introduce more agents only when task boundaries and verification allow independent work without multiplying ambiguity.</li>
+            </ol>
+            <div class="callout"><p><strong>For an agentic platform team.</strong> The reusable unit is not a persona prompt. It is a versioned work contract: intent, context sources, allowed actions, deterministic tools, verification procedure, escalation conditions, evidence output, and ownership. Master agents and subagents become useful after these contracts exist.</p></div>
+          </section>
+
+          <section id="take">
+            <p class="eyebrow">My take</p>
+            <h2>The breakthrough is environmental learning</h2>
+            <p>The interview is convincing when it treats trust as an engineering result rather than a feeling. The agent does not become trustworthy because a user becomes comfortable with it. Trust rises because the system exposes reality, rejects known bad states, preserves successful procedures, narrows the action space, and produces evidence that can falsify its own claim of completion.</p>
+            <p>The most transferable idea is the shift from session-level correction to environment-level learning. Most agent use today is amnesiac: a person catches an error, fixes the prompt, and repeats the same lesson next week. Tan's process asks where that lesson belongs permanently. This mirrors how mature engineering organisations improve—through tests, types, APIs, playbooks, architecture, and post-incident changes—not through heroic vigilance.</p>
+            <p>The headline number remains the least useful part. Thousands of PRs can still create thousands of tiny liabilities. What matters is whether the organisation can explain why work was initiated, how it was verified, which failures escaped, how the environment changed afterward, and whether customers received a better outcome. High autonomy without that evidence is not a trust ladder. It is invisible risk.</p>
+          </section>
+
+          <section id="map">
+            <p class="eyebrow">Video map</p>
+            <h2>Where the main ideas appear</h2>
+            <ul class="chapter-list">
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=60s"><time>01:00</time><span>The 2,500-PR claim and trust ladder</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=118s"><time>01:58</time><span>From side project to pstack</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=362s"><time>06:02</time><span>Make the easy thing the right thing</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=411s"><time>06:51</time><span>Why domain expertise matters more</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=680s"><time>11:20</time><span>Michelin kitchen, not software factory</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=974s"><time>16:14</time><span>Verification gives agents hands and eyes</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=1088s"><time>18:08</time><span>Hill climbing and measurable loops</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=1263s"><time>21:03</time><span>Judgment versus deterministic tooling</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=1574s"><time>26:14</time><span>The engineer's new job: environment design</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=1801s"><time>30:01</time><span>Dune, conventions, and restrictive linting</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=1980s"><time>33:00</time><span>Prerequisites for high PR volume</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=2125s"><time>35:25</time><span>Outer and inner loops</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=2327s"><time>38:47</time><span>Coordinator agents and autonomous merge</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=2460s"><time>41:00</time><span>Connectors, projects, and context not control</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=2761s"><time>46:01</time><span>2,500 PRs includes gardening</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=2839s"><time>47:19</time><span>Buffer findings before executing fixes</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=2955s"><time>49:15</time><span>Review through sampling</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=3119s"><time>51:59</time><span>The bounded dark factory</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=3388s"><time>56:28</time><span>One-way doors and verifiability</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso&t=3635s"><time>1:00:35</time><span>Build skills from previous transcripts</span></a></li>
+            </ul>
+          </section>
+
+          <section id="sources">
+            <p class="eyebrow">Sources</p>
+            <h2>Primary conversation and public workflow material</h2>
+            <ol>
+              <li><a href="https://www.youtube.com/watch?v=MN9dGgmLyso">Matt Pocock — Poteto on shipping thousands of PRs a month</a>. Primary 65-minute conversation and auto-generated English transcript.</li>
+              <li><a href="https://github.com/backnotprop/pstack">Lauren Tan / Poteto — pstack standalone mirror</a>. Public skills, principles, installation notes, and current workflow descriptions.</li>
+              <li><a href="https://github.com/cursor/plugins/tree/main/pstack">Cursor plugins — pstack</a>. Upstream public plugin location referenced by the standalone mirror.</li>
+              <li><a href="https://x.com/poteto/status/2082874054483255805">Lauren Tan — verification-skill announcement</a>. Public explanation of create-verification-skill, maintain-verification-skill, and the feature-map concept.</li>
+            </ol>
+            <p class="source-note">Source review completed October 4, 2026. Public repositories can change after publication. Internal names and operating details are preserved only as statements from the interview; the article does not infer undisclosed SpaceXAI architecture.</p>
+          </section>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <p>On this page</p>
+          <nav>
+            <a href="#summary">Executive summary</a><a href="#origin">Trust ladder</a><a href="#kitchen">Michelin kitchen</a><a href="#verification">Verification</a><a href="#determinism">Determinism</a><a href="#environment">Agent environment</a><a href="#loops">Inner and outer loops</a><a href="#gardening">What 2,500 PRs means</a><a href="#review">Review at scale</a><a href="#risk">Autonomy boundary</a><a href="#skills">Skills as process</a><a href="#adoption">Practical adoption</a><a href="#take">My take</a><a href="#map">Video map</a><a href="#sources">Sources</a>
+          </nav>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>
