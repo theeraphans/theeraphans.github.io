@@ -56,15 +56,79 @@
       .visual {
         margin: 1.75rem 0 2rem;
       }
-      .slide-figure a {
-        display: block;
-      }
-      .slide-figure img {
-        display: block;
-        width: 100%;
-        height: auto;
+      .diagram-panel {
         border: 1px solid var(--line);
         border-radius: 4px;
+        background: var(--page);
+        overflow: hidden;
+      }
+      .diagram-label {
+        margin: 0;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .trust-chart {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .trust-stage {
+        min-height: 12rem;
+        padding: 1rem;
+        border-right: 1px solid var(--line);
+      }
+      .trust-stage:last-child {
+        border-right: 0;
+      }
+      .trust-stage span {
+        display: block;
+        width: fit-content;
+        margin-bottom: 2.4rem;
+        padding: 0.25rem 0.45rem;
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.72rem;
+      }
+      .trust-stage:nth-child(2) span {
+        margin-bottom: 1.2rem;
+      }
+      .trust-stage:nth-child(3) span {
+        margin-bottom: 0;
+      }
+      .trust-stage strong {
+        display: block;
+        margin-bottom: 0.4rem;
+        font-size: 1rem;
+      }
+      .trust-stage p,
+      .verification-grid p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1.5;
+      }
+      .verification-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .verification-grid > div {
+        min-height: 10rem;
+        padding: 1rem;
+        border-right: 1px solid var(--line);
+      }
+      .verification-grid > div:last-child {
+        border-right: 0;
+      }
+      .verification-grid b {
+        display: block;
+        margin: 0.7rem 0 0.4rem;
+      }
+      .verification-grid small {
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
       }
       .slide-figure figcaption,
       .visual figcaption {
@@ -159,6 +223,25 @@
         .visual {
           margin: 1.35rem 0 1.7rem;
         }
+        .trust-chart,
+        .verification-grid {
+          grid-template-columns: 1fr;
+        }
+        .trust-stage,
+        .verification-grid > div {
+          min-height: 0;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .trust-stage:last-child,
+        .verification-grid > div:last-child {
+          border-bottom: 0;
+        }
+        .trust-stage span,
+        .trust-stage:nth-child(2) span,
+        .trust-stage:nth-child(3) span {
+          margin-bottom: 0.75rem;
+        }
         .slide-figure figcaption,
         .visual figcaption {
           font-size: 0.86rem;
@@ -195,11 +278,11 @@
         <figure class="hero-card">
           <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g"
             ><img
-              src="https://i.ytimg.com/vi/yw_QhowlZ2g/hqdefault.jpg"
+              src="2026-09-20-lauren-tan-workshop-hero.jpg"
               alt="Lauren Tan presenting a workshop about trustworthy coding agents"
           /></a>
           <figcaption>
-            How Cursor Turned AI Agents Into Better Engineers.
+            Source thumbnail for How Cursor Turned AI Agents Into Better Engineers.
           </figcaption>
         </figure>
       </header>
@@ -252,6 +335,14 @@
               verifier.
             </p>
             <p>
+              She begins with a useful boundary: AI should behave like a pair,
+              not a replacement for thinking. Code generation may reduce typing
+              time while increasing the time spent reviewing and correcting
+              work. The objective is therefore not maximum output. It is a
+              system that can produce evidence strong enough to reduce the
+              human verification burden without hiding uncertainty.
+            </p>
+            <p>
               Her answer is to move engineering knowledge out of the reviewer's
               head and into the environment. A verification skill lets the agent
               run the product, inspect UI or runtime behavior, capture traces,
@@ -283,16 +374,19 @@
               than every line.
             </p>
             <figure class="slide-figure">
-              <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g&t=240s"
-                ><img
-                  src="2026-09-20-lauren-tan-slide-agent-trust-curve.jpg"
-                  alt="Lauren Tan's sketch of trust increasing with the number of agents"
-              /></a>
+              <div class="diagram-panel">
+                <p class="diagram-label">Trust must rise before agent count</p>
+                <div class="trust-chart">
+                  <div class="trust-stage"><span>LOW TRUST</span><strong>One agent, constant supervision</strong><p>The human relays observations, checks every result, and remains the execution bottleneck.</p></div>
+                  <div class="trust-stage"><span>PROVEN LOOP</span><strong>Several agents, executable verification</strong><p>Agents can run the product, collect evidence, and follow tested engineering skills.</p></div>
+                  <div class="trust-stage"><span>BOUNDED AUTONOMY</span><strong>Cloud parallelism and automated merges</strong><p>Strict architecture, CI, evals, and recovery controls make wider delegation defensible.</p></div>
+                </div>
+              </div>
               <figcaption>
-                <strong>What to notice:</strong> The curve is intentionally
-                qualitative. Scaling from one agent to hundreds is not a tooling
-                switch; it requires trust to rise first. Click the image to hear
-                the explanation.
+                <strong>What to notice:</strong> This redraw preserves the
+                workshop's qualitative trust curve without relying on a blurry
+                video frame. Scaling from one agent to hundreds is not a tooling
+                switch. It requires evidence to rise first. <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g&t=240s">Watch the source explanation.</a>
               </figcaption>
             </figure>
             <p>
@@ -339,17 +433,19 @@
               behavioral proof.
             </p>
             <figure class="slide-figure">
-              <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g&t=420s"
-                ><img
-                  src="2026-09-20-lauren-tan-slide-control-glass-verification.jpg"
-                  alt="Control Glass skill describing browser control and isolated worktree flows"
-              /></a>
+              <div class="diagram-panel">
+                <p class="diagram-label">A verification skill gives the agent hands and eyes</p>
+                <div class="verification-grid">
+                  <div><small>01</small><b>Launch</b><p>Start the correct build in the correct worktree and diagnose the environment before changing code.</p></div>
+                  <div><small>02</small><b>Operate</b><p>Use browser, simulator, CLI, traces, or logs to reproduce the behavior through the real product surface.</p></div>
+                  <div><small>03</small><b>Observe</b><p>Collect screenshots, runtime state, performance data, and failure signals instead of relying on self-report.</p></div>
+                  <div><small>04</small><b>Prove</b><p>Repeat the user path after the change and leave evidence that the original problem is gone.</p></div>
+                </div>
+              </div>
               <figcaption>
                 <strong>What to notice:</strong> Control Glass is operational
-                documentation, not a vague persona prompt. It tells the agent
-                how to launch the correct build, attach through Playwright/CDP,
-                respect worktree isolation, inspect the product, and diagnose
-                the environment before acting.
+                documentation, not a vague persona prompt. It explains how to
+                launch, inspect, verify, and preserve isolation. <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g&t=420s">Watch the source explanation.</a>
               </figcaption>
             </figure>
             <p>
@@ -554,6 +650,13 @@
               not an independent quality metric. The deeper evidence is whether
               the resulting codebase reduces rework, escaped defects, review
               time, and performance regressions.
+            </p>
+            <p>
+              She also prefers work to be split into coherent pull requests.
+              Git history becomes durable context: each change explains one
+              intent, can be reverted independently, and narrows the search when
+              a regression appears. There is no universal line-count limit, but
+              a 40,000-line change destroys much of that recovery value.
             </p>
           </section>
 
@@ -786,10 +889,20 @@
               pstack's purpose and authorship were checked against the public
               <a href="https://github.com/cursor/plugins/tree/main/pstack"
                 >Cursor plugin repository</a
-              >. The screenshots are frames from the supplied reupload. The
-              eval-loop, architecture diagram, cautions about metrics, and
-              adoption checklist are editorial synthesis grounded in the
-              workshop.
+              >. The trust and verification visuals were redrawn as responsive
+              HTML diagrams because the available reupload frames were only
+              854 by 480 pixels. The eval-loop, architecture diagram, cautions
+              about metrics, and adoption checklist are editorial synthesis
+              grounded in the workshop.
+            </p>
+            <p>
+              Completeness was checked again on October 5, 2026 against the
+              55-minute transcript from a second reupload,
+              <a href="https://www.youtube.com/watch?v=u1hqfjrMhwQ"
+                >SpaceX AI Engineer: Stop Using AI Agents Like This</a
+              >. That pass added the pair-programming boundary and the role of
+              atomic pull requests as context and recovery. The remaining core
+              topics were already represented in this article.
             </p>
             <p>
               Company-wide adoption percentages and viral descriptions of a
