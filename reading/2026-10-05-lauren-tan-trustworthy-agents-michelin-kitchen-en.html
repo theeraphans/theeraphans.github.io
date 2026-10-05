@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>Lauren Tan: Build the Environment Before You Scale the Agents</title>
+    <meta name="description" content="Lauren Tan's detailed playbook for trustworthy coding agents: verification skills, feature maps, codebases as memory, static analysis, Dune, gardening, Grokbot routines, and the Michelin-kitchen operating model." />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .visual { margin: 1.7rem 0 2rem; }
+      .visual img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 4px; }
+      .visual figcaption { margin-top: .65rem; color: var(--muted); font-size: .88rem; line-height: 1.55; text-align: center; }
+      .callout { margin: 1.5rem 0; padding: 1rem !important; border-left: 3px solid var(--green) !important; background: var(--surface) !important; }
+      .callout.warning { border-left-color: #8a6417 !important; }
+      .callout p:last-child { margin-bottom: 0; }
+      .trust-grid, .stack-grid, .loop-grid { display: grid; gap: 1px; margin: 1.5rem 0; background: var(--line); border: 1px solid var(--line); }
+      .trust-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .stack-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+      .loop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .trust-grid > div, .stack-grid > div, .loop-grid > div { padding: 1rem; background: var(--paper); }
+      .trust-grid h3, .stack-grid h3, .loop-grid h3 { margin: 0 0 .45rem; font-size: 1rem; }
+      .trust-grid p, .stack-grid p, .loop-grid p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.55; }
+      .stack-grid strong { display: block; margin-bottom: .4rem; font-size: .78rem; color: var(--green); }
+      .chapter-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 1.25rem 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
+      .chapter-list li { border-bottom: 1px solid var(--line); }
+      .chapter-list div { display: flex; gap: .7rem; min-height: 100%; padding: .8rem .45rem; }
+      .chapter-list time { flex: 0 0 3.4rem; color: var(--green); font-variant-numeric: tabular-nums; }
+      @media (max-width: 850px) {
+        .trust-grid, .stack-grid, .loop-grid, .chapter-list { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Reading room</a>
+      <div class="top-actions"><a class="action-link" href="https://x.com/poteto/status/2102050467505430555/video/1">Watch video</a></div>
+    </nav>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Agentic engineering · Software systems</p>
+          <h1>Build the Environment Before You Scale the Agents</h1>
+          <p class="subtitle">Lauren Tan's updated operating model for coding agents: earn trust with executable verification, move repeated judgment into the codebase, stop bad patterns at the structural layer, and connect a well-governed inner loop to real operational signals.</p>
+          <div class="meta"><span>38:02 video</span><span>Publisher-supplied English captions</span><span>Published September 21, 2026</span><span>Summary run: October 5, 2026 · 19:59 ICT</span></div>
+        </div>
+        <figure class="hero-card">
+          <img src="2026-10-05-lauren-tan-trust-agenda.jpg" alt="Lauren Tan presenting four themes for trustworthy coding agents: trust, increasing trust, codebases as memory, and automation" />
+          <figcaption>The talk is not a recipe for spawning more agents. It is a sequence for making their environment more trustworthy before increasing parallelism.</figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="eyebrow">Executive summary</p>
+            <h2>Agent autonomy is the output of environmental engineering</h2>
+            <p>Lauren Tan, known online as Poteto, argues that teams do not reach high agent throughput by writing one better prompt or starting one hundred workers. They reach it by repeatedly removing the reasons an agent needs a human: give it a deterministic way to operate the product, a map of how the product works, executable quality checks, a codebase whose easiest path is the correct path, and an outer loop that supplies current operational context.</p>
+            <p>Her preferred metaphor is a Michelin kitchen rather than a software factory. The goal is not interchangeable mass production. It is coordinated creative work in an environment where equipment, stations, training, cleanup, safety, and quality standards allow many contributors to produce a coherent result. The human remains accountable for what leaves the kitchen even when agents perform more of the individual steps.</p>
+            <ul>
+              <li><strong>Trust comes before parallelism.</strong> Scaling low-trust agents multiplies regressions, review load, and low-quality pull requests.</li>
+              <li><strong>Verification needs both hands and context.</strong> A CLI lets the agent control the real product; a feature map tells it what the product contains and how users reach each capability.</li>
+              <li><strong>The codebase is durable memory.</strong> Agents copy nearby patterns. Good architecture compounds; workarounds and anti-patterns compound too.</li>
+              <li><strong>Corrections should move downward.</strong> Prefer architecture and data structures, then static analysis, then rules and review agents, then skills, leaving a human-only style guide as the weakest backstop.</li>
+              <li><strong>Automation belongs at the end.</strong> Grokbot routines and cloud agents become useful after the inner engineering loop can verify and constrain its own work.</li>
+            </ul>
+            <div class="callout warning"><p><strong>Evidence boundary.</strong> This article is based on Tan's public talk and its supplied caption track. The post description says “2,500 PRs,” while Tan says “2,000 pull requests” in the recording. Neither figure is independently audited here, and PR count alone does not establish quality, product impact, or safety.</p></div>
+          </section>
+
+          <section id="trust">
+            <p class="eyebrow">The central constraint</p>
+            <h2>The human bottleneck is usually a trust problem</h2>
+            <p>Tan begins with performance work on Cursor's new agents window. The product was changing quickly, but detecting regressions still required her to inspect Chrome DevTools traces and heap snapshots manually. Code generation was fast; empirical judgment remained serial. Her question changed from “How can the agent write this code?” to “How can the agent run the product, collect the same evidence I use, identify the hotspot, and iterate toward a measurable improvement?”</p>
+            <p>That reframing explains her trust curve. With one to five agents, the operator can watch every session, correct every misunderstanding, and relay every observation. Trying to jump directly to one hundred agents does not remove that work. It produces one hundred streams of uncertain output. More parallelism becomes useful only after fewer tasks require intervention.</p>
+            <figure class="visual"><img src="2026-10-05-lauren-tan-trust-agenda.jpg" alt="Lauren Tan's opening slide listing trust, increasing trust, codebases as memory, and automation" loading="lazy" /><figcaption><strong>From the video at 00:25.</strong> Automation is the fourth topic, not the first. The talk builds from trust and environment design toward autonomous routines.</figcaption></figure>
+            <div class="trust-grid">
+              <div><h3>Low trust</h3><p>A person watches every chat, runs the application, interprets evidence, and tells the agent what to do next.</p></div>
+              <div><h3>Earned trust</h3><p>The agent can operate the product, verify observable outcomes, and follow stable engineering workflows.</p></div>
+              <div><h3>Scaled trust</h3><p>Bounded tasks run in parallel because failures are visible, known bad states are blocked, and escalation remains possible.</p></div>
+            </div>
+          </section>
+
+          <section id="verification">
+            <p class="eyebrow">Verification infrastructure</p>
+            <h2>A CLI gives the agent hands; a feature map gives it orientation</h2>
+            <p>Tan's first verification skill, Control Glass, used the Chrome DevTools Protocol to run the application, capture traces, and inspect performance evidence. The important design choice was to package the mechanical operation as a maintained CLI. Without that tool, every session could invent a different script and rediscover the same integration failures. The CLI makes evidence collection reproducible.</p>
+            <p>Control alone was not enough. When a Slack report contained a tiny screenshot and a few question marks, the agent could launch the product but did not know which feature the report referred to. Tan added a feature map: materialized product memory describing available features, navigation paths, shortcuts, relevant DOM elements, and expected behavior. An automation keeps that map current.</p>
+            <figure class="visual"><img src="2026-10-05-lauren-tan-verification-map.jpg" alt="Slide showing a feature map plus a CLI enabling an agent to verify its own work" loading="lazy" /><figcaption><strong>From the video at 10:45.</strong> High-quality verification combines a product map with a repeatable control surface. One supplies meaning; the other supplies action and evidence.</figcaption></figure>
+            <p>The distinction matters for any agentic platform. A tool declaration says what action exists. It does not explain when the action is relevant, how the user reaches the affected workflow, which evidence proves success, or what uncertainty should trigger escalation. A robust skill joins those elements into a closed loop.</p>
+          </section>
+
+          <section id="quality">
+            <p class="eyebrow">Beyond correctness</p>
+            <h2>A working feature can still be poor engineering</h2>
+            <p>Verification answers a narrow question: did the requested behavior work? It does not automatically answer whether the change is fast, maintainable, secure, or consistent with the system. Tan places engineering playbooks such as debugging, prototyping, and feature-development skills above the basic control loop. Experienced engineers can encode how they investigate and judge work, while runtime metrics provide evidence that the process improved the actual product.</p>
+            <p>This is the role Tan assigns to pstack: not a magic prompt pack, but a collection of workflows derived from real engineering practice. The strongest version combines a domain-specific verification skill with team-specific methods. The agent learns both how to check the product and how the team expects engineering work to proceed.</p>
+            <div class="callout"><p><strong>Platform implication.</strong> Keep “can perform the action,” “can verify the user outcome,” and “can judge engineering quality” as separate capabilities. Bundling them into one persona prompt makes failures hard to diagnose and governance hard to enforce.</p></div>
+          </section>
+
+          <section id="stack">
+            <p class="eyebrow">The correction ladder</p>
+            <h2>Move repeated lessons from prose into structure</h2>
+            <p>Tan presents five places a correction can live. They are not equally reliable. A style guide depends on a person remembering to inspect every line. A skill is reusable but can be skipped or misapplied. A rule or review agent provides stronger guidance. Static analysis rejects a class of error mechanically. Architecture and data structures are strongest when they make the wrong state impossible to express.</p>
+            <figure class="visual"><img src="2026-10-05-lauren-tan-trust-stack.jpg" alt="Lauren Tan's five-part hierarchy for encoding corrections: codebase, static analysis, rules or bug bot, skills, and style guide" loading="lazy" /><figcaption><strong>From the video at 18:35.</strong> When an agent repeats a mistake, ask for the lowest layer that can prevent the entire failure class.</figcaption></figure>
+            <div class="stack-grid">
+              <div><strong>1 · Strongest</strong><h3>Codebase</h3><p>Architecture, types, data structures, and APIs make the intended path natural or unavoidable.</p></div>
+              <div><strong>2</strong><h3>Static analysis</h3><p>Compilers, linters, dependency rules, and CI reject known bad patterns before merge.</p></div>
+              <div><strong>3</strong><h3>Rules and review bots</h3><p>Contextual guidance and automated review catch issues that are not yet structural invariants.</p></div>
+              <div><strong>4</strong><h3>Skills</h3><p>Reusable workflows teach investigation and judgment but still depend on correct invocation and execution.</p></div>
+              <div><strong>5 · Weakest</strong><h3>Style guide</h3><p>Human memory and manual review remain useful, but they cannot carry a high-throughput system alone.</p></div>
+            </div>
+            <p>The practical rule is simple: when a human corrects the same behavior twice, stop polishing the wording first. Ask whether the repository can encode the lesson in a form that every future contributor—human or agent—will encounter automatically.</p>
+          </section>
+
+          <section id="memory">
+            <p class="eyebrow">Codebase as memory</p>
+            <h2>Agents copy the system they see, including its compromises</h2>
+            <p>Files opened by an agent become part of its context. That makes the repository a materialized snapshot of what the organization currently accepts. A coherent pattern increases the probability that the next change will follow it. A workaround, copied repeatedly, can become an accidental standard within days.</p>
+            <p>Tan's sharpest example is code comments. In the environment she describes, agents sometimes used nearby comments as justification for preserving a workaround instead of fixing the underlying design. Dune, the agent-oriented framework behind Grokbot, therefore bans comments. This is a local policy, not a universal recommendation: many codebases need comments for rationale, constraints, safety, or non-obvious behavior. The transferable lesson is to inspect what agents use as permission for shortcuts and redesign that surface deliberately.</p>
+            <p>Her Dune example also enforces process boundaries. Code meant for Electron's main process cannot leak into the renderer, protecting the UI thread from expensive work. The framework co-locates features, defines explicit entry points, and narrows import paths. The agent does not need to remember every performance lesson because the dependency graph carries part of that memory.</p>
+          </section>
+
+          <section id="garden">
+            <p class="eyebrow">Maintenance model</p>
+            <h2>A high-throughput team needs gardeners, not only builders</h2>
+            <p>Tan compares the codebase to a garden. Small workarounds can spread because each new agent sees prior output as precedent. The team needs someone—or a bounded automated process—watching for emerging patterns before they become the default.</p>
+            <figure class="visual"><img src="2026-10-05-lauren-tan-codebase-garden.jpg" alt="Slide showing a cycle from deleting tech debt to keeping one paved path and linting against anti-patterns" loading="lazy" /><figcaption><strong>From the video at 25:30.</strong> The gardening loop removes existing debt, preserves one paved path, and adds enforcement when a new anti-pattern appears.</figcaption></figure>
+            <ol>
+              <li><strong>Delete existing tech debt.</strong> A repository full of exceptions teaches agents to produce more exceptions.</li>
+              <li><strong>Keep one paved path.</strong> Stable conventions reduce guessing about where code belongs and how components interact.</li>
+              <li><strong>Lint against recurrence.</strong> A new rule can stop the bleeding even when the team cannot immediately clean every old instance.</li>
+              <li><strong>Use agents for cleanup.</strong> Once the invariant is explicit, agents can migrate old code under measurable constraints.</li>
+            </ol>
+            <p>The gardener role is system maintenance, not cosmetic cleanup. Its output is a repository that future agents can imitate safely.</p>
+          </section>
+
+          <section id="kitchen">
+            <p class="eyebrow">Operating model</p>
+            <h2>The Michelin kitchen preserves responsibility while distributing work</h2>
+            <p>Tan rejects “software factory” because software is not identical output moving down an assembly line. A kitchen better captures creative coordination. Line cooks, sous chefs, equipment, stations, training, and dishwashing all affect quality. The executive chef may not prepare every component, but remains responsible for the finished dish and for improving the environment when people repeatedly fail.</p>
+            <figure class="visual"><img src="2026-10-05-lauren-tan-michelin-kitchen.jpg" alt="Slide comparing a Michelin kitchen or software factory with Grokbot, cloud agents, automations, and agent SDKs" loading="lazy" /><figcaption><strong>From the video at 31:20.</strong> The outer automation layer only becomes valuable after the kitchen has tools, roles, constraints, and quality control.</figcaption></figure>
+            <p>This metaphor also exposes a scaling error. Adding more cooks to a chaotic kitchen makes it more dangerous. Adding more agents to a weak repository makes review and regressions grow faster than useful output. The environment—not agent count—is the real scaling variable.</p>
+          </section>
+
+          <section id="automation">
+            <p class="eyebrow">Outer and inner loops</p>
+            <h2>Grokbot supplies changing context; coding agents execute bounded work</h2>
+            <p>In Tan's description, Grokbot connects to operational systems such as Slack, Datadog, Sentry, and PlanetScale. Routines subscribe to signals and can launch cloud agents when an event deserves investigation. Cursor automations and an agent SDK reuse the verification, skills, rules, and repository constraints already built for interactive work.</p>
+            <div class="loop-grid">
+              <div><h3>Outer loop</h3><p>Observe reports and telemetry, gather current organizational context, group related signals, and decide whether work should begin.</p></div>
+              <div><h3>Inner loop</h3><p>Inspect the repository, reproduce the problem, make a bounded change, verify the result, collect evidence, and prepare a pull request.</p></div>
+            </div>
+            <p>The architecture is deliberately less mystical than a universal “company brain.” Tan's argument is that capable agents can use existing tools and connectors directly. The hard work is ensuring that the inner loop is trustworthy enough to receive an event without requiring a person to supervise every step.</p>
+          </section>
+
+          <section id="adoption">
+            <p class="eyebrow">Practical adoption</p>
+            <h2>Climb the trust curve one repeated intervention at a time</h2>
+            <ol>
+              <li><strong>Choose one frequent, reversible workflow.</strong> Avoid beginning with the broadest or riskiest process.</li>
+              <li><strong>Record human intervention.</strong> Note what the person had to operate, explain, inspect, and decide.</li>
+              <li><strong>Build a deterministic control surface.</strong> Give the agent a stable CLI or API for the real system rather than asking it to generate ad hoc scripts.</li>
+              <li><strong>Create a feature map.</strong> Document how users reach the workflow, what state matters, and which evidence proves success.</li>
+              <li><strong>Turn repeated corrections into constraints.</strong> Prefer architecture and static analysis before adding more prose.</li>
+              <li><strong>Measure trust operationally.</strong> Track intervention rate, escaped regressions, rollback, repeated failure classes, verification coverage, and outcome quality—not only PR count.</li>
+              <li><strong>Add triggers and parallelism last.</strong> Automation should reuse an already reliable inner loop.</li>
+            </ol>
+            <div class="callout"><p><strong>For a multi-agent platform.</strong> A BA-friendly building block should be a versioned work contract: business intent, trigger, context sources, allowed tools, deterministic steps, verification procedure, evidence output, escalation conditions, and owner. Personas can shape communication, but contracts make composition and governance possible.</p></div>
+          </section>
+
+          <section id="take">
+            <p class="eyebrow">My take</p>
+            <h2>The strongest idea is not autonomy; it is organizational learning</h2>
+            <p>The talk is persuasive because it treats trust as an engineered property. Every intervention is evidence of missing infrastructure. Instead of teaching one session to behave, the team asks where the lesson should live permanently: a product map, CLI, type, import boundary, linter, rule, skill, or review policy.</p>
+            <p>The method still needs discipline. A locked-down framework can encode the wrong assumptions. A feature map can become stale. A passing verification loop can optimize the wrong metric. Automated routines can turn one mistaken signal into a fleet of unnecessary changes. Teams therefore need versioned constraints, independent outcome measures, sampled review, rollback, and explicit authority boundaries.</p>
+            <p>The headline throughput number is a distraction if read as a target. The useful result is a system that can explain why work began, what authority the agent had, which evidence justified completion, what escaped, and how the environment changed afterward. That is the difference between multiplying output and compounding capability.</p>
+          </section>
+
+          <section id="map">
+            <p class="eyebrow">Video map</p>
+            <h2>Where the main ideas appear</h2>
+            <ul class="chapter-list">
+              <li><div><time>00:00</time><span>PR-volume claim, trust, and the Michelin-kitchen thesis</span></div></li>
+              <li><div><time>02:25</time><span>Manual performance investigation and the need for verification</span></div></li>
+              <li><div><time>05:00</time><span>The trust curve and why scaling low-trust agents fails</span></div></li>
+              <li><div><time>07:25</time><span>Verification from runtime evidence to formal methods</span></div></li>
+              <li><div><time>09:05</time><span>Control Glass, repeatable CLI tooling, and Chrome DevTools</span></div></li>
+              <li><div><time>10:45</time><span>Feature maps plus control surfaces</span></div></li>
+              <li><div><time>13:20</time><span>Correctness, quality, and pstack workflows</span></div></li>
+              <li><div><time>15:45</time><span>Codebase memory and the five-layer correction hierarchy</span></div></li>
+              <li><div><time>19:00</time><span>Dune and making the easy path the right path</span></div></li>
+              <li><div><time>22:00</time><span>Anti-pattern propagation, comments, and the garden metaphor</span></div></li>
+              <li><div><time>25:30</time><span>Delete debt, keep one paved path, and lint recurrence</span></div></li>
+              <li><div><time>27:20</time><span>Process boundaries and renderer-thread performance</span></div></li>
+              <li><div><time>31:20</time><span>Building the Michelin kitchen</span></div></li>
+              <li><div><time>32:20</time><span>Grokbot connectors, routines, cloud agents, and automations</span></div></li>
+              <li><div><time>36:28</time><span>Final five-layer checklist for every repeated correction</span></div></li>
+            </ul>
+          </section>
+
+          <section id="sources">
+            <p class="eyebrow">Sources</p>
+            <h2>Primary talk and related public material</h2>
+            <ol>
+              <li><a href="https://x.com/poteto/status/2102050467505430555/video/1">Lauren Tan (Poteto) — “here's how I shipped 2,500 PRs last month to production”</a>. Primary 38-minute recording and publisher-supplied English caption track.</li>
+              <li><a href="https://github.com/backnotprop/pstack">Lauren Tan / Poteto — pstack</a>. Public skill collection and engineering principles related to the workflows discussed in the talk.</li>
+              <li><a href="2026-09-20-lauren-tan-agent-trust-verification-pstack-en.html">Lauren Tan: Build Trust Before You Scale Coding Agents</a>. Earlier workshop summary covering verification, feature maps, evals, and agent-friendly architecture in more depth.</li>
+              <li><a href="2026-10-04-lauren-tan-pstack-trust-ladder-2500-prs-en.html">The System Behind 2,500 Agent-Written PRs</a>. Related interview summary with more detail on coordinator agents, review sampling, bounded autonomy, and what the PR count includes.</li>
+            </ol>
+            <p class="source-note">Source review completed October 5, 2026. The recording was downloaded from the public X post at 1146×720; all five article images are direct frames from that file. Internal Cursor, Grokbot, Dune, and SpaceX AI details are presented as Tan's public claims, not as independently verified architecture.</p>
+          </section>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <p>On this page</p>
+          <nav>
+            <a href="#summary">Executive summary</a><a href="#trust">Trust curve</a><a href="#verification">Verification and feature maps</a><a href="#quality">Correctness and quality</a><a href="#stack">Correction hierarchy</a><a href="#memory">Codebase as memory</a><a href="#garden">Gardening</a><a href="#kitchen">Michelin kitchen</a><a href="#automation">Outer and inner loops</a><a href="#adoption">Adoption playbook</a><a href="#take">My take</a><a href="#map">Video map</a><a href="#sources">Sources</a>
+          </nav>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>
