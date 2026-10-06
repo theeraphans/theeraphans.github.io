@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>Jonathan Gorard: Physics Needs a Verifier, Not Just a Smarter Model</title>
+    <meta name="description" content="A detailed, evidence-aware guide to Jonathan Gorard's argument for executable physics: verifiable rewards, scientific formalization, theory-laden observations, description languages, Lanyon AI, verified PDE solvers, and the changing role of physicists." />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .callout { margin: 1.5rem 0; padding: 1rem !important; border-left: 3px solid var(--green) !important; background: var(--surface) !important; }
+      .callout.warning { border-left-color: #8a6417 !important; }
+      .callout p:last-child { margin-bottom: 0; }
+      .verification-stack, .language-ladder, .argument-grid, .boundary-grid { display: grid; gap: 1px; margin: 1.5rem 0; background: var(--line); border: 1px solid var(--line); }
+      .verification-stack { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .language-ladder { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+      .argument-grid, .boundary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .verification-stack > div, .language-ladder > div, .argument-grid > div, .boundary-grid > div { min-width: 0; padding: 1rem; background: var(--paper); }
+      .verification-stack strong, .language-ladder strong { display: block; margin-bottom: .4rem; color: var(--green); font-size: .78rem; }
+      .verification-stack h3, .language-ladder h3, .argument-grid h3, .boundary-grid h3 { margin: 0 0 .45rem; font-size: 1rem; }
+      .verification-stack p, .language-ladder p, .argument-grid p, .boundary-grid p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.55; }
+      .source-figure { margin: 1.7rem 0; }
+      .source-figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); }
+      .source-figure figcaption { margin-top: .55rem; color: var(--muted); font-size: .82rem; line-height: 1.5; text-align: center; }
+      .formula { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); align-items: stretch; gap: .7rem; margin: 1.5rem 0; }
+      .formula > div { padding: 1rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .formula strong { display: block; margin-bottom: .3rem; }
+      .formula span { color: var(--muted); font-size: .84rem; line-height: 1.5; }
+      .formula .arrow { display: grid; place-items: center; color: var(--green); font-size: 1.25rem; }
+      .chapter-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 1.25rem 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
+      .chapter-list li { border-bottom: 1px solid var(--line); }
+      .chapter-list a { display: flex; gap: .7rem; min-height: 100%; padding: .8rem .45rem; color: var(--ink); text-decoration: none; }
+      .chapter-list time { flex: 0 0 4.2rem; color: var(--green); font-variant-numeric: tabular-nums; }
+      @media (max-width: 850px) {
+        .verification-stack, .language-ladder, .argument-grid, .boundary-grid, .chapter-list { grid-template-columns: 1fr; }
+        .formula { grid-template-columns: 1fr; }
+        .formula .arrow { transform: rotate(90deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Reading room</a>
+      <div class="top-actions"><a class="action-link" href="https://www.youtube.com/watch?v=oQypVVv1u1o">Watch video</a></div>
+    </nav>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Scientific AI · Formal verification</p>
+          <h1>Physics Needs a Verifier, Not Just a Smarter Model</h1>
+          <p class="subtitle">Jonathan Gorard argues that AI accelerated coding and mathematics because both have machine-checkable feedback. To produce trustworthy progress in physics, AI needs a language that can connect equations, physical principles, numerical implementations, and observation.</p>
+          <div class="meta"><span>2:09:43 video</span><span>Publisher-supplied English captions</span><span>Published October 5, 2026</span><span>Summary run: October 6, 2026 · 20:18 ICT</span></div>
+        </div>
+        <figure class="hero-card">
+          <img src="2026-10-06-jonathan-gorard-executable-physics-hero.jpg" alt="Jonathan Gorard and Curt Jaimungal beside the title The Physicist Revolutionizing Physics With AI" />
+          <figcaption>The interview's central proposal is not “let an LLM write more papers.” It is to make scientific claims executable enough that machines can test their logical, physical, numerical, and empirical obligations.</figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="eyebrow">Executive summary</p>
+            <h2>The bottleneck is reliable feedback about the physical world</h2>
+            <p>Applied mathematician Jonathan Gorard begins from an asymmetry. AI systems have improved rapidly at software and formal mathematics because those domains expose strong verifiers: compilers, tests, type systems, proof assistants, and theorem checkers. Physics has equations and simulations, but it lacks an equivalent end-to-end mechanism for deciding whether a generated model is mathematically coherent, compatible with physical principles, numerically faithful, and supported by observation.</p>
+            <p>His company, Lanyon AI, is an attempt to build part of that missing substrate. Instead of asking a language model to emit a large program and then separately justify it, the proposed architecture has a model express a compact formal specification in a domain-specific language. Symbolic systems then derive implementation and proof artifacts from the same specification. This can tightly bind code to a declared model, but it does not automatically prove that the declaration captures nature or the user's intent.</p>
+            <ul>
+              <li><strong>Verifiers shape capability.</strong> Domains with cheap, scalable, machine-checkable feedback are easier targets for reinforcement learning and autonomous iteration.</li>
+              <li><strong>Physics verification is layered.</strong> Logical consistency, compatibility with physical principles, numerical correctness, and agreement with observation are different obligations.</li>
+              <li><strong>Observation is not raw input.</strong> A statement such as “a particle was detected” rests on instruments, reconstruction software, calibration, statistical assumptions, and theory.</li>
+              <li><strong>Formal correctness has a semantic boundary.</strong> Proof and implementation can match a specification perfectly while the specification still fails to represent the intended system.</li>
+              <li><strong>Solutions and understanding are different products.</strong> A machine-checkable answer can establish correctness without transmitting insight to a human reader.</li>
+              <li><strong>The future of physics may be a language shift.</strong> Gorard expects AI to help search for new formal description languages, not merely solve more problems inside current ones.</li>
+            </ul>
+            <div class="callout warning"><p><strong>Evidence boundary.</strong> The interview mixes documented projects, company claims, philosophical positions, and forecasts. Lanyon's public research demonstrates specific verified numerical methods; it does not establish a general proof assistant for all of physics or a solved pipeline from raw reality to verified theory. Claims about coming labor disruption, machine understanding, and future scientific languages remain arguments, not settled results.</p></div>
+          </section>
+
+          <section id="shock">
+            <p class="eyebrow">The triggering event</p>
+            <h2>A formalized sphere-packing proof collapsed Gorard's timeline</h2>
+            <p>Gorard says his outlook changed in March 2026 when Math, Inc. announced a roughly 200,000-line Lean formalization of the sphere-packing results in dimensions 8 and 24. He had worked around automated theorem proving for a decade and expected this scale of autoformalization closer to 2028. Seeing it arrive earlier made the academic adjustment window look dangerously short.</p>
+            <p>He also adds an important correction: the public story was more complicated than “an AI independently solved everything.” A human-led formalization effort already existed, with a blueprint, maintainers, and a substantial codebase. Math, Inc. describes its Gauss system as completing the remaining 8-dimensional work and autoformalizing the 24-dimensional case. The distinction matters because acceleration, completion, library construction, and original discovery are not the same achievement.</p>
+            <div class="argument-grid">
+              <div><h3>What the event demonstrates</h3><p>AI-assisted formalization can operate at a scale and speed that surprised an experienced researcher, producing a checkable artifact rather than prose alone.</p></div>
+              <div><h3>What it does not demonstrate</h3><p>That the original mathematics, formal blueprint, library engineering, and social process were unnecessary—or that every scientific domain has an equally strong verifier.</p></div>
+            </div>
+          </section>
+
+          <section id="product-process">
+            <p class="eyebrow">Science as product and process</p>
+            <h2>Automation threatens a funding story as much as a workflow</h2>
+            <p>Gorard distinguishes science as product from science as process. Product means outcomes society can point to: energy, medicine, materials, prediction, infrastructure. Process is the curiosity-driven activity scientists value intrinsically: understanding turbulence, quantum gravity, protein folding, or an elegant mathematical structure.</p>
+            <p>Modern research institutions often justify the process by promising that it will eventually produce useful outcomes. If machines become dramatically better at producing those outcomes, the old bargain may weaken even if human curiosity remains valuable. Gorard's concern is therefore institutional as well as technical: academic funding, prestige, career paths, and the identity of researchers may adjust much more slowly than capability.</p>
+          </section>
+
+          <section id="verifiers">
+            <p class="eyebrow">Why coding and mathematics moved first</p>
+            <h2>Reinforcement learning scales where success is cheap to check</h2>
+            <p>The interview's most useful engineering argument is that recent capability gains depend heavily on post-training environments with verifiable rewards. Code can be compiled, executed, tested, type-checked, benchmarked, and inspected for static properties. Formal mathematics can be checked by a small trusted kernel. These feedback loops let a system generate attempts, receive an objective signal, and improve without requiring a human judgment for every trajectory.</p>
+            <figure class="source-figure">
+              <img src="2026-10-06-jonathan-gorard-rlvr-paper.jpg" alt="A paper shown in the video titled Reinforcement Learning with Verifiable Rewards Implicitly Incentivizes Correct Reasoning in Base LLMs" />
+              <figcaption>At 36:10, the video uses RL with verifiable rewards to explain why machine-checkable domains are unusually fertile training environments. Screenshot from the source video.</figcaption>
+            </figure>
+            <p>Physics is not devoid of checks, but many are fragmented, expensive, approximate, or dependent on human interpretation. A simulation can run while violating conservation, stability, dimensional, regime, or measurement assumptions. A model can fit data while being physically implausible. An equation can be mathematically valid but irrelevant to the world being measured.</p>
+          </section>
+
+          <section id="stack">
+            <p class="eyebrow">A verifier for physics</p>
+            <h2>Correctness is a stack, not one green checkmark</h2>
+            <div class="verification-stack">
+              <div><strong>Layer 1</strong><h3>Logical and mathematical</h3><p>Are definitions well formed? Do claims follow from axioms? Are operators, spaces, and transformations used consistently?</p></div>
+              <div><strong>Layer 2</strong><h3>Physical and numerical</h3><p>Does the model respect relevant conservation laws, thermodynamics, covariance, stability, convergence, discretization, and finite-precision behavior?</p></div>
+              <div><strong>Layer 3</strong><h3>Empirical and semantic</h3><p>Do instruments and data support the claim under explicit calibration, reconstruction, uncertainty, regime, and background-theory assumptions?</p></div>
+            </div>
+            <p>The layers are nested but not reducible to one another. A proof of a numerical algorithm does not establish that its governing equations describe the target phenomenon. Agreement with one dataset does not prove internal consistency. A general verifier must expose which obligation is being checked, against which assumptions, and with which scope.</p>
+          </section>
+
+          <section id="gandy">
+            <p class="eyebrow">A historical precursor</p>
+            <h2>Robin Gandy asked for a machine model of scientific reasoning</h2>
+            <p>Gorard points to Robin Gandy, Alan Turing's doctoral student, whose thesis considered axiomatic systems in mathematics and physical theories. Gorard interprets its unfinished ambition as an analogue of a Turing machine for science: take empirical or sensory data, apply deductive and inductive operations, and produce physical hypotheses.</p>
+            <figure class="source-figure">
+              <img src="2026-10-06-jonathan-gorard-turing-paper.jpg" alt="The title page of Alan Turing's On Computable Numbers with the Entscheidungsproblem highlighted" />
+              <figcaption>At 37:00, the interview traces the contrast back to the Entscheidungsproblem: mathematical reasoning gained a computational abstraction, while scientific reasoning never received an equally complete one. Screenshot from the source video.</figcaption>
+            </figure>
+            <p>The analogy is powerful but incomplete. Scientific inference is not deduction over a closed formal system. It involves model selection, approximation, intervention, measurement error, changing instruments, causal assumptions, and uncertainty about whether the formal vocabulary itself is adequate.</p>
+          </section>
+
+          <section id="observation">
+            <p class="eyebrow">Theory-ladenness</p>
+            <h2>“We detected a particle” is the end of a long dependency chain</h2>
+            <p>Gorard argues that observation cannot be treated as bare reality entering a machine. A detector produces electrical signals. Firmware, calibration, event reconstruction, filtering, statistical models, and prior physical theories turn those signals into the sentence “a particle was detected.” He estimates that such a statement may rest on 20 to 50 layers of theoretical assumptions.</p>
+            <p>This creates two forms of theory-ladenness. Semantic theory-ladenness concerns what words such as particle, temperature, field, or event mean inside a theory. Perceptual theory-ladenness concerns the instruments and transformations that make an observation accessible at all. An executable physics system must track these dependencies rather than pretending the final dataset is neutral.</p>
+            <div class="formula">
+              <div><strong>Physical interaction</strong><span>A phenomenon couples to an instrument under a specific experimental configuration.</span></div><span class="arrow" aria-hidden="true">→</span><div><strong>Reconstruction pipeline</strong><span>Calibration, filtering, models, software, and statistics convert signals into candidate events.</span></div><span class="arrow" aria-hidden="true">→</span><div><strong>Scientific claim</strong><span>A human-readable statement inherits the assumptions and uncertainties of every prior stage.</span></div>
+            </div>
+          </section>
+
+          <section id="math-limit">
+            <p class="eyebrow">Why mathematics is not sufficient</p>
+            <h2>Our equations permit more worlds than the one we observe</h2>
+            <p>Mathematical consistency alone underconstrains physics. Einstein's equations admit solutions with features we do not observe or may rule out using knowledge from elsewhere. Quantum field theory is extraordinarily successful in practice while its rigorous mathematical foundations remain incomplete. Physical principles can also be approximate, emergent, or regime-dependent rather than universal axioms.</p>
+            <p>A verifier must therefore handle limits and compatibility: does a proposed quantum-gravity model recover general relativity or known field behavior in the appropriate regime? Does a numerical method preserve the invariants its claim depends on? Which desiderata are hard constraints, and which are approximations that may cease to apply?</p>
+          </section>
+
+          <section id="lanyon">
+            <p class="eyebrow">Lanyon's proposed architecture</p>
+            <h2>Generate specification first; derive code and proof together</h2>
+            <p>Lanyon describes a neurosymbolic pipeline. An LLM proposes a compact statement in a proprietary formal domain-specific language. Symbolic tooling expands that statement into implementation and proof artifacts. Because both descend from one specification, the implementation can be constrained to match the formal model rather than asking a second model to retrofit a proof onto arbitrary generated code.</p>
+            <div class="formula">
+              <div><strong>Natural-language intent</strong><span>The user's scientific objective, constraints, geometry, equations, and expected outputs.</span></div><span class="arrow" aria-hidden="true">→</span><div><strong>Formal DSL</strong><span>A compact machine-readable specification proposed by a model and checked against domain rules.</span></div><span class="arrow" aria-hidden="true">→</span><div><strong>Code + certificate</strong><span>Symbolic generation produces an implementation and proof obligations from the same artifact.</span></div>
+            </div>
+            <p>The strongest claim this supports is structural: generated code can be made to match a formal specification by construction. It does not eliminate the semantic problem of whether the specification matches the user's intent, the experimental setup, or physical reality. Lanyon's own announcement explicitly distinguishes syntactic correctness from semantic correctness.</p>
+          </section>
+
+          <section id="languages">
+            <p class="eyebrow">Description languages</p>
+            <h2>Gorard's deeper bet is that representation determines discoverability</h2>
+            <p>The conversation moves beyond verification into a philosophical thesis: apparent mysteries may be artifacts of the language used to describe them. Hamiltonian and Lagrangian mechanics can encode the same observations through very different ontologies. Information-theoretic language made problems about entropy and computation easier to formulate than older mechanical descriptions.</p>
+            <div class="language-ladder">
+              <div><strong>Words</strong><h3>Natural philosophy</h3><p>Qualitative accounts of matter, motion, cause, and change.</p></div>
+              <div><strong>Shapes</strong><h3>Geometry</h3><p>Spatial relations became a disciplined language for optics and astronomy.</p></div>
+              <div><strong>Equations</strong><h3>Analysis</h3><p>Calculus and differential equations mechanized continuous change.</p></div>
+              <div><strong>Programs</strong><h3>Computation</h3><p>Algorithms, state transitions, and information exposed new invariants.</p></div>
+              <div><strong>Next</strong><h3>Scientific DSLs</h3><p>Gorard wants formalisms that bind theories, implementations, and observations.</p></div>
+            </div>
+            <p>His ambitious proposal is to automate not only inference inside a language but also the search for better languages. That is a research direction, not a demonstrated general capability. It would require criteria for comparing representations without collapsing novelty into what current verifiers already know how to reward.</p>
+          </section>
+
+          <section id="papers">
+            <p class="eyebrow">The paper deluge</p>
+            <h2>More hypotheses without stronger filters produce scientific congestion</h2>
+            <p>The interview warns that AI can amplify an existing problem: producing more papers than communities can evaluate, integrate, or reproduce. Generation is not progress by itself. A useful scientific agent must help identify contradictions, duplicated assumptions, invalid regimes, missing evidence, and connections to established theory.</p>
+            <p>This reframes the “AI scientist” from a paper generator into a maintenance system for knowledge. The difficult work includes provenance, dependency tracking, verification scope, library governance, experimental metadata, and deciding when two apparently different claims are equivalent under a change of representation.</p>
+          </section>
+
+          <section id="understanding">
+            <p class="eyebrow">Solutions versus understanding</p>
+            <h2>A proof can be correct without transferring insight</h2>
+            <p>Curt asks whether solving a hard theorem should count as understanding it. Gorard separates possessing a valid solution from transmitting a mental model to another mind. This difficulty predates AI: a mathematician may know a proof and still fail to explain why the key construction is natural or how it changes the surrounding landscape.</p>
+            <div class="boundary-grid">
+              <div><h3>Certificate of correctness</h3><p>Lets a checker establish that stated conclusions follow under declared assumptions. It is an audit artifact.</p></div>
+              <div><h3>Human-transmissible insight</h3><p>Provides abstractions, examples, counterexamples, causal stories, and nearby questions that reorganize a reader's understanding.</p></div>
+            </div>
+            <p>An AI-native representation may be efficient for search or proof while expensive to translate into human concepts. Asking the system for an explanation does not guarantee that the explanation faithfully reflects the internal route. A serious interface should preserve links from summary claims back to formal objects, dependencies, experiments, and uncertainty.</p>
+          </section>
+
+          <section id="embodiment">
+            <p class="eyebrow">Embodiment</p>
+            <h2>Scientific language inherits the body and instruments that formed it</h2>
+            <p>Gorard considers whether reasoning must be embodied. Arithmetic grew from exchange; geometry from land and space; later abstractions retained structures inherited from human interaction with the physical world. A disembodied intelligence might develop different primitive concepts, while an experimental AI cannot avoid sensors, apparatus, interventions, and physical failure modes.</p>
+            <p>The practical lesson is modest: adding a camera or robot body is not enough. The system needs a typed account of instrument capability, calibration, environmental conditions, control actions, uncertainty, and the chain connecting sensor states to scientific claims.</p>
+          </section>
+
+          <section id="pde">
+            <p class="eyebrow">Concrete work</p>
+            <h2>Verified PDE solvers show what a bounded version can look like</h2>
+            <p>Gorard and Ammar Hakim's “Shock with Confidence” work presents a pipeline for constructing hyperbolic PDE solvers, generating C code, and producing formal proofs of properties including stability, flux conservation, and physical validity. Crucially, it reasons about finite-precision arithmetic rather than silently replacing machine numbers with ideal real numbers.</p>
+            <p>The later BEACONS project explores neural PDE solvers with bounded error, compositional structure, and machine-checkable correctness certificates. These projects make the broader vision concrete, but within a bounded class of equations and declared properties. They should be read as research foundations, not evidence that arbitrary physical theories can already be verified end to end.</p>
+          </section>
+
+          <section id="careers">
+            <p class="eyebrow">The changing physicist</p>
+            <h2>The workflow may disappear before curiosity does</h2>
+            <p>Much of the interview is emotionally direct. Gorard describes grieving a style of theoretical work built around long projects, gradual insight, and individual intellectual craft. He expects physical experimentation to change more slowly because hardware, laboratories, and real-world interventions retain friction, though that protection may erode as robotics and “physical AI” improve.</p>
+            <p>His optimistic position is continuity of motivation rather than continuity of tasks. Physicists may spend less time performing familiar symbolic derivations and more time designing representations, choosing experiments, auditing assumptions, interpreting machine-generated structures, maintaining formal libraries, and deciding which questions deserve scarce physical resources.</p>
+          </section>
+
+          <section id="take">
+            <p class="eyebrow">My take</p>
+            <h2>The verification thesis is stronger than the automation forecast</h2>
+            <p>The interview's strongest claim is architectural: capability grows faster where feedback is objective, cheap, and composable. Building richer verifiers for scientific computing is valuable even if sweeping forecasts about automated discovery prove wrong. Verified solvers, traceable assumptions, explicit regimes, and code generated from shared specifications would improve ordinary human science too.</p>
+            <p>The weakest step is moving from verified numerical artifacts to “executable physics” in general. Nature does not provide a proof kernel. Empirical adequacy changes with instruments and data; theories are underdetermined; specifications can misstate intent; and the search for a new description language requires objectives that may encode today's blind spots.</p>
+            <p>The practical conclusion is therefore not “replace physicists with agents.” It is: treat scientific AI as a system of contracts. Name the claim, assumptions, regime, implementation, numerical guarantees, data lineage, uncertainty, and failed checks. Make every generated result navigable back to those contracts. That is a credible route from fluent output toward trustworthy scientific work.</p>
+          </section>
+
+          <section id="map">
+            <p class="eyebrow">Video map</p>
+            <h2>Navigate the two-hour conversation</h2>
+            <ul class="chapter-list">
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o&t=0s"><time>00:00</time><span>The sphere-packing shock and compressed timelines</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o&t=353s"><time>05:53</time><span>Science as product versus science as process</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o&t=680s"><time>11:20</time><span>Curiosity, hedonism, and the social bargain of research</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o&t=1256s"><time>20:56</time><span>Why academia was slow to engage with AI</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o&t=1914s"><time>31:54</time><span>Why Gorard left Princeton to form Lanyon AI</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o&t=2396s"><time>39:56</time><span>Robin Gandy and the formalization of physics</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o&t=2696s"><time>44:56</time><span>Theory-ladenness of observation</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o&t=3022s"><time>50:22</time><span>Why mathematical consistency is not enough</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o&t=3499s"><time>58:19</time><span>Description languages and AI reasoning</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o&t=3949s"><time>1:05:49</time><span>Filtering the scientific-paper deluge</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o&t=4327s"><time>1:12:07</time><span>Can AI transmit understanding?</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o&t=4778s"><time>1:19:38</time><span>Human-readable explanations of AI reasoning</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o&t=5159s"><time>1:25:59</time><span>Must scientific AI be embodied?</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o&t=5510s"><time>1:31:50</time><span>Mysteries as description-language artifacts</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o&t=6114s"><time>1:41:54</time><span>Grieving a style of physics</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o&t=6599s"><time>1:49:59</time><span>What remains for physicists?</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o&t=6918s"><time>1:55:18</time><span>The next formal description language</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o&t=7346s"><time>2:02:26</time><span>Spacetime discreteness, verified PDEs, and BEACONS</span></a></li>
+            </ul>
+          </section>
+
+          <section id="sources">
+            <p class="eyebrow">Sources</p>
+            <h2>Primary interview and technical references</h2>
+            <ol>
+              <li><a href="https://www.youtube.com/watch?v=oQypVVv1u1o">Curt Jaimungal — The Physicist Revolutionizing Physics With AI</a>. Primary interview and publisher-supplied English caption track.</li>
+              <li><a href="https://www.math.inc/sphere-packing">Math, Inc. — Completing the formal proof of higher-dimensional sphere packing</a>. Project account, human collaborators, prior formalization, scale, and released Lean work.</li>
+              <li><a href="https://www.lanyon.ai/blog/welcome/">Lanyon AI — Announcing Lanyon AI</a>. Company description of the DSL-plus-symbolic architecture and its explicit syntactic-versus-semantic correctness boundary.</li>
+              <li><a href="https://www.lanyon.ai/blog/vision/">Lanyon AI — Our Vision</a>. Gorard's description-language thesis and proposed direction for scientific AI.</li>
+              <li><a href="https://arxiv.org/abs/2503.13877">Gorard and Hakim — Shock with Confidence</a>. Formal verification pipeline for hyperbolic PDE solvers and finite-precision correctness properties.</li>
+              <li><a href="https://arxiv.org/abs/2602.14853">Gorard, Hakim, and Juno — BEACONS</a>. Bounded-error, algebraically composable neural PDE solvers with machine-checkable certificates.</li>
+              <li><a href="https://www.cs.ox.ac.uk/people/ohad.kammar/scans/gandy-thesis-ocr.pdf">Robin Gandy — On Axiomatic Systems in Mathematics and Theories in Physics</a>. Historical thesis discussed as a precursor to formal scientific reasoning.</li>
+            </ol>
+            <p class="source-note">Source review completed October 6, 2026. The hero is the publisher's 1280×720 thumbnail. The two in-article images are 1280×720 frames captured from the source video at 36:10 and 37:00, with explanatory captions. The remaining visuals are article-native HTML/CSS diagrams so they remain sharp and readable on mobile.</p>
+          </section>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <p>On this page</p>
+          <nav>
+            <a href="#summary">Executive summary</a><a href="#shock">Sphere-packing shock</a><a href="#product-process">Product vs process</a><a href="#verifiers">Why verifiers matter</a><a href="#stack">Physics verification stack</a><a href="#gandy">Gandy's machine</a><a href="#observation">Theory-laden observation</a><a href="#math-limit">Why math is not enough</a><a href="#lanyon">Lanyon architecture</a><a href="#languages">Description languages</a><a href="#papers">Paper deluge</a><a href="#understanding">Solutions vs insight</a><a href="#embodiment">Embodiment</a><a href="#pde">Verified PDE work</a><a href="#careers">Future physicist</a><a href="#take">My take</a><a href="#map">Video map</a><a href="#sources">Sources</a>
+          </nav>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>
