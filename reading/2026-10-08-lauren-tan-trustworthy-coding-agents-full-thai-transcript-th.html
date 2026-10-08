@@ -15,7 +15,7 @@
       h1, h2, h3, h4, h5, h6, .subtitle, .dek, .lead, .description { font-family: "IBM Plex Sans Thai", "Noto Sans Thai", "Leelawadee UI", system-ui, sans-serif !important; }
       .hero h1 { font-size: clamp(2.8rem, 4.5vw, 4.5rem) !important; font-weight: 400 !important; line-height: 1.08 !important; }
       .subtitle { font-weight: 300 !important; line-height: 1.62 !important; }
-      .content p, .content li { line-height: 1.72; }
+      .content p, .content li, .transcript-row p { font-size: 18px; line-height: 1.65; }
       .callout { margin: 1.4rem 0; padding: 1rem !important; border-left: 3px solid var(--green) !important; background: var(--surface) !important; }
       .callout.warning { border-left-color: #8a6417 !important; }
       .callout p:last-child { margin-bottom: 0; }
@@ -23,27 +23,27 @@
       .trust-ladder > div { padding: 1rem; background: var(--paper); }
       .trust-ladder small { display: block; margin-bottom: .4rem; color: var(--green); font-weight: 700; }
       .trust-ladder strong { display: block; margin-bottom: .4rem; }
-      .trust-ladder p { margin: 0; color: var(--muted); font-size: .88rem; }
+      .trust-ladder p { margin: 0; color: var(--muted); font-size: 15px; }
       .loop { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin: 1.5rem 0; padding: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); list-style: none; }
       .loop li { padding: .9rem .75rem; border-right: 1px solid var(--line); }
       .loop li:last-child { border-right: 0; }
       .loop b { display: block; margin-bottom: .3rem; }
-      .loop span { color: var(--muted); font-size: .84rem; }
+      .loop span { color: var(--muted); font-size: 15px; }
       .video-figure { margin: 1.5rem 0; }
       .video-figure img { display: block; width: 100%; aspect-ratio: 1854 / 1080; object-fit: cover; border: 1px solid var(--line); }
-      .video-figure figcaption { margin-top: .55rem; color: var(--muted); font-size: .86rem; line-height: 1.55; text-align: center; }
+      .video-figure figcaption { margin-top: .55rem; color: var(--muted); font-size: 15px; line-height: 1.55; text-align: center; }
       .chapter-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 1.25rem 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
       .chapter-list li { border-bottom: 1px solid var(--line); }
       .chapter-list a { display: flex; gap: .75rem; padding: .8rem .4rem; text-decoration: none !important; }
       .chapter-list time { flex: 0 0 3.5rem; color: var(--green); font-variant-numeric: tabular-nums; }
       .transcript-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; margin: 1rem 0; padding: .85rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-      .transcript-tools p { margin: 0; color: var(--muted); font-size: .88rem; }
+      .transcript-tools p { margin: 0; color: var(--muted); font-size: 15px; }
       .language-toggle { min-height: 42px; padding: .55rem .8rem; color: var(--paper); background: var(--ink); border: 1px solid var(--ink); border-radius: 3px; cursor: pointer; }
       .transcript-list { border-top: 1px solid var(--line); }
       .transcript-row { display: grid; grid-template-columns: 4.2rem minmax(0, 1fr); gap: 1rem; padding: .9rem 0; border-bottom: 1px solid var(--line); }
-      .timestamp { align-self: start; color: var(--green) !important; font-size: .88rem; font-variant-numeric: tabular-nums; text-decoration: none !important; }
+      .timestamp { align-self: start; color: var(--green) !important; font-size: 15px; font-variant-numeric: tabular-nums; text-decoration: none !important; }
       .transcript-row p { margin: 0; }
-      .english-line { margin-top: .55rem !important; padding-top: .55rem; color: var(--muted); border-top: 1px dotted var(--line); font-size: .88rem; }
+      .english-line { margin-top: .55rem !important; padding-top: .55rem; color: var(--muted); border-top: 1px dotted var(--line); font-size: 15px; }
       @media (max-width: 850px) {
         .trust-ladder, .loop, .chapter-list { grid-template-columns: 1fr; }
         .loop li { border-right: 0; border-bottom: 1px solid var(--line); }
