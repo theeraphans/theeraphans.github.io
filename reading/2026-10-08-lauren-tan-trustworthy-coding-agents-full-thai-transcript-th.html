@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-    <title>Lauren Tan: สร้างระบบที่ทำให้ Coding Agent น่าเชื่อถือ</title>
+    <title>Lauren Tan: ทำอย่างไรให้เราไว้ใจ Coding Agent ได้จริง</title>
     <meta name="description" content="สรุปภาษาไทยและ transcript ภาษาไทยฉบับเต็มของ Lauren Tan ว่าด้วย verification skills, pstack, evals, codebase constraints และการเพิ่ม autonomy ให้ coding agents อย่างมีหลักฐาน" />
     <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
     <script src="article-theme.js?v=20261003-5" defer></script>
@@ -57,91 +57,91 @@
       <header class="hero">
         <div class="hero-copy">
           <p class="kicker">AI engineering workflow · ฉบับภาษาไทย</p>
-          <h1>สร้างระบบที่ทำให้ Coding Agent น่าเชื่อถือ</h1>
-          <p class="subtitle">Lauren Tan อธิบายว่าการใช้ Agent จำนวนมากไม่ได้เริ่มจาก prompt หรือ orchestration ที่ซับซ้อน แต่เริ่มจากการทำให้ Agent มองเห็นผลลัพธ์จริง ตรวจสอบงานตัวเองได้ และถูกบังคับด้วยโครงสร้างของ codebase กับ CI</p>
+          <h1>ทำอย่างไรให้เราไว้ใจ Coding Agent ได้จริง</h1>
+          <p class="subtitle">Lauren Tan กล้าปล่อยให้ Agent ส่งงานและ merge โค้ดเอง เพราะเธอสร้างระบบที่ทำให้มันเปิดแอป ดูผลงานตัวเอง และพิสูจน์ได้ว่าสิ่งที่แก้ใช้งานได้จริง Prompt เป็นเพียงส่วนเล็ก ๆ ของเรื่องนี้</p>
           <div class="meta"><span>วิดีโอ 58:31</span><span>แปลจาก English auto-caption</span><span>เผยแพร่ 5 กันยายน 2026</span><span>ประมวลผล 8 ตุลาคม 2026 · 21:41 ICT</span></div>
         </div>
         <figure class="hero-card">
           <img src="2026-10-08-lauren-tan-trustworthy-agents-thai-transcript-hero.jpg" alt="ภาพปกวิดีโอภาษาไทยของ Lauren Tan ว่าด้วย AI coding agents" />
-          <figcaption>ภาพปกเรียก Lauren ว่า SpaceX AI Engineer แต่ในคลิปเธอแนะนำตัวว่าอยู่ที่ Cursor และก่อนหน้านั้นทำงานที่ Meta กับ Netflix</figcaption>
+          <figcaption>ข้อความบนภาพปกบอกว่า Lauren เป็น SpaceX AI Engineer แต่เธอแนะนำตัวในคลิปว่าทำงานอยู่ที่ Cursor</figcaption>
         </figure>
       </header>
 
       <div class="layout">
         <article class="content">
           <section id="source-note">
-            <p class="eyebrow">หมายเหตุต้นทาง</p>
-            <h2>ชื่อบนภาพปกไม่ตรงกับคำแนะนำตัวในวิดีโอ</h2>
-            <p>วิดีโอที่ให้มาเป็น reupload ภาษาไทยของ session ภาษาอังกฤษ Lauren แนะนำตัวว่าเป็นวิศวกรที่ <strong>Cursor</strong> มาได้ประมาณห้าเดือน ก่อนหน้านั้นอยู่ทีม React ที่ Meta และเคยเป็นทั้ง Tech Lead กับ Engineering Manager ที่ Netflix ส่วนข้อความ “SpaceX AI Engineer” บน thumbnail ไม่ได้รับการสนับสนุนจากคำพูดในคลิป จึงไม่ควรใช้เป็นประวัติของเธอ</p>
-            <div class="callout warning"><p><strong>ขอบเขตความแม่นยำ:</strong> transcript ด้านล่างครอบคลุม caption ต้นฉบับครบ 1,469 แถวจนถึงท้ายคลิป แต่ต้นทางเป็น YouTube auto-caption และภาษาไทยเป็นคำแปลอัตโนมัติที่ปรับศัพท์เทคนิคบางส่วน จึงเหมาะสำหรับอ่านทำความเข้าใจ ไม่ใช่คำถอดเสียงรับรองแบบคำต่อคำ กด “แสดง English ต้นฉบับ” เพื่อตรวจประโยคสำคัญได้</p></div>
+            <p class="eyebrow">ก่อนเริ่มอ่าน</p>
+            <h2>อย่าเพิ่งเชื่อข้อความบนภาพปก</h2>
+            <p>คลิปนี้เป็นการนำ session ภาษาอังกฤษมาเผยแพร่ใหม่พร้อมคำบรรยายไทย ภาพปกเรียก Lauren ว่า “SpaceX AI Engineer” แต่เธอบอกเองในช่วงเปิดคลิปว่าทำงานที่ <strong>Cursor</strong> มาได้ประมาณห้าเดือน ก่อนหน้านั้นเธออยู่ทีม React ของ Meta และเคยเป็นทั้ง Tech Lead และ Engineering Manager ที่ Netflix ผมจึงยึดคำแนะนำตัวในคลิป ไม่ยึดข้อความโฆษณาบนภาพปก</p>
+            <div class="callout warning"><p><strong>เรื่องความแม่นยำของ transcript</strong> เนื้อหาด้านล่างแปลจาก YouTube auto-caption ครบทั้ง 1,469 แถว ผมปรับชื่อผลิตภัณฑ์และศัพท์เทคนิคที่เห็นชัด แต่ไม่ได้ตรวจแก้ทีละประโยคเหมือนงานถอดเสียงโดยมนุษย์ ถ้าประโยคไหนสำคัญต่อการตัดสินใจ กด “แสดง English ต้นฉบับ” แล้วเทียบกับคำพูดจริงในวิดีโออีกครั้ง</p></div>
           </section>
 
           <section id="summary">
-            <p class="eyebrow">สรุปใจความ</p>
-            <h2>Autonomy เป็นผลลัพธ์ของระบบ verification ไม่ใช่สิทธิ์ที่ให้ Agent ตั้งแต่วันแรก</h2>
-            <p>Lauren เปรียบการทำงานกับ Coding Agent กับการบริหารวิศวกร หากมนุษย์ต้องเปิดแอป ตรวจทุก diff ส่ง screenshot และอธิบาย error กลับให้ Agent ทุกครั้ง มนุษย์ยังคงเป็น verifier และเป็นคอขวด ไม่ว่าจะเปิด Agent พร้อมกันกี่ตัวก็ตาม</p>
-            <p>วิธีเพิ่มความไว้ใจคือย้ายความรู้จากหัวของ reviewer เข้าไปอยู่ใน environment: ให้ Agent มีเครื่องมือเปิดและใช้งานผลิตภัณฑ์จริง มี feature map สำหรับนำทาง มี Skill ที่บันทึกวิธีแก้ปัญหา มี eval สำหรับตรวจว่า Skill ยังทำงาน และมีข้อจำกัดใน codebase/CI ที่ทำให้รูปแบบโค้ดที่ไม่ต้องการผ่านไม่ได้</p>
+            <p class="eyebrow">สรุปแบบสั้นที่สุด</p>
+            <h2>ถ้าเรายังต้องตามตรวจทุกอย่าง Agent ก็ยังช่วยเราได้ไม่มาก</h2>
+            <p>ลองนึกภาพว่า Agent เขียนโค้ดเสร็จแล้ว แต่เรายังต้องเปิดแอปให้ ดูว่าหน้าจอพังตรงไหน ส่ง screenshot กลับไป และคอยอธิบาย error ทุกครั้ง แบบนี้ Agent อาจช่วยให้พิมพ์โค้ดเร็วขึ้น แต่คนยังเป็นคอขวดเหมือนเดิม เปิดพร้อมกันสิบตัวก็ไม่ได้ทำให้งานเดินเร็วขึ้น เพราะสุดท้ายทุกงานต้องมาต่อคิวรอเราเช็ก</p>
+            <p>สิ่งที่ Lauren ทำคือค่อย ๆ ย้ายงานตรวจเหล่านั้นเข้าไปอยู่ในระบบ เธอทำให้ Agent เปิดและใช้งานแอปได้เอง มีแผนที่บอกว่าฟีเจอร์อยู่ตรงไหน มี Skill ที่สอนวิธีทำงาน และมี eval คอยเช็กว่า Skill ยังใช้ได้อยู่ ถ้าเป็นข้อผิดพลาดที่ไม่ควรเกิดอีก เธอแก้ที่โครงสร้างของ codebase หรือ CI เพื่อให้โค้ดแบบนั้นผ่านเข้ามาไม่ได้ตั้งแต่แรก</p>
             <ul>
-              <li><strong>เริ่มจากหนึ่ง Agent และเพิ่มอิสระตามหลักฐาน</strong> ไม่ใช่เริ่มจาก Agent จำนวนมากแล้วหวังว่าคุณภาพจะตามมา</li>
-              <li><strong>Verification ต้องทดสอบ behavior ที่ผู้ใช้เห็น</strong> test ผ่านไม่ได้แปลว่าปัญหาจริงถูกแก้เสมอไป</li>
-              <li><strong>Skill คือ executable process</strong> ไม่ใช่ persona prompt; ต้องบอกวิธี inspect, ลงมือ, ตรวจผล และเก็บ evidence</li>
-              <li><strong>Eval ป้องกัน Skill เสื่อม</strong> ใช้หลาย task และหลาย Agent เพื่อดูว่า procedure นั้นช่วยอย่างสม่ำเสมอหรือไม่</li>
-              <li><strong>Codebase เป็น memory ของทีม</strong> เมื่อพบความผิดพลาดซ้ำ ให้แก้ที่ architecture, static analysis หรือ CI ก่อนเพิ่มคำสั่งยาว ๆ</li>
-              <li><strong>Agent ราคาถูกทำงานดีขึ้นได้เมื่อ environment แข็งแรง</strong> งบ token จึงควรวัดเทียบกับเวลาวิศวกรและผลลัพธ์ ไม่ใช่มอง cost ต่อ call อย่างเดียว</li>
+              <li><strong>อย่าเพิ่งเพิ่มจำนวน Agent</strong> เริ่มจากทำให้ตัวเดียวตรวจงานตัวเองได้ก่อน</li>
+              <li><strong>ให้มันลองใช้ของที่มันแก้</strong> test ผ่านไม่ได้แปลว่าผู้ใช้ทำงานได้จริงเสมอไป</li>
+              <li><strong>Skill ต้องบอกวิธีทำงาน</strong> ระบุขั้นตอนและหลักฐานที่ต้องเก็บให้ชัดกว่าคำสั่งเรื่องบุคลิกหรือบทบาท</li>
+              <li><strong>Skill เองก็ต้องมีข้อสอบ</strong> ลองกับหลายงานและหลาย Agent เพื่อดูว่าใช้ได้จริงหรือบังเอิญผ่านแค่ครั้งเดียว</li>
+              <li><strong>เรื่องที่พลาดซ้ำควรแก้ใน codebase</strong> อย่าแก้ด้วย prompt ที่ยาวขึ้นทุกครั้ง</li>
+              <li><strong>คิดต้นทุนเป็นเวลาของทั้งทีม</strong> token ที่แพงอาจคุ้ม ถ้ามันลดเวลาตรวจงานและลดข้อผิดพลาดได้จริง</li>
             </ul>
           </section>
 
           <section id="trust">
-            <p class="eyebrow">Trust ladder</p>
-            <h2>เพิ่มจำนวน Agent หลังจากลดภาระการตรวจของมนุษย์ได้จริง</h2>
-            <p>Lauren เล่าว่าเริ่มจากการใช้ Agent แบบใกล้ชิดและค่อย ๆ ปรับระบบจน Agent บางงานสามารถเปิดและ merge Pull Request ได้เอง เธอย้ำว่าจุดนั้นใช้เวลาลงทุนกับ codebase และ verification จำนวนมาก ไม่ใช่ผลจากการเปิด auto-merge เพียงอย่างเดียว</p>
-            <figure class="video-figure"><img src="2026-10-08-lauren-tan-trust-curve-frame.jpg" alt="กราฟ trust เทียบกับจำนวน agents ที่ Lauren Tan แสดงในวิดีโอ" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 04:00.</strong> เส้นโค้งสื่อว่าความไว้ใจเพิ่มเร็วเมื่อระบบเริ่มตรวจตัวเองได้ แต่จะไม่เพิ่มเพียงเพราะเปิด Agent มากขึ้น</figcaption></figure>
+            <p class="eyebrow">ค่อย ๆ เพิ่มความไว้ใจ</p>
+            <h2>อย่าเปิด auto-merge ก่อนที่ระบบจะพิสูจน์ตัวเอง</h2>
+            <p>Lauren ไม่ได้เริ่มจากการปล่อย Agent จำนวนมากให้ทำงานอิสระ เธอเริ่มจากใช้งานใกล้ ๆ ตรวจแทบทุกอย่าง แล้วค่อยแก้เหตุผลที่ทำให้เธอต้องเข้าไปช่วยทีละข้อ หลังจากสะสมเครื่องมือตรวจงานและปรับ codebase อยู่นาน เธอจึงเริ่มปล่อยให้บางงานเปิดและ merge Pull Request ได้เอง</p>
+            <figure class="video-figure"><img src="2026-10-08-lauren-tan-trust-curve-frame.jpg" alt="กราฟ trust เทียบกับจำนวน agents ที่ Lauren Tan แสดงในวิดีโอ" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 04:00.</strong> จำนวน Agent เพิ่มได้ก็ต่อเมื่อระบบช่วยตรวจงานแทนคนได้มากขึ้น การเปิด Agent เพิ่มเฉย ๆ ไม่ได้ทำให้เรากล้าเชื่อผลงานของมัน</figcaption></figure>
             <div class="trust-ladder">
-              <div><small>ขั้น 1</small><strong>Human verifies</strong><p>มนุษย์สั่งงาน เปิดแอป ดูผล แล้วส่ง feedback กลับทุกครั้ง</p></div>
-              <div><small>ขั้น 2</small><strong>Agent observes</strong><p>Agent เปิดผลิตภัณฑ์ ใช้งาน และเห็น error หรือ behavior ได้เอง</p></div>
-              <div><small>ขั้น 3</small><strong>System constrains</strong><p>Skill, eval, architecture และ CI บังคับมาตรฐานที่ตรวจซ้ำได้</p></div>
-              <div><small>ขั้น 4</small><strong>Bounded autonomy</strong><p>งานที่ผ่านหลักฐานและ rollback ได้จึงค่อยรับ autonomy มากขึ้น</p></div>
+              <div><small>ขั้น 1</small><strong>คนตรวจทุกอย่าง</strong><p>Agent ทำงานเสร็จแล้วรอให้เราเปิดแอปและบอกว่าถูกหรือผิด</p></div>
+              <div><small>ขั้น 2</small><strong>Agent ดูผลงานตัวเองได้</strong><p>มันเปิดแอป ลองใช้งาน อ่าน error และเก็บหลักฐานกลับมาให้เราได้</p></div>
+              <div><small>ขั้น 3</small><strong>ระบบช่วยกันงานผิด</strong><p>Skill, eval และ CI ตรวจเรื่องที่ไม่ควรปล่อยให้คนจำเอง</p></div>
+              <div><small>ขั้น 4</small><strong>ให้อิสระเฉพาะงานที่พร้อม</strong><p>งานที่ตรวจซ้ำและย้อนกลับได้จึงค่อยให้ Agent จัดการเองมากขึ้น</p></div>
             </div>
-            <figure class="video-figure"><img src="2026-10-08-lauren-tan-pr-volume-frame.jpg" alt="กราฟจำนวน Pull Request ของ Lauren Tan พร้อมข้อความ shipped 3000 plus PRs in 5 months" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 07:00.</strong> Lauren ใช้กราฟ Pull Request เป็นภาพประกอบการเพิ่ม throughput ของตัวเอง แต่ตัวเลขนี้เป็นคำรายงานของผู้พูด ไม่ใช่ benchmark ที่ควบคุมคุณภาพหรือ defect rate</figcaption></figure>
+            <figure class="video-figure"><img src="2026-10-08-lauren-tan-pr-volume-frame.jpg" alt="กราฟจำนวน Pull Request ของ Lauren Tan พร้อมข้อความ shipped 3000 plus PRs in 5 months" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 07:00.</strong> Lauren บอกว่าเธอส่ง Pull Request มากกว่า 3,000 รายการในห้าเดือน กราฟนี้ช่วยให้เห็นปริมาณงาน แต่ไม่ได้บอกว่าทุก PR มีขนาดหรือคุณภาพเท่ากัน</figcaption></figure>
           </section>
 
           <section id="verification">
-            <p class="eyebrow">Verification Skill</p>
-            <h2>ให้ Agent มีทั้ง “มือ” และ “ตา” บนผลิตภัณฑ์จริง</h2>
-            <p>ถ้า Agent แก้ UI แต่ดูได้เพียง source code มันยังไม่รู้ว่าผู้ใช้เห็นอะไร Lauren จึงให้ Agent เปิด local application, เรียก API ที่ใช้ควบคุมแอป, อ่าน console และเก็บภาพหรือ runtime evidence ด้วยตัวเอง สำหรับ CLI หรือ desktop app หลักการเหมือนกัน: Agent ต้องทำ user journey ที่เกี่ยวข้องและเห็นผลหลังแก้</p>
-            <figure class="video-figure"><img src="2026-10-08-lauren-tan-verification-guide-frame.jpg" alt="ตัวอย่าง verification guide สำหรับ Electron application จากวิดีโอ" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 11:30.</strong> ตัวอย่างเอกสาร Verification Skill แสดงขั้นตอนเปิด app, แยก worktree และตรวจ behavior จริง จึงเป็น operational guide มากกว่า persona prompt</figcaption></figure>
+            <p class="eyebrow">ให้ Agent ตรวจงานตัวเอง</p>
+            <h2>ถ้ามันแก้หน้าจอ มันก็ควรเปิดหน้าจอนั้นดูได้</h2>
+            <p>Agent ที่เห็นแค่ source code ไม่มีทางรู้ว่าปุ่มทับข้อความหรือ flow ใช้งานไม่ได้ Lauren จึงทำ Verification Skill ที่สอนให้มันเปิดแอปในเครื่อง ใช้งานฟีเจอร์ อ่าน console และเก็บภาพกลับมาเอง หลักการนี้ใช้กับ CLI และ desktop app ได้เหมือนกัน หลังแก้เสร็จ Agent ต้องลองทำงานแบบเดียวกับผู้ใช้และแสดงให้เห็นว่าปัญหาหายแล้ว</p>
+            <figure class="video-figure"><img src="2026-10-08-lauren-tan-verification-guide-frame.jpg" alt="ตัวอย่าง verification guide สำหรับ Electron application จากวิดีโอ" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 11:30.</strong> เอกสารนี้บอกวิธีเปิด Electron app แยก worktree และตรวจผลจริง Agent จึงมีคู่มือทำงานที่ชัดเจน แทนที่จะได้รับเพียงคำสั่งกว้าง ๆ ว่าให้ “ทำตัวเป็นวิศวกรที่เก่ง”</figcaption></figure>
             <ol class="loop">
-              <li><b>Reproduce</b><span>ทำให้ปัญหาเกิดซ้ำผ่าน surface จริง</span></li>
-              <li><b>Inspect</b><span>อ่าน code, state, log และ dependency ที่เกี่ยวข้อง</span></li>
-              <li><b>Change</b><span>แก้แบบแคบและสอดคล้องกับ architecture</span></li>
-              <li><b>Operate</b><span>รันแอปและทำ flow เดิมอีกครั้ง</span></li>
-              <li><b>Prove</b><span>ทิ้ง evidence ที่ reviewer ตรวจได้</span></li>
+              <li><b>ทำให้ปัญหาเกิดซ้ำ</b><span>ลองผ่านหน้าจอหรือคำสั่งเดียวกับที่ผู้ใช้เจอ</span></li>
+              <li><b>หาต้นเหตุ</b><span>อ่าน code, state, log และส่วนที่เชื่อมโยงกัน</span></li>
+              <li><b>แก้เท่าที่จำเป็น</b><span>ไม่รื้อของที่ไม่เกี่ยวและไม่ฝืน architecture</span></li>
+              <li><b>ลองใช้อีกครั้ง</b><span>รันแอปแล้วทำขั้นตอนเดิมตั้งแต่ต้น</span></li>
+              <li><b>เก็บหลักฐาน</b><span>ส่งภาพ log หรือผลตรวจที่ reviewer เปิดดูได้</span></li>
             </ol>
           </section>
 
           <section id="skills">
             <p class="eyebrow">pstack, Skills และ Evals</p>
-            <h2>เก็บวิธีคิดที่ใช้ซ้ำเป็น Skill แล้วทดสอบมันเหมือนผลิตภัณฑ์</h2>
-            <p>pstack เกิดจากการสังเกตว่า Agent พลาดเรื่องเดิม เช่นเดาแทนการ inspect, ข้าม design, debug แบบผิวเผิน หรือประกาศว่างานเสร็จโดยไม่มีหลักฐาน Lauren จึงแยกวิธีทำงานเป็น Skill สำหรับ investigation, architecture, implementation, review และ verification</p>
-            <figure class="video-figure"><img src="2026-10-08-lauren-tan-pstack-frame.jpg" alt="สไลด์ how do I trust my agents more ที่ระบุ verification pstack และ agent-friendly architecture" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 16:00.</strong> โครงเรื่องของ session เรียงจาก verification ไปสู่ Skills อย่าง pstack แล้วจึง refactor architecture ให้ Agent ทำงานได้ง่ายขึ้น</figcaption></figure>
-            <p>จากนั้นเธอใช้ coordinator สร้าง rubric และ spawn sub-agent หลายตัวใน environment แยกกันเพื่อทดสอบ Skill กับ task ต่าง ๆ ชื่อ directory ถูกทำให้ไม่สื่อว่ากำลังอยู่ในการประเมิน เพราะ Agent อาจเปลี่ยนพฤติกรรมเมื่อรู้ว่าถูก eval เป้าหมายไม่ใช่ให้ผ่านตัวอย่างเดียว แต่ดูว่ากระบวนการช่วยได้สม่ำเสมอหรือไม่</p>
-            <figure class="video-figure"><img src="2026-10-08-lauren-tan-eval-rubric-frame.jpg" alt="Lauren Tan อธิบาย rubric และ sub-agents สำหรับประเมิน Skill" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 21:00.</strong> Coordinator สร้าง rubric แล้วให้ sub-agent หลายตัวทำงานแยกกัน เพื่อตรวจว่ากระบวนการใช้ได้กว้างกว่าตัวอย่างเดียว</figcaption></figure>
+            <h2>ถ้าต้องสอนเรื่องเดิมซ้ำ ให้เขียนเป็น Skill</h2>
+            <p>pstack เริ่มจากเรื่องน่ารำคาญที่เกิดซ้ำ Agent ชอบเดาแทนที่จะเปิด code ดูจริง ข้ามขั้นออกแบบ debug แบบจับจุด และบอกว่างานเสร็จทั้งที่ไม่มีหลักฐาน Lauren จึงเขียนวิธีทำงานเหล่านี้เป็น Skill แยกตามงาน เช่น การสืบหาปัญหา การออกแบบ การเขียนโค้ด การ review และการตรวจผล</p>
+            <figure class="video-figure"><img src="2026-10-08-lauren-tan-pstack-frame.jpg" alt="สไลด์ how do I trust my agents more ที่ระบุ verification pstack และ agent-friendly architecture" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 16:00.</strong> Lauren เริ่มจาก verification แล้วค่อยเพิ่ม pstack สุดท้ายจึงปรับ architecture ให้ Agent เดินตามทางที่ถูกได้ง่ายขึ้น</figcaption></figure>
+            <p>เธอไม่ได้ถือว่า Skill ใช้ได้เพียงเพราะมันทำงานสำเร็จครั้งหนึ่ง Coordinator จะสร้างเกณฑ์ให้คะแนนแล้วส่งงานเดียวกันให้ sub-agent หลายตัวใน directory แยกกัน ชื่อ directory ยังตั้งใจไม่บอกว่ากำลังถูกทดสอบ เพราะ Agent อาจทำตัวต่างออกไปเมื่อรู้ว่าอยู่ใน eval สิ่งที่เธอต้องการรู้คือ Skill ช่วยได้สม่ำเสมอหรือแค่โชคดีในตัวอย่างแรก</p>
+            <figure class="video-figure"><img src="2026-10-08-lauren-tan-eval-rubric-frame.jpg" alt="Lauren Tan อธิบาย rubric และ sub-agents สำหรับประเมิน Skill" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 21:00.</strong> Coordinator เขียนเกณฑ์ให้คะแนน แล้วให้ sub-agent หลายตัวลองทำงานแยกกัน ผลที่ได้จึงบอกได้มากกว่าการทดลองเพียงครั้งเดียว</figcaption></figure>
           </section>
 
           <section id="codebase">
-            <p class="eyebrow">Codebase as memory</p>
-            <h2>แก้ความผิดพลาดซ้ำที่ชั้นต่ำที่สุดที่ป้องกันมันได้</h2>
-            <p>เมื่อ Agent ทำ pattern ที่ไม่ดีซ้ำ Lauren ไม่ต้องการเพิ่ม instruction ไปเรื่อย ๆ เพราะ rules และ Skills ยังถูกลืมหรือใช้ไม่ครบได้ เธอพยายามเปลี่ยน architecture, API, type, lint rule หรือ CI เพื่อทำให้สถานะที่ไม่ต้องการสร้างยากขึ้นหรือ merge ไม่ได้</p>
-            <figure class="video-figure"><img src="2026-10-08-lauren-tan-agent-architecture-frame.jpg" alt="หน้าเอกสาร Agent-friendly architecture ของ Dune ที่แสดง contract และข้อห้ามใน codebase" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 42:00.</strong> เอกสาร architecture ของ Dune นิยาม convention, dependency และ invariant ที่คาดเดาได้ เพื่อให้เส้นทางที่ถูกต้องเป็นเส้นทางที่ Agent หาเจอง่าย</figcaption></figure>
-            <p>แนวคิดนี้ทำให้ codebase กลายเป็น institutional memory: ทุกครั้งที่ทีมเรียนรู้จาก bug หรือ review ความรู้นั้นควรถูก encode ให้นักพัฒนาและ Agent รุ่นถัดไปได้รับประโยชน์โดยอัตโนมัติ ผลคือ model ที่ไม่ได้ฉลาดที่สุดก็ยังทำงานได้ดีขึ้น เพราะพื้นที่การตัดสินใจถูกจำกัดไว้อย่างมีเจตนา</p>
-            <figure class="video-figure"><img src="2026-10-08-lauren-tan-constraint-stack-frame.jpg" alt="ลำดับชั้น codebase static analysis rules skills และ style guide จากวิดีโอ" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 47:10.</strong> ลำดับชั้นเริ่มจาก codebase และ static analysis ซึ่งบังคับได้แข็งที่สุด ก่อนลงมาที่ rules, Skills และ style guide ที่ยังขึ้นกับการตีความของ Agent</figcaption></figure>
+            <p class="eyebrow">ให้ codebase ช่วยจำแทนทีม</p>
+            <h2>ข้อผิดพลาดที่เกิดซ้ำไม่ควรจบด้วยการเพิ่ม prompt</h2>
+            <p>rules และ Skills มีประโยชน์ แต่ Agent ยังลืมหรืออ่านผิดได้ ถ้าความผิดพลาดแบบเดิมกลับมาอีก Lauren จะถามว่าป้องกันที่ชั้นล่างกว่านี้ได้ไหม บางครั้งคำตอบคือเปลี่ยน API หรือ type บางครั้งต้องเพิ่ม lint rule หรือทำให้ CI ไม่ยอมให้โค้ดแบบนั้น merge</p>
+            <figure class="video-figure"><img src="2026-10-08-lauren-tan-agent-architecture-frame.jpg" alt="หน้าเอกสาร Agent-friendly architecture ของ Dune ที่แสดง contract และข้อห้ามใน codebase" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 42:00.</strong> Dune เขียนกติกาของ architecture ไว้ชัดเจน ทั้งวิธีวางไฟล์และ dependency ที่ห้ามใช้ Agent จึงไม่ต้องเดาโครงสร้างใหม่ทุกครั้ง</figcaption></figure>
+            <p>เมื่อทีมแก้ bug หรือพบปัญหาในการ review บทเรียนนั้นจึงไม่ควรอยู่แค่ในหัวของคนที่เจอ Lauren พยายามใส่มันกลับเข้าไปใน codebase เพื่อให้ทั้งคนและ Agent รุ่นถัดไปได้ประโยชน์ วิธีนี้ยังช่วยให้ model ที่ธรรมดากว่าทำงานได้ดีขึ้น เพราะระบบตัดทางเลือกที่ผิดออกไปแล้วส่วนหนึ่ง</p>
+            <figure class="video-figure"><img src="2026-10-08-lauren-tan-constraint-stack-frame.jpg" alt="ลำดับชั้น codebase static analysis rules skills และ style guide จากวิดีโอ" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 47:10.</strong> ถ้าบังคับได้ใน codebase หรือ static analysis ให้ทำตรงนั้นก่อน ส่วน rules, Skills และ style guide อยู่ชั้นล่างเพราะ Agent ยังตีความผิดได้</figcaption></figure>
           </section>
 
           <section id="economics">
-            <p class="eyebrow">ต้นทุนและผลตอบแทน</p>
-            <h2>อย่าวัดแค่ token cost; วัดต้นทุน verification ที่ระบบเอาออกไปได้</h2>
-            <p>ช่วง Q&amp;A มีคำถามว่าการใช้ Agent และ token จำนวนมากคุ้มไหม Lauren เสนอให้เทียบกับต้นทุนเวลาของวิศวกรที่ต้องทำงานเดิม ตรวจงาน และแก้ข้อผิดพลาดเอง หากการลงทุนครั้งหนึ่งทำให้ codebase รองรับ Agent ที่ธรรมดากว่าและทำให้คนหลายบทบาทส่งงานได้ปลอดภัยขึ้น ผลตอบแทนอาจเกิดในระดับทีม ไม่ใช่แค่ความเร็วของคนเดียว</p>
-            <p>อย่างไรก็ตาม session ไม่ได้ให้ benchmark แบบควบคุม, defect rate ระยะยาว หรือ cost breakdown ที่เพียงพอจะสรุปว่า auto-merge เหมาะกับทุกทีม ควรเริ่มจากงาน reversible, สิทธิ์แคบ, evidence ชัด, rollback ได้ และวัด escaped defects ควบคู่กับ throughput</p>
+            <p class="eyebrow">แล้วค่า token คุ้มไหม</p>
+            <h2>คำถามที่ถูกไม่ใช่ “ใช้ token เท่าไร” แต่คือ “ประหยัดเวลาคนได้เท่าไร”</h2>
+            <p>ช่วงถามตอบมีคนถามตรง ๆ ว่าการใช้ Agent จำนวนมากสิ้นเปลืองหรือไม่ Lauren มองว่าต้องเทียบค่า token กับเวลาของวิศวกรที่ต้องเขียน ตรวจ และแก้งานเองด้วย ถ้าการปรับ codebase ครั้งเดียวทำให้ Agent รุ่นธรรมดาทำงานได้ดีขึ้น และช่วยให้คนในทีมส่งงานได้โดยไม่เพิ่มภาระ review ตามสัดส่วน ค่าใช้จ่ายนั้นอาจคุ้มในระดับทีม</p>
+            <p>แต่คลิปนี้ยังไม่มีข้อมูลพอจะบอกว่า auto-merge เหมาะกับทุกบริษัท เราไม่เห็น defect rate ระยะยาว ค่าใช้จ่ายทั้งหมด หรือการทดลองเทียบกับทีมที่ไม่ใช้วิธีนี้ ทางที่สมเหตุสมผลคือเริ่มจากงานที่ย้อนกลับได้ จำกัดสิทธิ์ให้แคบ เก็บหลักฐานทุกครั้ง และวัดทั้งความเร็วกับ bug ที่หลุดถึงผู้ใช้</p>
           </section>
 
           <section id="chapters">
@@ -165,8 +165,8 @@
 
           <section id="transcript">
             <p class="eyebrow">Transcript ภาษาไทยฉบับเต็ม</p>
-            <h2>ครบตั้งแต่ 00:01 ถึง 58:32</h2>
-            <p>แต่ละช่วงเชื่อมกลับไปยังเวลาจริงใน YouTube ภาษาไทยรักษาเนื้อหาของ caption ทุกแถวไว้ ส่วนชื่อผลิตภัณฑ์และศัพท์วิศวกรรมสำคัญคงเป็น English เพื่อไม่ให้ความหมายเพี้ยน</p>
+            <h2>อ่านต่อได้ตั้งแต่นาทีแรกจนจบคลิป</h2>
+            <p>ผมแบ่งคำพูดเป็นช่วงละประมาณ 30 วินาที เพื่อให้อ่านต่อเนื่องได้โดยไม่กลายเป็นกำแพงข้อความ ทุกช่วงกดกลับไปฟังใน YouTube ได้ทันที ส่วนชื่อผลิตภัณฑ์และศัพท์วิศวกรรมยังคงเป็น English เพื่อรักษาความหมายเดิม</p>
             <div class="transcript-tools">
               <p>1,469 caption rows · 112 ช่วงอ่าน · ไม่มีช่วงว่าง</p>
               <button id="language-toggle" class="language-toggle" type="button" aria-pressed="false">แสดง English ต้นฉบับ</button>
@@ -961,9 +961,9 @@
 
           <section id="method">
             <p class="eyebrow">วิธีทำและแหล่งข้อมูล</p>
-            <h2>ตรวจความครบแยกจากความแม่นยำของคำแปล</h2>
-            <p>ต้นทางหลักคือ <a href="https://www.youtube.com/watch?v=Yx_CBWkRAWY">วิดีโอที่ผู้ใช้ส่งมา</a> และ English auto-caption ในรูปแบบ JSON3 จำนวน 1,469 แถว ระบบรวม caption เป็น 112 ช่วงโดยรักษาลำดับและ timestamp แล้วแปลเป็นไทยครบทุกช่วง การตรวจ completeness ยืนยันว่าช่วงแรกเริ่ม 00:01 และช่วงสุดท้ายสิ้นสุด 58:32 ซึ่งครอบคลุมวิดีโอความยาว 58:31</p>
-            <p>สรุปด้านบนเป็น editorial synthesis จาก transcript ทั้งคลิป ไม่ได้ถือข้อความโฆษณาบน thumbnail เป็นข้อเท็จจริง สำหรับคำอ้างเรื่องบริษัท ตำแหน่งงาน จำนวน Pull Request หรือความคุ้มค่าทางธุรกิจที่ไม่มีหลักฐานภายนอก บทความจึงระบุเป็นคำเล่าของผู้พูด ไม่ใช่ผลวิจัยที่พิสูจน์แล้ว</p>
+            <h2>ผมเช็กความครบอย่างไร</h2>
+            <p>ต้นทางหลักคือ <a href="https://www.youtube.com/watch?v=Yx_CBWkRAWY">วิดีโอที่ผู้ใช้ส่งมา</a> และ English auto-caption แบบ JSON3 จำนวน 1,469 แถว ผมรวม caption เหล่านั้นเป็น 112 ช่วงโดยเก็บลำดับและ timestamp เดิมไว้ ช่วงแรกเริ่มที่ 00:01 และช่วงสุดท้ายจบที่ 58:32 จึงครอบคลุมวิดีโอความยาว 58:31 ทั้งคลิป</p>
+            <p>ส่วนสรุปด้านบนเขียนจาก transcript ทั้งคลิป คำอ้างเรื่องตำแหน่งงาน จำนวน Pull Request และความคุ้มค่าทางธุรกิจจะระบุว่าเป็นคำเล่าของ Lauren เมื่อยังไม่มีหลักฐานภายนอกมายืนยัน วิธีนี้ช่วยแยกสิ่งที่เธอเล่าออกจากสิ่งที่บทความตรวจสอบได้เอง</p>
           </section>
         </article>
         <aside class="sidebar">
