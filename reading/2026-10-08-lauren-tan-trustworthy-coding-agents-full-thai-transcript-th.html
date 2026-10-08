@@ -23,6 +23,9 @@
       .loop li:last-child { border-right: 0; }
       .loop b { display: block; margin-bottom: .3rem; }
       .loop span { color: var(--muted); font-size: .84rem; }
+      .video-figure { margin: 1.5rem 0; }
+      .video-figure img { display: block; width: 100%; aspect-ratio: 1854 / 1080; object-fit: cover; border: 1px solid var(--line); }
+      .video-figure figcaption { margin-top: .55rem; color: var(--muted); font-size: .86rem; line-height: 1.55; text-align: center; }
       .chapter-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 1.25rem 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
       .chapter-list li { border-bottom: 1px solid var(--line); }
       .chapter-list a { display: flex; gap: .75rem; padding: .8rem .4rem; text-decoration: none !important; }
@@ -92,18 +95,21 @@
             <p class="eyebrow">Trust ladder</p>
             <h2>เพิ่มจำนวน Agent หลังจากลดภาระการตรวจของมนุษย์ได้จริง</h2>
             <p>Lauren เล่าว่าเริ่มจากการใช้ Agent แบบใกล้ชิดและค่อย ๆ ปรับระบบจน Agent บางงานสามารถเปิดและ merge Pull Request ได้เอง เธอย้ำว่าจุดนั้นใช้เวลาลงทุนกับ codebase และ verification จำนวนมาก ไม่ใช่ผลจากการเปิด auto-merge เพียงอย่างเดียว</p>
+            <figure class="video-figure"><img src="2026-10-08-lauren-tan-trust-curve-frame.jpg" alt="กราฟ trust เทียบกับจำนวน agents ที่ Lauren Tan แสดงในวิดีโอ" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 04:00.</strong> เส้นโค้งสื่อว่าความไว้ใจเพิ่มเร็วเมื่อระบบเริ่มตรวจตัวเองได้ แต่จะไม่เพิ่มเพียงเพราะเปิด Agent มากขึ้น</figcaption></figure>
             <div class="trust-ladder">
               <div><small>ขั้น 1</small><strong>Human verifies</strong><p>มนุษย์สั่งงาน เปิดแอป ดูผล แล้วส่ง feedback กลับทุกครั้ง</p></div>
               <div><small>ขั้น 2</small><strong>Agent observes</strong><p>Agent เปิดผลิตภัณฑ์ ใช้งาน และเห็น error หรือ behavior ได้เอง</p></div>
               <div><small>ขั้น 3</small><strong>System constrains</strong><p>Skill, eval, architecture และ CI บังคับมาตรฐานที่ตรวจซ้ำได้</p></div>
               <div><small>ขั้น 4</small><strong>Bounded autonomy</strong><p>งานที่ผ่านหลักฐานและ rollback ได้จึงค่อยรับ autonomy มากขึ้น</p></div>
             </div>
+            <figure class="video-figure"><img src="2026-10-08-lauren-tan-pr-volume-frame.jpg" alt="กราฟจำนวน Pull Request ของ Lauren Tan พร้อมข้อความ shipped 3000 plus PRs in 5 months" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 07:00.</strong> Lauren ใช้กราฟ Pull Request เป็นภาพประกอบการเพิ่ม throughput ของตัวเอง แต่ตัวเลขนี้เป็นคำรายงานของผู้พูด ไม่ใช่ benchmark ที่ควบคุมคุณภาพหรือ defect rate</figcaption></figure>
           </section>
 
           <section id="verification">
             <p class="eyebrow">Verification Skill</p>
             <h2>ให้ Agent มีทั้ง “มือ” และ “ตา” บนผลิตภัณฑ์จริง</h2>
             <p>ถ้า Agent แก้ UI แต่ดูได้เพียง source code มันยังไม่รู้ว่าผู้ใช้เห็นอะไร Lauren จึงให้ Agent เปิด local application, เรียก API ที่ใช้ควบคุมแอป, อ่าน console และเก็บภาพหรือ runtime evidence ด้วยตัวเอง สำหรับ CLI หรือ desktop app หลักการเหมือนกัน: Agent ต้องทำ user journey ที่เกี่ยวข้องและเห็นผลหลังแก้</p>
+            <figure class="video-figure"><img src="2026-10-08-lauren-tan-verification-guide-frame.jpg" alt="ตัวอย่าง verification guide สำหรับ Electron application จากวิดีโอ" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 11:30.</strong> ตัวอย่างเอกสาร Verification Skill แสดงขั้นตอนเปิด app, แยก worktree และตรวจ behavior จริง จึงเป็น operational guide มากกว่า persona prompt</figcaption></figure>
             <ol class="loop">
               <li><b>Reproduce</b><span>ทำให้ปัญหาเกิดซ้ำผ่าน surface จริง</span></li>
               <li><b>Inspect</b><span>อ่าน code, state, log และ dependency ที่เกี่ยวข้อง</span></li>
@@ -117,14 +123,18 @@
             <p class="eyebrow">pstack, Skills และ Evals</p>
             <h2>เก็บวิธีคิดที่ใช้ซ้ำเป็น Skill แล้วทดสอบมันเหมือนผลิตภัณฑ์</h2>
             <p>pstack เกิดจากการสังเกตว่า Agent พลาดเรื่องเดิม เช่นเดาแทนการ inspect, ข้าม design, debug แบบผิวเผิน หรือประกาศว่างานเสร็จโดยไม่มีหลักฐาน Lauren จึงแยกวิธีทำงานเป็น Skill สำหรับ investigation, architecture, implementation, review และ verification</p>
+            <figure class="video-figure"><img src="2026-10-08-lauren-tan-pstack-frame.jpg" alt="สไลด์ how do I trust my agents more ที่ระบุ verification pstack และ agent-friendly architecture" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 16:00.</strong> โครงเรื่องของ session เรียงจาก verification ไปสู่ Skills อย่าง pstack แล้วจึง refactor architecture ให้ Agent ทำงานได้ง่ายขึ้น</figcaption></figure>
             <p>จากนั้นเธอใช้ coordinator สร้าง rubric และ spawn sub-agent หลายตัวใน environment แยกกันเพื่อทดสอบ Skill กับ task ต่าง ๆ ชื่อ directory ถูกทำให้ไม่สื่อว่ากำลังอยู่ในการประเมิน เพราะ Agent อาจเปลี่ยนพฤติกรรมเมื่อรู้ว่าถูก eval เป้าหมายไม่ใช่ให้ผ่านตัวอย่างเดียว แต่ดูว่ากระบวนการช่วยได้สม่ำเสมอหรือไม่</p>
+            <figure class="video-figure"><img src="2026-10-08-lauren-tan-eval-rubric-frame.jpg" alt="Lauren Tan อธิบาย rubric และ sub-agents สำหรับประเมิน Skill" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 21:00.</strong> Coordinator สร้าง rubric แล้วให้ sub-agent หลายตัวทำงานแยกกัน เพื่อตรวจว่ากระบวนการใช้ได้กว้างกว่าตัวอย่างเดียว</figcaption></figure>
           </section>
 
           <section id="codebase">
             <p class="eyebrow">Codebase as memory</p>
             <h2>แก้ความผิดพลาดซ้ำที่ชั้นต่ำที่สุดที่ป้องกันมันได้</h2>
             <p>เมื่อ Agent ทำ pattern ที่ไม่ดีซ้ำ Lauren ไม่ต้องการเพิ่ม instruction ไปเรื่อย ๆ เพราะ rules และ Skills ยังถูกลืมหรือใช้ไม่ครบได้ เธอพยายามเปลี่ยน architecture, API, type, lint rule หรือ CI เพื่อทำให้สถานะที่ไม่ต้องการสร้างยากขึ้นหรือ merge ไม่ได้</p>
+            <figure class="video-figure"><img src="2026-10-08-lauren-tan-agent-architecture-frame.jpg" alt="หน้าเอกสาร Agent-friendly architecture ของ Dune ที่แสดง contract และข้อห้ามใน codebase" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 42:00.</strong> เอกสาร architecture ของ Dune นิยาม convention, dependency และ invariant ที่คาดเดาได้ เพื่อให้เส้นทางที่ถูกต้องเป็นเส้นทางที่ Agent หาเจอง่าย</figcaption></figure>
             <p>แนวคิดนี้ทำให้ codebase กลายเป็น institutional memory: ทุกครั้งที่ทีมเรียนรู้จาก bug หรือ review ความรู้นั้นควรถูก encode ให้นักพัฒนาและ Agent รุ่นถัดไปได้รับประโยชน์โดยอัตโนมัติ ผลคือ model ที่ไม่ได้ฉลาดที่สุดก็ยังทำงานได้ดีขึ้น เพราะพื้นที่การตัดสินใจถูกจำกัดไว้อย่างมีเจตนา</p>
+            <figure class="video-figure"><img src="2026-10-08-lauren-tan-constraint-stack-frame.jpg" alt="ลำดับชั้น codebase static analysis rules skills และ style guide จากวิดีโอ" loading="lazy" /><figcaption><strong>ภาพจากวิดีโอ 47:10.</strong> ลำดับชั้นเริ่มจาก codebase และ static analysis ซึ่งบังคับได้แข็งที่สุด ก่อนลงมาที่ rules, Skills และ style guide ที่ยังขึ้นกับการตีความของ Agent</figcaption></figure>
           </section>
 
           <section id="economics">
