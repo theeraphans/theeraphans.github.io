@@ -5,11 +5,17 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
     <title>Lauren Tan: ทำอย่างไรให้เราไว้ใจ Coding Agent ได้จริง</title>
     <meta name="description" content="สรุปภาษาไทยและ transcript ภาษาไทยฉบับเต็มของ Lauren Tan ว่าด้วย verification skills, pstack, evals, codebase constraints และการเพิ่ม autonomy ให้ coding agents อย่างมีหลักฐาน" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&amp;display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
     <script src="article-theme.js?v=20261003-5" defer></script>
     <style>
-      body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans Thai", "Leelawadee UI", sans-serif !important; }
-      h1, h2, h3, h4, h5, h6 { font-family: inherit !important; }
+      body { font-family: "IBM Plex Sans Thai", "Noto Sans Thai", "Leelawadee UI", system-ui, sans-serif !important; line-height: 1.6 !important; }
+      h1, h2, h3, h4, h5, h6, .subtitle, .dek, .lead, .description { font-family: "IBM Plex Sans Thai", "Noto Sans Thai", "Leelawadee UI", system-ui, sans-serif !important; }
+      .hero h1 { font-size: clamp(2.8rem, 4.5vw, 4.5rem) !important; font-weight: 400 !important; line-height: 1.08 !important; }
+      .subtitle { font-weight: 300 !important; line-height: 1.62 !important; }
+      .content p, .content li { line-height: 1.72; }
       .callout { margin: 1.4rem 0; padding: 1rem !important; border-left: 3px solid var(--green) !important; background: var(--surface) !important; }
       .callout.warning { border-left-color: #8a6417 !important; }
       .callout p:last-child { margin-bottom: 0; }
@@ -44,6 +50,7 @@
         .loop li:last-child { border-bottom: 0; }
       }
       @media (max-width: 520px) {
+        .hero h1 { font-size: clamp(2.15rem, 10vw, 2.75rem) !important; line-height: 1.12 !important; }
         .transcript-row { grid-template-columns: 3.35rem minmax(0, 1fr); gap: .6rem; }
       }
     </style>
