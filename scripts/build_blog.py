@@ -23,6 +23,8 @@ def build():
         slug = project['slug']
         svg = diagram(slug, project['title'], project['nodes'], project['supports'])
         figure = f'<figure><div class="architecture-scroll" tabindex="0" aria-label="Scrollable architecture diagram">{svg}</div><figcaption>A simplified public architecture. Solid arrows show the main flow; dashed arrows show supporting dependencies. <a href="architecture.html">Open diagram ↗</a></figcaption></figure>'
+        if slug == 'agentic-platform':
+            figure = figure.replace(' <a href="architecture.html">Open diagram ↗</a>', '')
         detail = ''
         if project.get('detail'):
             title = 'Evaluation and version review' if slug == 'agentic-platform' else 'Agent publishing and runtime selection'
