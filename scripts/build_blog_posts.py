@@ -4,7 +4,6 @@ from html import escape
 import re
 from build_blog import head, article_toc
 from blog_topics import TOPICS, BASIS
-from project_data import PROJECTS
 
 ROOT = Path(__file__).resolve().parents[1]
 TITLE = 'Beyond the prompt: designing an agent harness for business workflows'
@@ -33,7 +32,7 @@ def write_article(slug, title, summary, body, project=None):
     desktop, mobile = article_toc(body)
     folder = ROOT / 'blog' / slug
     folder.mkdir(parents=True, exist_ok=True)
-    related = f'<p><a href="../../project/{project}/">Project overview →</a></p>' if project else ''
+    related = ''
     article = head(title, 1).replace('<main id="main">', '<main id="main" class="article-layout">')
     article += desktop + '<div class="article-column"><article><div class="intro article-intro"><a class="back-link" href="../">← All blog posts</a>'
     article += f'<h1>{escape(title)}</h1><p class="lead">{escape(summary)}</p><p class="meta">Theeraphan Sukchok · 9 October 2026 · Engineering research note</p>{related}</div>'
@@ -53,14 +52,11 @@ def build():
         body += '<section id="next-test" data-toc="A testable next step"><h2>What I would test next</h2><p>' + escape(test) + '</p><p>This is a proposed test, not a completed result. A future report needs its fixtures, baseline, and execution evidence.</p></section>'
         body += research['references']
         write_article(slug, title, summary, body, project)
-    catalog = head('Blog') + '<div class="intro"><p class="eyebrow">Blog</p><h1>Research notes from the systems I build.</h1><p class="lead">Twelve focused articles on agent execution, customer operations, data, and computer vision.</p><p>Each series starts with my project record, examines an engineering decision, and defines what needs testing. Proposed experiments are separate from reported results.</p></div>'
-    for project in PROJECTS:
-        catalog += f'<section><h2>{escape(project["title"])}</h2><p><a href="../project/{project["slug"]}/">Project overview →</a></p><nav class="project-catalog" aria-label="{escape(project["title"])} articles">'
-        for slug, parent, title, summary, *_ in TOPICS:
-            if parent == project['slug']:
-                catalog += f'<a href="{slug}/"><span class="catalog-number">9 October 2026 · Engineering research</span><h3>{escape(title)}</h3><p>{escape(summary)}</p><span class="catalog-read">Read article →</span></a>'
-        catalog += '</nav></section>'
-    catalog += f'<section><h2>Background reading</h2><nav class="project-catalog" aria-label="Background notes"><a href="{SLUG}/"><h3>{TITLE}</h3><p>A literature-informed starting point for business-agent reliability.</p><span class="catalog-read">Read article →</span></a></nav></section></main><footer>© 2026 Theeraphan Sukchok</footer></body></html>'
+    catalog = head('Blog') + '<div class="intro"><p class="eyebrow">Blog</p><h1>Research &amp; engineering notes.</h1><p class="lead">Ideas and technical decisions in agent systems, evaluation, data, and computer vision.</p></div><nav class="project-catalog" aria-label="Blog articles">'
+    labels = {'agentic-platform': 'Agent systems · Evaluation', 'hermes': 'AI applications · Reliability', 'voc': 'Classification · Retrieval', 'sales-recovery': 'Workflow automation', 'data-platform': 'Data engineering · Analytics', 'visual-recognition': 'Computer vision'}
+    for slug, parent, title, summary, *_ in TOPICS:
+        catalog += f'<a href="{slug}/"><span class="catalog-number">9 October 2026</span><h2>{escape(title)}</h2><p>{escape(summary)}</p><div class="tags"><span>{labels[parent]}</span></div><span class="catalog-read">Read article →</span></a>'
+    catalog += f'<a href="{SLUG}/"><span class="catalog-number">9 October 2026</span><h2>{TITLE}</h2><p>A literature-informed starting point for business-agent reliability.</p><div class="tags"><span>Agent systems · Reliability</span></div><span class="catalog-read">Read article →</span></a></nav></main><footer>© 2026 Theeraphan Sukchok</footer></body></html>'
     (ROOT / 'blog/index.html').write_text(catalog)
 
 if __name__ == '__main__':
