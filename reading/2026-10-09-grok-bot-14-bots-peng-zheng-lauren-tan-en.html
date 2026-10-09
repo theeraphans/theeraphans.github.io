@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>The Operating System Behind a 14-Bot Team</title>
+    <meta name="description" content="A detailed, evidence-aware guide to Peng Zheng and Lauren Tan's 14-bot operating system: persistent roles, disposable project rooms, delegated execution, skills, routines, approvals, and earned autonomy." />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .visual { margin: 1.7rem 0 2rem; }
+      .visual img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 4px; }
+      .visual figcaption { margin-top: .65rem; color: var(--muted); font-size: .88rem; line-height: 1.55; text-align: center; }
+      .callout { margin: 1.5rem 0; padding: 1rem !important; border-left: 3px solid var(--green) !important; background: var(--surface) !important; }
+      .callout.warning { border-left-color: #8a6417 !important; }
+      .callout p:last-child { margin-bottom: 0; }
+      .role-grid, .trust-grid, .boundary-grid { display: grid; gap: 1px; margin: 1.5rem 0; border: 1px solid var(--line); background: var(--line); }
+      .role-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .trust-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .boundary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .role-grid > div, .trust-grid > div, .boundary-grid > div { padding: 1rem; background: var(--paper); }
+      .role-grid strong, .trust-grid strong { display: block; margin-bottom: .4rem; color: var(--green); font-size: .8rem; }
+      .role-grid h3, .trust-grid h3, .boundary-grid h3 { margin: 0 0 .45rem; font-size: 1rem; }
+      .role-grid p, .trust-grid p, .boundary-grid p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.55; }
+      .system-map { margin: 1.5rem 0; padding: 1.1rem; border: 1px solid var(--line); }
+      .system-row { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; align-items: stretch; gap: .65rem; }
+      .system-node { display: grid; place-items: center; min-height: 6rem; padding: .8rem; text-align: center; background: var(--surface); border: 1px solid var(--line); }
+      .system-node b { display: block; margin-bottom: .25rem; }
+      .system-node small { color: var(--muted); line-height: 1.4; }
+      .system-arrow { align-self: center; color: var(--green); font-weight: 700; }
+      .chapter-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 1.25rem 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
+      .chapter-list li { border-bottom: 1px solid var(--line); }
+      .chapter-list div { display: flex; gap: .7rem; min-height: 100%; padding: .8rem .45rem; }
+      .chapter-list time { flex: 0 0 3.4rem; color: var(--green); font-variant-numeric: tabular-nums; }
+      @media (max-width: 850px) {
+        .role-grid, .trust-grid, .boundary-grid, .chapter-list { grid-template-columns: 1fr; }
+        .system-row { grid-template-columns: 1fr; }
+        .system-arrow { justify-self: center; transform: rotate(90deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Loki Reading</a>
+      <div class="top-actions"><a class="action-link" href="https://www.youtube.com/watch?v=xZ5TEaleUdg">Watch original</a></div>
+    </nav>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Agent operating systems · Delegation and trust</p>
+          <h1>The Operating System Behind a 14-Bot Team</h1>
+          <p class="subtitle">Peng Zheng and Lauren Tan do not treat agents as interchangeable chat windows. They assign persistent roles, delegate execution through a hierarchy, turn repeated work into skills, and grant autonomy only after a workflow becomes observable and reliable.</p>
+          <div class="meta"><span>43:41 video</span><span>Publisher-supplied English captions</span><span>Published September 27, 2026</span><span>Summary run: October 9, 2026 · 15:38 ICT</span></div>
+        </div>
+        <figure class="hero-card">
+          <img src="2026-10-09-grok-bot-14-bots-group-chat-hero.jpg" alt="Peng Zheng showing a Grok Bot group chat with product, design, and engineering agents" />
+          <figcaption>The interface looks like a team chat, but the important architecture sits behind it: persistent roles, scoped tools, local memory, delegated workers, and explicit approval boundaries.</figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="eyebrow">Executive summary</p>
+            <h2>The breakthrough is not 14 bots. It is a legible organization.</h2>
+            <p>In this Behind the Craft episode, Grok Bot builders Peng Zheng and Lauren Tan open their working setups. Peng uses persistent assistants for product, design, engineering, marketplace listings, personal inventory, and travel. Lauren uses a chief of staff, an engineering lead, specialist engineering bots, and cloud coding agents. The number of agents is the least interesting part. What matters is that every level has a different job.</p>
+            <p>The system separates <strong>coordination from execution</strong>. A persistent bot remembers the role, tools, preferences, and ongoing context. A temporary project room gathers the right roles around one objective. Specialist bots decompose and supervise work. Disposable cloud agents perform bounded implementation tasks. Humans still approve consequential actions and improve the system when intervention repeats.</p>
+            <ul>
+              <li><strong>Persistent roles beat anonymous chats.</strong> A named point of contact can accumulate domain context and present a stable interface even when the underlying models or tools change.</li>
+              <li><strong>Project rooms should be disposable.</strong> The room exists for the work; the roles survive it.</li>
+              <li><strong>Managers should delegate, not secretly execute.</strong> Lauren explicitly instructs her engineering lead to pass implementation to specialist bots, which then launch cloud agents.</li>
+              <li><strong>Skills are compiled experience.</strong> Once a repeated workflow is understood, it becomes an inspectable procedure rather than another long conversation.</li>
+              <li><strong>Routines come after reliability.</strong> Scheduled autonomy is the last step, not the starting point.</li>
+              <li><strong>Humans remain authority boundaries.</strong> The travel assistant searches and prepares the itinerary, but asks before making the purchase.</li>
+            </ul>
+            <div class="callout warning"><p><strong>Evidence boundary.</strong> The X repost says the bots “make every decision.” The recording shows a more careful system: human approvals, gradual trust, and auto-merge only in constrained workflows. This article distinguishes visible demonstrations from the speakers' broader claims. It does not independently verify internal SpaceXAI systems, productivity, or code quality.</p></div>
+          </section>
+
+          <section id="roles">
+            <p class="eyebrow">System model</p>
+            <h2>Keep the people; throw away the meeting room</h2>
+            <p>Most AI products make the chat thread the durable object. Peng reverses that relationship. The bot is durable: it has a name, role, tools, memory, and preferences. A project chat is temporary. When a product question needs design and engineering input, Peng opens a room with those three roles, asks the question, and lets each participant respond only when relevant or explicitly mentioned.</p>
+            <p>This mirrors a healthy organization. A designer does not become a new person for every project. The project provides a shared workspace; expertise remains attached to the role. That gives users a simpler mental model and gives platform builders a clean place to separate private memory from shared project state.</p>
+            <figure class="visual"><img src="2026-10-09-grok-bot-14-bots-group-chat-hero.jpg" alt="Product, design, and engineering bots participating in a shared project discussion" loading="lazy" /><figcaption><strong>From the video around 06:31.</strong> Product, design, and engineering bots join one project conversation. Roles persist; the shared room exists only as long as the project needs it.</figcaption></figure>
+            <div class="role-grid">
+              <div><strong>Durable</strong><h3>Role</h3><p>Identity, mandate, ownership, communication style, and escalation policy.</p></div>
+              <div><strong>Durable</strong><h3>Capability</h3><p>Allowed tools, connectors, skills, local memory, and operational limits.</p></div>
+              <div><strong>Temporary</strong><h3>Project room</h3><p>A shared objective, artifacts, decisions, and only the roles needed for the work.</p></div>
+              <div><strong>Disposable</strong><h3>Worker</h3><p>A bounded execution context created for one task, then inspected and discarded.</p></div>
+            </div>
+          </section>
+
+          <section id="peng">
+            <p class="eyebrow">Peng's daily workflows</p>
+            <h2>A chief of staff becomes the front door to many small systems</h2>
+            <p>Peng's chief of staff is less a chatbot than a personal operations layer. It buys 3D-printer filament and updates a Notion inventory. It researches comparable prices for a DJI microphone, asks a writing bot to match Peng's tone, posts the listing to Facebook Marketplace, and reduces the price by five dollars each week. It extracts action items from email and updates a calendar from screenshots.</p>
+            <figure class="visual"><img src="2026-10-09-grok-bot-chief-of-staff-frame.jpg" alt="Peng Zheng demonstrating his persistent chief of staff bot" loading="lazy" /><figcaption><strong>From the video around 01:23.</strong> The chief of staff is a durable interface to recurring personal operations, not a new prompt assembled for every request.</figcaption></figure>
+            <p>The useful product lesson is not “connect everything.” It is to give one trusted role a coherent responsibility and let it coordinate narrower capabilities. A user should not need to remember which model, connector, or script performs the work. They should know who owns the outcome and when that role must ask for help.</p>
+          </section>
+
+          <section id="design">
+            <p class="eyebrow">Design delegation</p>
+            <h2>The human draws the keyframe; the bot scales the system</h2>
+            <p>Peng describes a design workflow in which he performs the first five percent: the keyframe that captures the visual idea and quality bar. A design bot connected to Figma then extends that language across the remaining flow. This is not design-by-prompt. The human supplies taste, intent, and an example; the agent supplies repetition and coverage.</p>
+            <p>His personal check-in application makes the pattern concrete. A photo of a place becomes a clay-style diorama, receives day and night variants, has its background removed, and is published to a website. Peng avoids building an administrative interface because Grok Bot itself becomes the operational interface.</p>
+            <figure class="visual"><img src="2026-10-09-grok-bot-diorama-frame.jpg" alt="A photo-to-diorama check-in workflow demonstrated through Grok Bot" loading="lazy" /><figcaption><strong>From the video around 10:07.</strong> A photo triggers an image pipeline and publication workflow. The chat interface replaces a custom CMS for a private, low-volume tool.</figcaption></figure>
+            <div class="callout"><p><strong>When this pattern works.</strong> Chat can replace an admin UI when usage is low, the operator is trusted, actions are reversible, and evidence is easy to inspect. A customer-facing or high-risk workflow still needs explicit state, validation, permissions, and auditability.</p></div>
+          </section>
+
+          <section id="lauren">
+            <p class="eyebrow">Lauren's engineering organization</p>
+            <h2>The chief of staff coordinates; specialist agents execute</h2>
+            <p>Lauren mostly speaks to one chief of staff. For engineering work, that role hands the objective to an engineering lead called Matcha. Matcha is instructed never to implement the work directly. It delegates to four engineering bots, which can then launch cloud agents with an appropriate model and reasoning budget.</p>
+            <p>The hierarchy prevents a common multi-agent failure: one generalist accumulating every responsibility while “subagents” exist only in a diagram. Here, delegation is an explicit invariant. Coordination agents preserve context and make decisions about work. Execution agents operate inside bounded tasks. Evidence flows back upward.</p>
+            <figure class="visual"><img src="2026-10-09-grok-bot-engineering-team-frame.jpg" alt="Lauren Tan showing an engineering lead and specialist engineering bots" loading="lazy" /><figcaption><strong>From the video around 25:22.</strong> Lauren's engineering lead delegates to specialist bots rather than writing code itself. The organization is visible in the interface.</figcaption></figure>
+            <div class="system-map" aria-label="Delegation hierarchy">
+              <div class="system-row">
+                <div class="system-node"><div><b>Human</b><small>Sets intent, authority, and quality bar</small></div></div>
+                <div class="system-arrow">-&gt;</div>
+                <div class="system-node"><div><b>Chief of staff</b><small>Routes work and preserves operating context</small></div></div>
+                <div class="system-arrow">-&gt;</div>
+                <div class="system-node"><div><b>Specialist lead</b><small>Plans, decomposes, supervises, and escalates</small></div></div>
+                <div class="system-arrow">-&gt;</div>
+                <div class="system-node"><div><b>Workers and tools</b><small>Execute bounded tasks and return evidence</small></div></div>
+              </div>
+            </div>
+            <figure class="visual"><img src="2026-10-09-grok-bot-cloud-agents-frame.jpg" alt="Cloud coding agents launched by the specialist engineering team" loading="lazy" /><figcaption><strong>From the video around 27:00.</strong> Cloud agents are the execution layer. Persistent bots supervise, choose workers, and relay results rather than doing every step themselves.</figcaption></figure>
+          </section>
+
+          <section id="eggbot">
+            <p class="eyebrow">Meta-agent</p>
+            <h2>Dr. Eggbot designs and audits the other bots</h2>
+            <p>The most revealing role may be Dr. Eggbot, a bot responsible for creating and inspecting other bots. Its existence acknowledges that prompts, permissions, skills, and routines form a system that needs maintenance. When an agent repeatedly fails, the answer is not always to correct that one conversation. The team can change the role definition, tool boundary, skill, or verification process.</p>
+            <figure class="visual"><img src="2026-10-09-grok-bot-eggbot-frame.jpg" alt="Dr. Eggbot, the meta-agent used to design and audit other bots" loading="lazy" /><figcaption><strong>From the video around 17:59.</strong> A dedicated meta-role turns agent design into an inspectable operating practice rather than scattered prompt editing.</figcaption></figure>
+            <p>A production platform should split this responsibility further. A bot designer may propose changes, but changes to permissions, customer-facing actions, or high-risk routines should pass policy checks, evaluation, review, and versioned rollout before becoming active.</p>
+          </section>
+
+          <section id="authority">
+            <p class="eyebrow">Authority boundaries</p>
+            <h2>Delegating the work does not mean delegating every decision</h2>
+            <p>Lauren's personal assistant searches a multi-city trip from Orange County to Denver, London, Amsterdam, and home through Navan. It compares flights and hotels and prepares the itinerary. Before spending money, it asks for approval. That small pause is more important than the impressive browsing sequence because it exposes the authority model.</p>
+            <div class="boundary-grid">
+              <div><h3>Agent can prepare</h3><p>Search, compare, draft, calculate, simulate, gather evidence, and recommend a bounded action.</p></div>
+              <div><h3>Human must authorize</h3><p>Expensive purchase, irreversible change, external communication, policy exception, or action outside a proven routine.</p></div>
+            </div>
+            <p>Approval should cover the exact payload, not just the idea. The reviewer needs to see the itinerary, price, recipients, timing, and cancellation conditions that will actually be submitted. If the payload changes after approval, the system should fail closed and request approval again.</p>
+          </section>
+
+          <section id="kitchen">
+            <p class="eyebrow">Agent-friendly engineering</p>
+            <h2>The target is a Michelin kitchen, not a software factory</h2>
+            <p>Lauren says some pull requests can land before she reads them. That claim only makes sense inside the environment she has described elsewhere: bounded tasks, verification skills, repository constraints, specialist review, and accumulated trust. Auto-merge is not a feature to copy in isolation.</p>
+            <p>Her preferred metaphor is a Michelin kitchen. Quality at scale comes from stations, clear ownership, tools, mise en place, training, inspection, and cleanup. More cooks do not rescue a chaotic kitchen. More agents do not rescue a repository with ambiguous ownership, weak tests, stale documentation, and no observable definition of done.</p>
+            <div class="callout"><p><strong>Practical test.</strong> Before adding another agent, ask whether the current one can reproduce the issue, operate the real product, verify the user outcome, collect reviewable evidence, and escalate uncertainty. If not, the missing capability is probably environmental rather than model-related.</p></div>
+          </section>
+
+          <section id="feedback">
+            <p class="eyebrow">Outer loop</p>
+            <h2>Operational signals should reach the team without copy and paste</h2>
+            <p>A social bot called Potato checks X mentions every 30 minutes and aggregates bug reports. The engineering lead can ask Potato for the surrounding context instead of waiting for a human to copy screenshots and links into an engineering channel. This connects an outer loop of customer signals to an inner loop of investigation, implementation, and verification.</p>
+            <p>The useful boundary is that an incoming mention is evidence, not truth and not automatically a task. The system still needs deduplication, severity assessment, reproduction, ownership, and a decision about whether work should begin. Otherwise a noisy social feed can create a noisy engineering queue at machine speed.</p>
+          </section>
+
+          <section id="trust">
+            <p class="eyebrow">Trust progression</p>
+            <h2>Task first, skill second, routine last</h2>
+            <p>The strongest framework in the episode is the progression from observation to autonomy. Start by asking the bot to perform one task while watching closely. Correct it and identify what knowledge or tooling was missing. Once the same procedure works repeatedly, encode it as a skill. Only after the skill succeeds reliably should it become a scheduled or event-driven routine.</p>
+            <div class="trust-grid">
+              <div><strong>Stage 1</strong><h3>Task</h3><p>One explicit request. The human watches, corrects, and learns where the system is weak.</p></div>
+              <div><strong>Stage 2</strong><h3>Repeat</h3><p>Run the workflow again with variation. Record interventions, failure classes, and evidence.</p></div>
+              <div><strong>Stage 3</strong><h3>Skill</h3><p>Encode the procedure, tools, constraints, verification, and escalation as a versioned contract.</p></div>
+              <div><strong>Stage 4</strong><h3>Routine</h3><p>Schedule or trigger it only when the workflow is reliable, observable, reversible, and owned.</p></div>
+            </div>
+            <p>This is the agent equivalent of onboarding an employee. Trust grows because the organization sees consistent evidence, not because the employee has an impressive title or the model has a higher benchmark score.</p>
+          </section>
+
+          <section id="platform">
+            <p class="eyebrow">Platform playbook</p>
+            <h2>What to carry into an agentic platform</h2>
+            <ol>
+              <li><strong>Make roles persistent and projects temporary.</strong> Keep role memory private; share only project artifacts and explicit decisions.</li>
+              <li><strong>Separate supervisors from workers.</strong> Supervisors plan, route, monitor, and escalate. Workers execute one bounded task with a clear completion contract.</li>
+              <li><strong>Represent authority explicitly.</strong> Every tool needs scope, payload constraints, approval policy, audit output, and a fail-closed path.</li>
+              <li><strong>Turn repeated work into versioned skills.</strong> Include trigger, inputs, steps, allowed tools, expected evidence, evals, and escalation conditions.</li>
+              <li><strong>Promote skills to routines only after evaluation.</strong> Measure intervention rate, outcome quality, rollback, and recurring failure classes.</li>
+              <li><strong>Give meta-agents bounded change authority.</strong> They may diagnose and propose agent changes; production activation should remain governed.</li>
+              <li><strong>Keep the hierarchy visible.</strong> A BA should be able to answer who owns the objective, who can act, who verifies, and who approves without reading prompts.</li>
+            </ol>
+          </section>
+
+          <section id="limits">
+            <p class="eyebrow">What the episode does not prove</p>
+            <h2>A compelling interface is not yet an operating benchmark</h2>
+            <p>The demonstrations show real interaction patterns, but they do not provide controlled measurements of task success, intervention rate, escaped defects, cost, latency, or comparison with a simpler single-agent workflow. We also do not see the full permission model, prompt versions, evaluation sets, failure logs, or how often a human repairs the system.</p>
+            <p>The credible takeaway is therefore architectural, not numerical. Named roles, bounded workers, shared project context, verification, approvals, and gradual promotion from tasks to routines form a coherent operating model. Whether 14 agents are better than four depends on workload, observability, coordination cost, and the quality of the environment around them.</p>
+          </section>
+
+          <section id="map">
+            <p class="eyebrow">Video map</p>
+            <h2>Where the main ideas appear</h2>
+            <ul class="chapter-list">
+              <li><div><time>00:00</time><span>Tour of the working bot team</span></div></li>
+              <li><div><time>01:23</time><span>Chief of staff: supplies, inventory, and marketplace listing</span></div></li>
+              <li><div><time>06:31</time><span>Product, design, and engineering group chat</span></div></li>
+              <li><div><time>10:07</time><span>Photo-to-diorama personal check-in app</span></div></li>
+              <li><div><time>14:16</time><span>Agents operate and verify the product before merge</span></div></li>
+              <li><div><time>17:59</time><span>Dr. Eggbot designs and audits other bots</span></div></li>
+              <li><div><time>21:27</time><span>Travel assistant plans a multi-city trip and asks approval</span></div></li>
+              <li><div><time>25:22</time><span>Engineering hierarchy and bounded delegation</span></div></li>
+              <li><div><time>29:30</time><span>Cloud agents as the execution layer</span></div></li>
+              <li><div><time>32:30</time><span>Michelin-kitchen quality model and pstack skills</span></div></li>
+              <li><div><time>35:20</time><span>Social feedback bot connects users to engineering</span></div></li>
+              <li><div><time>38:59</time><span>Task to skill to routine: earning autonomy</span></div></li>
+            </ul>
+          </section>
+
+          <section id="sources">
+            <p class="eyebrow">Sources</p>
+            <h2>Primary recording and provenance</h2>
+            <ol>
+              <li><a href="https://www.youtube.com/watch?v=xZ5TEaleUdg">Behind the Craft with Peter Yang - We Built Grok Bot. Here Are Our 14 Best Bots</a>. Original video and publisher-supplied English captions.</li>
+              <li><a href="https://creatoreconomy.so/p/grok-bot-team-14-best-bots-peng-zheng-lauren-tan">Peter Yang - episode page with Peng Zheng and Lauren Tan</a>. Original description, guest identities, and chapter markers.</li>
+              <li><a href="https://x.com/silentguyy66/status/2108280456835727812/video/1">X repost supplied for this summary</a>. Used to obtain the public recording; its promotional wording is treated as commentary, not verified fact.</li>
+            </ol>
+            <p class="source-note">Source review completed October 9, 2026. The X video was downloaded at 1280x720 and runs 43:41. All six article images are direct frames from that file. Product names mistranscribed in the caption track were normalized against the original episode page and visible interface.</p>
+          </section>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <p>On this page</p>
+          <nav>
+            <a href="#summary">Executive summary</a><a href="#roles">System model</a><a href="#peng">Chief of staff</a><a href="#design">Design workflow</a><a href="#lauren">Engineering hierarchy</a><a href="#eggbot">Dr. Eggbot</a><a href="#authority">Authority boundaries</a><a href="#kitchen">Michelin kitchen</a><a href="#feedback">Operational feedback</a><a href="#trust">Trust progression</a><a href="#platform">Platform playbook</a><a href="#limits">Evidence boundary</a><a href="#map">Video map</a><a href="#sources">Sources</a>
+          </nav>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>
