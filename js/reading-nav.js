@@ -27,7 +27,7 @@
   up.textContent = '↑';
   up.hidden = true;
   up.addEventListener('click', () => window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' }));
-  if (!existingNav) document.body.append(nav);
+  if (!existingNav && document.body.dataset.hideToc !== 'true') document.body.append(nav);
   document.body.append(up);
   const update = () => {
     const threshold = window.innerHeight * 0.3;
