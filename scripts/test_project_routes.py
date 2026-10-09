@@ -14,10 +14,19 @@ class Page(HTMLParser):
         self.articles = 0
         self.assets = []
         self.ids = []
+        self.toc_sections = []
+        self.left_toc = False
+        self.mobile_toc = False
         self.feed(text)
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
+        if attrs.get('data-toc'):
+            self.toc_sections.append(attrs['id'])
+        if tag == 'aside' and attrs.get('class') == 'article-toc':
+            self.left_toc = True
+        if tag == 'details' and attrs.get('class') == 'mobile-toc':
+            self.mobile_toc = True
         if attrs.get('id'):
             self.ids.append(attrs['id'])
         if tag == 'article':
@@ -47,6 +56,11 @@ class ProjectRoutes(unittest.TestCase):
                 self.assertIn('../', article.links)
                 self.assertEqual(article.articles, 1)
                 self.assertNotIn('data-workflow', text)
+                self.assertTrue(article.left_toc)
+                self.assertTrue(article.mobile_toc)
+                self.assertIn('references', article.toc_sections)
+                for section in article.toc_sections:
+                    self.assertEqual(article.links.count('#' + section), 2)
 
     def test_local_links_assets_and_fragments_resolve(self):
         root = Path(__file__).resolve().parents[1]
