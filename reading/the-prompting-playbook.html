@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>The Prompting Playbook - Summary Blog</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #182027;
+      --muted: #5f6d76;
+      --soft: #f6f3ec;
+      --paper: #fffdf8;
+      --line: #ddd6c8;
+      --red: #b63a32;
+      --green: #286c61;
+      --blue: #315f8c;
+      --gold: #a36f22;
+      --violet: #66598b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--soft);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--red), var(--green), var(--blue), var(--gold));
+    }
+
+    a {
+      color: var(--green);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    h1,
+    h2,
+    h3,
+    p,
+    figure {
+      margin: 0;
+    }
+
+    p,
+    li {
+      line-height: 1.78;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .language-link,
+    .watch-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .language-link {
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .language-link.is-active {
+      color: #fff;
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .watch-link {
+      color: #fff;
+      background: var(--red);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--red);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 10ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 9vw, 6.8rem);
+      font-weight: 760;
+      line-height: 0.92;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 780px;
+      margin-top: 24px;
+      color: #2d363d;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.18rem, 2.2vw, 1.55rem);
+      line-height: 1.6;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong {
+      color: var(--ink);
+    }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 28px 60px rgb(24 32 39 / 14%);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: #1f3535;
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 84%);
+      font-size: 1.06rem;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .stat {
+      padding: 14px;
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 18%);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: #fff;
+      font-size: 1.35rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      color: rgb(255 255 255 / 72%);
+      font-size: 0.88rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 48px;
+      align-items: start;
+      padding-top: 44px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 24px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .side-box {
+      padding-left: 18px;
+      border-left: 4px solid var(--green);
+    }
+
+    .side-box h2 {
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 780;
+      text-decoration: none;
+    }
+
+    .toc a:hover {
+      color: var(--red);
+    }
+
+    .note-list {
+      display: grid;
+      gap: 8px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .content {
+      min-width: 0;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 20px 46px rgb(24 32 39 / 8%);
+      overflow: hidden;
+    }
+
+    .section {
+      padding: 36px 44px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child {
+      border-top: 0;
+    }
+
+    .label {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--red);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .section h2 {
+      max-width: 760px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.9rem, 4vw, 2.8rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 760px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1.04rem;
+    }
+
+    .takeaways {
+      counter-reset: takeaway;
+      display: grid;
+      gap: 16px;
+      padding: 0;
+      margin: 26px 0 0;
+      list-style: none;
+    }
+
+    .takeaways li {
+      counter-increment: takeaway;
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr);
+      gap: 16px;
+      padding: 18px;
+      background: #f7faf7;
+      border: 1px solid #dce5de;
+      border-radius: 8px;
+    }
+
+    .takeaways li::before {
+      content: counter(takeaway, decimal-leading-zero);
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      color: #fff;
+      background: var(--green);
+      border-radius: 50%;
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+
+    .takeaways strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--ink);
+      font-size: 1.05rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      margin-top: 26px;
+    }
+
+    .card {
+      padding: 18px;
+      background: #f8f7fb;
+      border: 1px solid #dfd9ea;
+      border-radius: 8px;
+    }
+
+    .card h3 {
+      margin-bottom: 8px;
+      color: var(--violet);
+      font-size: 1.05rem;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .flow {
+      display: grid;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .flow-step {
+      display: grid;
+      grid-template-columns: 78px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+      padding: 18px;
+      background: #fbf8ef;
+      border: 1px solid #eadfca;
+      border-radius: 8px;
+    }
+
+    .flow-step time,
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 30px;
+      padding: 0 10px;
+      color: #fff;
+      background: var(--gold);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .flow-step h3 {
+      margin-bottom: 5px;
+      font-size: 1.08rem;
+    }
+
+    .flow-step p {
+      color: var(--muted);
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 26px;
+    }
+
+    .comparison article {
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    .comparison article:first-child {
+      background: #f7faf7;
+      border: 1px solid #dce5de;
+    }
+
+    .comparison article:last-child {
+      background: #f6f8fb;
+      border: 1px solid #d8e0ea;
+    }
+
+    .comparison h3 {
+      margin-bottom: 10px;
+      font-size: 1.08rem;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 26px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 14px 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .quote {
+      margin-top: 28px;
+      padding: 24px;
+      color: #fff;
+      background: var(--blue);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.25rem;
+      line-height: 1.55;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 28px auto 0;
+      padding: 0 24px 42px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 940px) {
+      .hero,
+      .quick-summary,
+      .layout,
+      .comparison {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      h1 {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .topbar,
+      .page,
+      .footer {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .hero {
+        gap: 28px;
+        padding-top: 36px;
+      }
+
+      .quick-summary,
+      .section {
+        padding: 24px 18px;
+      }
+
+      .takeaways li,
+      .flow-step {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <nav class="topbar" aria-label="Page navigation">
+    <a class="brand" href="./">Video Notes Studio</a>
+    <div class="top-actions" aria-label="Language and source links">
+      <a class="language-link is-active" href="/resource/the-prompting-playbook.html">ไทย</a>
+      <a class="language-link" href="/resource/the-prompting-playbook-en.html">English</a>
+      <a class="watch-link" href="https://www.youtube.com/watch?v=G2B0YWuJUgI">Watch source</a>
+    </div>
+  </nav>
+
+  <main class="page">
+    <header class="hero">
+      <div>
+        <p class="kicker">Summary Blog</p>
+        <h1>The Prompting Playbook</h1>
+        <p class="subtitle">
+          สรุปวิดีโอเรื่องการปรับ prompt ให้ใช้งานจริงได้ดีขึ้น โดยใช้ evals เป็นเข็มทิศ,
+          จัดระเบียบ prompt ให้ชัด, เพิ่ม tools เมื่อโมเดลขาดความสามารถ และแยกงานซับซ้อนออกเป็น loop ที่ตรวจและซ่อมตัวเองได้
+        </p>
+        <div class="meta">
+          <span>Source: <strong>Claude / Anthropic</strong></span>
+          <span>Length: <strong>33:41</strong></span>
+          <span>Format: <strong>สรุปสำหรับอ่านเร็ว</strong></span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/G2B0YWuJUgI/hqdefault.jpg" alt="The Prompting Playbook video thumbnail">
+        <figcaption>บทความนี้สรุปจาก transcript ของวิดีโอ ไม่ใช่การถอดคำพูดทุกประโยค</figcaption>
+      </figure>
+    </header>
+
+    <section class="quick-summary" aria-labelledby="quick-summary-title">
+      <div>
+        <h2 id="quick-summary-title">สรุปสั้นที่สุด</h2>
+        <p>
+          แก่นของวิดีโอนี้คือ “อย่าแก้ prompt แบบเดาสุ่ม” ให้เริ่มจาก evals เพื่อวัดปัญหา,
+          ทำความสะอาดโครงสร้าง prompt, แก้ failure mode ทีละจุด, และยอมรับว่า prompt ไม่สามารถเพิ่มความสามารถที่โมเดลไม่มีได้
+          ถ้างานต้องคำนวณหรือทำตามกฎที่ตรวจได้ ควรให้ tool หรือแยกเป็น workflow แบบ generate, evaluate, repair
+          แทนการอัดทุกอย่างไว้ใน prompt ก้อนเดียว
+        </p>
+      </div>
+      <div class="stats" aria-label="Summary stats">
+        <div class="stat"><strong>7</strong><span>บทเรียนหลัก</span></div>
+        <div class="stat"><strong>2</strong><span>case studies</span></div>
+        <div class="stat"><strong>33 min</strong><span>วิดีโอต้นทาง</span></div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <section class="side-box toc" aria-labelledby="toc-title">
+          <h2 id="toc-title">อ่านส่วนไหน</h2>
+          <a href="#takeaways">บทเรียนหลัก</a>
+          <a href="#case-one">Case 1: ดูแล prompt เดิม</a>
+          <a href="#case-two">Case 2: สร้าง agent ใหม่</a>
+          <a href="#playbook">Prompting playbook</a>
+          <a href="#checklist">Checklist</a>
+        </section>
+
+        <section class="side-box" aria-labelledby="best-for-title">
+          <h2 id="best-for-title">เหมาะกับใคร</h2>
+          <ul class="note-list">
+            <li>คนที่มี prompt ใน production แล้วเริ่มพังหลังเปลี่ยนโมเดล</li>
+            <li>ทีมที่กำลังสร้าง AI agent จากศูนย์</li>
+            <li>คนที่อยากแยกให้ออกว่าอะไรควรแก้ด้วย prompt และอะไรควรแก้ด้วยระบบ</li>
+          </ul>
+        </section>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="takeaways">
+          <span class="label">Key Takeaways</span>
+          <h2>บทเรียนหลักจากวิดีโอ</h2>
+          <p class="lead">นี่คือสาระที่ควรจำจากวิดีโอ ถ้าต้องเอาไปใช้กับงานจริงทันที</p>
+
+          <ol class="takeaways">
+            <li>
+              <div>
+                <strong>เริ่มจาก evals ก่อนแก้ prompt</strong>
+                ถ้าไม่มีชุดทดสอบ คุณจะไม่รู้ว่าการแก้ prompt ดีขึ้นจริงหรือแค่รู้สึกว่าดีขึ้น
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>แยก failure mode ให้ชัด</strong>
+                ปัญหาอาจเกิดจากโมเดล “ทำต่างจากเดิม” หรือโมเดล “ไม่มีความสามารถพอ” สองกรณีนี้แก้คนละแบบ
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>prompt hygiene ช่วยได้ทันที</strong>
+                ลบข้อมูลเก่า, แยก role, policy, guideline, tone และ data ออกจากกัน เพื่อให้โมเดลรู้ว่าข้อมูลไหนคืออะไร
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>อย่าใช้ ban list ยาวเพื่ออุดรู</strong>
+                prompt ที่เต็มไปด้วยข้อห้ามเฉพาะจุดมักทำให้โมเดล overfit และเกิด regression ในสถานการณ์อื่น
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>instruction ไม่ได้เพิ่ม capability</strong>
+                บอกโมเดลว่า “คำนวณให้ถูก” ไม่ได้ทำให้โมเดลคำนวณเก่งขึ้น ถ้างานต้องแม่น ควรให้ tool
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>ให้ trade-off ครบทั้งสองด้าน</strong>
+                ถ้าบอกแค่ “อย่า escalate เพราะแพง” โมเดลจะเลี่ยง escalation เกินไป ต้องบอก cost ของการตอบผิดด้วย
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>งานซับซ้อนควรแยกเป็นหลายขั้น</strong>
+                แทนที่จะให้ prompt เดียวทำทุกอย่าง ให้แยกเป็น generate, evaluate, repair เพื่อให้ตรวจและปรับงานได้เป็นระบบ
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="section" id="case-one">
+          <span class="label">Case Study 1</span>
+          <h2>เมื่อ prompt เดิมเริ่มพังหลังเปลี่ยนโมเดล</h2>
+          <p class="lead">
+            ตัวอย่างแรกคือบอท customer support ของบริษัทโทรคมนาคมสมมติชื่อ Meridian Mobile
+            prompt เดิมผ่านเคสง่าย แต่เริ่มพลาดใน edge cases หลังย้ายโมเดล
+          </p>
+
+          <div class="flow">
+            <article class="flow-step">
+              <time>Step 1</time>
+              <div>
+                <h3>วัดด้วย eval suite</h3>
+                <p>ใช้ test cases ที่มีทั้ง control case, edge case และเคสที่โมเดลควรรู้ว่าเมื่อไรต้องส่งต่อมนุษย์</p>
+              </div>
+            </article>
+            <article class="flow-step">
+              <time>Step 2</time>
+              <div>
+                <h3>จัด prompt ใหม่</h3>
+                <p>แยก role, guideline, policy, tone และ customer context ด้วยโครงสร้างที่ชัด เช่น XML tags</p>
+              </div>
+            </article>
+            <article class="flow-step">
+              <time>Step 3</time>
+              <div>
+                <h3>ลบ patch เก่าที่ไม่จำเป็น</h3>
+                <p>หลาย prompt มีคำสั่งป้องกันปัญหาจากโมเดลรุ่นก่อน เมื่อเปลี่ยนโมเดลแล้ว patch เหล่านี้อาจกลายเป็นตัวทำให้พลาด</p>
+              </div>
+            </article>
+            <article class="flow-step">
+              <time>Step 4</time>
+              <div>
+                <h3>เพิ่ม tool เมื่อโมเดลต้องคำนวณ</h3>
+                <p>ในเคส proration bill โมเดลไม่ควรคิดเลขเอง แต่ควรเรียก calculate proration tool ที่ระบบเตรียมไว้</p>
+              </div>
+            </article>
+            <article class="flow-step">
+              <time>Step 5</time>
+              <div>
+                <h3>ทำให้ objective สมดุล</h3>
+                <p>ถ้าจะให้โมเดลตัดสินใจเรื่อง escalation ต้องบอกทั้งต้นทุนของการ escalate และต้นทุนของการตอบผิด</p>
+              </div>
+            </article>
+          </div>
+
+          <p class="quote">
+            บทเรียนสำคัญ: prompt ที่ดีไม่ได้แค่ “สั่งให้โมเดลทำ” แต่ต้องออกแบบสภาพแวดล้อมให้โมเดลมีข้อมูล เครื่องมือ และเป้าหมายที่ถูกต้อง
+          </p>
+        </section>
+
+        <section class="section" id="case-two">
+          <span class="label">Case Study 2</span>
+          <h2>เมื่อสร้าง agent ใหม่จากศูนย์</h2>
+          <p class="lead">
+            ตัวอย่างที่สองคือ agent สำหรับจัดตารางพนักงานร้านค้าปลีก งานนี้มีกฎแข็ง เช่น availability, จำนวนคนต่อ shift,
+            และข้อจำกัดเฉพาะ จึงเหมาะกับการวัดผลแบบ programmatic
+          </p>
+
+          <div class="comparison">
+            <article>
+              <h3>วิธีที่ลองแล้วมีข้อจำกัด</h3>
+              <p>
+                prompt ง่ายกับโมเดลเล็กทำพลาดหลายเคส ส่วนโมเดลใหญ่ช่วยลดข้อผิดพลาดแต่ยังไม่พอ
+                การเปิด reasoning/adaptive thinking ทำให้ผ่านมากขึ้น แต่แลกกับ token และ latency สูง
+              </p>
+            </article>
+            <article>
+              <h3>วิธีที่เวิร์กกว่า</h3>
+              <p>
+                แยกงานเป็น generate, evaluate, repair loop ให้โมเดลสร้าง draft ก่อน จากนั้นตรวจ violation
+                แล้วค่อยซ่อมเฉพาะจุด วิธีนี้คุมคุณภาพได้ดีและยืดหยุ่นกับ soft constraints ที่เปลี่ยนตามเคส
+              </p>
+            </article>
+          </div>
+
+          <div class="cards">
+            <article class="card">
+              <h3>Generate</h3>
+              <p>สร้างคำตอบหรือแผนแรกให้ครบก่อน โดยไม่พยายามยัดทุกกฎไว้ใน prompt เดียวจนหนักเกินไป</p>
+            </article>
+            <article class="card">
+              <h3>Evaluate</h3>
+              <p>ตรวจผลลัพธ์กับกฎที่ต้องผ่าน และรายงาน violation พร้อม evidence ให้ชัด</p>
+            </article>
+            <article class="card">
+              <h3>Repair</h3>
+              <p>แก้เฉพาะ violation ที่พบ แทนการให้โมเดลเริ่มคิดใหม่ทั้งหมดทุกครั้ง</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="playbook">
+          <span class="label">Playbook</span>
+          <h2>ถ้าจะเอาไปใช้จริง ให้ทำตามลำดับนี้</h2>
+          <p class="lead">ลำดับนี้คือแกนของวิดีโอในรูปแบบที่นำไปใช้กับงาน AI product หรือ internal tools ได้ทันที</p>
+
+          <div class="flow">
+            <article class="flow-step">
+              <span class="pill">01</span>
+              <div>
+                <h3>นิยาม evals</h3>
+                <p>กำหนดเคสที่ต้องผ่าน ทั้งเคสปกติ เคสที่เคยพัง และเคสที่ต้อง refuse หรือ hand off</p>
+              </div>
+            </article>
+            <article class="flow-step">
+              <span class="pill">02</span>
+              <div>
+                <h3>รัน baseline</h3>
+                <p>ดูว่า prompt ปัจจุบันพลาดตรงไหน อย่าเพิ่งแก้ก่อนรู้ failure mode</p>
+              </div>
+            </article>
+            <article class="flow-step">
+              <span class="pill">03</span>
+              <div>
+                <h3>ทำ prompt hygiene</h3>
+                <p>ลบของรก แยกส่วนของ prompt ให้ชัด และทำให้ output format ตรวจได้ง่าย</p>
+              </div>
+            </article>
+            <article class="flow-step">
+              <span class="pill">04</span>
+              <div>
+                <h3>แก้ทีละ failure mode</h3>
+                <p>อย่าแก้กว้างเกินไป ให้เปลี่ยนทีละจุดแล้วกลับไปวัด evals ใหม่</p>
+              </div>
+            </article>
+            <article class="flow-step">
+              <span class="pill">05</span>
+              <div>
+                <h3>เพิ่ม tools หรือ workflow</h3>
+                <p>ถ้างานต้องการความแม่นยำเชิงระบบ เช่น คำนวณ ตรวจตาราง หรือ enforce กฎ ให้ใช้ tool หรือ loop</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="checklist">
+          <span class="label">Checklist</span>
+          <h2>Checklist สำหรับ prompt ที่พร้อมใช้งานจริง</h2>
+          <ul class="checklist">
+            <li>มี eval suite ที่ครอบคลุม control case, edge case และ boundary case</li>
+            <li>แยก role, policy, guideline, data, tone และ output format อย่างชัดเจน</li>
+            <li>ลบ instruction เก่าที่เป็น patch ของโมเดลรุ่นก่อน หากไม่มีเหตุผลแล้ว</li>
+            <li>ไม่มี ban list ยาวที่แก้ปัญหาเฉพาะจุดแต่สร้าง regression ใหม่</li>
+            <li>งานที่ต้องคำนวณหรือ enforce กฎใช้ tool หรือ programmatic checker</li>
+            <li>objective สำคัญถูกเขียนแบบสมดุล ไม่บอก trade-off ด้านเดียว</li>
+            <li>งานซับซ้อนถูกแยกเป็นหลายขั้นที่ตรวจและซ่อมได้</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated for <strong>The Prompting Playbook</strong>. This version is intentionally concise and blog-like, not a full transcript page.
+  </footer>
+</body>
+</html>

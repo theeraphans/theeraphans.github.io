@@ -1,0 +1,955 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>Jev and System One Models: Decisions Without Text Generation</title>
+    <meta
+      name="description"
+      content="A detailed, evidence-aware guide to Jev and typed decision models: choice, score, noul, calibrated confidence, agent harnesses, GLiNER2, Laya, System One, and SemIf."
+    />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .visual {
+        margin: 1.7rem 0 2rem;
+      }
+      .visual img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: #0d1217;
+      }
+      .visual figcaption {
+        margin-top: 0.65rem;
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.55;
+      }
+      .visual figcaption strong {
+        color: var(--ink);
+      }
+      .callout {
+        margin: 1.5rem 0;
+        padding: 1rem !important;
+        border-left: 3px solid var(--green) !important;
+        background: var(--surface) !important;
+      }
+      .callout.warning {
+        border-left-color: #8a6417 !important;
+      }
+      .callout p:last-child {
+        margin-bottom: 0;
+      }
+      .primitive-grid,
+      .metric-grid,
+      .boundary-grid {
+        display: grid;
+        gap: 1px;
+        margin: 1.5rem 0;
+        background: var(--line);
+        border: 1px solid var(--line);
+      }
+      .primitive-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .metric-grid,
+      .boundary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .primitive-grid > div,
+      .metric-grid > div,
+      .boundary-grid > div {
+        padding: 1rem;
+        background: var(--paper);
+      }
+      .primitive-grid h3,
+      .boundary-grid h3 {
+        margin: 0 0 0.45rem;
+        font-size: 1rem;
+      }
+      .primitive-grid p,
+      .boundary-grid p,
+      .metric-grid small {
+        display: block;
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.89rem;
+        line-height: 1.5;
+      }
+      .metric-grid span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+      }
+      .metric-grid strong {
+        display: block;
+        margin: 0.35rem 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 0.5rem;
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background: var(--surface);
+        border: 1px solid var(--line);
+      }
+      .flow > div {
+        min-height: 6rem;
+        padding: 0.72rem;
+        background: var(--paper);
+        border: 1px solid var(--line);
+      }
+      .flow .decision {
+        background: #e7f1eb;
+        border-color: #87aa95;
+      }
+      .flow strong,
+      .flow small {
+        display: block;
+      }
+      .flow strong {
+        margin-bottom: 0.3rem;
+      }
+      .flow small {
+        color: var(--muted);
+        line-height: 1.42;
+      }
+      .comparison {
+        width: 100%;
+        min-width: 0 !important;
+        margin: 1.5rem 0;
+        table-layout: fixed;
+        border-collapse: collapse;
+      }
+      .comparison th,
+      .comparison td {
+        padding: 0.78rem 0.55rem;
+        text-align: left;
+        vertical-align: top;
+        overflow-wrap: anywhere;
+        border-bottom: 1px solid var(--line);
+      }
+      .comparison th {
+        font-weight: 600;
+      }
+      .chapter-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin: 1.25rem 0;
+        padding: 0;
+        border-top: 1px solid var(--line);
+        list-style: none;
+      }
+      .chapter-list li {
+        border-bottom: 1px solid var(--line);
+      }
+      .chapter-list a {
+        display: flex;
+        gap: 0.7rem;
+        min-height: 100%;
+        padding: 0.8rem 0.45rem;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      .chapter-list time {
+        flex: 0 0 3.25rem;
+        color: var(--green);
+        font-variant-numeric: tabular-nums;
+      }
+      @media (max-width: 750px) {
+        .primitive-grid,
+        .metric-grid,
+        .boundary-grid,
+        .flow,
+        .chapter-list {
+          grid-template-columns: 1fr;
+        }
+        .flow > div {
+          min-height: auto;
+        }
+        .comparison {
+          font-size: 0.84rem;
+        }
+        .comparison thead {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip: rect(0 0 0 0);
+        }
+        .comparison,
+        .comparison tbody,
+        .comparison tr,
+        .comparison td {
+          display: block;
+          width: 100%;
+        }
+        .comparison tr {
+          padding: 0.55rem 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .comparison td {
+          display: grid;
+          grid-template-columns: 6.7rem minmax(0, 1fr);
+          gap: 0.6rem;
+          padding: 0.32rem 0.2rem;
+          border: 0;
+        }
+        .comparison td::before {
+          color: var(--muted);
+          font-weight: 600;
+        }
+        .comparison td:nth-child(1)::before {
+          content: "Approach";
+        }
+        .comparison td:nth-child(2)::before {
+          content: "Mechanism";
+        }
+        .comparison td:nth-child(3)::before {
+          content: "Strength";
+        }
+        .comparison td:nth-child(4)::before {
+          content: "Caution";
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Reading room</a>
+      <div class="top-actions">
+        <a
+          class="action-link"
+          href="https://www.youtube.com/watch?v=OxD4MtEmP-k"
+          >Watch video</a
+        >
+      </div>
+    </nav>
+
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">AI architecture · Decision models</p>
+          <h1>Intelligence Without Generating Words</h1>
+          <p class="subtitle">
+            Jev reframes a common software problem: when the application needs a
+            route, score, or yes/no probability, generating prose may be
+            unnecessary work. The important shift is from “ask an LLM and parse
+            its answer” to a typed decision contract with explicit uncertainty.
+          </p>
+          <div class="meta">
+            <span>17:51 video</span><span>Local Whisper transcript</span
+            ><span>Published October 2, 2026</span
+            ><span>Summary run: October 3, 2026 · 07:49 ICT</span>
+          </div>
+        </div>
+        <figure class="hero-card">
+          <img
+            src="2026-10-03-jev-decision-model-thumbnail.webp"
+            alt="How Can a Model Be Better Without Generating Words video thumbnail"
+          />
+          <figcaption>
+            A decision model consumes rich language but returns a bounded
+            software value rather than another string.
+          </figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="section-label">Executive summary</p>
+            <h2>
+              The breakthrough is an interface, not proof of a secret
+              architecture
+            </h2>
+            <p>
+              The video by <strong>bycloud</strong> argues that many production
+              AI calls do not need generated language. A support workflow may
+              only need a destination queue, an urgency score, or a probability
+              that a refund is requested. A general LLM can produce those
+              answers, but it normally does so through autoregressive
+              generation, after which software validates or parses the generated
+              text back into a deterministic value.
+            </p>
+            <p>
+              TypeSafe's Jev exposes a narrower contract: provide an
+              unstructured <em>state</em> and typed questions, then receive
+              choices, scores, and probabilities. That makes the model useful at
+              the boundary where fuzzy language understanding must become an
+              exact branch in software. The model can sit inside an agent
+              harness as a router, policy gate, evaluator, or escalation signal
+              while the larger LLM remains responsible for open-ended reasoning
+              and generation.
+            </p>
+            <ul class="summary-list">
+              <li>
+                <strong>Jev is not a chatbot.</strong> It is positioned as a
+                System One decision model for bounded questions over
+                caller-supplied state.
+              </li>
+              <li>
+                <strong>The three core outputs are software-native.</strong>
+                <em>Choice</em> selects among options, <em>score</em> estimates
+                a position on an ordered scale, and <em>noul</em> returns the
+                probability that a proposition is true.
+              </li>
+              <li>
+                <strong>Skipping decoding can reduce latency and cost.</strong>
+                The model does not need to emit a sentence or JSON token by
+                token when the application only needs a decision.
+              </li>
+              <li>
+                <strong>Calibration is operationally valuable.</strong> A
+                trustworthy probability can drive auto-execute, review, or
+                escalation policies. A confident-looking number is not enough;
+                calibration must be measured locally.
+              </li>
+              <li>
+                <strong>Jev's internal architecture is not public.</strong> The
+                video's GLiNER2 and GLiGuard discussion is a plausible family
+                resemblance, not a verified description of Jev.
+              </li>
+              <li>
+                <strong>Early independent evidence is mixed but useful.</strong>
+                Recent evaluations support strong latency and cost advantages,
+                while warning that typed readout alone has not established a
+                universal accuracy advantage over comparable probability-based
+                classifiers.
+              </li>
+            </ul>
+            <div class="callout warning">
+              <strong>Evidence boundary</strong>
+              <p>
+                YouTube did not return usable captions for this video, so the
+                transcript was produced locally from the audio with Whisper and
+                technical names were checked against linked papers and
+                repositories. Product prices, speed claims, and benchmark
+                results are time-sensitive and remain attributed to their
+                publishers. The article separates Jev's documented API behavior
+                from the video's architectural hypothesis.
+              </p>
+            </div>
+          </section>
+
+          <section id="interface">
+            <p class="section-label">The interface mismatch</p>
+            <h2>
+              Software wants values; language models naturally return strings
+            </h2>
+            <p>
+              Traditional software is rigid but composable: a function returns a
+              boolean, enum, number, or structured object with defined
+              semantics. LLMs are flexible because they accept and produce
+              language, but that flexibility becomes awkward when the next
+              component needs one exact value. Teams add constrained decoding,
+              JSON schemas, validators, retries, and repair logic to make a
+              generative interface behave like an ordinary function.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-03-jev-decision-model-architecture.jpg"
+                alt="Video diagram comparing autoregressive guard generation with one-pass GLiGuard or GLiNER2 classification"
+              />
+              <figcaption>
+                <strong>Source frame, about 10:00.</strong> The upper path
+                generates “this is unsafe” sequentially. The lower path scores
+                the declared labels in one non-autoregressive encoder pass. This
+                diagram explains the model family the presenter uses as an
+                analogy, not Jev's confirmed implementation.
+              </figcaption>
+            </figure>
+            <p>
+              Typed decision models change the contract. They still need
+              semantic understanding of the state and question, but their output
+              space is bounded before inference begins. This is closer to a
+              learned function than a conversation: the application owns the
+              available actions, and the model estimates which action best fits.
+            </p>
+          </section>
+
+          <section id="primitives">
+            <p class="section-label">Three primitives</p>
+            <h2>Choice, score, and noul cover many small agent decisions</h2>
+            <div class="primitive-grid">
+              <div>
+                <h3>Choice</h3>
+                <p>
+                  Select one declared option, such as a queue, model tier,
+                  intent, or tool. The result includes a probability
+                  distribution across options.
+                </p>
+              </div>
+              <div>
+                <h3>Score</h3>
+                <p>
+                  Place the state on an ordered rubric. Because adjacent levels
+                  have order, the distribution can express that an answer lies
+                  between “acceptable” and “good.”
+                </p>
+              </div>
+              <div>
+                <h3>Noul</h3>
+                <p>
+                  Return the probability that a yes/no proposition is true. The
+                  unusual name distinguishes a probabilistic judgment from a
+                  hard boolean.
+                </p>
+              </div>
+            </div>
+            <figure class="visual">
+              <img
+                src="2026-10-03-jev-decision-model-noul.jpg"
+                alt="Video visualization of a score distribution over terrible, bad, acceptable, good, and excellent"
+              />
+              <figcaption>
+                <strong>Source frame, about 04:32.</strong> A score is not only
+                the winning label. The full distribution preserves uncertainty
+                and proximity between ordered levels.
+              </figcaption>
+            </figure>
+            <p>
+              One request can ask several questions about the same state. That
+              matters because the expensive part is often reading the long
+              context. Sharing that representation across multiple heads or
+              question suffixes can make ten small decisions cheaper than ten
+              independent model calls.
+            </p>
+          </section>
+
+          <section id="why-fast">
+            <p class="section-label">Why it can be fast</p>
+            <h2>Remove the decoding loop when no text is needed</h2>
+            <p>
+              Autoregressive generation repeatedly predicts a token, appends it,
+              and runs the model again until the answer is complete. A
+              decision-only path can instead compute scores for the allowed
+              outputs and stop. The largest savings appear when a generative
+              model would otherwise reason at length, emit verbose JSON, or
+              answer many separate binary questions.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-03-jev-decision-model-latency.jpg"
+                alt="Video terminal comparison showing many typed decisions completing before an autoregressive model returns its first token"
+              />
+              <figcaption>
+                <strong>Source frame, about 05:44.</strong> The demo contrasts a
+                batched typed-decision request with an autoregressive API
+                waiting for its first token. It illustrates the mechanism, but
+                it is not a controlled cross-provider benchmark.
+              </figcaption>
+            </figure>
+            <div class="metric-grid">
+              <div>
+                <span>Video's Jev claim</span><strong>70–500 ms</strong
+                ><small
+                  >Reported end-to-end latency range, workload and
+                  infrastructure dependent.</small
+                >
+              </div>
+              <div>
+                <span>Video's vendor claim</span
+                ><strong>Up to 194× faster</strong
+                ><small
+                  >A headline maximum, not an expectation for every task.</small
+                >
+              </div>
+              <div>
+                <span>System One demo</span><strong>172 ms vs 600 ms</strong
+                ><small
+                  >Qwen3-8B Doom action interval, reported by the open-source
+                  author using the same model and prompt.</small
+                >
+              </div>
+              <div>
+                <span>SemIf fixture</span><strong>1.023 s vs 5.332 s</strong
+                ><small
+                  >Twenty-one probability pairs versus a generated JSON array on
+                  one RTX 3090.</small
+                >
+              </div>
+            </div>
+          </section>
+
+          <section id="calibration">
+            <p class="section-label">Probabilities become policy</p>
+            <h2>Calibration matters more than confidence theater</h2>
+            <p>
+              A probability is valuable when 0.8 means “roughly eight out of ten
+              similar predictions are correct.” With that property, the harness
+              can map uncertainty to action. High confidence can permit a
+              reversible automatic step; a middle band can call a stronger
+              model; low confidence or high consequence can require human
+              review.
+            </p>
+            <div
+              class="flow"
+              role="img"
+              aria-label="Confidence-gated decision flow"
+            >
+              <div>
+                <strong>State</strong
+                ><small>Request, trace, document, or proposed action</small>
+              </div>
+              <div class="decision">
+                <strong>Typed decision</strong
+                ><small>Choice, score, or noul with probabilities</small>
+              </div>
+              <div>
+                <strong>Policy</strong
+                ><small>Threshold by risk, cost, and reversibility</small>
+              </div>
+              <div>
+                <strong>Act or escalate</strong
+                ><small>Execute, larger model, or human review</small>
+              </div>
+              <div>
+                <strong>Observe</strong
+                ><small>Outcome, override, drift, and calibration</small>
+              </div>
+            </div>
+            <p>
+              The threshold is not universal. An independent 2026 Jev benchmark
+              found that binary probabilities ranked examples well but were
+              poorly placed around a fixed 0.5 threshold on one legal-clause
+              dataset; tuning the threshold on training data raised micro-F1
+              from 0.50 to 0.75. The lesson is practical: validate reliability
+              diagrams, expected calibration error, and selective-risk curves on
+              your own population before treating probabilities as policy.
+            </p>
+          </section>
+
+          <section id="harness">
+            <p class="section-label">Agent harness</p>
+            <h2>Use a decision model at narrow control points</h2>
+            <p>
+              The best fit is not “replace the main LLM.” It is to place a small
+              decision layer around the generative model wherever the action
+              space is known. A master agent can route a task to a sub-agent,
+              decide whether a tool call requires approval, score retrieved
+              evidence, estimate whether an answer is grounded, or determine
+              whether a trace should enter an evaluation queue.
+            </p>
+            <div class="boundary-grid">
+              <div>
+                <h3>Good candidates</h3>
+                <p>
+                  Model routing, queue selection, policy checks, guardrails,
+                  retrieval relevance, escalation, trace grading, and bounded
+                  next-action selection.
+                </p>
+              </div>
+              <div>
+                <h3>Poor candidates</h3>
+                <p>
+                  Writing, synthesis, novel planning, ambiguous tasks with an
+                  incomplete option set, or decisions whose rationale must be
+                  generated and audited.
+                </p>
+              </div>
+              <div>
+                <h3>Keep deterministic</h3>
+                <p>
+                  Authorization, credential scope, hard safety limits, schema
+                  validation, transaction invariants, and irreversible
+                  enforcement.
+                </p>
+              </div>
+              <div>
+                <h3>Measure continuously</h3>
+                <p>
+                  Task accuracy, calibration, coverage at each threshold,
+                  abstention quality, cost, latency, drift, and downstream
+                  business loss.
+                </p>
+              </div>
+            </div>
+            <div class="callout">
+              <strong>Architecture rule</strong>
+              <p>
+                Let deterministic code enforce what must never be violated. Let
+                a decision model interpret fuzzy language inside that boundary.
+                Let a generative model handle work that genuinely requires
+                open-ended reasoning or language.
+              </p>
+            </div>
+          </section>
+
+          <section id="architecture">
+            <p class="section-label">Known versus inferred</p>
+            <h2>The video reverse-engineers a plausible family resemblance</h2>
+            <p>
+              The presenter explicitly notes that TypeSafe has not published a
+              detailed Jev architecture or technical report. The video therefore
+              uses GLiNER2 and GLiGuard as nearby examples. GLiNER2 is a compact
+              bidirectional encoder for schema-driven classification and
+              information extraction. GLiGuard uses a schema-conditioned encoder
+              to classify safety labels in one non-autoregressive pass. Both
+              show how dynamic labels can be inserted into the input,
+              represented by special markers, and scored without generating a
+              response.
+            </p>
+            <p>
+              That makes them useful explanatory precedents, but it does not
+              establish that Jev uses the same backbone, heads, loss, or
+              training data. The more defensible conclusion is behavioral: Jev
+              accepts runtime-defined questions and returns typed probability
+              distributions. Its internal route to those distributions remains
+              undisclosed.
+            </p>
+          </section>
+
+          <section id="alternatives">
+            <p class="section-label">Open alternatives</p>
+            <h2>
+              Several projects reproduce parts of the decision-only interface
+            </h2>
+            <figure class="visual">
+              <img
+                src="2026-10-03-jev-decision-model-laya.jpg"
+                alt="Video chart comparing Laya base, fine-tuned Laya, and Jev on a typed decisions benchmark"
+              />
+              <figcaption>
+                <strong>Source frame, about 12:42.</strong> Laya reports 76.6%
+                accuracy for a checkpoint fine-tuned on the typed-decisions
+                workflow versus 72.7% published for Jev. Its own model card
+                warns that the base checkpoint is near the majority baseline and
+                that the comparison uses different sources and conditions.
+              </figcaption>
+            </figure>
+            <table class="comparison">
+              <thead>
+                <tr>
+                  <th>Approach</th>
+                  <th>Mechanism</th>
+                  <th>Strength</th>
+                  <th>Caution</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Jev</td>
+                  <td>
+                    Closed hosted decision model with choice, score, and noul
+                    outputs.
+                  </td>
+                  <td>
+                    Purpose-built contract, batching, reported calibration, low
+                    hosted cost.
+                  </td>
+                  <td>
+                    Architecture and training details are not public; external
+                    evidence is still young.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Laya</td>
+                  <td>
+                    ModernBERT-large encoder plus a learned decision head;
+                    option markers are scored together.
+                  </td>
+                  <td>
+                    Open weights, non-autoregressive, self-hostable, explicit
+                    calibration training.
+                  </td>
+                  <td>
+                    Its model card says the base model is weak on its typed
+                    benchmark; the strong result comes from task fine-tuning.
+                  </td>
+                </tr>
+                <tr>
+                  <td>System One</td>
+                  <td>
+                    Prompt an ordinary Qwen model so the next token is a choice
+                    index, then read only allowed logits.
+                  </td>
+                  <td>
+                    Simple, cheap, works with existing LLMs, and shares cached
+                    context across questions.
+                  </td>
+                  <td>
+                    Next-token probabilities were not necessarily trained or
+                    calibrated for the decision policy.
+                  </td>
+                </tr>
+                <tr>
+                  <td>SemIf</td>
+                  <td>
+                    Score complete candidate answer strings against one cached
+                    context.
+                  </td>
+                  <td>
+                    Supports richer actions such as tool calls or longer
+                    commands, with auditable open fixtures.
+                  </td>
+                  <td>
+                    More compute than single-token scoring and still inherits
+                    the base model's probability behavior.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <figure class="visual">
+              <img
+                src="2026-10-03-jev-decision-model-systemone.jpg"
+                alt="Video diagram showing System One reading allowed next-token logits from a Qwen model"
+              />
+              <figcaption>
+                <strong>Source frame, about 14:55.</strong> System One prefills
+                the answer position and compares the logits of the permitted
+                choice tokens. It stops before generating a sentence.
+              </figcaption>
+            </figure>
+            <figure class="visual">
+              <img
+                src="2026-10-03-jev-decision-model-openjev.jpg"
+                alt="Video diagram showing SemIf scoring complete candidate answer strings against shared context"
+              />
+              <figcaption>
+                <strong>Source frame, about 15:53.</strong> SemIf, formerly
+                OpenJev, evaluates the likelihood of each full candidate
+                continuation. This is more flexible than a one-token label when
+                actions have different lengths or structures.
+              </figcaption>
+            </figure>
+          </section>
+
+          <section id="evidence">
+            <p class="section-label">What the evidence says</p>
+            <h2>
+              Efficiency looks real; universal accuracy superiority does not
+            </h2>
+            <p>
+              A large independent evaluation of Jev 1.13.0 covered 37 datasets
+              and 346,009 requests for under USD 10. It reported 95–99% accuracy
+              on several sentiment, commonsense, and reasoning datasets, 86.7%
+              on multilingual Belebele, and competitive results against
+              Qwen3.8-27B and Gemma-4-E4B using exact option probabilities. It
+              also found degradation on low-resource languages, noisy
+              fine-grained labels, and rubric-based quality judgments.
+            </p>
+            <p>
+              A separate early evidence audit reviewed 28 papers published in
+              the first nine days after Jev's release. Its conclusion is more
+              cautious: the typed readout itself had not shown an independent
+              accuracy advantage over comparable label-probability methods,
+              while latency and cost were the clearest benefits. That is the
+              right working assumption for production. Treat the interface as a
+              useful systems primitive, then prove accuracy and calibration for
+              each decision boundary.
+            </p>
+            <ol>
+              <li>
+                Build a frozen dataset from real states, options, outcomes, and
+                human adjudication.
+              </li>
+              <li>
+                Compare against deterministic rules, a compact classifier, and
+                the current LLM baseline.
+              </li>
+              <li>Measure hard accuracy and probability quality separately.</li>
+              <li>
+                Plot quality and business loss at multiple abstention
+                thresholds.
+              </li>
+              <li>
+                Test option order, paraphrases, missing context, adversarial
+                inputs, and distribution shift.
+              </li>
+              <li>
+                Replay the full harness because a better classifier can still
+                create worse end-to-end behavior.
+              </li>
+            </ol>
+          </section>
+
+          <section id="takeaway">
+            <p class="section-label">My take</p>
+            <h2>Jev's durable idea is the typed semantic branch</h2>
+            <p>
+              The most important idea is not that every LLM should stop
+              generating. It is that production AI systems should distinguish
+              <strong>generation</strong> from <strong>decision</strong>. When
+              software already knows the legal outputs, asking a model to write
+              prose and then parsing it is an unnecessary detour. A typed
+              probability distribution is a cleaner interface and can make
+              confidence-aware control practical.
+            </p>
+            <p>
+              For a multi-agent platform, this suggests a useful separation:
+              master and sub-agents own open-ended goals; skills and tools
+              expose deterministic capabilities; the harness owns permissions
+              and lifecycle; a decision model handles narrow semantic branches
+              between them. That can simplify routing, human-in-the-loop rules,
+              and observability, but only if every branch has an explicit
+              fallback and is evaluated on domain data.
+            </p>
+          </section>
+
+          <section id="timeline">
+            <p class="section-label">Video map</p>
+            <h2>Key moments</h2>
+            <ul class="chapter-list">
+              <li>
+                <a href="https://www.youtube.com/watch?v=OxD4MtEmP-k&t=0s"
+                  ><time>00:00</time
+                  ><span>The string-versus-software mismatch</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=OxD4MtEmP-k&t=155s"
+                  ><time>02:35</time
+                  ><span>Jev as a System One decision model</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=OxD4MtEmP-k&t=205s"
+                  ><time>03:25</time><span>Choice, score, and noul</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=OxD4MtEmP-k&t=299s"
+                  ><time>04:59</time
+                  ><span>Why skipping generation changes latency</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=OxD4MtEmP-k&t=375s"
+                  ><time>06:15</time
+                  ><span>Confidence-gated agent policies</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=OxD4MtEmP-k&t=499s"
+                  ><time>08:19</time
+                  ><span>GLiNER2 and GLiGuard analogy</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=OxD4MtEmP-k&t=657s"
+                  ><time>10:57</time
+                  ><span>Laya and open decision encoders</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=OxD4MtEmP-k&t=880s"
+                  ><time>14:40</time
+                  ><span>System One reads next-token logits</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=OxD4MtEmP-k&t=932s"
+                  ><time>15:32</time
+                  ><span>SemIf scores full candidate strings</span></a
+                >
+              </li>
+              <li>
+                <a href="https://www.youtube.com/watch?v=OxD4MtEmP-k&t=981s"
+                  ><time>16:21</time
+                  ><span>The lasting architectural implication</span></a
+                >
+              </li>
+            </ul>
+          </section>
+
+          <section id="sources">
+            <p class="section-label">Sources</p>
+            <h2>Video and verification material</h2>
+            <ol class="sources-list">
+              <li>
+                <a href="https://www.youtube.com/watch?v=OxD4MtEmP-k"
+                  >bycloud, “How Can A Model Be Better Without Generating
+                  Words?”</a
+                >
+                Primary narrative and all video frames.
+              </li>
+              <li>
+                <a href="https://arxiv.org/abs/2609.37647"
+                  >Deußer, Sparrenberg, and Sifa, “Evaluating and Benchmarking
+                  the System One Model Jev”</a
+                >
+                Independent large-scale Jev evaluation.
+              </li>
+              <li>
+                <a href="https://arxiv.org/abs/2609.32160"
+                  >Tang and Zheng, “Typed Decision Models: An Early Evidence
+                  Audit and Evaluation Checklist”</a
+                >
+                Early literature review and evaluation cautions.
+              </li>
+              <li>
+                <a href="https://arxiv.org/abs/2507.18546">GLiNER2</a>
+                Schema-driven classification and extraction with a compact
+                bidirectional encoder.
+              </li>
+              <li>
+                <a href="https://arxiv.org/abs/2605.07982">GLiGuard</a>
+                Non-autoregressive schema-conditioned guard model.
+              </li>
+              <li>
+                <a href="https://huggingface.co/convaiinnovations/laya"
+                  >Laya model card</a
+                >
+                Architecture, training, benchmark methodology, and stated
+                limits.
+              </li>
+              <li>
+                <a href="https://github.com/sgoedecke/system-one"
+                  >System One repository</a
+                >
+                Single-token choice inference, prefix caching, and Doom
+                demonstration.
+              </li>
+              <li>
+                <a href="https://github.com/TheoLeeCJ/SemIf-OpenJev"
+                  >SemIf repository</a
+                >
+                Open candidate-string scoring implementation, fixtures, and
+                benchmark caveats.
+              </li>
+              <li>
+                <a
+                  href="https://www.langchain.com/blog/jev-is-now-available-in-langsmith-evals"
+                  >LangChain, “Jev is now available in LangSmith Evals”</a
+                >
+                A narrow Jev-as-a-judge experiment and integration details.
+              </li>
+            </ol>
+          </section>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <p>On this page</p>
+          <a href="#summary">Executive summary</a>
+          <a href="#interface">Interface mismatch</a>
+          <a href="#primitives">Three primitives</a>
+          <a href="#why-fast">Why it can be fast</a>
+          <a href="#calibration">Calibration</a>
+          <a href="#harness">Agent harness</a>
+          <a href="#architecture">Known vs inferred</a>
+          <a href="#alternatives">Open alternatives</a>
+          <a href="#evidence">Evidence</a>
+          <a href="#takeaway">My take</a>
+          <a href="#timeline">Video map</a>
+          <a href="#sources">Sources</a>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <a href="./">← Back to reading room</a>
+      <span>Source-grounded notes for practical work.</span>
+    </footer>
+  </body>
+</html>

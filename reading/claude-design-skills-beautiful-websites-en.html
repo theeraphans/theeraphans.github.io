@@ -1,0 +1,1096 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Claude Design Skills for Beautiful Websites - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5d6970;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f4f7f2;
+      --line: #d7ded6;
+      --charcoal: #24323a;
+      --teal: #166f68;
+      --blue: #315f86;
+      --coral: #bd503f;
+      --gold: #9e711e;
+      --violet: #665987;
+      --mint: #e2f0ec;
+      --sky: #e7eef6;
+      --sand: #f7eed8;
+      --rose: #f5e5df;
+      --shadow: 0 24px 62px rgb(23 33 38 / 11%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(22 111 104 / 7%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(49 95 134 / 6%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 46px 46px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--coral), var(--gold), var(--violet));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 84%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.6rem, 6.25vw, 5.35rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2.05vw, 1.48rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e6ece7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 86%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: #f8fbf8;
+      background: rgb(255 255 255 / 9%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-height: 86px;
+      padding: 14px;
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: rgb(255 255 255 / 72%);
+      font-size: 0.84rem;
+      font-weight: 760;
+      text-transform: uppercase;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      gap: 42px;
+      align-items: start;
+      margin-top: 36px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 22px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .sidebar-block {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+    }
+
+    .sidebar-block h2,
+    .toc h2 {
+      margin-bottom: 12px;
+      color: var(--quiet);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .glance {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .glance strong {
+      color: var(--ink);
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .toc {
+      padding-left: 18px;
+      border-left: 4px solid var(--gold);
+    }
+
+    .toc a {
+      display: block;
+      padding: 7px 0;
+      color: var(--ink);
+      font-size: 0.94rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .content {
+      min-width: 0;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 8%);
+    }
+
+    .section {
+      padding: 34px 42px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; }
+
+    .label {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .section h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 3.3vw, 3.1rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .section h3 {
+      margin-top: 20px;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      margin-top: 16px;
+      color: #313d44;
+      font-size: 1.08rem;
+    }
+
+    .section p + p { margin-top: 14px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card.mint { background: var(--mint); }
+    .card.sky { background: var(--sky); }
+    .card.sand { background: var(--sand); }
+    .card.rose { background: var(--rose); }
+
+    .card h3 {
+      margin-top: 8px;
+      font-size: 1.02rem;
+    }
+
+    .card p {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.62;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pill.blue { background: var(--blue); }
+    .pill.coral { background: var(--coral); }
+    .pill.gold { background: var(--gold); }
+    .pill.violet { background: var(--violet); }
+
+    .note {
+      margin-top: 22px;
+      padding: 18px 20px;
+      background: #f8f3e6;
+      border-left: 5px solid var(--gold);
+      border-radius: 8px;
+      color: #3b3424;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(130px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+      align-items: stretch;
+    }
+
+    .flow-step {
+      min-height: 150px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .flow-step:nth-child(2) { border-top-color: var(--blue); }
+    .flow-step:nth-child(3) { border-top-color: var(--coral); }
+    .flow-step:nth-child(4) { border-top-color: var(--gold); }
+
+    .flow-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .pipeline-step {
+      min-height: 144px;
+      padding: 14px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .pipeline-step:nth-child(2) { background: var(--teal); }
+    .pipeline-step:nth-child(3) { background: var(--blue); }
+    .pipeline-step:nth-child(4) { background: var(--coral); }
+    .pipeline-step:nth-child(5) { background: var(--violet); }
+
+    .pipeline-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.92rem;
+      line-height: 1.3;
+    }
+
+    .pipeline-step span {
+      color: rgb(255 255 255 / 82%);
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    .compare {
+      width: 100%;
+      margin-top: 22px;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .compare th,
+    .compare td {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .compare th {
+      color: #fff;
+      background: var(--charcoal);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .compare td { background: #fff; }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+      color: #303b42;
+    }
+
+    .checklist li:nth-child(2n) { border-left-color: var(--blue); }
+    .checklist li:nth-child(3n) { border-left-color: var(--coral); }
+
+    .checklist strong { color: var(--ink); }
+
+    .quote-strip {
+      margin-top: 24px;
+      padding: 24px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      border-radius: 8px;
+    }
+
+    .quote-strip p {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.28rem, 2.8vw, 2.15rem);
+      line-height: 1.28;
+    }
+
+    .mini-spec {
+      margin-top: 22px;
+      padding: 18px;
+      color: #f8fbf8;
+      background: #1d2b32;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.9rem;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1000px) {
+      .flow,
+      .pipeline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .grid,
+      .two {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .page {
+        padding-inline: 16px;
+      }
+
+      .hero {
+        gap: 28px;
+        padding-top: 38px;
+      }
+
+      h1 {
+        font-size: clamp(2.35rem, 14vw, 3.35rem);
+      }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .tldr,
+      .sidebar,
+      .flow,
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+
+      .compare {
+        table-layout: fixed;
+      }
+
+      .compare th,
+      .compare td {
+        padding: 11px 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./">YouTube Extractor</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#direction">Direction</a>
+      <a class="action-link" href="#functional">Functional UI</a>
+      <a class="action-link" href="#motion">Motion</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=Ot582-E61ac">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">AI LABS - Claude Design Skills</span>
+        <h1>Design Skills That Push Claude Beyond Generic UI</h1>
+        <p class="subtitle">
+          A concise, blog-style summary of AI LABS' walkthrough of Claude design skills:
+          how reusable skill.md files steer design direction, when to use component registries and MCPs,
+          and why marketing pages, dashboards, motion, visuals, and mobile apps each need different design rules.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> Insane Claude Design Skills You Need To Build Beautiful Websites</span>
+          <span><strong>Creator:</strong> AI LABS</span>
+          <span><strong>Transcript:</strong> 2,977 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/Ot582-E61ac/hqdefault.jpg" alt="Video thumbnail for Insane Claude Design Skills You Need To Build Beautiful Websites">
+        <figcaption>
+          The talk argues that AI-generated design becomes generic unless the agent is given reusable design skills,
+          product-specific direction, component rules, motion patterns, asset generation, and platform-native mobile guidance.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          The video says Claude is better at design than before, but better models still drift toward common visual defaults:
+          safe layouts, overused fonts, familiar gradients, and one-note animations. Skills solve this by packaging useful design instructions
+          into reusable workflows. The right skill pushes the model to choose a design direction, use proven components,
+          reason about information density, animate correctly, generate real visual assets, and respect mobile platform rules.
+        </p>
+        <ul class="tldr">
+          <li>Marketing UI and functional UI need different skills because one sells a story while the other supports repeated work.</li>
+          <li>Skills and MCPs are complementary: skills provide rules and judgment; MCPs connect the model to live registries and tools.</li>
+          <li>Design quality improves when the platform captures direction, component rules, motion rules, visual assets, and native constraints as separate reusable skills.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>14m</strong><span>runtime</span></div>
+        <div class="stat"><strong>443</strong><span>caption rows</span></div>
+        <div class="stat"><strong>5</strong><span>skill layers</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Main lens</span><strong>Design skills</strong></li>
+            <li><span>Core risk</span><strong>Generic AI UI</strong></li>
+            <li><span>Key split</span><strong>Marketing vs product UI</strong></li>
+            <li><span>Best use</span><strong>Skill taxonomy</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#problem">Problem</a>
+          <a href="#direction">Design Direction</a>
+          <a href="#functional">Functional UI</a>
+          <a href="#decision-engine">Decision Engine</a>
+          <a href="#motion">Motion and Assets</a>
+          <a href="#taste">Taste Presets</a>
+          <a href="#mobile">Mobile</a>
+          <a href="#platform">Platform Takeaways</a>
+          <a href="#templates">Flow Markdown</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="problem">
+          <span class="label">The Problem</span>
+          <h2>Better models still default to familiar design patterns.</h2>
+          <p class="lead">
+            The speaker starts with a useful observation: AI-generated websites are improving,
+            but many still feel the same. The model has learned from a web full of repeated patterns,
+            so when it has to make a design decision it often chooses the most common safe option.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Generic drift</span>
+              <h3>Different pages can still feel identical</h3>
+              <p>The model may change text and layout details while keeping the same visual language underneath.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">AI slop</span>
+              <h3>Repeated design tropes become visible</h3>
+              <p>The video calls out overused fonts, purple gradients on white backgrounds, and safe landing-page defaults.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Missing point of view</span>
+              <h3>Correct is not the same as distinctive</h3>
+              <p>Landing pages, portfolios, dashboards, and mobile apps need different design intent, not one universal idea of good.</p>
+            </article>
+          </div>
+          <p class="note">
+            The practical lesson: a design skill should not only tell the model to "make it beautiful."
+            It should force a concrete direction, constraints, examples, forbidden patterns, and the rules for the target medium.
+          </p>
+        </section>
+
+        <section class="section" id="direction">
+          <span class="label">Design Direction</span>
+          <h2>Anthropic's front-end design skill makes the model commit before coding.</h2>
+          <p class="lead">
+            The video presents Anthropic's front-end design skill as a foundation for many other design skills.
+            Its value is that it pushes Claude to choose a design direction before generating the site,
+            then stay consistent with that direction instead of drifting into common defaults.
+          </p>
+          <div class="flow" aria-label="Design direction flow">
+            <div class="flow-step">
+              <strong>Read the brief</strong>
+              <span>Understand the product, audience, emotion, and website purpose.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Break the default</strong>
+              <span>Reject obvious AI tropes and pick a stronger visual point of view.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Commit to a system</strong>
+              <span>Choose typography, color, rhythm, spacing, media style, and layout language.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Build consistently</strong>
+              <span>Keep the generated page aligned with the chosen direction.</span>
+            </div>
+          </div>
+          <p class="note">
+            AI LABS says they adapted this idea into a marketing UI skill using a "break the default" style prompt,
+            because newer Claude models need updated prompting guidance.
+          </p>
+        </section>
+
+        <section class="section" id="functional">
+          <span class="label">Functional UI</span>
+          <h2>Functional product UI should lean on component systems, not pure invention.</h2>
+          <p class="lead">
+            The video draws a clear distinction between marketing pages and real applications.
+            Marketing pages can be expressive and artistic. Product dashboards and operational tools need consistent,
+            predictable components that people can use repeatedly.
+          </p>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Layer</th>
+                <th>What It Provides</th>
+                <th>Why It Matters</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Shadcn skill</strong></td>
+                <td>A rulebook for building with Shadcn conventions and fitting the current project setup.</td>
+                <td>Gives the agent judgment about how to use components correctly.</td>
+              </tr>
+              <tr>
+                <td><strong>Shadcn MCP</strong></td>
+                <td>A live connection to the Shadcn registry so the model can browse and pull real components.</td>
+                <td>Connects the agent to professional-grade components instead of hand-building rough versions.</td>
+              </tr>
+              <tr>
+                <td><strong>Dashboard skill</strong></td>
+                <td>A layout skill focused on grouping information, density, hierarchy, and screen organization.</td>
+                <td>Dashboards are less about isolated components and more about arranging information coherently.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="note">
+            This is a clean example of skill plus MCP separation:
+            the skill carries rules and reasoning, while the MCP gives live access to components and data.
+          </p>
+        </section>
+
+        <section class="section" id="decision-engine">
+          <span class="label">Decision Engine</span>
+          <h2>UI UX Pro Max is described as a design decision engine.</h2>
+          <p class="lead">
+            Most skills provide principles and trust the model to apply them.
+            The video describes UI UX Pro Max differently: it runs an engine first, searches an open-source design database,
+            selects an industry category, and produces a tailored design system before the model starts building.
+          </p>
+          <div class="pipeline" aria-label="Design decision engine pipeline">
+            <div class="pipeline-step">
+              <strong>Analyze product</strong>
+              <span>Infer what kind of site or app is being built.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Search categories</strong>
+              <span>Look across many industry categories and style references.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Select attributes</strong>
+              <span>Choose palette, font pairing, layout, and visual rhythm.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Filter mismatches</strong>
+              <span>Remove choices that do not fit the product category.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Build from rules</strong>
+              <span>Hand the model a tailored design system to follow.</span>
+            </div>
+          </div>
+          <div class="quote-strip">
+            <p>Better taste helps. A task-specific design decision helps more.</p>
+          </div>
+        </section>
+
+        <section class="section" id="motion">
+          <span class="label">Motion and Assets</span>
+          <h2>Motion and real media are separate production concerns.</h2>
+          <p class="lead">
+            Static design is not enough for modern websites, but AI animation often collapses into the same scroll-reveal pattern.
+            The video recommends a GSAP skill for professional motion and a visual generation tool such as Higgsfield for real images and video.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">GSAP</span>
+              <h3>Use correct animation patterns</h3>
+              <p>The GSAP skill gives the model library-specific guidance instead of letting it guess animation code.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Performance</span>
+              <h3>Animate browser-friendly properties</h3>
+              <p>The skill steers Claude away from layout-heavy changes that force the browser to rebuild the page every frame.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Visual media</span>
+              <h3>Generate task-fit assets</h3>
+              <p>Higgsfield is framed as a way to generate images and video inside the agent workflow instead of relying on mismatched stock media.</p>
+            </article>
+          </div>
+          <p class="note">
+            The important point for platform design is that animation and media generation are actionable skills:
+            they need real tools, performance rules, asset constraints, and review gates.
+          </p>
+        </section>
+
+        <section class="section" id="taste">
+          <span class="label">Taste Presets</span>
+          <h2>Some skills are not full systems. They are style presets.</h2>
+          <p class="lead">
+            The video also covers lightweight taste presets that steer the model toward a specific look.
+            These should be chosen intentionally, not stacked together.
+          </p>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Preset</th>
+                <th>Direction</th>
+                <th>Good Fit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Minimalist UI</strong></td>
+                <td>Open, restrained, content-first design.</td>
+                <td>Newspapers, blogs, editorial pages, and reading-heavy experiences.</td>
+              </tr>
+              <tr>
+                <td><strong>Industrial brutalist UI</strong></td>
+                <td>Raw, heavy, anti-corporate visual language.</td>
+                <td>Experimental brands, edgy portfolios, cultural sites, or bold campaigns.</td>
+              </tr>
+              <tr>
+                <td><strong>Front-end UI/UX</strong></td>
+                <td>General clean defaults.</td>
+                <td>Business landing pages and product sites that need to look professional without extremes.</td>
+              </tr>
+              <tr>
+                <td><strong>Premium front-end UI</strong></td>
+                <td>Luxury, fashion-like presentation.</td>
+                <td>High-end brands, premium launches, and visual-first campaigns.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="note">
+            For a BA-facing platform, these should be presented as selectable design modes with examples,
+            not as hidden prompt fragments the BA has to memorize.
+          </p>
+        </section>
+
+        <section class="section" id="mobile">
+          <span class="label">Mobile</span>
+          <h2>Mobile is not a smaller website.</h2>
+          <p class="lead">
+            The final section moves from web to mobile. The speaker argues that AI-generated mobile UI fails because models often shrink web habits onto a phone.
+            Mobile needs its own ergonomics, navigation patterns, platform conventions, and component systems.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Mobile app UI</span>
+              <h3>Principles layer</h3>
+              <p>Encodes thumb zone, spacing, limited type scales, and common mobile interaction rules.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Material 3</span>
+              <h3>Android design system</h3>
+              <p>Gives Claude Google's components, theme logic, colors, expressive shapes, and design checks.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">SwiftUI and Expo</span>
+              <h3>Native or cross-platform</h3>
+              <p>SwiftUI pulls Apple guidance from Xcode for native iOS; Expo covers shared iOS and Android app structure.</p>
+            </article>
+          </div>
+          <p class="note">
+            The platform lesson is clear: web, Android, iOS, and cross-platform app design should be separate skill families,
+            because each has different constraints and user expectations.
+          </p>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your Master Agent, Sub-Agent, Skill, and MCP platform</h2>
+          <p class="lead">
+            This video is useful because it gives a concrete taxonomy for skills.
+            Not every skill should be a persona. Some skills define direction, some define component rules,
+            some connect tools, some generate assets, and some verify platform-specific quality.
+          </p>
+          <ul class="checklist">
+            <li><strong>Split skills by job type.</strong> Marketing UI, functional app UI, dashboards, animation, visual generation, and mobile should not share one giant design prompt.</li>
+            <li><strong>Model cognitive vs actionable skills.</strong> Design direction and taste presets are cognitive. Shadcn MCP, GSAP implementation, Higgsfield asset generation, and Expo builds are actionable.</li>
+            <li><strong>Pair every MCP with a skill.</strong> The MCP gives access. The skill tells the agent when, why, and how to use that access correctly.</li>
+            <li><strong>Use decision-first design flows.</strong> Before generating UI, force the agent to choose product category, visual direction, component system, motion level, and media strategy.</li>
+            <li><strong>Make forbidden patterns explicit.</strong> Store "avoid AI slop" rules such as generic gradients, stock imagery, repeated scroll reveals, and inconsistent typography in skill definitions.</li>
+            <li><strong>Let BAs choose design intent in business language.</strong> Instead of asking for CSS details, ask if the experience should be editorial, premium, operational, playful, brutalist, mobile-native, or dashboard-dense.</li>
+            <li><strong>Add verification gates.</strong> Check accessibility, responsive layout, component consistency, animation performance, mobile ergonomics, and asset relevance.</li>
+            <li><strong>Version skill packs.</strong> The video notes that newer models need updated prompting. Treat design skills as versioned assets tied to model capability.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">Flow Markdown</span>
+          <h2>A BA-friendly design Flow Markdown should select skill layers before code is generated.</h2>
+          <p class="lead">
+            The practical artifact for your platform is a reusable UI generation spec.
+            It should let the BA define product type and design intent, then let the platform attach the right skills and tools.
+          </p>
+          <pre class="mini-spec"># Design Flow: Product Website or App UI
+
+goal: Generate a distinctive, production-ready interface for a specific product context.
+owner: Design Master Agent
+flow_type: skill_layered_ui_generation
+
+input:
+  product_type: analytics_dashboard
+  audience: operations_team
+  primary_goal: repeated daily use
+  design_intent: quiet_professional_dense
+  platform: web
+
+skill_layers:
+  direction:
+    skill: front_end_design_direction
+    rules:
+      - commit_to_visual_direction_before_code
+      - avoid_generic_ai_defaults
+  component_system:
+    skill: shadcn_rules
+    mcp_required: shadcn_registry
+  layout:
+    skill: dashboard_information_architecture
+    focus:
+      - grouping
+      - density
+      - hierarchy
+      - scanability
+  motion:
+    skill: gsap_motion
+    use_when: marketing_or_storytelling_required
+    performance_gate: animate_transform_and_opacity
+  assets:
+    skill: generated_visual_assets
+    use_when: hero_or_background_media_required
+
+platform_rules:
+  responsive_breakpoints: [mobile, tablet, desktop]
+  accessibility_required: true
+  no_text_overflow: true
+  no_horizontal_scroll: true
+
+verification:
+  - design_direction_matches_product
+  - component_usage_matches_project
+  - dashboard_density_is_readable
+  - animations_are_smooth
+  - visuals_are_relevant
+  - mobile_layout_is_not_shrunken_desktop
+
+failure_policy:
+  on_generic_design: restart_with_stronger_direction
+  on_component_mismatch: reload_component_system_rules
+  on_mobile_failure: switch_to_mobile_native_skill
+  on_asset_mismatch: regenerate_or_remove_media</pre>
+          <div class="grid two">
+            <article class="card sand">
+              <span class="pill gold">BA view</span>
+              <h3>Choose the design intent</h3>
+              <p>The BA chooses product type, audience, intent, platform, and acceptable visual language without writing implementation prompts.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Runtime view</span>
+              <h3>Assemble the skill stack</h3>
+              <p>The platform maps intent to design skills, MCP tools, component registries, asset generation, and verification gates.</p>
+            </article>
+          </div>
+          <p class="note">
+            Summary generated from public YouTube captions for this video. Product and skill claims should be validated in your own platform
+            with screenshots, responsive checks, accessibility checks, and human design review.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>Insane Claude Design Skills You Need To Build Beautiful Websites</strong>.
+    Source: AI LABS. Video ID: Ot582-E61ac.
+  </footer>
+</body>
+</html>

@@ -1,0 +1,945 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Andrej Karpathy: From Vibe Coding to Agentic Engineering - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172127;
+      --muted: #627078;
+      --paper: #fffdf9;
+      --wash: #f3f6f4;
+      --line: #d5ddd8;
+      --teal: #16736d;
+      --blue: #2c6287;
+      --coral: #c65446;
+      --gold: #a87821;
+      --violet: #685b86;
+      --charcoal: #203038;
+      --shadow: 0 24px 62px rgb(23 33 39 / 12%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(22 115 109 / 8%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(44 98 135 / 7%) 1px, transparent 1px),
+        var(--wash);
+      background-size: 42px 42px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--coral), var(--gold));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 82%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 760;
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 840px;
+      margin-top: 24px;
+      color: #2e3940;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.16rem, 2.1vw, 1.55rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e7edf0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 84%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: rgb(255 255 255 / 88%);
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .stat {
+      padding: 14px;
+      color: var(--ink);
+      background: #fff;
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--coral);
+      font-size: 1.65rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 238px minmax(0, 1fr);
+      gap: 40px;
+      align-items: start;
+      margin-top: 38px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 6px;
+      padding: 16px;
+      background: rgb(255 255 255 / 78%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .toc span {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 750;
+      text-decoration: none;
+      border-top: 1px solid rgb(213 221 216 / 76%);
+    }
+
+    .content {
+      display: grid;
+      gap: 28px;
+      min-width: 0;
+    }
+
+    .section {
+      min-width: 0;
+      padding: 34px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; padding-top: 0; }
+
+    .label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      max-width: 880px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 4.2vw, 3.45rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      max-width: 900px;
+      margin-top: 14px;
+      color: #2e3940;
+      font-size: 1.08rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      margin-bottom: 12px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .flow-step {
+      position: relative;
+      min-width: 0;
+      padding: 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 30px rgb(23 33 39 / 6%);
+    }
+
+    .flow-step::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -10px;
+      width: 10px;
+      height: 2px;
+      background: var(--line);
+    }
+
+    .flow-step:last-child::after { display: none; }
+
+    .flow-step b {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--coral);
+      font-size: 0.8rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .spectrum {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .spectrum-item {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      border-top: 6px solid var(--blue);
+    }
+
+    .spectrum-item:nth-child(2) { border-top-color: var(--teal); }
+    .spectrum-item:nth-child(3) { border-top-color: var(--coral); }
+    .spectrum-item:nth-child(4) { border-top-color: var(--gold); }
+
+    .spectrum-item strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.04rem;
+    }
+
+    .spectrum-item span {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .table-wrap {
+      min-width: 0;
+      margin-top: 24px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: #fff;
+      background: var(--blue);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    td {
+      color: #344047;
+      font-size: 0.95rem;
+    }
+
+    .quote {
+      margin-top: 24px;
+      padding: 22px;
+      color: #fff;
+      background: var(--violet);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.25rem, 2.5vw, 1.9rem);
+      line-height: 1.35;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 14px 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 46px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .toc { position: static; }
+
+      .grid,
+      .two,
+      .tldr,
+      .flow,
+      .spectrum {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .page { padding-inline: 16px; }
+
+      .hero {
+        padding-top: 36px;
+        gap: 28px;
+      }
+
+      h1 {
+        max-width: 10ch;
+        font-size: clamp(2.7rem, 14vw, 4.35rem);
+      }
+
+      .grid,
+      .two,
+      .tldr,
+      .flow,
+      .spectrum {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-step::after {
+        top: auto;
+        right: auto;
+        left: 24px;
+        bottom: -10px;
+        width: 2px;
+        height: 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./">YouTube Extractor</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#verifiability">10:56 Focus</a>
+      <a class="action-link" href="#platform">Platform Takeaways</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=96jN2OCOfLs&t=656s">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Agentic Engineering</span>
+        <h1>From Vibe Coding to Agentic Engineering</h1>
+        <p class="subtitle">
+          A structured summary of Andrej Karpathy's Sequoia conversation with Stephanie Zhan.
+          The core shift: AI is not just making programming faster. It is changing what counts as software, what work is verifiable, and what humans must still understand.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> Andrej Karpathy: From Vibe Coding to Agentic Engineering</span>
+          <span><strong>Creator:</strong> Sequoia Capital</span>
+          <span><strong>Transcript:</strong> 6,262 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/96jN2OCOfLs/hqdefault.jpg" alt="Video thumbnail for Andrej Karpathy From Vibe Coding to Agentic Engineering">
+        <figcaption>
+          Source video from Sequoia Capital. The linked timestamp starts around 10:56, where Andrej discusses verifiability and jagged model capability.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="quick-summary-title">
+      <div>
+        <h2 id="quick-summary-title">The Short Version</h2>
+        <p>
+          Karpathy argues that LLMs are becoming a new kind of computer. Software 1.0 is explicit code.
+          Software 2.0 is learned weights. Software 3.0 is programming through prompts, context, examples, tools, and agent workflows.
+          Vibe coding raises the floor, but agentic engineering preserves the quality bar while using fallible but powerful agents.
+        </p>
+        <ul class="tldr">
+          <li>The biggest opportunities are not only faster code, but new information-processing products that could not exist before.</li>
+          <li>AI automates fastest where outputs can be verified, rewarded, tested, or simulated.</li>
+          <li>Humans still own taste, spec, architecture, judgment, and understanding.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>29m</strong><span>conversation runtime</span></div>
+        <div class="stat"><strong>10:56</strong><span>verifiability timestamp</span></div>
+        <div class="stat"><strong>966</strong><span>caption segments</span></div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Table of contents">
+        <span>Read</span>
+        <a href="#software-3">Software 3.0</a>
+        <a href="#new-products">New products</a>
+        <a href="#verifiability">Verifiability</a>
+        <a href="#agentic-engineering">Agentic engineering</a>
+        <a href="#human-role">Human role</a>
+        <a href="#agent-native">Agent-native world</a>
+        <a href="#platform">Platform takeaways</a>
+      </nav>
+
+      <article class="content">
+        <section class="section" id="software-3">
+          <span class="label">Software 3.0</span>
+          <h2>The programming interface is moving from code to context</h2>
+          <p class="lead">
+            Karpathy frames the shift as three eras. In Software 1.0, humans write explicit rules.
+            In Software 2.0, humans curate data and objectives to train neural networks.
+            In Software 3.0, the LLM is an interpreter over context, and the context window becomes the main lever.
+          </p>
+
+          <div class="spectrum" aria-label="Software era spectrum">
+            <div class="spectrum-item">
+              <strong>Software 1.0</strong>
+              <span>Write code over structured data. The program is explicit and deterministic.</span>
+            </div>
+            <div class="spectrum-item">
+              <strong>Software 2.0</strong>
+              <span>Arrange datasets, objectives, and architectures. The program lives in learned weights.</span>
+            </div>
+            <div class="spectrum-item">
+              <strong>Software 3.0</strong>
+              <span>Write prompts, specs, examples, and tool instructions. The LLM interprets context.</span>
+            </div>
+            <div class="spectrum-item">
+              <strong>Agentic Runtime</strong>
+              <span>The model uses tools, sees the environment, debugs, and takes action in a loop.</span>
+            </div>
+          </div>
+
+          <p class="quote">
+            The practical question becomes: what is the right piece of text, context, image, file, or tool contract to give the agent?
+          </p>
+        </section>
+
+        <section class="section" id="new-products">
+          <span class="label">New Products</span>
+          <h2>The mistake is treating AI as only a speed-up for existing software</h2>
+          <p class="lead">
+            Karpathy's menu example shows the difference. One approach builds a traditional app that uploads a menu,
+            OCRs items, generates food images, and renders a UI. The Software 3.0 version is more direct:
+            give the menu image to a model and ask it to transform the image itself.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Old Mindset</span>
+              <h3>Build an app around the task</h3>
+              <p>Classical software decomposes the work into OCR, parsing, image generation, database, frontend, and deployment pieces.</p>
+            </article>
+            <article class="card">
+              <span class="pill">New Mindset</span>
+              <h3>Ask the model to transform the artifact</h3>
+              <p>For some tasks, the prompt and source artifact can replace large parts of the application pipeline.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Opportunity</span>
+              <h3>Recompile information</h3>
+              <p>LLMs can turn documents into wikis, notes into knowledge bases, and raw facts into new projections that were not practical before.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="verifiability">
+          <span class="label">10:56 Focus</span>
+          <h2>AI accelerates first where the output is verifiable</h2>
+          <p class="lead">
+            The timestamp in your link lands on Karpathy's explanation of verifiability.
+            Traditional computers automate what we can specify in code. Modern LLMs automate what we can verify, because frontier models are trained in environments with rewards, tests, checks, and feedback.
+          </p>
+
+          <div class="flow" aria-label="Verifiability loop">
+            <div class="flow-step"><b>Task</b><span>Choose a domain where success can be checked.</span></div>
+            <div class="flow-step"><b>Environment</b><span>Create examples, tests, simulations, or RL-style rewards.</span></div>
+            <div class="flow-step"><b>Model</b><span>Train, tune, or prompt against that feedback.</span></div>
+            <div class="flow-step"><b>Capability</b><span>The model improves sharply inside that circuit.</span></div>
+            <div class="flow-step"><b>Edge</b><span>Outside the circuit, behavior can still be jagged.</span></div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Concept</th>
+                  <th>Karpathy's point</th>
+                  <th>Builder implication</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Verifiable domains</td>
+                  <td>Models peak in areas like code and math because outputs can be checked and rewarded.</td>
+                  <td>Build evals, tests, simulators, and judges for your business domain.</td>
+                </tr>
+                <tr>
+                  <td>Jagged intelligence</td>
+                  <td>A model can refactor a huge codebase but still fail a simple practical question.</td>
+                  <td>Do not assume broad competence from one impressive demo. Test your exact workflow.</td>
+                </tr>
+                <tr>
+                  <td>Data distribution</td>
+                  <td>Capabilities depend on what labs focused on and what data or RL environments made it into training.</td>
+                  <td>If your domain is outside the model's strong circuits, add domain data, fine-tuning, tools, or strict verification.</td>
+                </tr>
+                <tr>
+                  <td>Founder opportunity</td>
+                  <td>Valuable verifiable environments may still be underexplored.</td>
+                  <td>Find workflows where correctness can be measured but labs have not specialized deeply yet.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="agentic-engineering">
+          <span class="label">Engineering Discipline</span>
+          <h2>Vibe coding raises the floor; agentic engineering protects the quality bar</h2>
+          <p class="lead">
+            Karpathy separates casual AI-assisted creation from professional engineering.
+            Vibe coding lets many more people build things. Agentic engineering is about using powerful, spiky, stochastic agents without introducing security problems, brittle architecture, or quality regressions.
+          </p>
+
+          <div class="grid two">
+            <article class="card">
+              <span class="pill">Vibe Coding</span>
+              <h3>Fast creation</h3>
+              <p>The model can produce larger chunks of working code, so individuals can explore, prototype, and ship side projects quickly.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Agentic Engineering</span>
+              <h3>Fast creation with discipline</h3>
+              <p>The human team still owns security, architecture, correctness, tests, deployment, observability, and maintainability.</p>
+            </article>
+          </div>
+
+          <ul class="checklist">
+            <li>Agentic engineers invest in their setup, tools, context, workflows, and evaluation process.</li>
+            <li>Hiring for this skill should look less like puzzles and more like large project execution under quality and security constraints.</li>
+            <li>The ceiling may be much higher than the old "10x engineer" idea, but only for people who can direct agents well.</li>
+            <li>The professional bar does not disappear. It moves into specs, review, constraints, tests, and judgment.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="human-role">
+          <span class="label">Human Role</span>
+          <h2>The human role shifts toward taste, spec, design, and understanding</h2>
+          <p class="lead">
+            Karpathy says agents are like capable interns: strong recall, useful implementation ability, but still prone to strange design mistakes.
+            His example is a payment flow where an agent matched Stripe and Google accounts by email instead of using a persistent user ID.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Taste</span>
+              <h3>Know what good looks like</h3>
+              <p>Models may produce bloated code, awkward abstractions, or visually weak products unless the human pushes for quality.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Spec</span>
+              <h3>Define the right plan</h3>
+              <p>The human must set the top-level categories, invariants, data model, constraints, and acceptance criteria.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Fundamentals</span>
+              <h3>Keep the deep model</h3>
+              <p>You may forget API details, but you still need to understand the underlying system well enough to spot inefficient or unsafe designs.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Understanding</span>
+              <h3>Do not outsource the bottleneck</h3>
+              <p>Karpathy's closing point: you can outsource thinking, but you cannot outsource understanding.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Oversight</span>
+              <h3>Stay in the loop</h3>
+              <p>Because intelligence is jagged, humans must inspect where the model is strong and where it is outside its circuit.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Education</span>
+              <h3>Learn what directs agents</h3>
+              <p>Deep learning still matters because you need to decide what is worth building and how to steer the agentic system.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="agent-native">
+          <span class="label">Agent-Native World</span>
+          <h2>Infrastructure, docs, and workflows need to be written for agents first</h2>
+          <p class="lead">
+            Karpathy argues that much of today's digital world is still written for humans.
+            Docs tell humans which buttons to click, URLs to open, and settings to configure. In an agentic world, the better artifact is often a copy-pasteable instruction, a tool contract, or a machine-legible interface the agent can execute.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Docs</span>
+              <h3>From human guide to agent instruction</h3>
+              <p>Instead of "go here, click this," provide the exact context, command, or API path an agent can use.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Infrastructure</span>
+              <h3>Deployment should be agent-operable</h3>
+              <p>The hard part of side projects was not just code, but DNS, settings, services, deployment, and integration.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Interfaces</span>
+              <h3>Think sensors and actuators</h3>
+              <p>Agent-native systems expose what agents can observe and what they are allowed to change.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Organizations</span>
+              <h3>People and companies get agent representations</h3>
+              <p>Karpathy imagines personal and organizational agents negotiating details like meetings and coordination.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Data</span>
+              <h3>Make structures legible to LLMs</h3>
+              <p>Systems should expose state, logs, and business objects in forms that models can reliably read and act on.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Control</span>
+              <h3>Permissions become product design</h3>
+              <p>Agents with real permissions need clear boundaries, auditability, rollback, and human approval paths.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your agentic AI platform</h2>
+          <p class="lead">
+            This conversation is almost a product strategy memo for your BA-facing multi-agent platform.
+            The big lesson: let BAs describe verifiable business behavior, then turn that behavior into specs, evals, tools, memory, permissions, traces, and agent-native instructions.
+          </p>
+
+          <ul class="checklist">
+            <li><strong>Make verifiability a first-class field.</strong> Every business flow should declare how success is checked: exact output, policy rule, tool state, user confirmation, judge score, simulator, or human approval.</li>
+            <li><strong>Separate vibe prototyping from governed agentic engineering.</strong> The platform can allow fast drafts, but promotion to production should require evals, trace evidence, permission review, and release gates.</li>
+            <li><strong>Design Flow Markdown as Software 3.0 code.</strong> A flow is not documentation only. It is the program-like context that tells agents objectives, constraints, tools, memory checkpoints, and escalation rules.</li>
+            <li><strong>Represent each Skill as an agent-native artifact.</strong> Cognitive skills should define reasoning patterns and scoring. Actionable skills should define tool contracts, schemas, side effects, retries, permissions, and audit logs.</li>
+            <li><strong>Build a verifiable environment library.</strong> Give BA users templates for policy checks, document extraction checks, claims checks, approval checks, customer-service checks, and compliance checks.</li>
+            <li><strong>Expose sensors and actuators.</strong> Sensors are what an agent can read: documents, CRM records, logs, policies, tickets. Actuators are what it can change: create case, send email, update status, request approval.</li>
+            <li><strong>Keep human understanding in the loop.</strong> BA users should own intent, business invariants, examples, exception logic, and what "good" means. The system can automate implementation and testing around that.</li>
+            <li><strong>Test for jaggedness.</strong> Do not trust broad model quality. Test exact business circuits, especially edge cases where common sense, identity, money, compliance, or user permissions matter.</li>
+            <li><strong>Make docs copy-pasteable to agents.</strong> Replace human-only SOP pages with agent-readable instructions, structured examples, tool specs, expected outputs, and failure handling.</li>
+            <li><strong>Promote knowledge bases as understanding tools.</strong> Summaries, wikis, graph views, and alternative projections help humans direct agents because they compress information into forms humans can actually understand.</li>
+          </ul>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Karpathy idea</th>
+                  <th>Platform feature</th>
+                  <th>Why it matters</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Context is the program</td>
+                  <td>Flow Markdown plus Agent Cards</td>
+                  <td>BA-authored context becomes executable design, not passive documentation.</td>
+                </tr>
+                <tr>
+                  <td>Verifiability drives capability</td>
+                  <td>Eval Builder and Scorer Library</td>
+                  <td>Agents improve fastest when correctness is measurable.</td>
+                </tr>
+                <tr>
+                  <td>Jagged intelligence</td>
+                  <td>Edge-case regression suite</td>
+                  <td>Prevents confidence from one demo leaking into unsafe production behavior.</td>
+                </tr>
+                <tr>
+                  <td>Agentic engineering</td>
+                  <td>Promotion pipeline from draft to production</td>
+                  <td>Keeps fast building from eroding security, compliance, or maintainability.</td>
+                </tr>
+                <tr>
+                  <td>Agent-native infrastructure</td>
+                  <td>MCP tools, sensors, actuators, audit contracts</td>
+                  <td>Lets agents operate systems safely instead of scraping human UI flows.</td>
+                </tr>
+                <tr>
+                  <td>Understanding remains human</td>
+                  <td>Knowledge graph, summaries, trace review, SME workbench</td>
+                  <td>Humans can direct agents only when they understand the business and system state.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="quote">
+            Strong opinion: your platform should treat BA-authored SOPs as Software 3.0 source code, then surround them with evals, tool contracts, memory, traces, and governance.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for <strong>Andrej Karpathy: From Vibe Coding to Agentic Engineering w/ Stephanie Zhan</strong>. Source: Sequoia Capital. Video ID: 96jN2OCOfLs.
+  </footer>
+</body>
+</html>

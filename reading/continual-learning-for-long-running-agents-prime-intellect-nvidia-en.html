@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Continual Learning for Long-Running Agents - NVIDIA Developer - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #617079;
+      --paper: #fffef9;
+      --canvas: #f4f7f2;
+      --line: #d8ded5;
+      --teal: #147069;
+      --blue: #315f83;
+      --coral: #bc4d3f;
+      --gold: #a27320;
+      --green: #476f3d;
+      --violet: #675986;
+      --charcoal: #233039;
+      --soft-green: #e7f0e3;
+      --soft-blue: #e5edf3;
+      --soft-gold: #f7efd8;
+      --shadow: 0 24px 62px rgb(23 33 38 / 11%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(20 112 105 / 7%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(49 95 131 / 6%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--green), var(--teal), var(--blue), var(--coral), var(--gold));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 84%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.04fr) minmax(300px, 0.96fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.9rem, 6.7vw, 5.8rem);
+      font-weight: 760;
+      line-height: 0.96;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      margin-top: 24px;
+      color: #303b41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2.05vw, 1.48rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e6ece7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 86%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: rgb(255 255 255 / 88%);
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .stat {
+      padding: 14px;
+      color: var(--ink);
+      background: #fff;
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--coral);
+      font-size: 1.65rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 238px minmax(0, 1fr);
+      gap: 40px;
+      align-items: start;
+      margin-top: 38px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 6px;
+      padding: 16px;
+      background: rgb(255 255 255 / 80%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .toc span {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 750;
+      text-decoration: none;
+      border-top: 1px solid rgb(216 222 213 / 76%);
+    }
+
+    .content {
+      display: grid;
+      gap: 28px;
+      min-width: 0;
+    }
+
+    .section {
+      min-width: 0;
+      padding: 34px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; padding-top: 0; }
+
+    .label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      max-width: 900px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.9rem, 4vw, 3.35rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      max-width: 920px;
+      margin-top: 14px;
+      color: #303b41;
+      font-size: 1.08rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      margin-bottom: 12px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .flow-step {
+      min-width: 0;
+      padding: 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 30px rgb(23 33 38 / 6%);
+    }
+
+    .flow-step b {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--coral);
+      font-size: 0.8rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .lanes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .lane {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .lane:nth-child(1) { background: var(--soft-green); }
+    .lane:nth-child(2) { background: var(--soft-blue); }
+    .lane:nth-child(3) { background: var(--soft-gold); }
+
+    .lane h3 {
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 1.08rem;
+    }
+
+    .lane p {
+      color: #42505a;
+      font-size: 0.96rem;
+    }
+
+    .table-wrap {
+      min-width: 0;
+      margin-top: 24px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: #fff;
+      background: var(--blue);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    td {
+      color: #344047;
+      font-size: 0.95rem;
+    }
+
+    .quote {
+      margin-top: 24px;
+      padding: 22px;
+      color: #fff;
+      background: var(--violet);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.22rem, 2.4vw, 1.78rem);
+      line-height: 1.35;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 14px 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .checklist strong { color: var(--coral); }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .stack-row {
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .stack-label {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      color: #fff;
+      background: var(--blue);
+      border-radius: 8px;
+      font-weight: 900;
+    }
+
+    .stack-body {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .node {
+      min-height: 96px;
+      padding: 14px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .node strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.98rem;
+    }
+
+    .node span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 46px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .layout,
+      .stack-row {
+        grid-template-columns: 1fr;
+      }
+
+      .toc { position: static; }
+
+      .grid,
+      .two,
+      .tldr,
+      .lanes,
+      .stack-body {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .page { padding-inline: 16px; }
+
+      .hero {
+        padding-top: 36px;
+        gap: 28px;
+      }
+
+      h1 {
+        max-width: 10ch;
+        font-size: clamp(2.55rem, 13vw, 4.15rem);
+      }
+
+      .quick-summary { padding: 22px; }
+
+      .grid,
+      .two,
+      .tldr,
+      .lanes,
+      .stack-body {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        min-width: 0;
+        table-layout: fixed;
+      }
+
+      th, td {
+        padding: 11px 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./">YouTube Extractor</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#context-rot">Context Rot</a>
+      <a class="action-link" href="#recursive">Recursive Agents</a>
+      <a class="action-link" href="#continual-learning">Continual Learning</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=SVWmuJx0hHM">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Long-Running Agents</span>
+        <h1>Agents That Keep Getting Better</h1>
+        <p class="subtitle">
+          A readable summary of NVIDIA Developer's talk by Jack Manong from Prime Intellect.
+          The video argues that long-running agents need more than big context windows: they need references,
+          programmatic orchestration, sub-agent delegation, trace harvesting, feedback, and continual model training.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> Continual Learning for Long-Running Agents</span>
+          <span><strong>Speaker:</strong> Jack Manong, Prime Intellect</span>
+          <span><strong>Transcript:</strong> 4,564 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/SVWmuJx0hHM/hqdefault.jpg" alt="Video thumbnail for Continual Learning for Long-Running Agents">
+        <figcaption>
+          Source video from NVIDIA Developer about context rot, recursive language models, continual learning, RL environments, and model-training infrastructure.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="quick-summary-title">
+      <div>
+        <h2 id="quick-summary-title">The Short Version</h2>
+        <p>
+          Long-running agents are now useful enough that the hard questions have become economic:
+          reliability, cost, latency, and product experience. The speaker's answer is to train models on the actual harness,
+          traces, tools, and feedback loops of the agent system, rather than hoping that a larger context window will solve orchestration.
+        </p>
+        <ul class="tldr">
+          <li>Large context windows still suffer from context rot, especially for reasoning across very long histories.</li>
+          <li>Agents should pass references and variables, then explore context programmatically instead of swallowing everything at once.</li>
+          <li>Continual learning means harvesting trajectories, scoring them, and training the model to use the harness better over time.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>23m</strong><span>runtime</span></div>
+        <div class="stat"><strong>674</strong><span>caption rows</span></div>
+        <div class="stat"><strong>4.6k</strong><span>transcript words</span></div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Table of contents">
+        <span>Read</span>
+        <a href="#shift">Why it matters</a>
+        <a href="#context-rot">Context rot</a>
+        <a href="#references">References</a>
+        <a href="#recursive">Recursive agents</a>
+        <a href="#train-harness">Train the harness</a>
+        <a href="#continual-learning">Continual learning</a>
+        <a href="#prime-stack">Prime Intellect stack</a>
+        <a href="#platform">Platform takeaways</a>
+      </nav>
+
+      <article class="content">
+        <section class="section" id="shift">
+          <span class="label">Why It Matters</span>
+          <h2>Agent work moved from short autocomplete to long-running workflows</h2>
+          <p class="lead">
+            The talk opens by contrasting 2024 with 2026. In 2024, most people still thought of coding LLMs as autocomplete.
+            Cursor Agent changed that mental model by showing that users could describe a task in English and let an agent modify code.
+            By 2026, the speaker says agents can run for far longer, spend millions of tokens, and become part of enterprise workflows.
+          </p>
+
+          <div class="lanes" aria-label="Agent evolution">
+            <article class="lane">
+              <h3>2024 Mental Model</h3>
+              <p>LLMs complete code, fill boilerplate, or answer short questions. If an agent ran more than a few minutes, users expected it to drift.</p>
+            </article>
+            <article class="lane">
+              <h3>2026 Reality</h3>
+              <p>Developers run multiple agent terminal sessions, let agents work overnight, and expect them to solve longer tasks.</p>
+            </article>
+            <article class="lane">
+              <h3>Enterprise Pressure</h3>
+              <p>Businesses ask how to make agents more reliable, cheaper, and fast enough for product-grade user experiences.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="context-rot">
+          <span class="label">Context Rot</span>
+          <h2>A million-token context window is not the same as a million-token reasoning ability</h2>
+          <p class="lead">
+            The first technical problem is long-context degradation. Many modern models advertise very large context windows,
+            but accepting a long prompt is not the same as retrieving and reasoning reliably across all of it.
+            The speaker points to benchmark patterns where performance drops as context grows.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">MRCR</span>
+              <h3>Retrieval gets worse</h3>
+              <p>Needle-in-the-haystack style tasks test whether the model can find specific information in long generated text.</p>
+            </article>
+            <article class="card">
+              <span class="pill">GraphWalks</span>
+              <h3>Reasoning gets worse</h3>
+              <p>Graph tasks test whether the model can reason across nodes and edges, not just recall an isolated fact.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Agent Runs</span>
+              <h3>Compaction creates drift</h3>
+              <p>Long tool-call histories and repeated summarization can cause the agent to forget what it already did.</p>
+            </article>
+          </div>
+
+          <p class="quote">
+            The key warning: do not design long-running agents by dumping the whole world into context and trusting the model to stay coherent.
+          </p>
+        </section>
+
+        <section class="section" id="references">
+          <span class="label">References</span>
+          <h2>Pass references and variables, then let the agent inspect context as needed</h2>
+          <p class="lead">
+            The proposed fix is to stop passing every detail into the prompt at once. Instead, pass handles, references,
+            or variables that the agent can open, filter, inspect, and query. The speaker compares this to data science:
+            a data scientist does not paste an entire CSV into code; they load a dataframe and inspect it incrementally.
+          </p>
+
+          <div class="flow" aria-label="Reference-based context flow">
+            <div class="flow-step"><b>Context</b><span>Documents, traces, files, videos, or data tables exist outside the prompt.</span></div>
+            <div class="flow-step"><b>Handle</b><span>The agent receives a reference, variable, path, or object ID.</span></div>
+            <div class="flow-step"><b>Inspect</b><span>It reads slices, filters rows, or asks subqueries.</span></div>
+            <div class="flow-step"><b>Reason</b><span>Only relevant results enter the working context.</span></div>
+            <div class="flow-step"><b>Act</b><span>The agent calls tools with stable variables rather than retyping huge text.</span></div>
+          </div>
+
+          <ul class="checklist">
+            <li><strong>Context chunking becomes natural.</strong> Chunks can be passed around as variables instead of copied into every prompt.</li>
+            <li><strong>Tool calls become less brittle.</strong> The model can pass a reference to a tool instead of trying to regenerate thousands of tokens correctly.</li>
+            <li><strong>Sub-agent delegation becomes easier.</strong> The main agent can send focused references to sub-agents and collect their results.</li>
+            <li><strong>Batch processing becomes possible.</strong> A programmatic loop can process many documents without forcing the agent to remember every prior step in prose.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="recursive">
+          <span class="label">Recursive Language Models</span>
+          <h2>The next harness pattern is to let agents write code to orchestrate their own work</h2>
+          <p class="lead">
+            The speaker calls this pattern recursive language models. Rather than performing 10,000 sequential tool calls in natural language,
+            the agent can write a loop, delegate subtasks, and process context programmatically. A main orchestration agent stays clean,
+            while messy document processing or search is pushed into sub-agents.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Old pattern</th>
+                  <th>Recursive pattern</th>
+                  <th>Why it helps</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Paste a giant context into the prompt.</td>
+                  <td>Pass a reference and inspect slices.</td>
+                  <td>Reduces context overload and keeps reasoning focused.</td>
+                </tr>
+                <tr>
+                  <td>Ask the model to make thousands of sequential calls.</td>
+                  <td>Let the model write a loop or batched subqueries.</td>
+                  <td>Tracks progress deterministically and avoids repeated compaction.</td>
+                </tr>
+                <tr>
+                  <td>One agent carries all intermediate work.</td>
+                  <td>Main agent delegates messy work to sub-agents.</td>
+                  <td>Preserves orchestration state while workers handle detailed context.</td>
+                </tr>
+                <tr>
+                  <td>Tool calls depend on regenerating long arguments.</td>
+                  <td>Tool calls pass object handles or variables.</td>
+                  <td>Less chance of malformed calls and lost information.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="quote">
+            The talk frames recursive orchestration as the next version of “thinking”: first models learned to spend tokens reasoning; next they may learn to spend code orchestrating.
+          </p>
+        </section>
+
+        <section class="section" id="train-harness">
+          <span class="label">Harness Training</span>
+          <h2>Models are specific to the harness they were trained on</h2>
+          <p class="lead">
+            A major point is that recursive language model prompts do not automatically work well out of the box.
+            The speaker argues that models become good at the agentic patterns they are trained to use.
+            Prompt engineering can help, but training on the actual harness should help more.
+          </p>
+
+          <div class="stack" aria-label="Harness training stack">
+            <div class="stack-row">
+              <div class="stack-label">Harness</div>
+              <div class="stack-body">
+                <div class="node"><strong>References</strong><span>Files, objects, chunks, traces, and datasets.</span></div>
+                <div class="node"><strong>Tools</strong><span>Search, code, sandbox, environment, and business actions.</span></div>
+                <div class="node"><strong>Sub-agents</strong><span>Delegated workers for focused subtasks.</span></div>
+                <div class="node"><strong>Loops</strong><span>Programmatic control flow and stop conditions.</span></div>
+              </div>
+            </div>
+            <div class="stack-row">
+              <div class="stack-label">Training Signal</div>
+              <div class="stack-body">
+                <div class="node"><strong>Trajectories</strong><span>Model calls, tool calls, user messages, and memories.</span></div>
+                <div class="node"><strong>User feedback</strong><span>Ratings, success, frustration, or completion data.</span></div>
+                <div class="node"><strong>Rule checks</strong><span>Did the task finish? Did tests pass? Was cost acceptable?</span></div>
+                <div class="node"><strong>LLM judge</strong><span>Reviews success, efficiency, and trajectory quality.</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="continual-learning">
+          <span class="label">Continual Learning</span>
+          <h2>The deployed agent becomes the data engine for the next model</h2>
+          <p class="lead">
+            Continual learning is the loop from deployed behavior back into training. Once an agent is in production,
+            the platform can harvest traces and trajectories, attach feedback signals, train or fine-tune models,
+            evaluate the new model, and deploy improvements back into the harness.
+          </p>
+
+          <div class="flow" aria-label="Continual learning loop">
+            <div class="flow-step"><b>Deploy</b><span>The agent runs in real workflows.</span></div>
+            <div class="flow-step"><b>Harvest</b><span>Collect model calls, tool calls, user messages, memory access, and outcomes.</span></div>
+            <div class="flow-step"><b>Score</b><span>Use ratings, rule checks, task completion, frustration signals, or LLM judges.</span></div>
+            <div class="flow-step"><b>Train</b><span>Update a model on successful, efficient, harness-specific trajectories.</span></div>
+            <div class="flow-step"><b>Evaluate</b><span>Run benchmark tasks, rollout viewers, and environment tests.</span></div>
+            <div class="flow-step"><b>Ship</b><span>Deploy a model that performs the same workflow faster, cheaper, or more reliably.</span></div>
+          </div>
+
+          <ul class="checklist">
+            <li><strong>Quality improves through traces.</strong> The agent's own behavior becomes training data when the platform captures enough detail.</li>
+            <li><strong>Efficiency is part of the reward.</strong> The system can score not only correctness, but also tool count, latency, tokens, and unnecessary retrieval.</li>
+            <li><strong>The harness and model co-evolve.</strong> Better prompts, references, tools, and training examples reinforce each other.</li>
+            <li><strong>Eval must be consistent.</strong> You need repeatable evaluation environments before trusting a continually improved model in production.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="prime-stack">
+          <span class="label">Prime Intellect Stack</span>
+          <h2>The second half of the talk is about infrastructure for training and evaluating agent models</h2>
+          <p class="lead">
+            The speaker then explains Prime Intellect's model-training-as-a-service stack and how it connects with NVIDIA infrastructure.
+            The pieces include hosted training, experiment metrics, rollout viewers, RL environments, evaluations, sandboxes, compute,
+            and inference orchestration with NVIDIA Dynamo.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Training</span>
+              <h3>CLI and GUI</h3>
+              <p>Users can launch training for open-source models and inspect RL-specific metrics, configs, buffers, and evaluations.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Rollouts</span>
+              <h3>Trace viewer</h3>
+              <p>Teams can click into training rollouts to see model decisions, tool calls, environment logs, and failure modes.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Environments</span>
+              <h3>RL and eval hub</h3>
+              <p>The stack includes thousands of open-source RL environments and benchmark environments for consistent testing.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Sandboxes</span>
+              <h3>CPU and GPU execution</h3>
+              <p>Agents can run tests, environments, and tool workloads inside controlled sandboxes during RL and evaluation.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Dynamo</span>
+              <h3>Inference orchestration</h3>
+              <p>NVIDIA Dynamo helps with prefix-cache-aware routing, prefill/decode disaggregation, KV cache transfer, and autoscaling.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Case Study</span>
+              <h3>Task-specific smaller models</h3>
+              <p>The talk cites a Ramp Labs Excel agent where a smaller trained model beat a larger frontier model on a specific workflow with lower latency.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your agentic AI platform</h2>
+          <p class="lead">
+            For your Master Agent, Sub-Agent, Skill, Tool MCP, memory, and Flow Markdown work, this talk adds a strong point:
+            the platform should not only execute agents. It should collect trajectories that make future agents better.
+          </p>
+
+          <ul class="checklist">
+            <li><strong>Use references as a core runtime primitive.</strong> Flow Markdown should pass files, cases, tickets, traces, and datasets as handles that agents inspect on demand.</li>
+            <li><strong>Separate orchestrator state from worker context.</strong> The Master Agent should preserve the plan, while Sub-Agents process heavy context and return compact structured outputs.</li>
+            <li><strong>Avoid blind compaction.</strong> Store task state, processed items, pending items, decisions, and stop reasons as structured state, not only as prose summaries.</li>
+            <li><strong>Make every run a training candidate.</strong> Capture user prompt, context handles, memory retrieval, tool calls, outputs, approvals, failures, cost, and latency.</li>
+            <li><strong>Design feedback signals early.</strong> BA-authored flows should include pass criteria, success events, failure events, user satisfaction signals, and escalation outcomes.</li>
+            <li><strong>Train for the harness you actually use.</strong> If your platform has MCP tools, Skill Cards, Flow Markdown, and approval gates, the model should see those patterns in training data.</li>
+            <li><strong>Build a rollout viewer for business users and engineers.</strong> A BA needs to inspect what happened; engineers need the same trace to debug retrieval, tools, and model behavior.</li>
+            <li><strong>Evaluate smaller specialized models.</strong> A domain-trained smaller model may beat a larger generic model on a narrow business workflow while reducing latency and cost.</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>Continual Learning for Long-Running Agents: Agents That Keep Getting Better</strong>.
+    Source: NVIDIA Developer. Video ID: SVWmuJx0hHM.
+  </footer>
+</body>
+</html>

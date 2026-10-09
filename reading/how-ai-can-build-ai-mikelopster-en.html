@@ -1,0 +1,1135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>How AI Can Build AI - mikelopster Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5b6870;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f5f7f1;
+      --line: #d8dfd8;
+      --teal: #1b756d;
+      --blue: #2c6381;
+      --green: #557d54;
+      --gold: #a97725;
+      --coral: #bd503f;
+      --plum: #665987;
+      --mint: #e3f0ec;
+      --sky: #e6eef6;
+      --sand: #f7edd8;
+      --rose: #f5e5df;
+      --lavender: #ece8f2;
+      --shadow: 0 24px 68px rgb(23 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(27 117 109 / 6%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(44 99 129 / 5%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--green), var(--gold), var(--coral), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 86%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.55rem, 5.85vw, 5.15rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 860px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: #e8ede7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 28px;
+      margin: 34px 0 0;
+      padding: 24px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .quick-summary h2,
+    .section h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.85rem, 3.2vw, 2.7rem);
+      font-weight: 740;
+      line-height: 1.06;
+      letter-spacing: 0;
+    }
+
+    .quick-summary p {
+      margin-top: 14px;
+      color: #303a41;
+      font-size: 1.04rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .summary-list li {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+      color: var(--muted);
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+    }
+
+    .stat {
+      display: grid;
+      min-height: 74px;
+      padding: 12px;
+      background: var(--mint);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat:nth-child(2) { background: var(--sky); }
+    .stat:nth-child(3) { background: var(--sand); }
+
+    .stat strong {
+      font-size: 1.4rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 820;
+      text-transform: uppercase;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 46px;
+      align-items: start;
+      padding-top: 38px;
+    }
+
+    .article-layout > *,
+    .sidebar,
+    .sidebar-block,
+    .toc,
+    .content,
+    .section {
+      min-width: 0;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .sidebar-block,
+    .toc {
+      padding: 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .sidebar h2,
+    .toc h2 {
+      margin-bottom: 10px;
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .glance {
+      display: grid;
+      gap: 11px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: grid;
+      gap: 2px;
+      padding-bottom: 11px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .glance li:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .glance span {
+      color: var(--quiet);
+      font-size: 0.75rem;
+      font-weight: 820;
+      text-transform: uppercase;
+    }
+
+    .glance strong { font-size: 0.95rem; }
+
+    .toc {
+      display: grid;
+      gap: 8px;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--blue);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+      font-weight: 780;
+      text-decoration: none;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+    }
+
+    .section {
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .label {
+      display: inline-flex;
+      margin-bottom: 13px;
+      color: var(--coral);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .lead {
+      margin-top: 16px;
+      color: #303a41;
+      font-size: 1.12rem;
+      line-height: 1.72;
+    }
+
+    .section p:not(.lead),
+    .section ul,
+    .section ol {
+      margin-top: 15px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .section strong { color: var(--ink); }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card.mint { background: var(--mint); }
+    .card.sky { background: var(--sky); }
+    .card.sand { background: var(--sand); }
+    .card.rose { background: var(--rose); }
+    .card.lavender { background: var(--lavender); }
+
+    .card h3 {
+      margin-top: 10px;
+      font-size: 1.02rem;
+      line-height: 1.25;
+    }
+
+    .card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      color: #fff;
+      background: var(--blue);
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .pill.green { background: var(--green); }
+    .pill.gold { background: var(--gold); }
+    .pill.coral { background: var(--coral); }
+    .pill.plum { background: var(--plum); }
+    .pill.teal { background: var(--teal); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .flow-step {
+      min-height: 132px;
+      padding: 14px;
+      background: var(--mint);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .flow-step:nth-child(2) { background: var(--sky); }
+    .flow-step:nth-child(3) { background: var(--sand); }
+    .flow-step:nth-child(4) { background: var(--rose); }
+    .flow-step:nth-child(5) { background: var(--lavender); }
+
+    .flow-step span {
+      color: var(--coral);
+      font-size: 0.76rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .flow-step strong {
+      display: block;
+      margin-top: 8px;
+      line-height: 1.25;
+    }
+
+    .flow-step p {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .matrix {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .matrix th,
+    .matrix td {
+      padding: 12px;
+      vertical-align: top;
+      border: 1px solid var(--line);
+    }
+
+    .matrix th {
+      color: var(--ink);
+      background: var(--mint);
+      text-align: left;
+    }
+
+    .matrix td {
+      color: var(--muted);
+      background: #fff;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 13px 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .quote-box {
+      margin-top: 20px;
+      padding: 18px;
+      color: #263138;
+      background: linear-gradient(90deg, rgb(27 117 109 / 11%), rgb(189 80 63 / 10%));
+      border-left: 5px solid var(--teal);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.16rem;
+      line-height: 1.55;
+    }
+
+    .mini-spec {
+      margin: 20px 0 0;
+      padding: 18px;
+      overflow-x: auto;
+      color: #f7fbfb;
+      background: #1f2a30;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.88rem;
+      line-height: 1.58;
+      white-space: pre;
+    }
+
+    .note {
+      margin-top: 18px;
+      padding: 14px;
+      color: var(--muted);
+      background: var(--sky);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 26px 24px 38px;
+      color: var(--quiet);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar { position: static; }
+
+      .toc {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .toc h2 { grid-column: 1 / -1; }
+
+      .flow,
+      .three {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions { justify-content: flex-start; }
+      .page { padding-inline: 18px; }
+
+      .hero {
+        gap: 26px;
+        padding-top: 36px;
+      }
+
+      h1 { font-size: clamp(2.25rem, 13vw, 3.2rem); }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .two,
+      .three,
+      .flow,
+      .toc {
+        grid-template-columns: 1fr;
+      }
+
+      .matrix {
+        table-layout: fixed;
+      }
+
+      .matrix th,
+      .matrix td {
+        padding: 10px;
+      }
+
+      .mini-spec { white-space: pre-wrap; }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./">YouTube Extractor</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#thesis">Thesis</a>
+      <a class="action-link" href="#taxonomy">Taxonomy</a>
+      <a class="action-link" href="#synthetic">Synthetic Data</a>
+      <a class="action-link" href="#feedback">Feedback</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=GCn7EgjzanA">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Thai Video Summary - AI Building AI</span>
+        <h1>How AI Can Build AI</h1>
+        <p class="subtitle">
+          An English summary of mikelopster's Thai introduction to using AI to create other AI systems:
+          from AutoML and synthetic data to model distillation, AI feedback, self-improving coding agents,
+          agent harnesses, and the evaluation risks that come with automated improvement loops.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> ใช้ AI สร้าง AI ได้ยังไงบ้าง ?</span>
+          <span><strong>Creator:</strong> mikelopster</span>
+          <span><strong>Transcript:</strong> Thai captions, 1,161 rows</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/GCn7EgjzanA/hqdefault.jpg" alt="Video thumbnail for mikelopster video about using AI to build AI">
+        <figcaption>
+          The talk is an orientation map. It does not claim that one magical technique makes AI create itself.
+          Instead, it separates the practical layers where AI can automate data, model choice, feedback, code,
+          experiments, and evaluation.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          The core idea is that "AI builds AI" is not one method. It is a family of techniques where AI helps automate
+          parts of the AI development loop: preparing data, searching model architectures, generating synthetic examples,
+          compressing large models into smaller ones, using AI-generated feedback, and letting coding agents revise the
+          code or harness around an AI system.
+        </p>
+        <ul class="summary-list">
+          <li>Older approaches like AutoML and Neural Architecture Search already used automation to search for better models.</li>
+          <li>Modern LLMs make synthetic data, instruction data, feedback generation, code modification, and evaluation loops much easier to compose.</li>
+          <li>The biggest risk is letting AI train on its own outputs without strong evaluation, which can create bias, model collapse, or narrower behavior.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>42m</strong><span>runtime</span></div>
+        <div class="stat"><strong>1,161</strong><span>caption rows</span></div>
+        <div class="stat"><strong>TH</strong><span>caption language</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Main lens</span><strong>AI development automation</strong></li>
+            <li><span>Speaker</span><strong>mikelopster</strong></li>
+            <li><span>Best warning</span><strong>Evaluation prevents collapse</strong></li>
+            <li><span>Best artifact</span><strong>AI-building-AI flow</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#thesis">Core Thesis</a>
+          <a href="#taxonomy">Five Ways AI Builds AI</a>
+          <a href="#automl">AutoML and NAS</a>
+          <a href="#synthetic">Synthetic Data</a>
+          <a href="#distillation">Distillation and SLMs</a>
+          <a href="#feedback">AI Feedback and Alignment</a>
+          <a href="#agents">Agents That Rewrite the Loop</a>
+          <a href="#harness">Agent Harness Pattern</a>
+          <a href="#risks">Risks and Evaluation</a>
+          <a href="#platform">Platform Takeaways</a>
+          <a href="#templates">Flow Markdown</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="thesis">
+          <span class="label">Core Thesis</span>
+          <h2>AI can build AI when it automates part of the development loop.</h2>
+          <p class="lead">
+            The speaker frames this as an introductory map rather than a deep technical implementation. A traditional AI workflow
+            starts with data, then model design, then training, evaluation, and iteration. The new shift is that AI can now help
+            at many of those steps, especially because LLMs and coding agents can generate data, write code, interpret errors,
+            and revise experiments.
+          </p>
+          <p>
+            This matters because the boundary of "building AI" has expanded. It is no longer only about hand-coding a neural
+            network or manually collecting training data. A modern AI-building-AI loop can use a large model to produce synthetic
+            examples, use a coding agent to modify model code, use evals to score the result, and feed those findings back into
+            the next iteration.
+          </p>
+          <div class="flow" aria-label="AI building AI lifecycle">
+            <div class="flow-step">
+              <span>Layer 1</span>
+              <strong>Data</strong>
+              <p>Generate, label, expand, or filter training examples.</p>
+            </div>
+            <div class="flow-step">
+              <span>Layer 2</span>
+              <strong>Model</strong>
+              <p>Search architecture, tune hyperparameters, train or fine-tune.</p>
+            </div>
+            <div class="flow-step">
+              <span>Layer 3</span>
+              <strong>Feedback</strong>
+              <p>Use humans, AI judges, policies, or rewards to score outputs.</p>
+            </div>
+            <div class="flow-step">
+              <span>Layer 4</span>
+              <strong>Code</strong>
+              <p>Let coding agents revise training scripts, harnesses, and tools.</p>
+            </div>
+            <div class="flow-step">
+              <span>Layer 5</span>
+              <strong>Evaluation</strong>
+              <p>Prevent drift, bias, collapse, and false improvement.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="taxonomy">
+          <span class="label">Taxonomy</span>
+          <h2>The talk separates AI-building-AI into five practical families.</h2>
+          <p class="lead">
+            The speaker is careful to say this is his own practical categorization, not a universal taxonomy. The categories
+            overlap in real systems, but separating them helps explain what is being automated.
+          </p>
+          <table class="matrix" aria-label="AI building AI taxonomy">
+            <thead>
+              <tr>
+                <th>Family</th>
+                <th>What AI helps with</th>
+                <th>Typical outcome</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>AutoML / NAS</td>
+                <td>Search model architecture, hyperparameters, and training choices.</td>
+                <td>A candidate model or neural architecture that fits a task.</td>
+              </tr>
+              <tr>
+                <td>Synthetic data</td>
+                <td>Create more examples from a small seed set or desired instruction pattern.</td>
+                <td>A larger training or fine-tuning dataset.</td>
+              </tr>
+              <tr>
+                <td>Distillation</td>
+                <td>Use a large model to teach a smaller specialized model.</td>
+                <td>A smaller, cheaper, on-device or domain-specific model.</td>
+              </tr>
+              <tr>
+                <td>AI feedback</td>
+                <td>Use models and policies to score, critique, or select better outputs.</td>
+                <td>Alignment data, reward signals, or stronger behavior rules.</td>
+              </tr>
+              <tr>
+                <td>Agentic self-improvement</td>
+                <td>Let an agent modify code, run experiments, evaluate results, and iterate.</td>
+                <td>A model, tool, or harness that improves through an automated loop.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="automl">
+          <span class="label">AutoML and NAS</span>
+          <h2>The earliest version is model-search automation, not LLM magic.</h2>
+          <p class="lead">
+            The first family is AutoML and Neural Architecture Search. The problem is simple: when building a neural network,
+            you may not know which architecture, depth, learning rate, number of nodes, or hyperparameters will work best.
+            Instead of trying a few options manually, automation searches the space and keeps promising candidates.
+          </p>
+          <p>
+            The speaker explains neural networks at a high level: input data becomes numbers, intermediate layers extract
+            patterns, and output nodes represent categories or predictions. The difficult part is deciding what the middle
+            architecture should look like. NAS automates the search for that middle structure.
+          </p>
+          <div class="grid two">
+            <article class="card mint">
+              <span class="pill teal">Before LLMs</span>
+              <h3>Automation searched the model space</h3>
+              <p>AutoML could try many architectures or settings and choose the candidate with stronger metrics.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill">With coding agents</span>
+              <h3>The search can include code edits</h3>
+              <p>A modern agent can generate experiments, modify training scripts, read results, and propose the next search path.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="synthetic">
+          <span class="label">Synthetic Data</span>
+          <h2>LLMs make training-data expansion much easier.</h2>
+          <p class="lead">
+            The second family is synthetic data. The historical problem is that model training often lacks enough examples.
+            Generative models changed that because they can produce new examples from a small seed set, a schema, or an intended
+            instruction pattern.
+          </p>
+          <p>
+            The speaker gives a simple review-classification example: if you only have a few positive and negative reviews, you
+            can ask an LLM to generate many more examples in the same style. Those examples can become training data for a smaller
+            classifier or domain-specific model.
+          </p>
+          <p>
+            He also references instruction-data generation: start with a small set of manually written examples, use a strong
+            model to expand them into tens of thousands of instruction-response pairs, then fine-tune a smaller model. The big
+            idea is that a capable model can externalize some of its knowledge into a dataset that teaches another model.
+          </p>
+          <div class="quote-box">
+            Synthetic data is useful when the model you already have can generate examples that the model you want still needs
+            to learn from.
+          </div>
+        </section>
+
+        <section class="section" id="distillation">
+          <span class="label">Distillation and Small Models</span>
+          <h2>Large models can teach smaller models when compute, privacy, or deployment constraints matter.</h2>
+          <p class="lead">
+            The third family is knowledge distillation: use a strong large model to produce outputs, probability-like guidance,
+            rationales, or specialized examples, then use those to train a smaller model. The smaller model may not be generally
+            as powerful, but it can be very useful for a narrower task.
+          </p>
+          <p>
+            The speaker connects this to small language models and on-device deployment. Large frontier models may require huge
+            compute and memory. Smaller models can run on local machines, edge devices, or private environments, especially after
+            quantization reduces numerical precision and memory requirements.
+          </p>
+          <ul class="checklist">
+            <li><strong>Use distillation when:</strong> the target task is narrow, repeated, latency-sensitive, private, or needs lower cost.</li>
+            <li><strong>Do not fine-tune by default:</strong> if RAG or prompting already solves the problem, fine-tuning may be unnecessary overhead.</li>
+            <li><strong>Fine-tuning changes preference:</strong> it can shape tone, style, domain behavior, privacy boundaries, and task-specific behavior.</li>
+            <li><strong>Quantization trades precision for size:</strong> smaller numeric representation reduces memory use but may lose some fidelity.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="feedback">
+          <span class="label">AI Feedback and Alignment</span>
+          <h2>AI feedback scales human feedback, but it inherits the policy you give it.</h2>
+          <p class="lead">
+            The fourth family is feedback. The speaker starts from RLHF: humans judge or rank model outputs so the model learns
+            what responses are preferred. This is powerful but expensive, slow, and biased by the human raters or expert group.
+          </p>
+          <p>
+            AI feedback tries to scale this process by using models to critique, score, compare, and improve outputs. The speaker
+            explains this through Constitutional AI: instead of letting AI judge freely, give it a policy or constitution, then
+            have it evaluate whether responses follow that policy. This allows self-critique and iterative improvement while
+            still being anchored to explicit rules.
+          </p>
+          <div class="grid three">
+            <article class="card rose">
+              <span class="pill coral">Human feedback</span>
+              <h3>High-value but costly</h3>
+              <p>Humans can judge quality, safety, and usefulness, but scaling their judgments is expensive and biased.</p>
+            </article>
+            <article class="card sand">
+              <span class="pill gold">AI feedback</span>
+              <h3>Scalable but risky</h3>
+              <p>Models can generate critiques and scores quickly, but they may amplify flaws in the scoring policy.</p>
+            </article>
+            <article class="card lavender">
+              <span class="pill plum">Constitution</span>
+              <h3>Rules for the judge</h3>
+              <p>Explicit principles define what should be rewarded, rejected, corrected, or escalated.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="agents">
+          <span class="label">Agentic Self-Improvement</span>
+          <h2>The newest layer is agents that can change code, not only data or model weights.</h2>
+          <p class="lead">
+            The speaker says the first four families mostly manipulate data and models. The newer shift is that AI can now edit
+            code. A coding agent can write training scripts, run experiments, inspect losses, modify neural-network code, alter
+            hyperparameter search, and rerun the loop.
+          </p>
+          <p>
+            This is where examples like algorithm discovery, automated ML research, or agents completing a research cycle become
+            relevant. The system can start from a hypothesis, write code, run tests or experiments, evaluate the result, revise
+            the code, and repeat. Humans still belong in the loop, but automation moves the work to a higher layer.
+          </p>
+          <div class="flow" aria-label="Agentic research loop">
+            <div class="flow-step">
+              <span>1</span>
+              <strong>Hypothesis</strong>
+              <p>Define what the agent is trying to improve or discover.</p>
+            </div>
+            <div class="flow-step">
+              <span>2</span>
+              <strong>Code</strong>
+              <p>Generate or modify model, harness, or experiment code.</p>
+            </div>
+            <div class="flow-step">
+              <span>3</span>
+              <strong>Run</strong>
+              <p>Train, evaluate, simulate, or benchmark the candidate.</p>
+            </div>
+            <div class="flow-step">
+              <span>4</span>
+              <strong>Judge</strong>
+              <p>Compare against evals, loss, cost, latency, and behavior rules.</p>
+            </div>
+            <div class="flow-step">
+              <span>5</span>
+              <strong>Revise</strong>
+              <p>Feed results back into the next code or prompt change.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="harness">
+          <span class="label">Agent Harness</span>
+          <h2>A harness can improve behavior without changing the base model.</h2>
+          <p class="lead">
+            The speaker closes the technical arc with agent harnesses. Instead of fine-tuning a model, you can build a software
+            layer around an agent: prompts, tools, rules, evals, guardrails, and feedback loops. If the result is wrong, the
+            system can adjust the harness or prompt rather than changing model weights.
+          </p>
+          <p>
+            This is the most immediately useful pattern for platform builders. If you want a chatbot that handles text, images,
+            listening, tool calls, or domain-specific tasks, you can create a harness, define eval cases, run the agent, collect
+            failures, then ask another agent to propose harness improvements. The improvement target is the system, not only the
+            model.
+          </p>
+          <div class="grid two">
+            <article class="card mint">
+              <span class="pill green">Model improvement</span>
+              <h3>Change weights or training data</h3>
+              <p>Fine-tuning, distillation, synthetic data, reward models, and feedback modify model behavior more deeply.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill">Harness improvement</span>
+              <h3>Change system behavior around the model</h3>
+              <p>Prompts, tools, memory, routing, evals, policies, and retries can improve task performance without new weights.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="risks">
+          <span class="label">Risks</span>
+          <h2>The main trap is model collapse and false confidence from self-generated data.</h2>
+          <p class="lead">
+            The final warning is model collapse. If AI repeatedly trains on its own outputs, it may lose diversity, amplify
+            errors, narrow its behavior, or become overconfident in synthetic patterns that are not grounded in reality.
+          </p>
+          <p>
+            The speaker's answer is not to avoid automation. It is to build stronger evaluation. Automated improvement loops
+            are valuable only when the system can detect whether it is actually improving. That means real holdout data, external
+            checks, human review where needed, diverse test cases, and explicit safety or quality criteria.
+          </p>
+          <ul class="checklist">
+            <li><strong>Do not trust synthetic data blindly.</strong> It must be filtered, diversified, and tested against real examples.</li>
+            <li><strong>Do not let AI judges become the only truth source.</strong> Use policy, calibration, human audits, and external benchmarks.</li>
+            <li><strong>Do not optimize only for one metric.</strong> Accuracy, safety, cost, latency, diversity, and user usefulness can trade off.</li>
+            <li><strong>Do not remove humans too early.</strong> Human-in-the-loop review is still needed for ambiguous, strategic, or high-risk decisions.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>How this maps to your agentic AI platform.</h2>
+          <p class="lead">
+            This video gives you a useful architecture lens: your platform should not treat "AI builds AI" as one feature.
+            It should expose multiple building blocks: data synthesis, model selection, distillation, feedback generation,
+            harness improvement, evaluation, and human approval.
+          </p>
+          <ul class="checklist">
+            <li><strong>Separate model-building flows from harness-building flows.</strong> Some tasks need fine-tuning or distillation; many need better prompts, tools, memory, and evals.</li>
+            <li><strong>Make evaluation a first-class object.</strong> Every AI-building-AI loop needs eval cases before it is allowed to optimize itself.</li>
+            <li><strong>Define synthetic-data policy.</strong> Track origin, generation prompt, model, filters, labels, confidence, diversity, and real-data validation.</li>
+            <li><strong>Add a model compression workflow.</strong> Use large models to generate domain examples, then train or tune smaller models for private or low-latency deployment.</li>
+            <li><strong>Use agent harness loops for BA-authored workflows.</strong> BAs define expected behavior; agents generate implementation and evals; humans approve risky changes.</li>
+            <li><strong>Guard against collapse.</strong> Require holdout data, human audits, source diversity, and drift detection before accepting self-improvement claims.</li>
+            <li><strong>Keep code, data, model, and prompt changes traceable.</strong> Each iteration should record what changed, why, how it scored, and who approved it.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">Flow Markdown</span>
+          <h2>A practical AI-building-AI workflow spec.</h2>
+          <p class="lead">
+            This template converts the talk into a platform flow. It can be used for building a task-specific model, an agent
+            harness, or a combined data-model-code loop.
+          </p>
+          <pre class="mini-spec"># AI-Building-AI Workflow
+
+goal: Use AI to create or improve a task-specific AI system without losing control of quality.
+owner: AI Platform Team
+business_owner: Domain Owner
+flow_type: ai_builds_ai_controlled_loop
+
+target:
+  system_type: agent_harness_or_model
+  domain: customer_review_classification
+  desired_behavior:
+    - classify sentiment accurately
+    - explain uncertain cases
+    - preserve Thai language nuance
+    - avoid unsafe or fabricated claims
+
+inputs:
+  real_seed_data:
+    - labeled_examples
+    - policy_documents
+    - edge_cases
+  base_models:
+    - frontier_llm_for_generation
+    - candidate_small_model
+  constraints:
+    - privacy_required
+    - low_latency_required
+    - human_review_for_policy_changes
+
+stage_1_data_synthesis:
+  agent: synthetic_data_agent
+  tasks:
+    - expand_seed_examples
+    - generate_instruction_pairs
+    - diversify_edge_cases
+    - mark_generated_origin
+  controls:
+    - deduplicate
+    - filter_low_quality
+    - compare_against_real_distribution
+    - holdout_real_data_never_generated
+
+stage_2_model_or_harness_creation:
+  options:
+    automl_or_nas:
+      use_when: architecture_or_hyperparameters_are_unknown
+    distillation:
+      use_when: smaller_private_or_low_latency_model_is_needed
+    harness_building:
+      use_when: base_model_is_good_enough_but_system_behavior_needs_control
+  coding_agent:
+    responsibilities:
+      - write_training_or_harness_code
+      - run_experiments
+      - capture_metrics
+      - propose_next_iteration
+
+stage_3_feedback_and_alignment:
+  feedback_sources:
+    - human_review
+    - ai_judge
+    - constitutional_policy
+    - task_specific_eval
+  policy:
+    - ai_feedback_must_cite_rule
+    - human_review_required_for_ambiguous_cases
+    - reward_signal_must_be_versioned
+
+stage_4_evaluation:
+  eval_sets:
+    - real_holdout
+    - synthetic_validation
+    - adversarial_cases
+    - regression_cases
+  metrics:
+    - accuracy
+    - false_positive_rate
+    - false_negative_rate
+    - latency
+    - cost
+    - diversity
+    - human_acceptance_rate
+    - collapse_warning_score
+
+stage_5_release_gate:
+  accept_if:
+    - improves_on_baseline
+    - passes_real_holdout
+    - no_major_safety_regression
+    - synthetic_data_ratio_is_known
+    - changes_are_traceable
+  reject_if:
+    - improvement_only_on_synthetic_data
+    - output_diversity_collapses
+    - ai_judge_disagrees_with_human_audit
+    - cost_exceeds_budget
+
+audit_log:
+  record:
+    - dataset_version
+    - model_or_harness_version
+    - code_diff
+    - prompts_changed
+    - eval_results
+    - reviewer_decisions
+    - known_risks</pre>
+          <p class="note">
+            Summary generated from Thai public YouTube captions and translated into English. Some speech-recognition artifacts
+            were normalized into the likely intended technical terms.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from Thai public YouTube captions for
+    <strong>ใช้ AI สร้าง AI ได้ยังไงบ้าง ?</strong>.
+    Source: mikelopster. Video ID: GCn7EgjzanA.
+  </footer>
+</body>
+</html>

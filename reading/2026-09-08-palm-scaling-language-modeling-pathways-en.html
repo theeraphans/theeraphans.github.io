@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Scaled a dense 540B-parameter decoder model across 6,144 TPU v4 chips with Pathways and documented broad few-shot gains plus discontinuous improvements on some tasks.">
+  <meta name="resource-file" content="2026-09-08-palm-scaling-language-modeling-pathways-en.html">
+  <title>PaLM · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2204.02311">Read paper</a><a class="action-link" href="./">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Scaling, Data, and Open Models · Paper 13 of 37</p>
+        <h1>PaLM: Scaling Language Modeling with Pathways</h1>
+        <p class="subtitle">Scaled a dense 540B-parameter decoder model across 6,144 TPU v4 chips with Pathways and documented broad few-shot gains plus discontinuous improvements on some tasks.</p>
+        <div class="meta"><span><strong>Aakanksha Chowdhery, Sharan Narang, Jacob Devlin, Maarten Bosma, Gaurav Mishra, Adam Roberts, Paul Barham, Hyung Won Chung, Charles Sutton, Sebastian Gehrmann, Parker Schuh, Kensen Shi, Sasha Tsvyashchenko, Joshua Maynez, Abhishek Rao, Parker Barnes, Yi Tay, Noam Shazeer, Vinodkumar Prabhakaran, Emily Reif, Nan Du, Ben Hutchinson, Reiner Pope, James Bradbury, Jacob Austin, Michael Isard, Guy Gur-Ari, Pengcheng Yin, Toju Duke, Anselm Levskaya, Sanjay Ghemawat, Sunipa Dev, Henryk Michalewski, Xavier Garcia, Vedant Misra, Kevin Robinson, Liam Fedus, Denny Zhou, Daphne Ippolito, David Luan, Hyeontaek Lim, Barret Zoph, Alexander Spiridonov, Ryan Sepassi, David Dohan, Shivani Agrawal, Mark Omernick, Andrew M. Dai, Thanumalayan Sankaranarayana Pillai, Marie Pellat, Aitor Lewkowycz, Erica Moreira, Rewon Child, Oleksandr Polozov, Katherine Lee, Zongwei Zhou, Xuezhi Wang, Brennan Saeta, Mark Diaz, Orhan Firat, Michele Catasta, Jason Wei, Kathy Meier-Hellstern, Douglas Eck, Jeff Dean, Slav Petrov, Noah Fiedel</strong></span><span>2022</span><span>Intermediate</span><span>12 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>PaLM</h2><p>Google Research</p><p><strong>Prerequisites:</strong> Decoder-only Transformers, few-shot evaluation, data parallelism, and model scaling.</p><a href="https://arxiv.org/abs/2204.02311">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Intermediate</strong></div><div class="paper-fact"><span>Place in path</span><strong>13 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Frontier models needed both larger compute and a software system capable of coordinating thousands of accelerators efficiently. Researchers also needed broad evidence about which tasks continue improving with scale.</p>
+<p>PaLM combines a large dense model with Pathways infrastructure and evaluates language, reasoning, code, multilingual, and knowledge behavior.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Train one large decoder-only Transformer with a high-quality multilingual and code mixture using efficient TPU-scale parallelism. Keep the architecture relatively conventional so gains can be attributed largely to scale and training.</p>
+<p>Evaluate the same frozen model through prompting across many tasks, including chain-of-thought settings where intermediate reasoning can be elicited.</p><div class="equation">Scale = model architecture × data mixture × 6,144-chip Pathways execution.</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Tokenize the mixed corpus, distribute model and data computation across TPU pods, and optimize causal language-model loss. Use techniques such as parallel attention/feed-forward computation and multi-query attention to improve efficiency.</p>
+<p>At evaluation, construct zero-, one-, or few-shot prompts and compare three model sizes to inspect scaling behavior.</p><figure class="concept-flow" aria-label="PaLM scale stack">
+    <div class="flow-step"><span>Data</span><strong>Multilingual mixture</strong><p>Blend web, books, code, and dialogue.</p></div>
+<div class="flow-step"><span>Model</span><strong>Dense decoder</strong><p>Scale to 540B parameters.</p></div>
+<div class="flow-step"><span>System</span><strong>Pathways</strong><p>Coordinate 6,144 TPU v4 chips.</p></div>
+<div class="flow-step"><span>Prompt</span><strong>Few-shot interface</strong><p>Specify tasks in context.</p></div>
+<div class="flow-step"><span>Audit</span><strong>Broad evaluation</strong><p>Measure gains and harms.</p></div>
+    <figcaption>Capability reflects the complete stack, not parameter count in isolation.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>The largest model has 540B parameters and uses 64 layers with a wide hidden dimension. Pathways enables two TPU v4 pods to cooperate in one training run, making interconnect and parallel strategy part of the result.</p>
+<p>Reported FLOPs utilization and training stability matter as much as parameter count. A model that cannot keep accelerators busy converts budget into waiting rather than learning.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>PaLM reported strong few-shot results on hundreds of tasks, including notable improvements in reasoning and multilingual transfer. Some benchmark curves showed sharp gains at the largest scale.</p>
+<p>The paper also documented toxicity, memorization, and uneven performance. “Emergence” depends on metric granularity and later research has challenged strong interpretations of sudden capability phase changes.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>PaLM demonstrated that large dense models and industrial-scale accelerator orchestration could produce broad transfer. It influenced later Google model lines and highlighted chain-of-thought as a scaling-dependent interface.</p>
+<p>It also connected architecture choices such as MQA directly to the feasibility of serving enormous models.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Treat distributed utilization as a first-class metric: tokens per second, failure recovery, checkpoint time, and communication can dominate total cost. Benchmark model behavior at multiple sizes rather than extrapolating from one point.</p>
+<p>When reporting emergent behavior, include continuous metrics, uncertainty, prompt selection, and smaller-scale trends. Avoid turning a benchmark threshold into a claim about sudden cognition.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>The model and training data were not released as a fully reproducible artifact. Dense 540B serving is expensive, and the training recipe predates later compute-optimal and alignment advances.</p>
+<p>Broad benchmark success does not ensure robustness, factual reliability, or safe use. Data contamination and prompt sensitivity remain.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>PaLM scales the GPT-3 paradigm with a major systems contribution and uses MQA. OPT and BLOOM pursue more open documentation and weights. Chain-of-Thought explains one prompting technique behind PaLM’s reasoning gains.</p><div class="article-nav"><a href="2026-09-08-chinchilla-compute-optimal-scaling-en.html">← Chinchilla</a><a href="2026-09-08-opt-open-pretrained-transformer-language-models-en.html">OPT →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>Scaling requires distributed-systems engineering as well as model design.</li><li>PaLM combined dense scale, multilingual data, and code.</li><li>Some measured abilities improved sharply at the largest size.</li><li>Benchmark thresholds can exaggerate emergence.</li><li>MQA helped address serving cost.</li><li>Transparency and reproducibility remained limited.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2204.02311">PaLM: Scaling Language Modeling with Pathways</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>Separate PaLM’s systems achievement from claims about emergent abilities. A thresholded benchmark can look discontinuous even when underlying likelihood improves smoothly.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

@@ -31,3 +31,48 @@ if ('IntersectionObserver' in window && projectSections.length) {
 
   projectSections.forEach((section) => sectionObserver.observe(section));
 }
+
+// Both complete flows remain readable until the interactive controls initialize.
+const hermesDiagram = document.querySelector('.hermes-interactive');
+if (hermesDiagram) {
+  const modes = [...hermesDiagram.querySelectorAll('[data-hermes-mode]')];
+  const flows = [...hermesDiagram.querySelectorAll('[data-hermes-flow]')];
+  const nodes = [...hermesDiagram.querySelectorAll('[data-hermes-node]')];
+  const connections = [...hermesDiagram.querySelectorAll('[data-hermes-connect]')];
+
+  function showHermesMode(mode) {
+    flows.forEach((flow) => { flow.hidden = flow.dataset.hermesFlow !== mode; });
+    modes.forEach((button) => {
+      button.setAttribute('aria-pressed', String(button.dataset.hermesMode === mode));
+    });
+    nodes.forEach((node) => {
+      node.setAttribute('aria-expanded', 'false');
+      document.getElementById(node.getAttribute('aria-controls')).hidden = true;
+      node.querySelector('.hermes-node-action').textContent = 'Explore component +';
+    });
+    connections.forEach((connection) => connection.classList.remove('is-connected'));
+    hermesDiagram.querySelector('.hermes-mode-status').textContent =
+      mode === 'build' ? 'Agent building flow shown.' : 'Request execution flow shown.';
+  }
+
+  modes.forEach((button) => button.addEventListener('click', () => showHermesMode(button.dataset.hermesMode)));
+  nodes.forEach((node) => {
+    node.disabled = false;
+    node.addEventListener('click', () => {
+      const expand = node.getAttribute('aria-expanded') !== 'true';
+      nodes.forEach((other) => {
+        const selected = other === node && expand;
+        other.setAttribute('aria-expanded', String(selected));
+        document.getElementById(other.getAttribute('aria-controls')).hidden = !selected;
+        other.querySelector('.hermes-node-action').textContent = selected ? 'Close details −' : 'Explore component +';
+      });
+      connections.forEach((connection) => connection.classList.toggle('is-connected',
+        expand && connection.dataset.hermesConnect.split(' ').includes(node.dataset.hermesNode)));
+    });
+  });
+  showHermesMode('execute');
+  hermesDiagram.classList.add('is-enhanced');
+  ['.hermes-mode-controls', '.hermes-interaction-help', '.hermes-mode-status'].forEach((selector) => {
+    hermesDiagram.querySelector(selector).hidden = false;
+  });
+}

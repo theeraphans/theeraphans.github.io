@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Showed that smaller models trained on far more tokens can outperform much larger models on many benchmarks while using publicly available data sources.">
+  <meta name="resource-file" content="2026-09-08-llama-open-efficient-foundation-language-models-en.html">
+  <title>LLaMA · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2302.13971">Read paper</a><a class="action-link" href="./">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Scaling, Data, and Open Models · Paper 16 of 37</p>
+        <h1>LLaMA: Open and Efficient Foundation Language Models</h1>
+        <p class="subtitle">Showed that smaller models trained on far more tokens can outperform much larger models on many benchmarks while using publicly available data sources.</p>
+        <div class="meta"><span><strong>Hugo Touvron, Thibaut Lavril, Gautier Izacard, Xavier Martinet, Marie-Anne Lachaux, Timothée Lacroix, Baptiste Rozière, Naman Goyal, Eric Hambro, Faisal Azhar, Aurelien Rodriguez, Armand Joulin, Edouard Grave, Guillaume Lample</strong></span><span>2023</span><span>Intermediate</span><span>12 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>LLaMA</h2><p>Meta AI</p><p><strong>Prerequisites:</strong> Chinchilla scaling, decoder Transformers, tokenization, and zero-shot evaluation.</p><a href="https://arxiv.org/abs/2302.13971">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Intermediate</strong></div><div class="paper-fact"><span>Place in path</span><strong>16 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Frontier performance had become associated with hundreds of billions of parameters, making inference and research expensive. Chinchilla suggested those models were often undertrained.</p>
+<p>LLaMA asks how strong smaller checkpoints can become when trained longer on a carefully assembled public-data mixture.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Train decoder-only models from 7B to 65B parameters on one to 1.4 trillion tokens, emphasizing compute-efficient scale and inference accessibility rather than the largest possible parameter count.</p>
+<p>Use established architectural improvements such as pre-normalization, SwiGLU, and RoPE while keeping the training recipe clear enough for broad research use.</p><div class="equation">Practical frontier = smaller parameter count × substantially more training tokens.</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Build a mixture from Common Crawl, C4, GitHub, Wikipedia, books, arXiv, and Stack Exchange. Deduplicate and filter components, tokenize with SentencePiece, and optimize causal language modeling.</p>
+<p>Evaluate base checkpoints zero-shot and few-shot across common-sense reasoning, QA, mathematics, code, and language tasks.</p><figure class="concept-flow" aria-label="LLaMA efficiency choice">
+    <div class="flow-step"><span>Size</span><strong>Choose 7B–65B</strong><p>Keep inference comparatively practical.</p></div>
+<div class="flow-step"><span>Data</span><strong>Train much longer</strong><p>Use up to 1.4T public-data tokens.</p></div>
+<div class="flow-step"><span>Recipe</span><strong>Modernize blocks</strong><p>RMSNorm, SwiGLU, and RoPE.</p></div>
+<div class="flow-step"><span>Evaluate</span><strong>Test base behavior</strong><p>Compare zero- and few-shot tasks.</p></div>
+<div class="flow-step"><span>Adapt</span><strong>Fine-tune downstream</strong><p>Add instructions or domain behavior.</p></div>
+    <figcaption>Training invests more tokens into a smaller active model, seeking a better quality-to-inference-cost point.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>The architecture uses RMSNorm before sublayers, SwiGLU activations, and rotary positions. The 65B model sees 1.4T tokens, while the smaller models also receive long training relative to their size.</p>
+<p>Inference cost scales strongly with active parameters, so a well-trained smaller model can improve both research access and production latency even if pretraining uses many tokens.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>The paper reported that LLaMA-13B outperformed GPT-3 175B on many benchmarks and that LLaMA-65B was competitive with leading models of its period. Results vary by task and prompting protocol.</p>
+<p>Comparisons against closed models rely on published numbers and do not fully control data or evaluation setup. Benchmark contamination remains possible.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>LLaMA became a central base for open-weight fine-tuning, quantization, local inference, and later model families. It demonstrated the practical value of spending compute on more tokens rather than only more parameters.</p>
+<p>Its ecosystem accelerated LoRA and QLoRA adoption because researchers could adapt useful base models on modest hardware.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Choose a base model based on active parameters, context, license, tokenizer, and domain evaluation, not leaderboard rank alone. Base checkpoints need instruction tuning before assistant use.</p>
+<p>Audit dataset and license implications for commercial deployment. “Publicly available training data” and “open-source model” are separate legal and technical claims.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>The original models are base language models, not aligned assistants, and can generate harmful or incorrect content. English and Western data dominate much of the mixture.</p>
+<p>Longer training still depends on data quality. Public release can amplify both beneficial research and misuse, and exact pretraining reproduction remains expensive.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>LLaMA operationalizes Chinchilla’s train-smaller-longer lesson. LoRA and QLoRA provide affordable adaptation, while RoPE shapes its positions and later context-extension work.</p><div class="article-nav"><a href="2026-09-08-bloom-open-access-multilingual-language-model-en.html">← BLOOM</a><a href="2026-09-08-instructgpt-rlhf-human-feedback-en.html">InstructGPT →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>Parameter count alone does not determine model quality.</li><li>Training smaller models longer improves inference economics.</li><li>Modern base-model recipes combine several proven architectural refinements.</li><li>Public checkpoints accelerate adaptation ecosystems.</li><li>Base models are not instruction-following assistants.</li><li>License and data provenance remain engineering constraints.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2302.13971">LLaMA: Open and Efficient Foundation Language Models</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>LLaMA optimizes for capable reusable base models at practical inference sizes. The original release is not instruction-tuned and its openness has licensing nuances.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

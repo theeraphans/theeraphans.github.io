@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Bootstrapped instruction-following data by asking a language model to generate new tasks, inputs, and outputs, then filtering and fine-tuning on the synthetic collection.">
+  <meta name="resource-file" content="2026-09-08-self-instruct-synthetic-instruction-tuning-en.html">
+  <title>Self-Instruct · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2212.10560">Read paper</a><a class="action-link" href="./">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Instruction and Preference Alignment · Paper 19 of 37</p>
+        <h1>Self-Instruct: Aligning Language Models with Self-Generated Instructions</h1>
+        <p class="subtitle">Bootstrapped instruction-following data by asking a language model to generate new tasks, inputs, and outputs, then filtering and fine-tuning on the synthetic collection.</p>
+        <div class="meta"><span><strong>Yizhong Wang, Yeganeh Kordi, Swaroop Mishra, Alisa Liu, Noah A. Smith, Daniel Khashabi, Hannaneh Hajishirzi</strong></span><span>2022</span><span>Intermediate</span><span>11 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>Self-Instruct</h2><p>University of Washington and Allen Institute for AI</p><p><strong>Prerequisites:</strong> Instruction tuning, few-shot prompting, semantic similarity, and dataset filtering.</p><a href="https://arxiv.org/abs/2212.10560">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Intermediate</strong></div><div class="paper-fact"><span>Place in path</span><strong>19 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Instruction-tuned models need diverse demonstrations, but manually authoring many tasks is expensive. Existing public NLP datasets cover a limited set of formats and may not resemble natural requests.</p>
+<p>The paper asks whether a capable base model can create enough useful instruction data to improve itself through supervised fine-tuning.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Begin with a small human-written seed set. Prompt a teacher model to invent new instructions and decide whether they require an input. Generate instances and answers, remove invalid or near-duplicate tasks, and fine-tune a base model on what remains.</p>
+<p>The learner is not discovering truth autonomously; it is distilling and reorganizing behaviors already accessible to the teacher, with filters shaping the result.</p><div class="equation">Seed tasks → generate instruction/input/output → filter → fine-tune → evaluate.</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Sample seed examples as in-context demonstrations. Generate batches of tasks, classify their input structure, create input-output instances, and apply heuristic and semantic-similarity filters.</p>
+<p>Mix synthetic data with seed tasks, fine-tune, and evaluate on held-out instructions using humans and automatic metrics.</p><figure class="concept-flow" aria-label="Self-Instruct data factory">
+    <div class="flow-step"><span>01</span><strong>Seed</strong><p>Start with human-written tasks.</p></div>
+<div class="flow-step"><span>02</span><strong>Invent</strong><p>Generate new instructions.</p></div>
+<div class="flow-step"><span>03</span><strong>Instantiate</strong><p>Create inputs and outputs.</p></div>
+<div class="flow-step"><span>04</span><strong>Filter</strong><p>Reject duplicates and failures.</p></div>
+<div class="flow-step"><span>05</span><strong>Fine-tune</strong><p>Train the learner on survivors.</p></div>
+    <figcaption>The teacher proposes examples; filtering determines which synthetic behavior enters the learner.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>ROUGE-L similarity was used to reject instructions too close to existing tasks, while blacklist and formatting checks removed malformed generations. The final dataset contained tens of thousands of instructions.</p>
+<p>Quality compounds multiplicatively: task validity, input relevance, answer correctness, diversity, and filtering precision all affect the learner.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>The resulting model substantially improved over the untuned GPT-3 base on the paper’s instruction evaluation and approached the behavior of models trained with proprietary instruction data.</p>
+<p>The teacher was a strong proprietary model, so the result does not show a weak model can bootstrap arbitrarily beyond its source capability. Human evaluation remained necessary.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>Self-Instruct launched a broad family of synthetic instruction datasets and teacher-student tuning recipes. It lowered the cost of creating domain and language variants.</p>
+<p>It also shifted bottlenecks toward data governance, decontamination, evaluator design, and knowing when synthetic volume merely repeats one model’s style.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Build validators per task family: executable tests for code, schema checks for extraction, citations for factual QA, and adversarial filters for policy. Similarity filtering alone does not ensure correctness.</p>
+<p>Keep synthetic origin and teacher version in metadata. Mix human or grounded examples to prevent stylistic collapse and audit important slices manually.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>Synthetic tasks inherit teacher hallucinations, cultural assumptions, and blind spots. Heuristic diversity can be superficial, and generated answers may be impossible to verify.</p>
+<p>Repeated self-training risks model collapse or narrowed distributions. The paper improves instruction following but does not provide a general self-improvement guarantee.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>Self-Instruct shares model-generated supervision with Constitutional AI but optimizes task coverage. DPO and ORPO later learn preferences over responses rather than only imitating synthetic targets.</p><div class="article-nav"><a href="2026-09-08-constitutional-ai-harmlessness-ai-feedback-en.html">← Constitutional AI</a><a href="2026-09-08-direct-preference-optimization-dpo-en.html">DPO →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>A small seed set can expand into a large instruction dataset.</li><li>Generation and filtering are equally important.</li><li>Synthetic volume does not guarantee factual quality.</li><li>Teacher lineage should remain visible.</li><li>Task-specific validators are stronger than generic similarity filters.</li><li>Human and grounded data still provide essential anchors.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2212.10560">Self-Instruct: Aligning Language Models with Self-Generated Instructions</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>Synthetic data can scale coverage but inherits the teacher’s biases and errors. The filtering pipeline is the central engineering asset.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

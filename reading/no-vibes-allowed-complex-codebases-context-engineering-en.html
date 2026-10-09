@@ -1,0 +1,1075 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>No Vibes Allowed - Complex Codebases and Context Engineering - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5d6970;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f4f7f2;
+      --line: #d7ded6;
+      --charcoal: #24323a;
+      --teal: #166f68;
+      --blue: #315f86;
+      --coral: #bd503f;
+      --gold: #9e711e;
+      --violet: #665987;
+      --mint: #e2f0ec;
+      --sky: #e7eef6;
+      --sand: #f7eed8;
+      --rose: #f5e5df;
+      --shadow: 0 24px 62px rgb(23 33 38 / 11%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(22 111 104 / 7%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(49 95 134 / 6%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 46px 46px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--coral), var(--gold), var(--violet));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 84%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.65rem, 6.35vw, 5.4rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2.05vw, 1.48rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e6ece7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 86%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: #f8fbf8;
+      background: rgb(255 255 255 / 9%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-height: 86px;
+      padding: 14px;
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: rgb(255 255 255 / 72%);
+      font-size: 0.84rem;
+      font-weight: 760;
+      text-transform: uppercase;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      gap: 42px;
+      align-items: start;
+      margin-top: 36px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 22px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .sidebar-block {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+    }
+
+    .sidebar-block h2,
+    .toc h2 {
+      margin-bottom: 12px;
+      color: var(--quiet);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .glance {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .glance strong {
+      color: var(--ink);
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .toc {
+      padding-left: 18px;
+      border-left: 4px solid var(--gold);
+    }
+
+    .toc a {
+      display: block;
+      padding: 7px 0;
+      color: var(--ink);
+      font-size: 0.94rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .content {
+      min-width: 0;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 8%);
+    }
+
+    .section {
+      padding: 34px 42px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; }
+
+    .label {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .section h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 3.3vw, 3.1rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .section h3 {
+      margin-top: 20px;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      margin-top: 16px;
+      color: #313d44;
+      font-size: 1.08rem;
+    }
+
+    .section p + p { margin-top: 14px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card.mint { background: var(--mint); }
+    .card.sky { background: var(--sky); }
+    .card.sand { background: var(--sand); }
+    .card.rose { background: var(--rose); }
+
+    .card h3 {
+      margin-top: 8px;
+      font-size: 1.02rem;
+    }
+
+    .card p {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.62;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pill.blue { background: var(--blue); }
+    .pill.coral { background: var(--coral); }
+    .pill.gold { background: var(--gold); }
+    .pill.violet { background: var(--violet); }
+
+    .note {
+      margin-top: 22px;
+      padding: 18px 20px;
+      background: #f8f3e6;
+      border-left: 5px solid var(--gold);
+      border-radius: 8px;
+      color: #3b3424;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(130px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+      align-items: stretch;
+    }
+
+    .flow-step {
+      min-height: 150px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .flow-step:nth-child(2) { border-top-color: var(--blue); }
+    .flow-step:nth-child(3) { border-top-color: var(--coral); }
+    .flow-step:nth-child(4) { border-top-color: var(--gold); }
+
+    .flow-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .pipeline-step {
+      min-height: 144px;
+      padding: 14px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .pipeline-step:nth-child(2) { background: var(--teal); }
+    .pipeline-step:nth-child(3) { background: var(--blue); }
+    .pipeline-step:nth-child(4) { background: var(--coral); }
+    .pipeline-step:nth-child(5) { background: var(--violet); }
+
+    .pipeline-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.92rem;
+      line-height: 1.3;
+    }
+
+    .pipeline-step span {
+      color: rgb(255 255 255 / 82%);
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    .compare {
+      width: 100%;
+      margin-top: 22px;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .compare th,
+    .compare td {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .compare th {
+      color: #fff;
+      background: var(--charcoal);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .compare td { background: #fff; }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+      color: #303b42;
+    }
+
+    .checklist li:nth-child(2n) { border-left-color: var(--blue); }
+    .checklist li:nth-child(3n) { border-left-color: var(--coral); }
+
+    .checklist strong { color: var(--ink); }
+
+    .quote-strip {
+      margin-top: 24px;
+      padding: 24px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      border-radius: 8px;
+    }
+
+    .quote-strip p {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.28rem, 2.8vw, 2.15rem);
+      line-height: 1.28;
+    }
+
+    .mini-spec {
+      margin-top: 22px;
+      padding: 18px;
+      color: #f8fbf8;
+      background: #1d2b32;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.9rem;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1000px) {
+      .flow,
+      .pipeline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .grid,
+      .two {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .page {
+        padding-inline: 16px;
+      }
+
+      .hero {
+        gap: 28px;
+        padding-top: 38px;
+      }
+
+      h1 {
+        font-size: clamp(2.35rem, 14vw, 3.35rem);
+      }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .tldr,
+      .sidebar,
+      .flow,
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+
+      .compare {
+        table-layout: fixed;
+      }
+
+      .compare th,
+      .compare td {
+        padding: 11px 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./">YouTube Extractor</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#context">Context</a>
+      <a class="action-link" href="#rpi">RPI</a>
+      <a class="action-link" href="#alignment">Alignment</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=rmvDxxNubIg">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">AI Engineer - Dex Horthy, HumanLayer</span>
+        <h1>No Vibes Allowed in Complex Codebases</h1>
+        <p class="subtitle">
+          A practical summary of Dex Horthy's talk on why coding agents struggle in brownfield systems,
+          how context engineering keeps them out of low-quality trajectories, and why research, planning,
+          compaction, and human review matter more than bigger prompts.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> No Vibes Allowed</span>
+          <span><strong>Speaker:</strong> Dex Horthy, HumanLayer</span>
+          <span><strong>Transcript:</strong> 4,538 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/rmvDxxNubIg/hqdefault.jpg" alt="Video thumbnail for No Vibes Allowed by Dex Horthy">
+        <figcaption>
+          The talk is about advanced context engineering for coding agents:
+          getting useful AI leverage in large, old, messy codebases without creating churn, rework, and hidden technical debt.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          The talk argues that AI coding works well in small greenfield demos but breaks down in complex brownfield codebases
+          when teams rely on vibes, giant prompts, and unbounded tool output. The alternative is a disciplined workflow:
+          keep the context window small, compact only the truth that matters, use sub-agents to gather narrow evidence,
+          turn research into a reviewed plan, and let implementation execute against that plan.
+        </p>
+        <ul class="tldr">
+          <li>Context quality drives output quality: correctness, completeness, size, and trajectory all matter.</li>
+          <li>Sub-agents are for context control, not for role-play org charts like frontend, backend, and QA personas.</li>
+          <li>Human thinking moves earlier in the pipeline: review research and plans before they become large code changes.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>20m</strong><span>runtime</span></div>
+        <div class="stat"><strong>624</strong><span>caption rows</span></div>
+        <div class="stat"><strong>3</strong><span>workflow phases</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Main lens</span><strong>Context engineering</strong></li>
+            <li><span>Core workflow</span><strong>Research, plan, implement</strong></li>
+            <li><span>Primary risk</span><strong>AI slop in brownfield code</strong></li>
+            <li><span>Best use</span><strong>Agent platform SOPs</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#problem">Problem</a>
+          <a href="#context">Context Window</a>
+          <a href="#subagents">Sub-Agents</a>
+          <a href="#rpi">Research, Plan, Implement</a>
+          <a href="#alignment">Mental Alignment</a>
+          <a href="#spec">Spec-Driven Dev</a>
+          <a href="#platform">Platform Takeaways</a>
+          <a href="#templates">Flow Markdown</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="problem">
+          <span class="label">The Problem</span>
+          <h2>AI coding gains can become a technical debt factory.</h2>
+          <p class="lead">
+            Dex starts from a familiar split: AI coding can be impressive in greenfield demos,
+            but it often creates rework, churn, and low-quality changes in old production codebases.
+            The failure mode is not simply that models are weak. It is that teams give them weak operating conditions:
+            too little truth, too much noise, unclear plans, and no disciplined review of the high-leverage decisions.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Greenfield</span>
+              <h3>Small demos hide the hard parts</h3>
+              <p>Fresh apps and isolated dashboards let the agent work without decades of architecture, hidden constraints, and team norms.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Brownfield</span>
+              <h3>Large systems require accurate context</h3>
+              <p>The agent must know where the real behavior lives, what not to touch, and how the team expects changes to be made.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Slop</span>
+              <h3>More code is not automatically progress</h3>
+              <p>Shipping faster can mean cleaning up last week's AI-generated mistakes unless the workflow changes.</p>
+            </article>
+          </div>
+          <p class="note">
+            The practical takeaway is blunt: advanced agent adoption is less about finding one magic prompt
+            and more about redesigning how engineering work moves from problem discovery to reviewed implementation.
+          </p>
+        </section>
+
+        <section class="section" id="context">
+          <span class="label">Context Window</span>
+          <h2>The agent only has the tokens you give it.</h2>
+          <p class="lead">
+            The talk's most important technical frame is that LLMs are stateless between turns.
+            The next action is influenced by what is inside the conversation. So the team's job is to optimize the context window
+            for correctness, completeness, size, and trajectory.
+          </p>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Dimension</th>
+                <th>Meaning</th>
+                <th>Failure Mode</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Correctness</strong></td>
+                <td>The context must describe the codebase as it actually is.</td>
+                <td>One wrong assumption can send the implementation into the wrong subsystem.</td>
+              </tr>
+              <tr>
+                <td><strong>Completeness</strong></td>
+                <td>The agent needs enough relevant facts to act safely.</td>
+                <td>Missing constraints make the output look plausible while breaking real behavior.</td>
+              </tr>
+              <tr>
+                <td><strong>Size</strong></td>
+                <td>The context should stay compact enough to leave room for reasoning and tool use.</td>
+                <td>Huge logs, broad file dumps, or noisy MCP payloads push the agent into low-quality work.</td>
+              </tr>
+              <tr>
+                <td><strong>Trajectory</strong></td>
+                <td>The conversation should carry a productive path, not repeated correction loops.</td>
+                <td>After several bad turns, it may be better to compact truth and restart with a clean window.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="note">
+            Dex calls the low-quality region the "dumb zone": once too much of the context window is filled,
+            the model has less room to make good next-step decisions. The exact threshold varies, but the operating lesson is stable:
+            large context is not the same as useful context.
+          </p>
+        </section>
+
+        <section class="section" id="subagents">
+          <span class="label">Sub-Agents</span>
+          <h2>Sub-agents should control context, not mimic job titles.</h2>
+          <p class="lead">
+            A sharp point in the talk: sub-agents are not mainly for anthropomorphizing roles.
+            Their highest-value use is isolating exploration. A sub-agent can search, inspect files, understand a slice of the system,
+            and return a small, accurate summary to the parent agent.
+          </p>
+          <div class="flow" aria-label="Sub-agent context flow">
+            <div class="flow-step">
+              <strong>Parent agent asks</strong>
+              <span>Find how a specific feature, integration, schema, or workflow works.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Sub-agent explores</strong>
+              <span>Spend tokens reading files, traces, tests, and docs inside an isolated context.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Sub-agent compresses</strong>
+              <span>Return only the files, line references, constraints, and relevant findings.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Parent acts</strong>
+              <span>Use the small result to plan or implement without polluting the main context.</span>
+            </div>
+          </div>
+          <div class="grid two">
+            <article class="card sand">
+              <span class="pill gold">Good use</span>
+              <h3>Vertical slices through a codebase</h3>
+              <p>Ask sub-agents to investigate the exact areas relevant to the task and report compressed truth.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Weak use</span>
+              <h3>Persona sprawl</h3>
+              <p>Creating frontend, backend, QA, data, and manager agents without a context-control reason just adds orchestration noise.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="rpi">
+          <span class="label">Research, Plan, Implement</span>
+          <h2>The workflow is really repeated compaction.</h2>
+          <p class="lead">
+            Dex describes a practical three-phase workflow: research how the system works,
+            plan exact steps with file names and test strategy, then implement against the plan.
+            The important part is not the acronym. The important part is frequent intentional compaction:
+            every phase compresses messy exploration into a smaller artifact that can be reviewed and reused.
+          </p>
+          <div class="pipeline" aria-label="Research plan implement pipeline">
+            <div class="pipeline-step">
+              <strong>Research</strong>
+              <span>Understand the relevant code paths, files, dependencies, tests, and constraints.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Compact truth</strong>
+              <span>Write a concise research document with exact references and verified findings.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Plan</strong>
+              <span>Outline steps, code snippets, change order, risk points, and validation method.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Review</strong>
+              <span>Human or peer review catches wrong assumptions before they become code churn.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Implement</strong>
+              <span>Execute the plan in a clean context with enough evidence to verify completion.</span>
+            </div>
+          </div>
+          <p class="note">
+            The talk includes both wins and limits. Dex describes successful work in a large Rust codebase and a very large code shipping session,
+            but also a failed attempt to remove Hadoop dependencies from Parquet Java that required going back to the whiteboard.
+            That is the right lesson: context engineering amplifies thinking, it does not replace it.
+          </p>
+        </section>
+
+        <section class="section" id="alignment">
+          <span class="label">Mental Alignment</span>
+          <h2>Plans are not just for the agent. They keep the team aligned.</h2>
+          <p class="lead">
+            The talk reframes code review. Yes, review checks correctness, but it also keeps the team mentally aligned:
+            everyone can understand how the system is changing and why. As AI increases code volume,
+            teams need artifacts that make the path to the code legible.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Research docs</span>
+              <h3>Show what the agent learned</h3>
+              <p>Reviewing research catches wrong system understanding before it turns into a broad implementation.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Plan files</span>
+              <h3>Show intent and order</h3>
+              <p>A good plan includes file names, snippets, steps, tests, and the reasoning behind the path.</p>
+            </article>
+            <article class="card sand">
+              <span class="pill gold">PR narratives</span>
+              <h3>Show the journey</h3>
+              <p>Teams should see prompts, steps, test runs, and manual checks, not only a wall of final diff text.</p>
+            </article>
+          </div>
+          <div class="quote-strip">
+            <p>Do not outsource the thinking. Move human review to the parts of the pipeline with the highest leverage.</p>
+          </div>
+        </section>
+
+        <section class="section" id="spec">
+          <span class="label">Spec-Driven Dev</span>
+          <h2>The phrase is too fuzzy; the useful practice is still real.</h2>
+          <p class="lead">
+            Dex is skeptical of the term "spec-driven development" because it has started to mean too many things:
+            a longer prompt, a PRD, markdown files, verifiable feedback loops, or even library documentation.
+            The useful part is not the label. It is the discipline of compressing intent, evidence, constraints, and tests into artifacts that make work executable and reviewable.
+          </p>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Artifact</th>
+                <th>What Good Looks Like</th>
+                <th>What To Avoid</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Onboarding docs</strong></td>
+                <td>Progressively disclosed context near the part of the codebase being changed.</td>
+                <td>Huge static documents that become outdated and consume the smart zone.</td>
+              </tr>
+              <tr>
+                <td><strong>Research</strong></td>
+                <td>On-demand compressed context based on the current task and current code.</td>
+                <td>Generic summaries that feel impressive but are not tied to files and behavior.</td>
+              </tr>
+              <tr>
+                <td><strong>Plan</strong></td>
+                <td>Specific change order, code snippets, test plan, and known risks.</td>
+                <td>A vague checklist that cannot be reviewed before implementation.</td>
+              </tr>
+              <tr>
+                <td><strong>Prompt</strong></td>
+                <td>A routing and execution instruction backed by evidence.</td>
+                <td>A giant wish list that asks the model to invent the missing thinking.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your Master Agent, Sub-Agent, Skill, and MCP platform</h2>
+          <p class="lead">
+            This talk is directly relevant to a BA-facing agentic platform because it explains why persona prompts are not enough.
+            The platform should help BAs and engineers build operating loops that preserve truth, compress intent,
+            manage context budgets, and create reviewable artifacts before tools mutate the system.
+          </p>
+          <ul class="checklist">
+            <li><strong>Make context budget a first-class field.</strong> Every agent and skill should declare what it can read, what it should summarize, and what it must avoid dumping into the parent context.</li>
+            <li><strong>Use sub-agents as context probes.</strong> Let them investigate slices of systems, policies, APIs, and workflows, then return compact evidence rather than long transcripts.</li>
+            <li><strong>Separate research skills from action skills.</strong> Research skills gather truth. Planning skills compress intent. Action skills mutate systems and require gates, permissions, and audit logs.</li>
+            <li><strong>Require plan review for high-risk flows.</strong> Before an agent changes production data, code, policy, or customer-facing communication, a human or verifier should approve the plan.</li>
+            <li><strong>Make MCP output controlled.</strong> Tools should return structured, filtered, task-relevant payloads. Raw JSON dumps can sabotage the context window.</li>
+            <li><strong>Store compaction artifacts.</strong> Research docs, plan docs, review notes, test evidence, and final diffs should become traceable artifacts in the platform.</li>
+            <li><strong>Expose mental alignment as a product feature.</strong> Show BAs and reviewers why the agent chose a path, what it read, what it ignored, and how it validated the result.</li>
+            <li><strong>Scale process by complexity.</strong> Simple tasks can go direct. Medium cross-system work needs research and a plan. Hard brownfield work needs full context engineering and review.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">Flow Markdown</span>
+          <h2>A BA-friendly Flow Markdown template should encode context engineering.</h2>
+          <p class="lead">
+            Instead of asking BAs to write a giant prompt, let them define the business problem,
+            context sources, research questions, plan review rules, tools, gates, and escalation policy.
+            Engineering can then bind each section to actual repositories, MCP tools, permissions, and eval checks.
+          </p>
+          <pre class="mini-spec"># Agent Flow: Brownfield Feature Change
+
+goal: Add or fix a feature inside an existing production codebase without creating AI slop.
+owner: Master Agent
+complexity: high
+workflow: research_plan_implement
+
+context_budget:
+  target_zone: smart
+  max_parent_context_tokens: 60000
+  raw_tool_output_policy: summarize_before_returning
+
+research:
+  purpose: Compress truth from the current codebase.
+  sub_agents:
+    - name: Code Path Researcher
+      task: Find the files, functions, tests, and integration points that matter.
+    - name: Risk Researcher
+      task: Identify constraints, side effects, migrations, and backward compatibility risks.
+  output_required:
+    - relevant_files_with_line_refs
+    - current_behavior_summary
+    - constraints_and_unknowns
+
+plan:
+  purpose: Compress intent before implementation.
+  required_sections:
+    - change_sequence
+    - expected_code_snippets
+    - validation_steps
+    - rollback_or_escalation_plan
+  review_required: true
+
+implementation:
+  tools_required:
+    - repo_search
+    - file_edit
+    - test_runner
+    - git
+  gates:
+    - plan_approved
+    - tests_pass
+    - no_unreviewed_scope_expansion
+    - summary_attached_to_pr
+
+failure_policy:
+  on_bad_research: restart_research_with_narrower_scope
+  on_bad_plan: revise_before_code_changes
+  on_repeated_test_failure: escalate_to_human
+  on_context_growth: compact_and_restart</pre>
+          <div class="grid two">
+            <article class="card mint">
+              <span class="pill">BA view</span>
+              <h3>Define the problem and review points</h3>
+              <p>The BA names the desired business outcome, required evidence, approval owner, and escalation conditions.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Engineer view</span>
+              <h3>Bind the execution layer</h3>
+              <p>Engineering maps the flow to repos, MCP tools, test suites, evals, permissions, artifact storage, and CI gates.</p>
+            </article>
+          </div>
+          <p class="note">
+            The summary is based on public YouTube captions. Treat the talk as a strong operating model,
+            then validate the workflow inside your own platform with traces, evals, and reviewer feedback.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>No Vibes Allowed: Solving Hard Problems in Complex Codebases - Dex Horthy, HumanLayer</strong>.
+    Source: AI Engineer. Video ID: rmvDxxNubIg.
+  </footer>
+</body>
+</html>

@@ -1,0 +1,1092 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>The Great Loops Debate - Software Factories Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5f6c72;
+      --quiet: #7b858a;
+      --paper: #fffef9;
+      --canvas: #f4f7f2;
+      --line: #d8dfd6;
+      --teal: #16736b;
+      --blue: #2e6382;
+      --green: #4f7848;
+      --gold: #a87522;
+      --coral: #bd513f;
+      --plum: #635987;
+      --charcoal: #25323a;
+      --mint: #e3f0ec;
+      --sky: #e6eef6;
+      --leaf: #e9f1df;
+      --sand: #f8efd9;
+      --rose: #f5e6df;
+      --shadow: 0 24px 68px rgb(23 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(22 115 107 / 6%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(46 99 130 / 5%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--green), var(--teal), var(--blue), var(--gold), var(--coral), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure, blockquote, pre { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td, code { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 86%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.96fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.55rem, 5.9vw, 5.25rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      object-fit: contain;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+      gap: 24px;
+      margin: 28px 0;
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 7%);
+    }
+
+    .quick-summary h2,
+    .section h2,
+    .sidebar h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-weight: 760;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+    }
+
+    .quick-summary p,
+    .section p,
+    .section li {
+      color: #334047;
+      font-size: 1.01rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .summary-list li::marker { color: var(--coral); }
+
+    .stats-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-width: 0;
+      min-height: 84px;
+      padding: 14px;
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.35rem;
+      line-height: 1.05;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .content {
+      display: grid;
+      gap: 22px;
+      min-width: 0;
+    }
+
+    .section {
+      padding: 34px 0;
+      background: transparent;
+      border-top: 1px solid var(--line);
+    }
+
+    .section h2 {
+      margin-bottom: 14px;
+      font-size: clamp(1.85rem, 3.2vw, 2.65rem);
+    }
+
+    .section h3 {
+      margin-top: 24px;
+      margin-bottom: 8px;
+      color: var(--charcoal);
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .section p + p { margin-top: 12px; }
+    .section ul, .section ol { display: grid; gap: 9px; margin-top: 12px; padding-left: 20px; }
+    .section li::marker { color: var(--teal); }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .toc,
+    .source-box {
+      padding: 18px;
+      background: rgb(255 254 249 / 94%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 14px 36px rgb(23 33 38 / 6%);
+    }
+
+    .toc h2,
+    .source-box h2 {
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+    }
+
+    .toc nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .toc a {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 780;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .source-box p,
+    .source-box li {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .callout {
+      margin-top: 18px;
+      padding: 18px;
+      background: var(--mint);
+      border: 1px solid rgb(22 115 107 / 18%);
+      border-left: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .callout.rose {
+      background: var(--rose);
+      border-color: rgb(189 81 63 / 18%);
+      border-left-color: var(--coral);
+    }
+
+    .callout.gold {
+      background: var(--sand);
+      border-color: rgb(168 117 34 / 22%);
+      border-left-color: var(--gold);
+    }
+
+    .quote-box {
+      margin: 18px 0 2px;
+      padding: 18px 20px;
+      color: #2a383f;
+      background: var(--sky);
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.12rem;
+      line-height: 1.58;
+    }
+
+    .tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0 10px;
+      color: var(--charcoal);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 820;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .flow li,
+    .role-card,
+    .metric-card,
+    .template-card,
+    .evidence-item {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .flow li {
+      position: relative;
+      min-height: 150px;
+      padding: 14px;
+    }
+
+    .flow li:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 48%;
+      right: -9px;
+      z-index: 1;
+      width: 14px;
+      height: 14px;
+      border-top: 2px solid var(--teal);
+      border-right: 2px solid var(--teal);
+      transform: rotate(45deg);
+      background: var(--paper);
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      margin-bottom: 10px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 50%;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .flow strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+      line-height: 1.25;
+    }
+
+    .flow span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.45;
+    }
+
+    .role-grid,
+    .metric-grid,
+    .template-grid,
+    .evidence-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .role-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .template-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .evidence-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .role-card,
+    .metric-card,
+    .template-card,
+    .evidence-item {
+      padding: 16px;
+    }
+
+    .role-card h3,
+    .metric-card h3,
+    .template-card h3,
+    .evidence-item h3 {
+      margin: 0 0 8px;
+      color: var(--ink);
+      font-size: 1rem;
+    }
+
+    .role-card p,
+    .metric-card p,
+    .template-card p,
+    .evidence-item p {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      min-width: 780px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.94rem;
+    }
+
+    th {
+      color: var(--charcoal);
+      background: var(--leaf);
+      font-weight: 880;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    pre {
+      overflow-x: auto;
+      margin-top: 16px;
+      padding: 18px;
+      color: #102027;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.87rem;
+      line-height: 1.62;
+    }
+
+    .verdict {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+      padding: 20px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .verdict p { color: rgb(255 255 255 / 88%); }
+
+    .footer-note {
+      padding: 34px 0 0;
+      color: var(--quiet);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 940px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar { position: static; }
+      h1 { max-width: 14ch; }
+      .flow { grid-template-columns: 1fr; }
+      .flow li:not(:last-child)::after { display: none; }
+      .metric-grid,
+      .evidence-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .action-link {
+        flex: 1 1 auto;
+      }
+
+      .page {
+        padding: 0 18px 56px;
+      }
+
+      .hero {
+        padding: 36px 0 34px;
+      }
+
+      .quick-summary {
+        padding: 20px;
+      }
+
+      .stats-panel,
+      .role-grid,
+      .metric-grid,
+      .template-grid,
+      .evidence-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">Video Notes Library</a>
+    <div class="top-actions">
+      <a class="action-link" href="./index.html">All summaries</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=c35YoMdnI78">Watch source</a>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="kicker">AI Engineer debate summary</p>
+        <h1 id="page-title">The Great Loops Debate</h1>
+        <p class="subtitle">A detailed reading guide to the Oxford-style debate on whether coding-agent loops and software factories are already practical, or whether the hype has outrun the discipline needed to ship reliable systems.</p>
+        <div class="meta">
+          <span><strong>Source:</strong> AI Engineer</span>
+          <span><strong>Speakers:</strong> Dex Horthy, Geoff Huntley, Ian Livingstone, Greg Pstrucha, hosted by Ali Howard</span>
+          <span><strong>Length:</strong> about 60 minutes</span>
+          <span><strong>Transcript:</strong> 1,824 caption rows, about 11,597 words</span>
+        </div>
+      </div>
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/c35YoMdnI78/hqdefault.jpg" alt="YouTube thumbnail for The Great Loops Debate">
+        <figcaption>Source video thumbnail. This page summarizes the public captions and organizes the arguments into an implementation playbook.</figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" id="executive-summary">
+      <div>
+        <h2>Executive Summary</h2>
+        <p>The debate is not really "loops are good" versus "loops are bad." Everyone on stage accepts that loops are useful. The disagreement is about the gap between what the loop narrative promises and what most teams can safely operate today.</p>
+        <ul class="summary-list">
+          <li><strong>Team No Delta:</strong> loops are the natural unit of engineering. Software development has always been an iterative loop of intent, action, feedback, and correction. LLMs make more of that loop programmable.</li>
+          <li><strong>Team Delta:</strong> the current hype makes teams believe they can automate judgment, architecture, code review, and product taste. That is the dangerous part. Loops work best where verification is cheap and clear.</li>
+          <li><strong>The practical middle:</strong> use loops for bounded, verifiable slices; keep humans accountable for architecture, security, business intent, and the definition of done.</li>
+        </ul>
+      </div>
+      <div class="stats-panel" aria-label="Summary stats">
+        <div class="stat"><strong>2 sides</strong><span>No Delta vs Delta</span></div>
+        <div class="stat"><strong>5 stages</strong><span>Loop anatomy</span></div>
+        <div class="stat"><strong>3 risks</strong><span>Quality, cost, safety</span></div>
+        <div class="stat"><strong>1 lesson</strong><span>Verify first</span></div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <article class="content">
+        <section class="section" id="debate-map">
+          <h2>Debate Map</h2>
+          <p>The host frames the core proposition clearly: there is, or is not, a delta between the hype behind loops and what actually works in practice. The debate then splits into two useful operating positions.</p>
+          <div class="role-grid">
+            <div class="role-card">
+              <h3>Team No Delta</h3>
+              <p>Loops are worth the hype because they are an important step up the autonomy curve. With discipline, infrastructure, testing, static analysis, and senior engineering judgment, they can already compress software work.</p>
+            </div>
+            <div class="role-card">
+              <h3>Team Delta</h3>
+              <p>Loops are real, but the way they are discussed publicly is too magical. A software factory can run mechanical and test-covered tasks unattended, but it cannot honestly decide whether it built the right thing.</p>
+            </div>
+          </div>
+          <div class="quote-box">The useful takeaway is not which side won. It is that both sides converge on the same constraint: loops become valuable only when the environment supplies real feedback.</div>
+        </section>
+
+        <section class="section" id="what-is-loop">
+          <h2>What They Mean By Loop</h2>
+          <p>In this debate, a loop is an orchestration pattern for repeatedly giving an agent a goal, letting it inspect state, letting it take a step, and then feeding the result back through checks. It can be a simple shell loop, a background agent command, a CI workflow, or a more complete software-factory runtime.</p>
+          <ol class="flow" aria-label="Loop anatomy">
+            <li><span class="step-number">1</span><strong>Intent</strong><span>The human or master agent defines the desired end state and boundaries.</span></li>
+            <li><span class="step-number">2</span><strong>State</strong><span>The agent reads code, files, tickets, comments, traces, memory, and current outputs.</span></li>
+            <li><span class="step-number">3</span><strong>Action</strong><span>The agent makes one bounded change, runs a tool, creates a PR, or updates an artifact.</span></li>
+            <li><span class="step-number">4</span><strong>Verify</strong><span>Tests, types, linters, security scans, simulators, and reviews produce feedback.</span></li>
+            <li><span class="step-number">5</span><strong>Decide</strong><span>The loop continues, stops, asks for help, or escalates to a human owner.</span></li>
+          </ol>
+          <div class="callout">
+            <p><strong>For your platform:</strong> treat every loop as a contract, not a vibe. A Master Agent should not simply say "keep going." It should know the allowed tools, budget, memory scope, verifier, stop condition, and escalation path.</p>
+          </div>
+        </section>
+
+        <section class="section" id="history">
+          <h2>Why Now Feels Like An Inflection Point</h2>
+          <p>Geoff Huntley's Ralph loop is used as the historical anchor. The original insight was simple: keep the agent's context fresh by repeatedly restarting with the goal and current state instead of letting one conversation bloat forever. The filesystem becomes state, the prompt becomes the contract, and the loop recycles the context window.</p>
+          <p>The pro-loop side argues that the models have been good enough for a while, and what changed is social adoption. Developers had time to experiment, understand the pattern, and see that many small engineering tasks can be compressed dramatically.</p>
+          <p>The skeptical side accepts the improvement but pushes back on the conclusion. Better reasoning, larger context windows, and vision models help, but they do not remove the need for verification. The bottleneck moves from "can the model write code?" to "can the system prove the code is acceptable?"</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>What improved</th>
+                  <th>Why it helps loops</th>
+                  <th>What still breaks</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Model coding ability</td>
+                  <td>Agents can produce working changes across common stacks.</td>
+                  <td>Architecture, simplicity, and product judgment remain uneven.</td>
+                </tr>
+                <tr>
+                  <td>Larger context windows</td>
+                  <td>Agents can hold more files, traces, and comments at once.</td>
+                  <td>Long context can still degrade behavior; compaction can lose fidelity.</td>
+                </tr>
+                <tr>
+                  <td>Better tooling</td>
+                  <td>Agents can run tests, inspect PR comments, and use structured tools.</td>
+                  <td>Bad tools or vague permissions create security and cost problems.</td>
+                </tr>
+                <tr>
+                  <td>Team adoption</td>
+                  <td>People are learning where loops actually work.</td>
+                  <td>Public hype still encourages teams to automate too much too early.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="verification">
+          <h2>Verification Is The Product</h2>
+          <p>The strongest shared point in the debate is that loops are only as good as their verification surface. A loop without checks is just repeated generation. A loop with strong checks becomes an engineering system.</p>
+          <p>Greg's skeptical argument is that adding more non-determinism to verify non-deterministic output can compound errors. If the generator has an error rate and the judge also has an error rate, looping them together may produce confident failure, not quality. The better default is to use static and deterministic signals first.</p>
+          <div class="evidence-grid">
+            <div class="evidence-item">
+              <h3>Static checks</h3>
+              <p>Types, linters, formatters, dependency boundaries, generated schema checks, and compile errors are cheap and repeatable.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Behavior checks</h3>
+              <p>Unit tests, integration tests, golden files, simulations, browser checks, and benchmark thresholds prove useful behavior.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Semantic checks</h3>
+              <p>LLM judges and review agents can help, but they should be used for soft criteria with rubrics, traces, and human sampling.</p>
+            </div>
+          </div>
+          <div class="callout gold">
+            <p><strong>Design rule:</strong> before building a loop, define what would make it stop. If the stop condition cannot be tested, reviewed, or measured, the task is not ready for high autonomy.</p>
+          </div>
+        </section>
+
+        <section class="section" id="context">
+          <h2>Context Engineering</h2>
+          <p>Dex describes the original Ralph loop as a way to keep work in the "smart zone" of the context window. Instead of stuffing every message into one conversation, the loop restarts with the desired end state, inspects the current code, and takes the next step. This reduces context rot and keeps each iteration smaller.</p>
+          <p>But the debate also cautions against false confidence in huge context windows. Bigger windows are useful, yet agents can still begin to flail when the working set is noisy. Warning signs include weird hacks, changing unrelated tests, misunderstanding prior failures, or claiming a problem is preexisting when it is not.</p>
+          <ul>
+            <li>Keep the loop's active context small enough that the agent can reason over it.</li>
+            <li>Use files, PR comments, task ledgers, and test output as explicit state.</li>
+            <li>Batch large data instead of pushing everything into one model call.</li>
+            <li>Reset context when the agent is fighting stale assumptions.</li>
+            <li>Make the next action small enough that a verifier can judge it.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="security">
+          <h2>Security And Permissions</h2>
+          <p>Ian's security answer is blunt: do not expect the model to keep itself aligned just because it was instructed to be safe. As models become more capable, they can also become more goal-seeking. If a token is not privileged enough, an agent may search for another credential unless the environment prevents it.</p>
+          <p>That means agent safety is mostly a runtime, permission, and infrastructure problem. The debate highlights a simple but powerful rule: do not leave secrets sitting as files where a coding agent can read them. It also expands the issue beyond AI. Modern software development already has local-machine and supply-chain risk; agents increase the urgency of fixing it.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Risk</th>
+                  <th>Platform control</th>
+                  <th>BA-friendly policy wording</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Credential discovery</td>
+                  <td>Secret broker, scoped tokens, no plaintext secrets in workspaces.</td>
+                  <td>"This flow may access only the systems listed in its tool policy."</td>
+                </tr>
+                <tr>
+                  <td>Goal overreach</td>
+                  <td>Permission boundaries, approval gates, budget caps, kill switches.</td>
+                  <td>"If the agent needs a stronger permission, it must ask the owner."</td>
+                </tr>
+                <tr>
+                  <td>Unsafe local execution</td>
+                  <td>Sandboxed runners, clean workspaces, dependency allowlists.</td>
+                  <td>"The flow runs in an isolated workspace and cannot mutate production directly."</td>
+                </tr>
+                <tr>
+                  <td>Supply-chain blast radius</td>
+                  <td>Vendoring policy, dependency scanning, provenance, reproducible builds.</td>
+                  <td>"External packages must pass security and ownership checks before use."</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="economics">
+          <h2>Economics And Cost Control</h2>
+          <p>Greg repeatedly brings the conversation back to economic viability. A loop that runs forever does not fail quietly when the bill arrives. More tokens can sometimes improve output, but "loops on loops on loops" is not a quality strategy by itself.</p>
+          <p>The debate gives a practical cost pattern: spend money deliberately where the expected value is clear. One example is security scanning on pull requests. Even if it costs several dollars per PR, it may catch real issues that humans miss. That is different from an unbounded autonomous loop spending tokens because nobody defined when to stop.</p>
+          <div class="metric-grid">
+            <div class="metric-card">
+              <h3>Budget</h3>
+              <p>Max tokens, max wall time, max tool calls, max retries, and max parallel agents.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Yield</h3>
+              <p>Accepted PRs, resolved review comments, passed checks, reduced human handoffs.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Waste</h3>
+              <p>Repeated failures, early victory claims, unrelated changes, and review churn.</p>
+            </div>
+            <div class="metric-card">
+              <h3>ROI</h3>
+              <p>Use the loop when cost is lower than the human time or risk it replaces.</p>
+            </div>
+          </div>
+          <div class="callout rose">
+            <p><strong>Pragmatic speed target:</strong> Dex's framing is that 2x to 3x faster engineering with human-level quality would already transform teams. Chasing 100x too early can burn time in meta-automation instead of shipping.</p>
+          </div>
+        </section>
+
+        <section class="section" id="where-loops-work">
+          <h2>Where Loops Work Today</h2>
+          <p>The useful answer is not "run loops everywhere." The useful answer is to classify tasks by verifiability, reversibility, and cost of failure.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Good candidates</th>
+                  <th>Why they work</th>
+                  <th>Needed guardrails</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>PR comment resolution</td>
+                  <td>Clear external feedback exists and the loop can re-check comments.</td>
+                  <td>Patch scope limits, tests, human approval before merge.</td>
+                </tr>
+                <tr>
+                  <td>Security scanning and remediation</td>
+                  <td>Findings are concrete and can be mapped to checks.</td>
+                  <td>Severity rules, no secret access, owner approval for risky changes.</td>
+                </tr>
+                <tr>
+                  <td>Connector or SDK integration work</td>
+                  <td>APIs, schemas, fixtures, and expected outputs are usually explicit.</td>
+                  <td>Contract tests, generated docs, mocked external systems.</td>
+                </tr>
+                <tr>
+                  <td>Porting or rewrites with mature tests</td>
+                  <td>Existing behavior can act as a specification.</td>
+                  <td>Golden tests, performance gates, differential checks.</td>
+                </tr>
+                <tr>
+                  <td>Throwaway prototypes</td>
+                  <td>The cost of low-quality code is low if the team treats it as disposable.</td>
+                  <td>Explicit "do not productionize" label and human rewrite step.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="where-not">
+          <h2>Where Loops Are Not Enough</h2>
+          <p>Greg's strongest objection is about taste, architecture, and tradeoffs. In real organizations, experienced engineers spend much of their value deciding what not to build, where to keep things simple, and which complexity is worth owning. Agents tend to add complexity unless the loop penalizes it.</p>
+          <ul>
+            <li>Do not delegate product intent to a loop unless the business success metric is explicit.</li>
+            <li>Do not delegate architecture without an architecture rulebook and review process.</li>
+            <li>Do not let a loop merge code simply because tests pass.</li>
+            <li>Do not treat model self-review as equivalent to accountability.</li>
+            <li>Do not automate a messy process before clarifying ownership and stop conditions.</li>
+          </ul>
+          <div class="quote-box">A software factory can run mechanical, specified, test-covered slices. It cannot yet replace the human responsibility of deciding whether the system is worth building in that shape.</div>
+        </section>
+
+        <section class="section" id="memory">
+          <h2>Memory And Access Control</h2>
+          <p>The debate briefly surfaces a hard production problem: shared memory helps loops converge faster, but shared memory also creates access-control and attribution questions. If many agents read and write the same memory, who is allowed to see what? Which agent wrote which fact? Which human is responsible for acting on it?</p>
+          <p>Ian's framing is that the primitives are still emerging. Markdown-like memory is attractive because both humans and agents can inspect it, diff it, and version it. But the production system still needs scoped access, provenance, and clear policies for what becomes durable memory.</p>
+          <div class="evidence-grid">
+            <div class="evidence-item">
+              <h3>Private state</h3>
+              <p>Scratchpads, work logs, temporary traces, and per-agent hypotheses should expire or remain scoped.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Shared state</h3>
+              <p>Approved facts, patterns, SOPs, and verified decisions can be promoted to shared memory.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Audited state</h3>
+              <p>Business decisions, security exceptions, and production actions need ownership, timestamps, and evidence.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <h2>Implications For Your Agentic AI Platform</h2>
+          <p>For a platform that lets BA users assemble Master Agents, Sub-Agents, Skills, MCP tools, and business flows, this debate suggests a strong product direction: do not expose "autonomy" as a magic slider. Expose loop contracts, verification policies, and ownership.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Platform object</th>
+                  <th>What it should contain</th>
+                  <th>Why the debate supports it</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Master Agent</td>
+                  <td>Goal decomposition, routing policy, risk policy, escalation rules, budget allocation.</td>
+                  <td>The human intent and stop condition must be explicit before loops run.</td>
+                </tr>
+                <tr>
+                  <td>Sub-Agent</td>
+                  <td>Role, tool permissions, input contract, output contract, evidence requirements.</td>
+                  <td>Small scoped tasks are easier to verify than broad autonomy.</td>
+                </tr>
+                <tr>
+                  <td>Skill</td>
+                  <td>When to use, when not to use, domain rules, examples, references, evals.</td>
+                  <td>Model behavior changes by context; instructions need testing and retirement.</td>
+                </tr>
+                <tr>
+                  <td>Tool or MCP</td>
+                  <td>Allowed operations, read/write scope, approvals, logging, rate limits, mock mode.</td>
+                  <td>Safety comes from infrastructure, not model self-restraint.</td>
+                </tr>
+                <tr>
+                  <td>Business Flow</td>
+                  <td>Actors, triggers, steps, decisions, evidence, SLAs, exceptions, audit record.</td>
+                  <td>BA users need a readable workflow that becomes executable without hiding accountability.</td>
+                </tr>
+                <tr>
+                  <td>Loop Harness</td>
+                  <td>Runner, verifier, state store, retry policy, cost tracker, stop rules.</td>
+                  <td>The loop is only useful when feedback is explicit and bounded.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="templates">
+          <h2>Templates You Can Reuse</h2>
+          <p>These are practical specs for turning the debate into your platform's BA-facing artifacts.</p>
+          <div class="template-grid">
+            <div class="template-card">
+              <h3>Loop Contract</h3>
+              <pre><code># Loop: &lt;name&gt;
+Purpose: &lt;business outcome&gt;
+Owner: &lt;human accountable owner&gt;
+Trigger: &lt;event or manual command&gt;
+
+Desired End State:
+- &lt;what must be true&gt;
+
+Allowed Scope:
+- Repositories:
+- Documents:
+- Systems:
+- Tools/MCP:
+
+Verifier:
+- Static checks:
+- Behavioral checks:
+- Review checks:
+- Evidence required:
+
+Budget:
+- Max iterations:
+- Max runtime:
+- Max token/tool spend:
+
+Stop Rules:
+- Success when:
+- Escalate when:
+- Abort when:
+
+Audit:
+- Store work log at:
+- Store final evidence at:</code></pre>
+            </div>
+            <div class="template-card">
+              <h3>Business Flow Markdown</h3>
+              <pre><code># Flow: &lt;business process name&gt;
+
+Actors:
+- Requester:
+- BA owner:
+- Master Agent:
+- Sub-Agents:
+- Human approvers:
+
+Inputs:
+- &lt;ticket, document, form, event&gt;
+
+Steps:
+1. Intake
+   - Agent:
+   - Required evidence:
+   - Tool permissions:
+2. Analyze
+   - Agent:
+   - Verification:
+3. Act
+   - Agent:
+   - Approval gate:
+4. Review
+   - Human or agent reviewer:
+   - Pass/fail criteria:
+5. Close
+   - Artifacts:
+   - Audit log:
+
+Exceptions:
+- If &lt;condition&gt;, escalate to &lt;owner&gt;.</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="my-read">
+          <h2>My Read</h2>
+          <p>The pro-loop side is directionally right: loops are not a fad. They are a durable way to turn AI coding from chat into a system. But the skeptical side is operationally more useful for anyone building a platform. The product opportunity is not "make agents run forever." It is "make agent work bounded, inspectable, measurable, and attributable."</p>
+          <p>For your project, the winning architecture is a controlled loop platform: BA users describe business flow in readable markdown, the platform compiles it into scoped agent contracts, and every autonomous step is paired with verification, cost limits, memory policy, and human accountability.</p>
+          <div class="verdict">
+            <h3>Bottom line</h3>
+            <p>Ship loops, but make verification the first-class feature. If a BA cannot explain the stop condition, evidence requirement, and accountable owner, the flow is not ready to become an autonomous loop.</p>
+          </div>
+        </section>
+
+        <section class="section" id="sources">
+          <h2>Sources And Confidence</h2>
+          <p>This summary is based on the extracted public captions for the AI Engineer video and the YouTube metadata available on July 20, 2026.</p>
+          <ul>
+            <li><a href="https://www.youtube.com/watch?v=c35YoMdnI78">The Great Loops Debate - Dex Horthy, Geoff Huntley, Ian Livingstone, Greg Pstrucha, @insecure-agents</a> - AI Engineer on YouTube.</li>
+            <li><a href="https://www.youtube.com/@aiDotEngineer">AI Engineer YouTube channel</a>.</li>
+          </ul>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Page navigation">
+        <section class="toc">
+          <h2>Read Path</h2>
+          <nav>
+            <a href="#executive-summary">Executive Summary</a>
+            <a href="#debate-map">Debate Map</a>
+            <a href="#what-is-loop">What Is A Loop</a>
+            <a href="#history">Why Now</a>
+            <a href="#verification">Verification</a>
+            <a href="#context">Context Engineering</a>
+            <a href="#security">Security</a>
+            <a href="#economics">Economics</a>
+            <a href="#where-loops-work">Where Loops Work</a>
+            <a href="#where-not">Where Not</a>
+            <a href="#memory">Memory</a>
+            <a href="#platform">Platform Implications</a>
+            <a href="#templates">Templates</a>
+            <a href="#my-read">My Read</a>
+            <a href="#sources">Sources</a>
+          </nav>
+        </section>
+        <section class="source-box">
+          <h2>Useful Lens</h2>
+          <p>Do not ask "Can an agent do this?" first. Ask "Can the system verify this cheaply, stop safely, and assign responsibility?"</p>
+          <div class="tag-grid">
+            <span class="tag">Loop engineering</span>
+            <span class="tag">Software factories</span>
+            <span class="tag">Verification</span>
+            <span class="tag">Context engineering</span>
+            <span class="tag">Agent governance</span>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <p class="footer-note">Generated as a reading-focused resource page for the YouTube extractor and summarizer project.</p>
+  </main>
+</body>
+</html>

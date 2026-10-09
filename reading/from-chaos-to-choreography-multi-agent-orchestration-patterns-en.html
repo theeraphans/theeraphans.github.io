@@ -1,0 +1,954 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>From Chaos to Choreography - Multi-Agent Orchestration Patterns - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5d6970;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f4f7f2;
+      --line: #d7ded6;
+      --charcoal: #24323a;
+      --teal: #166f68;
+      --blue: #315f86;
+      --coral: #bd503f;
+      --gold: #9e711e;
+      --violet: #665987;
+      --mint: #e2f0ec;
+      --sky: #e7eef6;
+      --sand: #f7eed8;
+      --rose: #f5e5df;
+      --shadow: 0 24px 62px rgb(23 33 38 / 11%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(22 111 104 / 7%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(49 95 134 / 6%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 46px 46px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--coral), var(--gold), var(--violet));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 84%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.85rem, 6.7vw, 5.8rem);
+      font-weight: 760;
+      line-height: 0.96;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2.05vw, 1.48rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e6ece7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 86%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: #f8fbf8;
+      background: rgb(255 255 255 / 9%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-height: 86px;
+      padding: 14px;
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: rgb(255 255 255 / 72%);
+      font-size: 0.84rem;
+      font-weight: 760;
+      text-transform: uppercase;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      gap: 42px;
+      align-items: start;
+      margin-top: 36px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 22px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .sidebar-block {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+    }
+
+    .sidebar-block h2,
+    .toc h2 {
+      margin-bottom: 12px;
+      color: var(--quiet);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .glance {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .glance strong {
+      color: var(--ink);
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .toc {
+      padding-left: 18px;
+      border-left: 4px solid var(--gold);
+    }
+
+    .toc a {
+      display: block;
+      padding: 7px 0;
+      color: var(--ink);
+      font-size: 0.94rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .content {
+      min-width: 0;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 8%);
+    }
+
+    .section {
+      padding: 34px 42px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; }
+
+    .label {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .section h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 3.3vw, 3.1rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .section h3 {
+      margin-top: 20px;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      margin-top: 16px;
+      color: #313d44;
+      font-size: 1.08rem;
+    }
+
+    .section p + p { margin-top: 14px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card.mint { background: var(--mint); }
+    .card.sky { background: var(--sky); }
+    .card.sand { background: var(--sand); }
+    .card.rose { background: var(--rose); }
+
+    .card h3 {
+      margin-top: 8px;
+      font-size: 1.02rem;
+    }
+
+    .card p {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.62;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pill.blue { background: var(--blue); }
+    .pill.coral { background: var(--coral); }
+    .pill.gold { background: var(--gold); }
+    .pill.violet { background: var(--violet); }
+
+    .note {
+      margin-top: 22px;
+      padding: 18px 20px;
+      background: #f8f3e6;
+      border-left: 5px solid var(--gold);
+      border-radius: 8px;
+      color: #3b3424;
+    }
+
+    .compare {
+      width: 100%;
+      margin-top: 22px;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .compare th,
+    .compare td {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .compare th {
+      color: #fff;
+      background: var(--charcoal);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .compare td { background: #fff; }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(118px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+      align-items: stretch;
+    }
+
+    .flow-step {
+      min-height: 146px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .flow-step:nth-child(2) { border-top-color: var(--blue); }
+    .flow-step:nth-child(3) { border-top-color: var(--coral); }
+    .flow-step:nth-child(4) { border-top-color: var(--gold); }
+    .flow-step:nth-child(5) { border-top-color: var(--violet); }
+
+    .flow-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .architecture {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .layer {
+      min-height: 176px;
+      padding: 18px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .layer:nth-child(2) { background: var(--teal); }
+    .layer:nth-child(3) { background: var(--blue); }
+    .layer:nth-child(4) { background: var(--coral); }
+
+    .layer strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.02rem;
+      line-height: 1.3;
+    }
+
+    .layer span {
+      color: rgb(255 255 255 / 82%);
+      font-size: 0.9rem;
+      line-height: 1.52;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+      color: #303b42;
+    }
+
+    .checklist li:nth-child(2n) { border-left-color: var(--blue); }
+    .checklist li:nth-child(3n) { border-left-color: var(--coral); }
+
+    .checklist strong { color: var(--ink); }
+
+    .quote-strip {
+      margin-top: 24px;
+      padding: 24px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      border-radius: 8px;
+    }
+
+    .quote-strip p {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.28rem, 2.8vw, 2.15rem);
+      line-height: 1.28;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .grid,
+      .two,
+      .architecture {
+        grid-template-columns: 1fr;
+      }
+
+      .flow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .page {
+        padding-inline: 16px;
+      }
+
+      .hero {
+        gap: 28px;
+        padding-top: 38px;
+      }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .tldr,
+      .sidebar,
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .compare {
+        table-layout: fixed;
+      }
+
+      .compare th,
+      .compare td {
+        padding: 11px 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./">YouTube Extractor</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#coordination">Coordination</a>
+      <a class="action-link" href="#state">State</a>
+      <a class="action-link" href="#recovery">Recovery</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=2czYyrTzILg">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">AI Engineer Talk</span>
+        <h1>From Agent Chaos to Production Choreography</h1>
+        <p class="subtitle">
+          A practical summary of Sandipan Bhaumik's talk on why multi-agent systems fail in production
+          and how distributed-systems patterns such as orchestration, choreography, immutable state,
+          circuit breakers, compensation, and contracts make them reliable.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> From Chaos to Choreography</span>
+          <span><strong>Speaker:</strong> Sandipan Bhaumik</span>
+          <span><strong>Transcript:</strong> 4,072 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/2czYyrTzILg/hqdefault.jpg" alt="Video thumbnail for From Chaos to Choreography">
+        <figcaption>
+          The talk reframes multi-agent AI as a production distributed system, not just a larger prompt or a bigger agent list.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          The central message is blunt: once you move beyond one agent, the hard part stops being the model and becomes distributed-system design.
+          The speaker shows how stale cache reads, race conditions, hidden coordination, weak state management, and partial failures create bad business outcomes.
+          The fix is not better prompting alone. It is production architecture.
+        </p>
+        <ul class="tldr">
+          <li>Multi-agent complexity grows through relationships, not just agent count.</li>
+          <li>Choose choreography for autonomous event-driven flows and orchestration for controlled, auditable workflows.</li>
+          <li>Use immutable state, schemas, circuit breakers, and saga-style compensation before production traffic arrives.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>26m</strong><span>runtime</span></div>
+        <div class="stat"><strong>665</strong><span>caption rows</span></div>
+        <div class="stat"><strong>4.1k</strong><span>transcript words</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Main lens</span><strong>Distributed systems</strong></li>
+            <li><span>Failure story</span><strong>Stale cache read</strong></li>
+            <li><span>Core choice</span><strong>Orchestrate or choreograph</strong></li>
+            <li><span>Best use</span><strong>Production agent platform</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#problem">The Problem</a>
+          <a href="#complexity">Complexity Curve</a>
+          <a href="#coordination">Coordination</a>
+          <a href="#state">State</a>
+          <a href="#recovery">Recovery</a>
+          <a href="#architecture">Architecture</a>
+          <a href="#platform">Platform Takeaways</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="problem">
+          <span class="label">Production War Story</span>
+          <h2>The bug was not in the model. It was in the architecture.</h2>
+          <p class="lead">
+            The talk starts with a credit-decisioning system. The first credit-score agent worked fine in production.
+            Then the team added income verification, risk assessment, fraud detection, and final approval agents.
+            Within days, about 20% of decisions had incorrect risk ratings.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">What happened</span>
+              <h3>One agent wrote the latest score</h3>
+              <p>The credit-score agent wrote a score of 750 to PostgreSQL for a customer.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">What went wrong</span>
+              <h3>Another agent read stale cache</h3>
+              <p>The risk agent read 680 from a cache that had not been invalidated after the database write.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Business impact</span>
+              <h3>The system made wrong approvals</h3>
+              <p>Customers who should have been flagged were approved because state coordination was broken.</p>
+            </article>
+          </div>
+          <p class="note">
+            This is the most important lesson for platform builders: multi-agent failure often looks like an AI issue,
+            but the root cause is usually coordination, state, or infrastructure.
+          </p>
+        </section>
+
+        <section class="section" id="complexity">
+          <span class="label">Complexity Curve</span>
+          <h2>Five agents are not five times harder. They create many relationships.</h2>
+          <p class="lead">
+            One agent has no coordination problem. Two agents create at least one relationship. Five agents create many possible dependencies,
+            handoffs, race conditions, and failure paths. Every connection becomes a possible stale read, duplicate event, missing event,
+            contract mismatch, retry storm, or partial failure.
+          </p>
+          <div class="flow" aria-label="How multi-agent complexity grows">
+            <div class="flow-step">
+              <strong>One agent</strong>
+              <span>Prompt, tools, retrieval, and output are mostly local to one runtime.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Five agents</strong>
+              <span>Agents now depend on each other for data, timing, and state transitions.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Shared resources</strong>
+              <span>Databases, caches, APIs, queues, and memory become coordination surfaces.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Failure modes</strong>
+              <span>Timeouts, retries, stale data, and crashes can cascade across the workflow.</span>
+            </div>
+            <div class="flow-step">
+              <strong>System design</strong>
+              <span>Reliability comes from architecture, not from adding more agent prompts.</span>
+            </div>
+          </div>
+          <div class="quote-strip">
+            <p>When you add agents, you are building a distributed system. You need distributed-system thinking.</p>
+          </div>
+        </section>
+
+        <section class="section" id="coordination">
+          <span class="label">Coordination Patterns</span>
+          <h2>Choreography gives autonomy. Orchestration gives control.</h2>
+          <p class="lead">
+            The first major architecture decision is how agents coordinate. Choreography is decentralized and event-driven.
+            Orchestration uses a central coordinator as the single source of truth. Neither is universally better; the right choice depends
+            on workflow complexity, autonomy needs, debugging requirements, and rollback needs.
+          </p>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Pattern</th>
+                <th>How it works</th>
+                <th>Use when</th>
+                <th>Main risk</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Choreography</strong></td>
+                <td>Agents publish and subscribe to events through a message bus. No central coordinator owns the full flow.</td>
+                <td>The workflow is naturally event-driven, agents need autonomy, and new agents are added frequently.</td>
+                <td>Debugging can become detective work unless event tracing and delivery guarantees are strong.</td>
+              </tr>
+              <tr>
+                <td><strong>Orchestration</strong></td>
+                <td>A workflow orchestrator calls agents directly, manages parallelism, stores state, retries, and logs every step.</td>
+                <td>The workflow has complex dependencies, rollback requirements, audit needs, or low tolerance for autonomy.</td>
+                <td>The orchestrator can become a bottleneck if it is not designed and scaled carefully.</td>
+              </tr>
+              <tr>
+                <td><strong>Hybrid</strong></td>
+                <td>Critical flow is orchestrated, while some independent activities use events and saga-style compensation.</td>
+                <td>The workflow is complex but some agents still need autonomy or asynchronous collaboration.</td>
+                <td>Requires clear boundaries between event-driven behavior and orchestrated checkpoints.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="note">
+            The talk recommends orchestration for regulated domains like financial services because auditability, rollback,
+            and exact execution order matter more than maximum agent autonomy.
+          </p>
+        </section>
+
+        <section class="section" id="state">
+          <span class="label">State Management</span>
+          <h2>Shared mutable state is where multi-agent systems quietly break.</h2>
+          <p class="lead">
+            The speaker warns against multiple agents reading and writing the same records directly. Defaults are dangerous:
+            databases have locks and isolation levels, but teams must use them correctly. The recommended pattern is immutable state snapshots
+            with versioning and schema validation at each handoff.
+          </p>
+          <div class="flow" aria-label="Immutable state handoff flow">
+            <div class="flow-step">
+              <strong>Agent A</strong>
+              <span>Produces state version 1 and seals it as immutable.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Contract check</strong>
+              <span>Validates that output matches the next agent's input schema.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Agent B</strong>
+              <span>Receives version 1, cannot mutate it, and produces version 2.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Append-only log</strong>
+              <span>Stores each state version as a new row rather than updating the old one.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Replay and debug</strong>
+              <span>Trace bad output back through versions to find where it entered the system.</span>
+            </div>
+          </div>
+          <ul class="checklist">
+            <li><strong>Never treat shared state as casual scratch space.</strong> Race conditions and lost updates appear quickly.</li>
+            <li><strong>Make every handoff versioned.</strong> Each agent should know exactly which state version it received.</li>
+            <li><strong>Enforce data contracts at the boundary.</strong> Catch low-confidence or malformed outputs before they move downstream.</li>
+            <li><strong>Prefer append-only state history.</strong> It gives auditability, replay, rollback, and root-cause analysis.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="recovery">
+          <span class="label">Failure Recovery</span>
+          <h2>Agents will fail. Design the recovery path before they do.</h2>
+          <p class="lead">
+            Timeouts, rate limits, crashes, and flaky models are guaranteed. The talk highlights two production patterns from distributed systems:
+            circuit breakers for failing fast and preventing cascading failures, and compensation or saga patterns for undoing partial work.
+          </p>
+          <div class="grid two">
+            <article class="card mint">
+              <span class="pill">Circuit breaker</span>
+              <h3>Protect the workflow from repeated agent failure</h3>
+              <p>If an agent fails repeatedly, open the circuit and stop sending traffic for a timeout window. Then test one request in half-open mode before returning to normal.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Compensation</span>
+              <h3>Undo already-completed steps when a later step fails</h3>
+              <p>Each agent exposes execute and compensate methods. If Agent C fails, the orchestrator walks backward and compensates Agent B, then Agent A.</p>
+            </article>
+          </div>
+          <p class="note">
+            This is unglamorous infrastructure, but it is what separates demos from systems that survive 2:00 a.m. failures.
+          </p>
+        </section>
+
+        <section class="section" id="architecture">
+          <span class="label">Reference Architecture</span>
+          <h2>The production shape is orchestrator, governed agents, versioned data, and traces.</h2>
+          <p class="lead">
+            The Databricks example places a workflow orchestrator at the center. Agents do not call each other directly.
+            The orchestrator stores state versions, calls agents, manages parallelism, logs observability data, triggers compensation,
+            and becomes the single source of truth for the workflow.
+          </p>
+          <div class="architecture" aria-label="Production architecture layers">
+            <div class="layer">
+              <strong>Orchestration</strong>
+              <span>LangGraph with Mosaic AI Agent Framework manages the workflow graph, order, state, retries, and compensation.</span>
+            </div>
+            <div class="layer">
+              <strong>Agent registry</strong>
+              <span>Unity Catalog functions, models, and schemas make agents discoverable, governed, versioned, and auditable.</span>
+            </div>
+            <div class="layer">
+              <strong>Serving controls</strong>
+              <span>Model Serving, Function Serving, and AI Gateway enforce timeouts, retries, rate limits, and circuit breaker policies.</span>
+            </div>
+            <div class="layer">
+              <strong>Data and telemetry</strong>
+              <span>Delta Lake stores immutable state versions, while MLflow traces calls, latency, inputs, outputs, token usage, and evals.</span>
+            </div>
+          </div>
+          <ul class="checklist">
+            <li><strong>The orchestrator owns coordination.</strong> Agents focus on their task and return structured outputs.</li>
+            <li><strong>State versions are rows, not overwrites.</strong> Every step can be replayed and audited.</li>
+            <li><strong>Every call is traceable.</strong> Inputs, outputs, latency, token usage, failures, and circuit transitions are visible.</li>
+            <li><strong>Agent assets are governed.</strong> Models, functions, schemas, access control, lineage, and audit trails live in a central catalog.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your Master Agent, Sub-Agent, Skill, and MCP platform</h2>
+          <p class="lead">
+            This talk is extremely relevant to a BA-buildable agentic AI platform. It argues that the platform should not only help users create
+            agents and prompts. It should help them design reliable distributed workflows with typed contracts, versioned state, visible traces,
+            recovery policies, and governance.
+          </p>
+          <ul class="checklist">
+            <li><strong>Make coordination pattern a first-class choice.</strong> A Flow Markdown should declare choreography, orchestration, or hybrid, not hide it in prose.</li>
+            <li><strong>Represent every Sub-Agent handoff as a contract.</strong> Include input schema, output schema, quality gates, confidence thresholds, and rejection behavior.</li>
+            <li><strong>Use immutable mission state.</strong> Each agent should append a new state version instead of mutating shared state.</li>
+            <li><strong>Add circuit breaker policy to every actionable skill.</strong> Timeouts, retry limits, rate limits, fallback behavior, and human escalation should be configurable.</li>
+            <li><strong>Require compensation for side-effecting tools.</strong> If a tool writes, sends, updates, or approves, the platform should ask how to undo or reconcile it.</li>
+            <li><strong>Expose trace views to BA users.</strong> Show which agent ran, why it was chosen, what state version it used, which tools it called, and what it produced.</li>
+            <li><strong>Separate cognitive skills from actionable skills.</strong> Cognitive skills transform information; actionable skills need tool contracts, permissions, circuit breakers, and compensation.</li>
+            <li><strong>Govern agents like production assets.</strong> Persona prompts, schemas, tools, MCP servers, versions, owners, permissions, and evaluation results should be cataloged.</li>
+            <li><strong>Prefer the simplest reliable architecture.</strong> A single agent is fine for one job. Multi-agent only pays off when role separation reduces overload more than coordination increases risk.</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>From Chaos to Choreography: Multi-Agent Orchestration Patterns That Actually Work - Sandipan Bhaumik</strong>.
+    Source: AI Engineer. Video ID: 2czYyrTzILg.
+  </footer>
+</body>
+</html>

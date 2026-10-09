@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>Stop Choosing One Chunk Size</title>
+    <meta
+      name="description"
+      content="Yuval Belfer explains query-dependent RAG chunking, multiscale indexing, document-level reciprocal rank fusion, evaluation results, and production trade-offs."
+    />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .callout {
+        padding: 1rem;
+        border-left: 3px solid var(--green);
+        background: var(--surface);
+        margin: 1.5rem 0;
+      }
+      .warning {
+        border-left-color: var(--gold);
+      }
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border-block: 1px solid var(--line);
+        margin: 1.5rem 0;
+      }
+      .flow div {
+        padding: 1rem;
+        min-width: 0;
+      }
+      .flow strong {
+        display: block;
+      }
+      .flow p {
+        font-size: 0.92rem;
+      }
+      .compare {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1px;
+        background: var(--line);
+        margin: 1.5rem 0;
+      }
+      .compare div {
+        background: var(--page);
+        padding: 1rem;
+      }
+      .timeline p {
+        padding: 0.7rem 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .slide-figure {
+        margin: 1.75rem 0 2rem;
+      }
+      .slide-figure a {
+        display: block;
+      }
+      .slide-figure img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+      }
+      .slide-figure figcaption {
+        margin-top: 0.7rem;
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.55;
+      }
+      .slide-figure figcaption strong {
+        color: var(--ink);
+      }
+      @media (max-width: 750px) {
+        .flow,
+        .compare {
+          grid-template-columns: 1fr;
+        }
+        .slide-figure {
+          margin: 1.35rem 0 1.7rem;
+        }
+        .slide-figure figcaption {
+          font-size: 0.86rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Reading room</a>
+      <div class="top-actions">
+        <a
+          class="action-link"
+          href="https://www.youtube.com/watch?v=r9OwPx_HoV0"
+          >Watch source</a
+        >
+      </div>
+    </nav>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">AI Engineer · Yuval Belfer, AI21 Labs</p>
+          <h1>Stop Choosing One Chunk Size</h1>
+          <p class="subtitle">
+            Why RAG retrieval is query-dependent, how multiscale indexing
+            recovers both detail and context, and what Reciprocal Rank Fusion
+            really buys you.
+          </p>
+          <div class="meta">
+            <span>Video: 18 minutes</span><span>English summary</span
+            ><span>Summary run: September 17, 2026</span>
+          </div>
+        </div>
+        <figure class="hero-card">
+          <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0"
+            ><img
+              src="https://i.ytimg.com/vi/r9OwPx_HoV0/hqdefault.jpg"
+              alt="Yuval Belfer presenting Stop Chunking Like It's 2022"
+          /></a>
+          <figcaption>
+            Stop Chunking Like It's 2022, presented at AI Engineer.
+          </figcaption>
+        </figure>
+      </header>
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="section-label">Executive summary</p>
+            <h2>The best chunk size belongs to the query, not the corpus</h2>
+            <p>
+              Most RAG systems choose one chunk size during ingestion, long
+              before they know what users will ask. Yuval Belfer's argument is
+              that this is the wrong commitment: a precise factual query may
+              need a small window, while a relational or narrative query may
+              need a much larger span.
+            </p>
+            <p>
+              AI21's proposed solution is intentionally simple. Index each
+              document at several window sizes. At query time, search all
+              indices in parallel, map retrieved chunks back to their parent
+              documents, and combine the document rankings with Reciprocal Rank
+              Fusion (RRF).
+            </p>
+            <p>
+              This avoids selecting one universal size and does not require
+              retraining the embedding model. The cost moves primarily to
+              ingestion and storage: experiments use roughly two to five times
+              as many chunks. Retrieval can run in parallel, while rank fusion
+              itself is cheap.
+            </p>
+            <div class="callout">
+              <strong>The core insight</strong>
+              <p>
+                Chunking is a lossy representation. Different losses are
+                acceptable for different questions, so storing multiple
+                resolutions can be more robust than finding one average
+                compromise.
+              </p>
+            </div>
+          </section>
+          <section id="problem">
+            <p class="section-label">The fixed-chunk trap</p>
+            <h2>Indexing makes a decision without the information it needs</h2>
+            <p>
+              A typical pipeline preprocesses documents, splits them into
+              windows such as 512 tokens with overlap, embeds those windows,
+              stores them, and rarely revisits the decision. Teams spend more
+              time tuning top-k, hybrid search, reranking, and generation
+              because those controls are available when queries arrive.
+            </p>
+            <p>The timing creates an information mismatch:</p>
+            <div class="compare">
+              <div>
+                <strong>At indexing time</strong>
+                <p>
+                  You control the chunk size but do not know the future query.
+                </p>
+              </div>
+              <div>
+                <strong>At retrieval time</strong>
+                <p>
+                  You know the query, but the indexed boundaries and window size
+                  are already fixed.
+                </p>
+              </div>
+            </div>
+            <p>
+              Re-indexing the corpus for every query would theoretically use the
+              missing information, but it would be too expensive and slow for
+              ordinary retrieval. A production system needs to prepare useful
+              representations in advance.
+            </p>
+            <h3>Agentic search does not remove retrieval</h3>
+            <p>
+              An agent can browse directories, use search commands, or inspect
+              several sources. This helps when data is well organized and the
+              search space is manageable. It becomes costly with large corpora
+              or queries that require aggregating facts spread across many
+              locations.
+            </p>
+            <p>
+              Belfer's World Cup example illustrates this. If each tournament is
+              stored in a separate directory, answering which team won most
+              often requires visiting every directory and aggregating the
+              winners. An agent still needs infrastructure that helps locate and
+              combine the evidence.
+            </p>
+          </section>
+          <section id="compression">
+            <p class="section-label">Chunking as compression</p>
+            <h2>Large windows dilute detail; small windows remove context</h2>
+            <div class="compare">
+              <div>
+                <strong>Smaller chunks</strong>
+                <p>
+                  Produce focused embeddings and often retrieve a localized fact
+                  well. They may omit the surrounding statements needed to
+                  interpret a relationship or event.
+                </p>
+              </div>
+              <div>
+                <strong>Larger chunks</strong>
+                <p>
+                  Preserve broader context and narrative relationships. A
+                  fixed-size embedding must compress more topics, which can
+                  weaken the signal of a specific fact.
+                </p>
+              </div>
+            </div>
+            <figure class="slide-figure">
+              <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0&t=290s">
+                <img
+                  src="2026-09-17-rag-slide-fixed-chunk-tradeoff.jpg"
+                  alt="Slide comparing large and small fixed chunks"
+                />
+              </a>
+              <figcaption>
+                <strong>What to notice:</strong> Large windows retain
+                surrounding clauses but blur individual details; small windows
+                isolate the fact but discard its context. Neither scale
+                dominates. Click the slide to watch this explanation.
+              </figcaption>
+            </figure>
+            <p>
+              Calling chunking lossy compression is a useful mental model.
+              Embedding a window turns a variable amount of language into a
+              fixed-dimensional vector. Information does not disappear
+              uniformly: the representation emphasizes some signals and weakens
+              others.
+            </p>
+            <p>
+              Overlap can reduce boundary failures, but it does not resolve the
+              scale problem. A 20% overlap still represents the corpus primarily
+              at one resolution.
+            </p>
+          </section>
+          <section id="seinfeld">
+            <p class="section-label">The Seinfeld demonstration</p>
+            <h2>Two questions from one corpus require opposite resolutions</h2>
+            <p>
+              The first query asks for the name of Jerry's favorite shirt. The
+              answer, Golden Boy, is localized, and a 100-token chunk ranks it
+              first. A much larger window pushes the relevant material below
+              rank 50.
+            </p>
+            <p>
+              The second query asks whom Jerry describes as his nemesis and
+              “pure evil.” The answer is Newman, but the evidence is spread
+              through a scene rather than contained in one compact statement.
+              Small chunks fail; larger chunks preserve enough context to
+              retrieve the relationship.
+            </p>
+            <figure class="slide-figure">
+              <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0&t=445s">
+                <img
+                  src="2026-09-17-rag-slide-seinfeld-query-dependent.jpg"
+                  alt="Slide showing two Seinfeld queries that favor opposite chunk sizes"
+                />
+              </a>
+              <figcaption>
+                <strong>What to notice:</strong> The rankings reverse on the
+                same corpus. The direct fact about Golden Boy ranks first at
+                100 tokens, while the relationship question about Newman ranks
+                first at 500 tokens. Query intent determines the useful
+                resolution.
+              </figcaption>
+            </figure>
+            <p>
+              This is stronger than saying different datasets need different
+              settings. The same dataset and retriever need different scales for
+              different questions. A corpus-level “best chunk size” can only
+              optimize an average over a particular query set.
+            </p>
+          </section>
+          <section id="oracle">
+            <p class="section-label">The oracle experiment</p>
+            <h2>Measure the opportunity before designing the solution</h2>
+            <p>
+              The researchers build several copies of each dataset, each indexed
+              at a different chunk size. For every evaluation query, the oracle
+              selects whichever size happens to retrieve best. Because it sees
+              the answer, the oracle is not deployable; it measures theoretical
+              headroom.
+            </p>
+            <p>
+              Across meeting transcripts, novels, and the Seinfeld dataset,
+              fixed-size performance curves cross. No single size dominates all
+              queries. The gap between the best fixed choice and per-query
+              oracle selection is reported as roughly 20–40% recall headroom.
+            </p>
+            <figure class="slide-figure">
+              <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0&t=530s">
+                <img
+                  src="2026-09-17-rag-slide-oracle-upper-bound.jpg"
+                  alt="QMSum chart comparing fixed chunk sizes with an oracle upper bound"
+                />
+              </a>
+              <figcaption>
+                <strong>What to notice:</strong> The orange oracle line is a
+                hindsight upper bound, not a deployable system or a measured
+                production gain. Its distance above the fixed-size curves
+                reveals how much retrieval quality may be left on the table.
+              </figcaption>
+            </figure>
+            <div class="callout warning">
+              <strong
+                >Do not report the oracle gap as the deployed gain.</strong
+              >
+              <p>
+                The oracle knows which result is correct. The practical RRF
+                method closes part of that gap. AI21's accompanying blog reports
+                measured improvements of 1–37% across benchmark configurations,
+                with many mature retrieval tasks improving by 1–3%.
+              </p>
+            </div>
+          </section>
+          <section id="method">
+            <p class="section-label">Multiscale indexing</p>
+            <h2>Store several views, then let documents collect votes</h2>
+            <div class="flow">
+              <div>
+                <strong>1. Split</strong>
+                <p>Chunk the same corpus at several window sizes.</p>
+              </div>
+              <div>
+                <strong>2. Index</strong>
+                <p>Build a separate vector index for every resolution.</p>
+              </div>
+              <div>
+                <strong>3. Search</strong>
+                <p>Send each query to all indices in parallel.</p>
+              </div>
+              <div>
+                <strong>4. Fuse</strong>
+                <p>Map hits to documents and combine ranked lists with RRF.</p>
+              </div>
+            </div>
+            <figure class="slide-figure">
+              <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0&t=700s">
+                <img
+                  src="2026-09-17-rag-slide-multiscale-indexing.jpg"
+                  alt="Diagram of multiscale indexing and parallel retrieval"
+                />
+              </a>
+              <figcaption>
+                <strong>What to notice:</strong> Ingestion creates separate
+                indices for several window sizes. At inference, the same query
+                fans out across all of them, paying the storage cost once and a
+                parallel search cost on every request.
+              </figcaption>
+            </figure>
+            <p>
+              The published example uses sizes such as 50, 100, 200, 500, and
+              1,000 tokens. These are experimental choices, not universally
+              optimal defaults.
+            </p>
+            <h3>Why not merge similarity scores directly?</h3>
+            <p>
+              Chunks of different lengths create different distributions of
+              embedding similarity. A score from a 100-token index is not
+              necessarily calibrated against a score from a 1,000-token index.
+              Direct score comparison can therefore privilege one resolution for
+              accidental reasons.
+            </p>
+            <p>
+              The method instead converts chunk hits into parent-document
+              rankings. The same documents exist across every index, so the
+              units being combined are comparable. Each retrieved chunk votes
+              for its document.
+            </p>
+            <h3>What RRF does</h3>
+            <p>
+              Reciprocal Rank Fusion gives larger weight to higher-ranked hits
+              and adds that evidence across ranked lists. It uses rank position
+              instead of raw similarity, avoiding cross-index score calibration.
+            </p>
+            <figure class="slide-figure">
+              <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0&t=785s">
+                <img
+                  src="2026-09-17-rag-slide-rrf-ranks.jpg"
+                  alt="Slide explaining why reciprocal rank fusion uses ranks rather than similarity scores"
+                />
+              </a>
+              <figcaption>
+                <strong>What to notice:</strong> Cosine scores from differently
+                sized chunk indices are not calibrated against one another. The
+                method first converts hits into parent-document ranks, then
+                aggregates those comparable ranks with RRF.
+              </figcaption>
+            </figure>
+            <p>
+              Documents consistently surfaced across scales move upward.
+              Multiple chunks from a document can also contribute evidence. RRF
+              is a deterministic aggregation script, not another language model
+              or learned reranker.
+            </p>
+          </section>
+          <section id="results">
+            <p class="section-label">Results</p>
+            <h2>Robust improvement without retraining</h2>
+            <p>
+              In the talk, multiscale retrieval matches or beats the best fixed
+              size across QMSum, NarrativeQA, the in-house Seinfeld set, and
+              FinanceBench over the displayed recall-at-k values. The
+              accompanying AI21 post also evaluates a subset of MTEB retrieval
+              tasks using two off-the-shelf embedding models.
+            </p>
+            <figure class="slide-figure">
+              <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0&t=870s">
+                <img
+                  src="2026-09-17-rag-slide-qmsum-results.jpg"
+                  alt="QMSum recall heatmap comparing fixed chunk sizes with the multiscale method"
+                />
+              </a>
+              <figcaption>
+                <strong>What to notice:</strong> The “Ours” row leads the
+                displayed recall cutoffs in this QMSum example. It is evidence
+                from one benchmark, not a guarantee that multiscale retrieval
+                will win on every corpus.
+              </figcaption>
+            </figure>
+            <p>
+              The blog reports improvement in seven of eight MTEB
+              configurations. Most gains are modest but meaningful at 1–3%,
+              while one TREC-COVID configuration improves by 36.7%. Across the
+              wider reported benchmarks, gains range from approximately 1% to
+              37%.
+            </p>
+            <p>
+              These are benchmark results, not a promise for every corpus. The
+              benefit depends on query diversity, document structure, embedding
+              model, baseline size, retrieval metric, and the quality of
+              document identifiers used for fusion.
+            </p>
+          </section>
+          <section id="cost">
+            <p class="section-label">Cost and operational trade-offs</p>
+            <h2>Buy retrieval robustness with storage and ingestion work</h2>
+            <p>
+              The main cost is indexing. AI21 reports that the number of chunks
+              embedded and stored increases by roughly two to five times in its
+              experiments. Smaller windows create especially many chunks, so
+              cost is not simply the number of scales.
+            </p>
+            <p>
+              Retrieval latency need not grow by the same factor because
+              searches can run concurrently. RRF adds little computation. Still,
+              real systems must account for connection overhead, vector-database
+              throughput, tail latency, query fan-out, and operational
+              complexity.
+            </p>
+            <h3>Returning whole documents is an evaluation choice</h3>
+            <p>
+              The approach ranks parent documents to make different scales
+              comparable. A generation pipeline still has to decide what context
+              to send to the LLM. Supplying every entire document can be
+              expensive or exceed the context budget.
+            </p>
+            <p>
+              A practical design can use fused document ranking as a first
+              stage, then select relevant spans, rerank passages, or let an
+              agent inspect the top documents. Multiscale indexing improves
+              candidate discovery; it does not by itself solve final context
+              assembly.
+            </p>
+          </section>
+          <section id="when">
+            <p class="section-label">When to use it</p>
+            <h2>Strong fit for heterogeneous questions over long documents</h2>
+            <p>
+              Multiscale indexing is attractive when users ask both pinpoint and
+              contextual questions, documents contain long narratives or
+              meetings, fixed chunk sizes trade wins across query categories,
+              and missing evidence is more costly than extra storage.
+            </p>
+            <p>
+              It may be unnecessary when documents are already short, queries
+              are highly uniform, the corpus has strong structured fields,
+              storage dominates cost, or a single tested size already meets the
+              product's recall target.
+            </p>
+            <p>
+              Before multiplying indices, segment evaluation queries by intent
+              and inspect recall by category. The method addresses scale
+              mismatch; it will not fix poor source documents, inadequate
+              embeddings, stale content, missing access controls, or an
+              evaluator that rewards the wrong evidence.
+            </p>
+          </section>
+          <section id="playbook">
+            <p class="section-label">Implementation playbook</p>
+            <h2>A disciplined experiment before production rollout</h2>
+            <ol>
+              <li>
+                Build a representative, answer-labeled query set from real
+                usage.
+              </li>
+              <li>
+                Choose several meaningfully different window sizes rather than
+                tiny variations.
+              </li>
+              <li>
+                Keep embedding model, overlap, filtering, and top-k controlled
+                during the comparison.
+              </li>
+              <li>
+                Measure each fixed index separately to expose query-level
+                trade-offs.
+              </li>
+              <li>
+                Calculate the oracle to estimate available headroom, but label
+                it as unattainable.
+              </li>
+              <li>
+                Map hits to stable parent-document IDs and fuse rankings with
+                RRF.
+              </li>
+              <li>
+                Compare fused retrieval against the strongest fixed baseline,
+                not an arbitrary 512-token setup.
+              </li>
+              <li>
+                Evaluate end-to-end answer quality as well as retrieval recall.
+              </li>
+              <li>
+                Measure index size, embedding cost, p50/p95 latency, and
+                vector-database load.
+              </li>
+              <li>
+                Design a second-stage context selection strategy for long
+                retrieved documents.
+              </li>
+            </ol>
+          </section>
+          <section id="limits">
+            <p class="section-label">Open questions</p>
+            <h2>The method deliberately leaves several choices unresolved</h2>
+            <ul>
+              <li>
+                <strong>Which scales?</strong> The tested sizes are partly
+                arbitrary; a principled selection method remains future work.
+              </li>
+              <li>
+                <strong>How many indices?</strong> More resolutions may improve
+                coverage while adding diminishing returns and storage cost.
+              </li>
+              <li>
+                <strong>Which fusion?</strong> RRF worked best among methods
+                tested, but better query-aware aggregation may exist.
+              </li>
+              <li>
+                <strong>Document granularity:</strong> books, reports, tickets,
+                and pages define “parent document” differently.
+              </li>
+              <li>
+                <strong>Filters and permissions:</strong> every index must apply
+                identical tenant and access constraints before fusion.
+              </li>
+              <li>
+                <strong>Updates:</strong> edits and deletes must remain
+                synchronized across all scale-specific indices.
+              </li>
+              <li>
+                <strong>Downstream context:</strong> document recall does not
+                automatically identify the best passages for generation.
+              </li>
+            </ul>
+          </section>
+          <section id="timeline">
+            <p class="section-label">Video map</p>
+            <h2>Navigate the talk</h2>
+            <div class="timeline">
+              <p>
+                <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0&t=0s"
+                  >00:00</a
+                >
+                · Why chunking still matters.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0&t=103s"
+                  >01:43</a
+                >
+                · Indexing versus retrieval tuning.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0&t=203s"
+                  >03:23</a
+                >
+                · The World Cup directory example.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0&t=257s"
+                  >04:17</a
+                >
+                · Chunking as lossy compression.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0&t=373s"
+                  >06:13</a
+                >
+                · Six index copies and three datasets.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0&t=427s"
+                  >07:07</a
+                >
+                · Two Seinfeld queries, opposite requirements.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0&t=492s"
+                  >08:12</a
+                >
+                · Oracle headroom.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0&t=599s"
+                  >09:59</a
+                >
+                · The indexing-time information problem.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0&t=662s"
+                  >11:02</a
+                >
+                · Multiscale indexing and RRF.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0&t=830s"
+                  >13:50</a
+                >
+                · Results across datasets.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0&t=924s"
+                  >15:24</a
+                >
+                · Storage and latency trade-offs.
+              </p>
+            </div>
+          </section>
+          <section id="sources">
+            <p class="section-label">Sources and method</p>
+            <h2>Transcript-grounded with the benchmark claims checked</h2>
+            <p>
+              Primary video:
+              <a href="https://www.youtube.com/watch?v=r9OwPx_HoV0"
+                >Stop Chunking Like It's 2022 — Yuval Belfer, AI21 Labs</a
+              >, published by AI Engineer. The complete English caption track
+              reaches the closing remarks.
+            </p>
+            <p>
+              Experimental details and result ranges were checked against AI21's
+              <a href="https://www.ai21.com/blog/query-dependent-chunking/"
+                >Query-Dependent RAG Chunking</a
+              >
+              post by Niv Granot and Yuval Belfer. The distinction between
+              oracle headroom and measured multiscale gains is explicit because
+              conflating them would exaggerate the method's demonstrated
+              improvement.
+            </p>
+            <p>
+              The context-assembly advice, access-control warning, and
+              implementation checklist are editorial engineering interpretation.
+              They are not additional experimental claims from AI21.
+            </p>
+          </section>
+        </article>
+        <aside class="sidebar">
+          <nav class="toc">
+            <h2>On this page</h2>
+            <ul>
+              <li><a href="#summary">Overview</a></li>
+              <li><a href="#problem">Fixed-chunk trap</a></li>
+              <li><a href="#compression">Lossy compression</a></li>
+              <li><a href="#seinfeld">Seinfeld example</a></li>
+              <li><a href="#oracle">Oracle experiment</a></li>
+              <li><a href="#method">Multiscale method</a></li>
+              <li><a href="#results">Results</a></li>
+              <li><a href="#cost">Costs</a></li>
+              <li><a href="#when">When to use it</a></li>
+              <li><a href="#playbook">Implementation</a></li>
+              <li><a href="#limits">Open questions</a></li>
+              <li><a href="#timeline">Video map</a></li>
+              <li><a href="#sources">Sources</a></li>
+            </ul>
+          </nav>
+        </aside>
+      </div>
+    </main>
+    <footer class="footer-note">
+      Detailed engineering summary with benchmark claims qualified.
+    </footer>
+  </body>
+</html>

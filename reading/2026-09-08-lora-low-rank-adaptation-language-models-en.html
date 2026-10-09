@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Made large-model adaptation cheaper by freezing pretrained weights and learning small low-rank update matrices inside selected linear layers.">
+  <meta name="resource-file" content="2026-09-08-lora-low-rank-adaptation-language-models-en.html">
+  <title>LoRA · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2106.09685">Read paper</a><a class="action-link" href="./">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Efficient Adaptation and Training · Paper 23 of 37</p>
+        <h1>LoRA: Low-Rank Adaptation of Large Language Models</h1>
+        <p class="subtitle">Made large-model adaptation cheaper by freezing pretrained weights and learning small low-rank update matrices inside selected linear layers.</p>
+        <div class="meta"><span><strong>Edward J. Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, Weizhu Chen</strong></span><span>2021</span><span>Intermediate</span><span>11 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>LoRA</h2><p>Microsoft Research</p><p><strong>Prerequisites:</strong> Linear layers, matrix rank, fine-tuning, and optimizer memory.</p><a href="https://arxiv.org/abs/2106.09685">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Intermediate</strong></div><div class="paper-fact"><span>Place in path</span><strong>23 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Full fine-tuning updates every parameter and stores gradients plus optimizer states, making each task replica expensive. Prompting avoids training but may not deliver stable domain behavior.</p>
+<p>The paper hypothesizes that task adaptation lives in a low-dimensional subspace, so the full weight matrix need not move independently.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Freeze W₀ and insert two trainable matrices: A projects into rank r and B projects back. Their product supplies an additive weight update. Initialize so the adapter starts with zero effect.</p>
+<p>Only adapter parameters and optimizer state are saved. At deployment, the product can be merged into W₀ with no additional layer latency.</p><div class="equation">W adapted = W₀ + ΔW, where ΔW = (α/r)BA and rank(BA) ≤ r.</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Choose target projections, commonly attention query/value or later all major linear layers. Insert low-rank branches, scale by α/r, and train only those parameters.</p>
+<p>Store one adapter per task or user. Load dynamically or merge for dedicated deployment; preserve the exact base-model identity because an adapter is relative to it.</p><figure class="concept-flow" aria-label="LoRA linear layer">
+    <div class="flow-step"><span>Input</span><strong>Hidden vector</strong><p>Feed both branches.</p></div>
+<div class="flow-step"><span>Base</span><strong>Frozen W₀</strong><p>Preserve pretrained behavior.</p></div>
+<div class="flow-step"><span>Down</span><strong>Train A</strong><p>Project into rank r.</p></div>
+<div class="flow-step"><span>Up</span><strong>Train B</strong><p>Return to output width.</p></div>
+<div class="flow-step"><span>Add</span><strong>Combine outputs</strong><p>Scale and add the update.</p></div>
+    <figcaption>The frozen path remains; a small trainable down-and-up projection adds the task update.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>For a d-by-k weight, LoRA trains r(d+k) values instead of dk. Savings depend on rank and targeted modules. Optimizer memory falls with trainable parameters, while forward activations and frozen weights still consume memory.</p>
+<p>Rank is capacity, not a direct quality setting. Alpha, dropout, module selection, learning rate, and data often matter as much as r.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>The paper reported quality comparable to or better than full fine-tuning on several GPT and RoBERTa tasks with dramatically fewer trainable parameters and smaller checkpoints.</p>
+<p>The experiments support low-rank adaptation for those models and tasks; they do not prove every downstream update has the same intrinsic rank.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>LoRA became the default unit of lightweight model customization and enabled adapter hubs, per-customer variants, and rapid experimentation.</p>
+<p>It also separated base-model governance from adaptation artifacts, creating new requirements for adapter provenance, compatibility, and composition.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Version base hash, target modules, rank, alpha, tokenizer, and training data with every adapter. Test adapter swapping and merged/unmerged numerical behavior.</p>
+<p>Estimate total memory, not trainable parameters alone. Use QLoRA when the frozen base is the bottleneck, and benchmark merged versus dynamic serving.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>Too little rank or narrow module targeting can underfit. Multiple simultaneous adapters can add latency or interact unpredictably, and merging complicates rollback.</p>
+<p>Adapters can still teach unsafe behavior or memorize data. Parameter efficiency is not a security boundary or evidence of model ownership.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>QLoRA combines LoRA with a 4-bit frozen base. LLaMA’s practical checkpoints drove broad LoRA adoption. DPO and other alignment objectives can train LoRA adapters instead of full weights.</p><div class="article-nav"><a href="2026-09-08-grpo-group-relative-policy-optimization-en.html">← GRPO</a><a href="2026-09-08-qlora-efficient-finetuning-quantized-llms-en.html">QLoRA →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>LoRA learns an additive low-rank weight update.</li><li>The pretrained matrix stays frozen.</li><li>Optimizer and checkpoint storage shrink dramatically.</li><li>Base-model inference memory remains unless separately compressed.</li><li>Adapter compatibility requires exact lineage.</li><li>Rank and target-module choices need evaluation.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2106.09685">LoRA: Low-Rank Adaptation of Large Language Models</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>LoRA reduces trainable state and checkpoint size. It does not reduce the frozen model’s inference memory unless adapters are merged or the base is separately quantized.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

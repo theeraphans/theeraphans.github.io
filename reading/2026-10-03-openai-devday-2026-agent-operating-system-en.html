@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>OpenAI DevDay 2026: The Agent Operating System</title>
+    <meta
+      name="description"
+      content="A detailed, evidence-aware guide to OpenAI DevDay 2026: dots, ChatGPT Spaces, GPT-6.1 Sol, Ultrafast, Decisions API, Codex Cloud, Agents API, Private Intelligence, plugins, distribution, and the strategy connecting them."
+    />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .visual {
+        margin: 1.8rem 0 2.1rem;
+      }
+      .visual img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: #111;
+      }
+      .visual figcaption {
+        max-width: 66rem;
+        margin: 0.65rem auto 0;
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.55;
+        text-align: center;
+      }
+      .visual figcaption strong {
+        color: var(--ink);
+      }
+      .callout {
+        margin: 1.55rem 0;
+        padding: 1rem !important;
+        border-left: 3px solid #171712 !important;
+        background: var(--surface) !important;
+      }
+      .callout.warning {
+        border-left-color: #8a6417 !important;
+      }
+      .callout p:last-child {
+        margin-bottom: 0;
+      }
+      .stack-map,
+      .three-grid,
+      .two-grid,
+      .status-grid {
+        display: grid;
+        gap: 1px;
+        margin: 1.5rem 0;
+        border: 1px solid var(--line);
+        background: var(--line);
+      }
+      .stack-map,
+      .three-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .two-grid,
+      .status-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .stack-map > div,
+      .three-grid > div,
+      .two-grid > div,
+      .status-grid > div {
+        min-width: 0;
+        padding: 1rem;
+        background: var(--paper);
+      }
+      .stack-map strong,
+      .stack-map span,
+      .three-grid strong,
+      .three-grid span,
+      .two-grid strong,
+      .two-grid span,
+      .status-grid strong,
+      .status-grid span {
+        display: block;
+      }
+      .stack-map strong,
+      .three-grid strong,
+      .two-grid strong,
+      .status-grid strong {
+        margin-bottom: 0.4rem;
+        font-weight: 600;
+      }
+      .stack-map span,
+      .three-grid span,
+      .two-grid span,
+      .status-grid span {
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+      .launch-table {
+        width: 100%;
+        min-width: 0 !important;
+        margin: 1.5rem 0;
+        table-layout: fixed;
+        border-collapse: collapse;
+      }
+      .launch-table th,
+      .launch-table td {
+        padding: 0.75rem 0.55rem;
+        text-align: left;
+        vertical-align: top;
+        overflow-wrap: anywhere;
+        border-bottom: 1px solid var(--line);
+      }
+      .launch-table th:nth-child(1) { width: 24%; }
+      .launch-table th:nth-child(2) { width: 20%; }
+      .launch-table th:nth-child(3) { width: 56%; }
+      .status {
+        display: inline-block;
+        padding: 0.16rem 0.42rem;
+        border: 1px solid var(--line-strong);
+        border-radius: 999px;
+        font-size: 0.76rem;
+        line-height: 1.25;
+        white-space: nowrap;
+      }
+      .chapter-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin: 1.25rem 0;
+        padding: 0;
+        border-top: 1px solid var(--line);
+        list-style: none;
+      }
+      .chapter-list li {
+        border-bottom: 1px solid var(--line);
+      }
+      .chapter-list a {
+        display: flex;
+        gap: 0.75rem;
+        min-height: 100%;
+        padding: 0.85rem 0.45rem;
+        text-decoration: none;
+      }
+      .chapter-list time {
+        flex: 0 0 3.25rem;
+        color: var(--green);
+        font-variant-numeric: tabular-nums;
+      }
+      @media (max-width: 760px) {
+        .stack-map,
+        .three-grid,
+        .two-grid,
+        .status-grid,
+        .chapter-list {
+          grid-template-columns: 1fr;
+        }
+        .launch-table {
+          font-size: 0.86rem;
+        }
+        .launch-table thead {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip: rect(0 0 0 0);
+        }
+        .launch-table,
+        .launch-table tbody,
+        .launch-table tr,
+        .launch-table td {
+          display: block;
+          width: 100%;
+        }
+        .launch-table tr {
+          padding: 0.65rem 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .launch-table td {
+          display: grid;
+          grid-template-columns: 6.3rem minmax(0, 1fr);
+          gap: 0.65rem;
+          padding: 0.35rem 0.2rem;
+          border: 0;
+        }
+        .launch-table td::before {
+          color: var(--muted);
+          font-weight: 600;
+        }
+        .launch-table td:nth-child(1)::before { content: "Launch"; }
+        .launch-table td:nth-child(2)::before { content: "Status"; }
+        .launch-table td:nth-child(3)::before { content: "Meaning"; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Reading room</a>
+      <div class="top-actions">
+        <a class="action-link" href="https://www.youtube.com/watch?v=Fls_onRviPM"
+          >Watch keynote</a
+        >
+      </div>
+    </nav>
+
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">OpenAI strategy · Agent platform · DevDay 2026</p>
+          <h1>OpenAI Is Building the Agent Operating System</h1>
+          <p class="subtitle">
+            DevDay 2026 was not a collection of unrelated launches. It revealed
+            a vertically integrated stack in which models reason, a managed
+            harness keeps agents working, Spaces coordinates people and dots,
+            and ChatGPT supplies identity, distribution, and eventually the
+            economic layer around third-party software.
+          </p>
+          <div class="meta">
+            <span>53:34 keynote</span><span>Authored English captions</span
+            ><span>Published September 29, 2026</span
+            ><span>Summary run: October 3, 2026 · 17:06 ICT</span>
+          </div>
+        </div>
+        <figure class="hero-card">
+          <img
+            src="2026-10-03-openai-devday-2026-thumbnail.webp"
+            alt="OpenAI DevDay 2026 official video artwork"
+          />
+          <figcaption>
+            The keynote announces more than twenty product and platform changes.
+            The deeper story is how they connect into one system for persistent,
+            tool-using, collaborative agents.
+          </figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="section-label">Executive summary</p>
+            <h2>The product is no longer the chat window; it is the work loop</h2>
+            <p>
+              OpenAI's DevDay 2026 keynote moves the center of gravity from a
+              model that answers prompts to a system that can own work over
+              time. <strong>Dots</strong> are persistent agents with computers,
+              connected applications, identity, permissions, and background
+              execution. <strong>ChatGPT Spaces</strong> gives people and dots a
+              shared surface for documents, data, prototypes, conversation, and
+              delegation. Underneath them, the <strong>Codex harness</strong>
+              supplies sessions, tools, compaction, environments, and
+              multi-agent control.
+            </p>
+            <p>
+              The same architecture is being exposed to developers through the
+              <strong>Agents API</strong>. GPT-6.1 Sol lowers the cost of capable
+              long-running work; Ultrafast trades money for latency; the
+              Decisions API handles bounded choices without a long generative
+              response. Codex Cloud and computer use provide execution. Private
+              Intelligence and security products address the trust boundary.
+              Sign in with ChatGPT, shared plan usage, and plugin extensions
+              tackle distribution and monetization.
+            </p>
+            <ul class="summary-list">
+              <li>
+                <strong>OpenAI is productizing its internal agent harness.</strong>
+                Dots, Codex Work, Codex Cloud, and the public Agents API are
+                presented as different surfaces over related runtime primitives.
+              </li>
+              <li>
+                <strong>Spaces turns collaboration into shared state.</strong>
+                It is closer to a live workbench than a group chat: people and
+                agents can co-create artifacts, inspect progress, and hand work
+                across boundaries.
+              </li>
+              <li>
+                <strong>The model portfolio is becoming workload-shaped.</strong>
+                Astra targets maximum intelligence, Sol targets the
+                capability-cost frontier, Ultrafast targets latency, and Luna
+                powers finite decisions.
+              </li>
+              <li>
+                <strong>Distribution is now part of the technical stack.</strong>
+                OpenAI wants ChatGPT identity, subscription usage, plugin
+                discovery, and interactive extensions to reduce the friction of
+                acquiring and serving AI users.
+              </li>
+              <li>
+                <strong>The launch is strategically coherent but operationally uneven.</strong>
+                Some products are available, others are beta or limited preview,
+                and the keynote's demos and OpenAI-reported metrics are not
+                substitutes for independent production evidence.
+              </li>
+            </ul>
+            <div class="callout warning">
+              <strong>Evidence boundary</strong>
+              <p>
+                This guide uses the full keynote transcript and source frames,
+                then checks product behavior and status against OpenAI's DevDay
+                announcement, model documentation, Agents API documentation,
+                and Help Center pages. Performance, reliability, adoption, and
+                research-progress numbers remain OpenAI-reported claims unless
+                otherwise stated. Rollouts, prices, regions, and eligibility can
+                change after publication.
+              </p>
+            </div>
+          </section>
+
+          <section id="thesis">
+            <p class="section-label">The strategic thesis</p>
+            <h2>Three layers form one agent platform</h2>
+            <p>
+              Sam Altman frames the developer platform around models, tools,
+              and distribution. The keynote itself reveals a slightly richer
+              system. Intelligence is only the bottom layer. A durable runtime
+              turns that intelligence into work, a collaboration surface makes
+              the work legible to people, and a distribution layer connects the
+              resulting software to users and payment capacity.
+            </p>
+            <div class="stack-map" aria-label="OpenAI agent platform stack">
+              <div>
+                <strong>1. Intelligence</strong>
+                <span>GPT-6.1 Sol, Astra, Ultrafast, Luna, voice, images, and computer use.</span>
+              </div>
+              <div>
+                <strong>2. Runtime</strong>
+                <span>Codex harness, Agents API, sessions, memory, tools, MCP, skills, sandboxes, and recovery.</span>
+              </div>
+              <div>
+                <strong>3. Work surface</strong>
+                <span>Dots, ChatGPT Spaces, Codex Cloud, Slack or Teams, and shared artifacts.</span>
+              </div>
+              <div>
+                <strong>4. Trust</strong>
+                <span>Permissions, approvals, threat models, Private Intelligence, ZDR paths, and auditability.</span>
+              </div>
+              <div>
+                <strong>5. Distribution</strong>
+                <span>ChatGPT identity, plan usage, plugin discovery, extensions, Sites, and partner channels.</span>
+              </div>
+              <div>
+                <strong>6. Feedback</strong>
+                <span>Real work produces traces, failures, evaluations, and research tasks that improve later systems.</span>
+              </div>
+            </div>
+            <p>
+              This matters because each layer increases the value of the others.
+              Better models make the harness more reliable. The harness lets
+              agents work longer. Spaces creates a place where humans can steer
+              and inspect that work. Distribution brings developers and users
+              into the loop. More real workflows generate the evidence needed
+              to improve the models and product controls.
+            </p>
+          </section>
+
+          <section id="launch-map">
+            <p class="section-label">Launch map</p>
+            <h2>What was announced, and how ready it actually is</h2>
+            <p>
+              The keynote moves quickly between launches, demos, previews, and
+              future availability. The table below normalizes those categories.
+              “Available” still depends on plan, region, workspace settings, and
+              staged rollout; it does not mean universal access.
+            </p>
+            <table class="launch-table">
+              <thead><tr><th>Launch</th><th>Status at DevDay</th><th>What it changes</th></tr></thead>
+              <tbody>
+                <tr><td>dots</td><td><span class="status">Beta / rollout</span></td><td>Persistent personal or specialist agents with cloud computers, connected apps, background work, and messaging identity.</td></tr>
+                <tr><td>ChatGPT Spaces</td><td><span class="status">Rollout</span></td><td>A collaborative canvas where people and dots create, discuss, and update documents, data, prototypes, and other artifacts.</td></tr>
+                <tr><td>GPT-6.1 Sol</td><td><span class="status">Available</span></td><td>Near-Astra capability for complex coding, computer use, and professional work at lower standard token prices.</td></tr>
+                <tr><td>Ultrafast</td><td><span class="status">Astra now; Sol later</span></td><td>A paid latency tier for Codex and API workloads, reported at up to 300 generated tokens per second and up to 8× standard speed in Codex.</td></tr>
+                <tr><td>Pro 500 / Pro 200</td><td><span class="status">Subscription launch</span></td><td>Higher-capacity consumer access, including Ultrafast at the top tier and broader frontier-model access.</td></tr>
+                <tr><td>Decisions API</td><td><span class="status">Limited preview</span></td><td>Uses Luna to choose among finite, developer-defined answers for fast classification, routing, and action selection.</td></tr>
+                <tr><td>Codex Cloud</td><td><span class="status">Available / rollout</span></td><td>Runs tasks remotely so work can continue while the user's laptop is closed and be resumed across devices.</td></tr>
+                <tr><td>Codex Security Cloud</td><td><span class="status">Research preview</span></td><td>Threat-model-guided vulnerability investigation, validation, deduplication, scheduled scans, and proposed patches.</td></tr>
+                <tr><td>Agents API</td><td><span class="status">Public beta</span></td><td>Exposes the managed Codex harness: durable sessions, tools, memory, compaction, environments, and multi-agent orchestration.</td></tr>
+                <tr><td>Computer use in Agents API</td><td><span class="status">Public beta surface</span></td><td>Lets an agent operate software through the UI inside a chosen environment.</td></tr>
+                <tr><td>Bedrock Managed Agents</td><td><span class="status">Partner launch</span></td><td>Runs OpenAI-powered agents alongside existing applications and data in AWS.</td></tr>
+                <tr><td>Private Intelligence</td><td><span class="status">Mixed availability</span></td><td>Combines privacy-oriented processing paths; ZDR with Private Safety Processing is documented, while Private Inference was announced for a later preview.</td></tr>
+                <tr><td>Sign in with ChatGPT</td><td><span class="status">Available / partner rollout</span></td><td>Provides identity and, with separate consent, lets eligible users apply ChatGPT plan usage to participating third-party products.</td></tr>
+                <tr><td>Plugin extensions</td><td><span class="status">Launch / rollout</span></td><td>Adds full-screen apps, conversation panels, file viewers, editors, dashboards, and workspaces to ChatGPT and Codex.</td></tr>
+                <tr><td>Plugin discovery and review</td><td><span class="status">Platform update</span></td><td>Recommends relevant plugins in conversation and reduces friction when developers revise a submission.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="dots-spaces">
+            <p class="section-label">Dots and Spaces</p>
+            <h2>Persistent agents need a place to work with people</h2>
+            <p>
+              A dot is not presented as a single chat thread. It is an agent
+              that can learn how its owner works, access authorized services,
+              operate a cloud computer, continue tasks in the background, and
+              return with results. In the keynote examples, dots review work
+              overnight, investigate bug reports, prepare fixes, open pull
+              requests, and participate through Slack or Microsoft Teams with a
+              distinct identity.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-03-openai-devday-dots-cloud-computer.jpg"
+                alt="OpenAI DevDay slide showing a dot executing a checklist on its own cloud computer"
+              />
+              <figcaption>
+                <strong>Source frame, about 06:42.</strong> The checklist makes
+                the operational model concrete: an agent reads migration docs,
+                plans changes, edits code, runs tests, and ships work in a
+                remote environment. The important unit is a recoverable task,
+                not a long chat response.
+              </figcaption>
+            </figure>
+            <p>
+              Spaces solves the coordination problem that follows. If several
+              people and agents are working on the same objective, a stream of
+              private chats fragments the state. A Space instead holds living
+              artifacts and conversations in one shared context. The demo moves
+              between an analysis, an interactive chart, a prototype, teammate
+              comments, and a dot returning from delegated work.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-03-openai-devday-space-collaboration.jpg"
+                alt="ChatGPT Space demo with teammates, an agent, and a customer feedback chart"
+              />
+              <figcaption>
+                <strong>Source frame, about 13:35.</strong> A Space behaves like
+                a shared, agent-aware workbench. Artifacts are visible alongside
+                the participants and conversation rather than buried inside a
+                single assistant's response.
+              </figcaption>
+            </figure>
+            <div class="two-grid">
+              <div>
+                <strong>What changes for users</strong>
+                <span>Delegation becomes asynchronous. A person can ask for an outcome, inspect progress later, and collaborate around the returned artifact.</span>
+              </div>
+              <div>
+                <strong>What changes for organizations</strong>
+                <span>Agent identity, permissions, connected apps, approvals, and ownership become administrative primitives rather than prompt conventions.</span>
+              </div>
+            </div>
+            <p>
+              The combination is stronger than either product alone. Dots
+              without Spaces risk becoming invisible background processes.
+              Spaces without durable agents would be another collaborative
+              document. Together they make agent work inspectable and social.
+            </p>
+          </section>
+
+          <section id="models">
+            <p class="section-label">The model portfolio</p>
+            <h2>Capability, cost, latency, and output shape are separate knobs</h2>
+            <p>
+              OpenAI no longer presents one model as the answer to every
+              workload. GPT-6.1 Sol is the default balance: official model
+              documentation describes near-Astra performance for complex work,
+              a 1,050,000-token context window, 128,000 maximum output tokens,
+              and support for tools including computer use, MCP, skills, hosted
+              shell, and structured outputs. Its listed standard price at the
+              time of writing is $2 per million input tokens and $10 per million
+              output tokens.
+            </p>
+            <p>
+              Ultrafast addresses a different bottleneck. The keynote reports
+              up to 300 generated tokens per second and the DevDay announcement
+              states up to 8× standard speed in Codex and 6× in the API. This is
+              a paid service tier, not a new reasoning method. It matters when
+              latency changes the product experience: interactive coding,
+              voice, computer control, games, or agents that repeatedly wait on
+              model output inside a tool loop.
+            </p>
+            <p>
+              The Decisions API narrows the output space instead of accelerating
+              an open-ended response. A developer supplies finite choices; Luna
+              selects among them in a fraction of a second. That makes it suited
+              to routing, classification, prioritization, and bounded next
+              actions. It should not replace a generative model when the answer
+              space is unknown or the system needs a novel explanation.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-03-openai-devday-decisions-api.jpg"
+                alt="OpenAI DevDay Decisions API slide showing a fast bounded decision demo"
+              />
+              <figcaption>
+                <strong>Source frame, about 22:25.</strong> Decisions API is
+                explicitly shown as “in preview.” The architectural lesson is
+                more durable than the launch status: use generative intelligence
+                for open problems and bounded decision models for known action
+                spaces.
+              </figcaption>
+            </figure>
+            <div class="three-grid">
+              <div><strong>Astra</strong><span>Maximum intelligence when quality dominates cost and latency.</span></div>
+              <div><strong>Sol</strong><span>Near-frontier capability as a daily driver for long, tool-using work.</span></div>
+              <div><strong>Luna / Decisions</strong><span>Fast, finite decisions where the application owns the allowed outputs.</span></div>
+            </div>
+          </section>
+
+          <section id="research">
+            <p class="section-label">The research flywheel</p>
+            <h2>OpenAI is using agents to improve the systems that build agents</h2>
+            <p>
+              The research section is strategically important because it
+              explains why the product stack may compound. Tejal Patwardhan
+              describes models helping with training infrastructure, computer
+              use, dashboards, game assets, and safer refusal behavior. OpenAI
+              reports that by July more than one-third of day-long internal
+              research tasks completed without human intervention and that
+              models contributed to work on more than one hundred open
+              mathematical problems.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-03-openai-devday-research-agents.jpg"
+                alt="OpenAI DevDay chart showing a rising share of complex research problems completed by agents"
+              />
+              <figcaption>
+                <strong>Source frame, about 26:27.</strong> OpenAI's internal
+                chart shows longer tasks becoming more tractable over time.
+                Treat it as company-reported operational evidence: the keynote
+                does not provide the task set, grading protocol, failure
+                distribution, or independent replication.
+              </figcaption>
+            </figure>
+            <p>
+              The phrase “AI research intern” is a product narrative, not a
+              scientific category. The defensible claim is narrower: OpenAI now
+              has internal agent systems that can complete a meaningful subset
+              of long research workflows, and the same harness foundations are
+              being shipped in Codex, dots, and the Agents API. This shortens the
+              path from internal capability to external product, while also
+              making evaluation quality and provenance more important.
+            </p>
+          </section>
+
+          <section id="runtime">
+            <p class="section-label">The developer runtime</p>
+            <h2>The Agents API is the architectural center of the keynote</h2>
+            <p>
+              OpenAI's documentation describes the Agents API as access to a
+              managed Codex harness. The application defines the agent and
+              provides tools; OpenAI manages durable sessions, orchestration,
+              context compaction, and recovery. An optional environment gives
+              the agent files, commands, skills, MCP connections, and computer
+              access. Events and items make progress observable to the host
+              application.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-03-openai-devday-agents-api.jpg"
+                alt="OpenAI DevDay Agents API slide listing harness, MCP tools and skills, environment, compaction, memory and context, and multi-agent control"
+              />
+              <figcaption>
+                <strong>Source frame, about 29:12.</strong> The slide exposes the
+                six runtime concerns the API is meant to own: harness; MCP,
+                tools, and skills; environment; compaction; memory and context;
+                and multi-agent control.
+              </figcaption>
+            </figure>
+            <div class="status-grid">
+              <div><strong>Agent</strong><span>Model, instructions, tools, skills, and MCP servers available to the worker.</span></div>
+              <div><strong>Environment</strong><span>Hosted or self-hosted sandbox/computer where the worker reads files and executes actions.</span></div>
+              <div><strong>Session</strong><span>Durable task history that survives turns, compacts context, and can recover from interruption.</span></div>
+              <div><strong>Application server</strong><span>Owns users, business state, authorization, billing, UX, and irreversible side effects.</span></div>
+            </div>
+            <p>
+              Codex Cloud is a first-party demonstration of this pattern. A task
+              can begin on a phone, continue remotely after a laptop closes, and
+              be reviewed later on another device. Codex Security Cloud applies
+              the runtime to a specialized workflow: build a threat model,
+              investigate candidates, validate exploitability in isolation,
+              deduplicate findings, and propose reviewed patches.
+            </p>
+            <div class="callout">
+              <strong>Critical architecture boundary</strong>
+              <p>
+                A managed harness does not remove application responsibility.
+                Your system still owns authorization, tool scope, approval
+                policy, domain state, human escalation, outcome evaluation, and
+                audit retention. The harness coordinates intelligent work; it
+                should not silently become the source of truth for the business.
+              </p>
+            </div>
+          </section>
+
+          <section id="trust">
+            <p class="section-label">Trust, privacy, and reliability</p>
+            <h2>Long-running agents move the risk boundary from text to action</h2>
+            <p>
+              Once an agent can browse, run commands, access connected services,
+              message a team, and operate for hours, answer quality is only one
+              dimension of safety. The platform must govern who can start work,
+              which data and tools are visible, when an approval is required,
+              how external instructions are treated, where execution occurs,
+              and how an operator reconstructs what happened.
+            </p>
+            <p>
+              The keynote groups several answers under Private Intelligence.
+              OpenAI's announcement documents Zero Data Retention with Private
+              Safety Processing and describes Private Inference as a later
+              preview. These claims should be mapped product by product. For
+              example, current Agents API documentation states that the public
+              beta supports United States data residency only and is not
+              ZDR-eligible, even when the sandbox is self-hosted.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-03-openai-devday-api-performance.jpg"
+                alt="OpenAI DevDay slide reporting API workflow speed, time to first token, and uptime improvements"
+              />
+              <figcaption>
+                <strong>Source frame, about 31:08.</strong> OpenAI reports more
+                than 30% speedup in tool-call workflows, more than 45% faster
+                time to first token, and more than 99.9% Responses API uptime.
+                The slide is useful operational context, but service-specific
+                SLOs and workload measurements remain necessary.
+              </figcaption>
+            </figure>
+            <div class="two-grid">
+              <div><strong>What the platform can provide</strong><span>Isolation, session recovery, permission surfaces, private processing options, policy controls, and agent-native telemetry.</span></div>
+              <div><strong>What the customer must still prove</strong><span>Least privilege, prompt-injection resistance, approval correctness, data classification, rollback, incident response, and business-outcome safety.</span></div>
+            </div>
+          </section>
+
+          <section id="distribution">
+            <p class="section-label">Distribution and economics</p>
+            <h2>OpenAI wants to reduce both user acquisition and inference friction</h2>
+            <p>
+              Sign in with ChatGPT is more than a familiar login button. The
+              identity flow shares basic profile information with a participating
+              application. A separate permission can allow eligible Plus or Pro
+              users to apply included ChatGPT Work and Codex usage to AI requests
+              in that product, without exposing an API key. Users can set weekly
+              limits per app; the developer may still charge for software,
+              infrastructure, or premium features.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-03-openai-devday-sign-in-chatgpt.jpg"
+                alt="OpenAI DevDay slide showing Sign in with ChatGPT as part of growing a developer business"
+              />
+              <figcaption>
+                <strong>Source frame, about 44:39.</strong> The strategic move is
+                to make an existing ChatGPT relationship portable into partner
+                products: identity first, then separately authorized model
+                usage. Conversations, memory, files, tokens, and billing data
+                are not automatically shared by identity sign-in.
+              </figcaption>
+            </figure>
+            <p>
+              Plugin extensions complete the distribution story. A plugin can
+              be more than a tool endpoint: it can add an interactive panel,
+              file viewer, editor, dashboard, workspace, or full-screen app to
+              ChatGPT and supported Codex surfaces. Contextual discovery lets
+              ChatGPT recommend a relevant plugin during a conversation. Sites
+              can embed the same extensions, allowing generated software to use
+              connected capabilities rather than remaining a static prototype.
+            </p>
+            <p>
+              For developers, this lowers onboarding and inference-cost friction.
+              For OpenAI, it expands ChatGPT from an application into a platform
+              and identity boundary. The trade-off is dependency: discovery,
+              permission models, plan economics, policy review, and runtime
+              behavior become coupled to OpenAI's ecosystem.
+            </p>
+          </section>
+
+          <section id="strategy">
+            <p class="section-label">Why this matters for OpenAI</p>
+            <h2>Five strategic consequences follow from the combined stack</h2>
+            <ol>
+              <li>
+                <strong>ChatGPT becomes a work substrate.</strong> The company is
+                moving beyond a destination where users ask questions toward a
+                persistent environment where people, agents, files, apps, and
+                business processes coexist.
+              </li>
+              <li>
+                <strong>Codex becomes a general agent runtime.</strong> Coding is
+                the proving ground because outcomes are executable and testable,
+                but the harness primitives generalize to research, operations,
+                security, and knowledge work.
+              </li>
+              <li>
+                <strong>The moat shifts from model quality alone to system integration.</strong>
+                Models can be substituted more easily than identity, durable
+                state, permissions, connected apps, collaboration surfaces,
+                distribution, and accumulated workflow traces.
+              </li>
+              <li>
+                <strong>OpenAI is aligning consumer and developer economics.</strong>
+                Shared plan usage can make third-party AI software easier to try
+                while keeping demand attached to an OpenAI account and capacity
+                system.
+              </li>
+              <li>
+                <strong>The platform creates a capability flywheel.</strong>
+                Internal agents help research and build the next generation;
+                product agents produce harder real-world tasks; improved models
+                make those agents more useful.
+              </li>
+            </ol>
+            <figure class="visual">
+              <img
+                src="2026-10-03-openai-devday-launch-recap.jpg"
+                alt="OpenAI DevDay recap slide showing dots, GPT-6.1 Sol, Ultrafast, Agents API, Codex Cloud, Pro 500, ChatGPT Space, and developer distribution launches"
+              />
+              <figcaption>
+                <strong>Source frame, about 47:55.</strong> The recap makes the
+                portfolio visible at once. The connective tissue is more
+                important than any single logo: intelligence, execution,
+                collaboration, trust, and distribution are being shipped as one
+                vertically integrated system.
+              </figcaption>
+            </figure>
+          </section>
+
+          <section id="platform-lessons">
+            <p class="section-label">For an agentic AI platform</p>
+            <h2>What to borrow, and what not to copy blindly</h2>
+            <p>
+              For teams building a master-agent, sub-agent, skill, and MCP
+              platform, DevDay offers a useful decomposition. Treat an agent as
+              a durable runtime contract rather than a persona prompt. Give it
+              explicit tools, skills, environment, memory scope, identity,
+              permissions, and evaluation policy. Put collaboration artifacts
+              outside the chat transcript so both people and agents can inspect
+              and modify shared state.
+            </p>
+            <div class="two-grid">
+              <div><strong>Adopt</strong><span>Durable sessions, separate environments, progressive skill loading, typed events, clear approval boundaries, agent identity, shared artifacts, and model routing by workload.</span></div>
+              <div><strong>Keep independent</strong><span>Business source of truth, authorization policy, eval datasets, audit logs, cost controls, provider abstraction, and rollback for irreversible actions.</span></div>
+              <div><strong>Design for BA users</strong><span>Compose agents from outcomes, allowed decisions, inputs, tools, escalation rules, and acceptance tests rather than asking business analysts to author one giant prompt.</span></div>
+              <div><strong>Measure</strong><span>Task completion, intervention rate, calibrated confidence, policy violations, tool success, cost per accepted outcome, recovery quality, and human override rate.</span></div>
+            </div>
+            <p>
+              The most valuable lesson is that multi-agent systems need an
+              operating model, not simply more agents. A master agent should
+              route and coordinate; specialist agents should own narrow
+              outcomes; skills should package reusable procedure; tools should
+              expose controlled capabilities; the workflow should define state,
+              gates, retries, and human escalation. Prompts sit inside that
+              system. They are not the system.
+            </p>
+          </section>
+
+          <section id="risks">
+            <p class="section-label">Open questions and risks</p>
+            <h2>The keynote shows direction more clearly than production maturity</h2>
+            <ul>
+              <li><strong>Rollout ambiguity:</strong> keynote language compresses beta, limited preview, staged availability, plan eligibility, and regional restrictions.</li>
+              <li><strong>Agent economics:</strong> persistent background work can make cost less visible; shared plan usage and premium speed tiers need explicit quotas and per-outcome accounting.</li>
+              <li><strong>Governance complexity:</strong> a dot's model controls, connected apps, local-computer access, messaging permissions, and custom rules can live in different administrative layers.</li>
+              <li><strong>Context integrity:</strong> long-lived memory and shared Spaces increase the value of continuity but also the blast radius of stale, poisoned, or over-broad context.</li>
+              <li><strong>Platform dependence:</strong> identity, discovery, subscription usage, plugins, and managed runtime improve velocity while increasing switching costs.</li>
+              <li><strong>Evaluation debt:</strong> impressive demos do not reveal tail failures, recovery quality, approval errors, or the business loss caused by a confidently wrong action.</li>
+              <li><strong>Data-control mismatch:</strong> “private” is not one property; retention, residency, safety processing, sandbox placement, telemetry, and third-party tools must be assessed separately.</li>
+            </ul>
+            <div class="callout">
+              <strong>My take</strong>
+              <p>
+                This is OpenAI's clearest platform statement since ChatGPT. The
+                company is betting that the winning interface for advanced AI is
+                a persistent network of agents embedded in shared work, and that
+                the winning developer platform must own the harness and
+                distribution around the model. The vision is coherent and the
+                pieces are unusually well aligned. The unresolved question is
+                whether real organizations can govern these systems as quickly
+                as OpenAI can make them capable.
+              </p>
+            </div>
+          </section>
+
+          <section id="timeline">
+            <p class="section-label">Video map</p>
+            <h2>Jump to the part you need</h2>
+            <ul class="chapter-list">
+              <li><a href="https://www.youtube.com/watch?v=Fls_onRviPM&t=146s"><time>02:26</time><span>dots introduced</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Fls_onRviPM&t=502s"><time>08:22</time><span>ChatGPT Spaces introduced</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Fls_onRviPM&t=769s"><time>12:49</time><span>Space collaboration demo</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Fls_onRviPM&t=1041s"><time>17:21</time><span>Availability and enterprise controls</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Fls_onRviPM&t=1132s"><time>18:52</time><span>Developer platform thesis</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Fls_onRviPM&t=1179s"><time>19:39</time><span>GPT-6.1 Sol</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Fls_onRviPM&t=1226s"><time>20:26</time><span>Ultrafast</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Fls_onRviPM&t=1333s"><time>22:13</time><span>Decisions API</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Fls_onRviPM&t=1455s"><time>24:15</time><span>AI research intern and research flywheel</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Fls_onRviPM&t=1700s"><time>28:20</time><span>Codex Cloud</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Fls_onRviPM&t=1748s"><time>29:08</time><span>Agents API and computer use</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Fls_onRviPM&t=1810s"><time>30:10</time><span>Private Intelligence</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Fls_onRviPM&t=1912s"><time>31:52</time><span>Live Codex, voice, and Ultrafast demos</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Fls_onRviPM&t=2644s"><time>44:04</time><span>Distribution and business</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Fls_onRviPM&t=2683s"><time>44:43</time><span>Sign in with ChatGPT and plan usage</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Fls_onRviPM&t=2707s"><time>45:07</time><span>Plugin extensions</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Fls_onRviPM&t=2871s"><time>47:51</time><span>Launch recap</span></a></li>
+            </ul>
+          </section>
+
+          <section id="sources">
+            <p class="section-label">Sources</p>
+            <h2>Primary material used for this guide</h2>
+            <ul class="source-list">
+              <li><a href="https://www.youtube.com/watch?v=Fls_onRviPM">OpenAI DevDay 2026 Keynote (full video)</a> — source transcript, demos, and frames.</li>
+              <li><a href="https://community.openai.com/t/devday-2026-announcements-and-developer-resources/1402006">DevDay 2026 announcements and developer resources</a> — official launch status and links.</li>
+              <li><a href="https://developers.openai.com/api/docs/models/gpt-6.1-sol">GPT-6.1 Sol model documentation</a> — pricing, context, features, and residency.</li>
+              <li><a href="https://developers.openai.com/api/docs/guides/ultrafast-mode">Ultrafast mode documentation</a> — speed tier behavior and limits.</li>
+              <li><a href="https://developers.openai.com/api/docs/guides/agents-api/overview">Agents API overview</a> and <a href="https://developers.openai.com/api/docs/guides/agents-api/architecture">architecture</a> — runtime ownership and data-control boundaries.</li>
+              <li><a href="https://help.openai.com/en/articles/20001554-manage-dots-in-chatgpt-workspaces">Manage dots in ChatGPT workspaces</a> — permissions and enterprise controls.</li>
+              <li><a href="https://help.openai.com/en/articles/20001107-codex-security">Codex Security</a> — threat models, validation, patches, access, and billing.</li>
+              <li><a href="https://help.openai.com/en/articles/20001410-sign-in-with-chatgpt">Sign in with ChatGPT</a> and <a href="https://help.openai.com/en/articles/20001542-using-your-chatgpt-plan-in-other-apps-and-sites">Using your ChatGPT plan in other apps and sites</a> — identity and delegated plan usage.</li>
+              <li><a href="https://help.openai.com/en/articles/20001256-plugins-in-chatgpt">Plugins in ChatGPT</a> — extensions, connected apps, permissions, and automation surfaces.</li>
+            </ul>
+          </section>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <p>On this page</p>
+          <a href="#summary">Executive summary</a>
+          <a href="#thesis">Strategic thesis</a>
+          <a href="#launch-map">Launch map</a>
+          <a href="#dots-spaces">Dots and Spaces</a>
+          <a href="#models">Model portfolio</a>
+          <a href="#research">Research flywheel</a>
+          <a href="#runtime">Developer runtime</a>
+          <a href="#trust">Trust and privacy</a>
+          <a href="#distribution">Distribution</a>
+          <a href="#strategy">Why it matters</a>
+          <a href="#platform-lessons">Platform lessons</a>
+          <a href="#risks">Open questions</a>
+          <a href="#timeline">Video map</a>
+          <a href="#sources">Sources</a>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <a href="./">← Back to reading room</a>
+      <span>Source-grounded notes for practical work.</span>
+    </footer>
+  </body>
+</html>

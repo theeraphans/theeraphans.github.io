@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Introduced the Transformer: an encoder-decoder architecture built around attention rather than recurrence or convolution, enabling much more parallel sequence training.">
+  <meta name="resource-file" content="2026-09-08-attention-is-all-you-need-transformers-en.html">
+  <title>Attention Is All You Need · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/1706.03762">Read paper</a><a class="action-link" href="./">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Transformer Foundations · Paper 1 of 37</p>
+        <h1>Attention Is All You Need</h1>
+        <p class="subtitle">Introduced the Transformer: an encoder-decoder architecture built around attention rather than recurrence or convolution, enabling much more parallel sequence training.</p>
+        <div class="meta"><span><strong>Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, Illia Polosukhin</strong></span><span>2017</span><span>Foundation</span><span>14 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>Attention Is All You Need</h2><p>Google Brain and Google Research</p><p><strong>Prerequisites:</strong> Vectors, matrix multiplication, softmax, and basic sequence-to-sequence learning.</p><a href="https://arxiv.org/abs/1706.03762">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Foundation</strong></div><div class="paper-fact"><span>Place in path</span><strong>1 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Sequence models before the Transformer were dominated by recurrent networks and, increasingly, convolutions. Recurrence carries state token by token, which creates a long computational path and prevents all positions in a sequence from being processed simultaneously during training. Long-range relationships are also difficult because information must travel through many recurrent steps.</p>
+<p>The paper asks whether attention can perform the entire sequence-transduction job. Earlier systems already used attention on top of recurrent encoders and decoders; the radical step was to remove recurrence and convolution from the core architecture.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Represent every token by directly mixing information from other relevant positions. Queries express what a position is looking for, keys describe what each position offers, and values contain the information to aggregate. Multiple heads learn several relationship spaces in parallel.</p>
+<p>Because every position can compute attention concurrently, training maps efficiently onto accelerators. Positional encodings are added because attention alone does not know sequence order.</p><div class="equation">Attention(Q, K, V) = softmax(QKᵀ / √dₖ)V</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>The encoder alternates multi-head self-attention with position-wise feed-forward networks. The decoder adds masked self-attention so a target token cannot inspect the future, then cross-attends to encoder outputs. Residual connections and layer normalization stabilize every sublayer.</p>
+<p>Scaled dot-product attention divides by the square root of key width before softmax. Without the scaling factor, large dot products push softmax into saturated regions with small gradients.</p><figure class="concept-flow" aria-label="Transformer information flow">
+    <div class="flow-step"><span>01</span><strong>Embed + position</strong><p>Turn token IDs into ordered vectors.</p></div>
+<div class="flow-step"><span>02</span><strong>Self-attend</strong><p>Mix information across allowed positions.</p></div>
+<div class="flow-step"><span>03</span><strong>Transform</strong><p>Apply the same feed-forward network per token.</p></div>
+<div class="flow-step"><span>04</span><strong>Cross-attend</strong><p>Decoder reads encoded source context.</p></div>
+<div class="flow-step"><span>05</span><strong>Predict</strong><p>Project to a next-token distribution.</p></div>
+    <figcaption>The encoder produces contextual source states; the masked decoder predicts one target token at a time during inference.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>For each head, learned projections map the input into Q, K, and V matrices. QK transpose produces all pairwise compatibility scores; masking removes illegal connections; softmax converts each row to weights; multiplying by V forms contextual representations. Head outputs are concatenated and projected again.</p>
+<p>The original model also uses sinusoidal positions, tied embedding choices, label smoothing, an Adam schedule with warmup, and beam search. These details matter historically, but the durable abstraction is a stack of attention and token-wise transformation blocks.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>On WMT 2014 English-to-German translation, the large Transformer reported 28.4 BLEU, exceeding the paper’s listed prior single models while using substantially less training cost. The base model also trained much faster than recurrent alternatives. English-to-French results showed the architecture generalized beyond one pair.</p>
+<p>These numbers establish effectiveness for the tested translation setup. They do not by themselves prove that attention is universally best, nor did the paper evaluate today’s scale, context lengths, or decoder-only pretraining regime.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>The architecture made accelerator-friendly scaling practical and became the shared skeleton for BERT-style encoders, GPT-style decoders, multimodal models, diffusion-model text encoders, and many scientific sequence systems. It also created new systems bottlenecks: attention’s quadratic score matrix and the memory traffic needed to materialize it.</p>
+<p>Later work in this collection changes almost every component around the basic block: objectives, position handling, KV-head sharing, kernels, sparse experts, cache management, and alignment.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Track tensor shapes explicitly: batch, sequence, heads, and head dimension. Many implementation errors are silent broadcasting or mask mistakes. Use fused attention kernels rather than constructing a full score tensor when the framework and hardware support them.</p>
+<p>Choose encoder-only, decoder-only, or encoder-decoder topology from the task. Bidirectional representation, autoregressive generation, and source-conditioned generation have different masking and serving behavior.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>Dense self-attention grows quadratically with sequence length in score computation and memory. The paper’s fixed context and translation evaluation do not settle long-context extrapolation. Attention also provides content mixing, not factual grounding, planning, or safety.</p>
+<p>Subsequent systems often move layer normalization, change activations and positions, remove the encoder, and optimize the attention kernel. The Transformer is a design family, not one frozen implementation.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>Read BERT next to see how a bidirectional pretraining objective turns the Transformer encoder into a general language representation. GPT provides the complementary decoder-only route. FlashAttention later preserves the same mathematical result while changing how it moves through memory.</p><div class="article-nav"><a href="2026-09-08-ai-engineer-research-papers.html">← Collection</a><a href="2026-09-08-bert-bidirectional-transformer-pretraining-en.html">BERT →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>Attention replaces sequential state propagation with direct token-to-token interaction.</li><li>Queries, keys, and values separate matching from transferred content.</li><li>Multiple heads create several learned relationship spaces.</li><li>Position information must be injected explicitly.</li><li>Parallel training was as important as benchmark quality.</li><li>The quadratic attention matrix becomes a central long-context cost.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>Focus on the data path through attention and the reason parallelism changed scaling. The original paper is a translation paper, not a modern decoder-only LLM specification.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

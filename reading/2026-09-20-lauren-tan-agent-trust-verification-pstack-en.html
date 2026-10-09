@@ -1,0 +1,943 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>Lauren Tan: Build Trust Before You Scale Coding Agents</title>
+    <meta
+      name="description"
+      content="Lauren Tan's practical system for trustworthy coding agents: verification skills, feature maps, pstack, evals, cloud agents, strict architecture, and CI-enforced taste."
+    />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .callout {
+        padding: 1rem;
+        border-left: 3px solid var(--green);
+        background: var(--surface);
+        margin: 1.5rem 0;
+      }
+      .warning {
+        border-left-color: var(--gold);
+      }
+      .compare {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1px;
+        background: var(--line);
+        margin: 1.5rem 0;
+      }
+      .compare > div {
+        background: var(--page);
+        padding: 1rem;
+      }
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1px;
+        background: var(--line);
+        margin: 1.5rem 0;
+      }
+      .steps > div {
+        background: var(--page);
+        padding: 1rem;
+      }
+      .steps strong {
+        display: block;
+      }
+      .steps span {
+        font-size: 0.84rem;
+        color: var(--muted);
+      }
+      .slide-figure,
+      .visual {
+        margin: 1.75rem 0 2rem;
+      }
+      .diagram-panel {
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--page);
+        overflow: hidden;
+      }
+      .diagram-label {
+        margin: 0;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .trust-chart {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .trust-stage {
+        min-height: 12rem;
+        padding: 1rem;
+        border-right: 1px solid var(--line);
+      }
+      .trust-stage:last-child {
+        border-right: 0;
+      }
+      .trust-stage span {
+        display: block;
+        width: fit-content;
+        margin-bottom: 2.4rem;
+        padding: 0.25rem 0.45rem;
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.72rem;
+      }
+      .trust-stage:nth-child(2) span {
+        margin-bottom: 1.2rem;
+      }
+      .trust-stage:nth-child(3) span {
+        margin-bottom: 0;
+      }
+      .trust-stage strong {
+        display: block;
+        margin-bottom: 0.4rem;
+        font-size: 1rem;
+      }
+      .trust-stage p,
+      .verification-grid p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1.5;
+      }
+      .verification-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .verification-grid > div {
+        min-height: 10rem;
+        padding: 1rem;
+        border-right: 1px solid var(--line);
+      }
+      .verification-grid > div:last-child {
+        border-right: 0;
+      }
+      .verification-grid b {
+        display: block;
+        margin: 0.7rem 0 0.4rem;
+      }
+      .verification-grid small {
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
+      .slide-figure figcaption,
+      .visual figcaption {
+        margin-top: 0.7rem;
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.55;
+      }
+      .slide-figure figcaption strong,
+      .visual figcaption strong {
+        color: var(--ink);
+      }
+      .eval-loop {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.5rem;
+        align-items: stretch;
+      }
+      .eval-loop div {
+        padding: 0.8rem;
+        border: 1px solid var(--line);
+        background: var(--page);
+        font-size: 0.88rem;
+      }
+      .eval-loop .score {
+        background: var(--ink);
+        color: var(--page);
+      }
+      .architecture {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1px;
+        background: var(--line);
+      }
+      .architecture div {
+        background: var(--page);
+        padding: 1rem;
+      }
+      .architecture b {
+        display: block;
+      }
+      .architecture small {
+        color: var(--muted);
+      }
+      .numbers {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-block: 1px solid var(--line);
+        margin: 1.5rem 0;
+      }
+      .numbers div {
+        padding: 1rem;
+        border-right: 1px solid var(--line);
+      }
+      .numbers div:last-child {
+        border-right: 0;
+      }
+      .numbers strong {
+        display: block;
+        font-size: 1.5rem;
+      }
+      .numbers span {
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+      .timeline p {
+        padding: 0.7rem 0;
+        border-bottom: 1px solid var(--line);
+      }
+      @media (max-width: 750px) {
+        .compare,
+        .architecture {
+          grid-template-columns: 1fr;
+        }
+        .steps {
+          grid-template-columns: 1fr 1fr;
+        }
+        .eval-loop {
+          grid-template-columns: 1fr;
+        }
+        .numbers {
+          grid-template-columns: 1fr;
+        }
+        .numbers div {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .numbers div:last-child {
+          border-bottom: 0;
+        }
+        .slide-figure,
+        .visual {
+          margin: 1.35rem 0 1.7rem;
+        }
+        .trust-chart,
+        .verification-grid {
+          grid-template-columns: 1fr;
+        }
+        .trust-stage,
+        .verification-grid > div {
+          min-height: 0;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .trust-stage:last-child,
+        .verification-grid > div:last-child {
+          border-bottom: 0;
+        }
+        .trust-stage span,
+        .trust-stage:nth-child(2) span,
+        .trust-stage:nth-child(3) span {
+          margin-bottom: 0.75rem;
+        }
+        .slide-figure figcaption,
+        .visual figcaption {
+          font-size: 0.86rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Reading room</a>
+      <div class="top-actions">
+        <a
+          class="action-link"
+          href="https://www.youtube.com/watch?v=yw_QhowlZ2g"
+          >Watch source</a
+        >
+      </div>
+    </nav>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Lauren Tan · Maven workshop</p>
+          <h1>Build Trust Before You Scale Coding Agents</h1>
+          <p class="subtitle">
+            Verification skills, eval-driven playbooks, agent-friendly
+            architecture, and CI constraints that turn raw model capability into
+            dependable engineering work.
+          </p>
+          <div class="meta">
+            <span>Video: 55 minutes</span><span>English deep dive</span
+            ><span>Summary run: September 20, 2026</span>
+          </div>
+        </div>
+        <figure class="hero-card">
+          <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g"
+            ><img
+              src="2026-09-20-lauren-tan-workshop-hero.jpg"
+              alt="Lauren Tan presenting a workshop about trustworthy coding agents"
+          /></a>
+          <figcaption>
+            Source thumbnail for How Cursor Turned AI Agents Into Better Engineers.
+          </figcaption>
+        </figure>
+      </header>
+      <div class="layout">
+        <article class="content">
+          <section id="framing">
+            <p class="section-label">Source correction</p>
+            <h2>
+              This is not primarily a tutorial about running 20 GrokBot agents
+            </h2>
+            <p>
+              The reupload title foregrounds “20+ GrokBot agents,” loops, goals,
+              and a Chief of Staff. The underlying recording is Lauren Tan and
+              Colin Matthews's Maven workshop,
+              <em>How Cursor Turned AI Agents Into Better Engineers</em>.
+              GrokBot appears near the end; most of the session teaches how to
+              earn enough trust to delegate engineering work at all.
+            </p>
+            <p>
+              That distinction matters. The useful system is not “spawn more
+              agents.” It is a progression: give one agent a way to observe real
+              behavior, encode reusable engineering judgment as skills, test
+              those skills with evals, reshape the codebase so correct changes
+              are easier, and enforce non-negotiable constraints in CI.
+              Parallelism comes after the evidence.
+            </p>
+            <div class="callout warning">
+              <strong>Headline claims need qualification.</strong>
+              <p>
+                The workshop supports Lauren's personal PR counts and her
+                engineering workflow. It does not substantiate the reupload
+                description's company-wide claim that 85% of engineers run teams
+                of 10+ GrokBots. This article does not repeat that statistic as
+                fact.
+              </p>
+            </div>
+          </section>
+
+          <section id="summary">
+            <p class="section-label">Executive summary</p>
+            <h2>
+              The human bottleneck disappears only when verification becomes
+              executable
+            </h2>
+            <p>
+              Tan compares managing agents to managing engineers. If you
+              distrust every result, you micromanage: one agent, one task,
+              constant review. That mode may increase typing speed, but it
+              cannot create real concurrency because the human remains the only
+              verifier.
+            </p>
+            <p>
+              She begins with a useful boundary: AI should behave like a pair,
+              not a replacement for thinking. Code generation may reduce typing
+              time while increasing the time spent reviewing and correcting
+              work. The objective is therefore not maximum output. It is a
+              system that can produce evidence strong enough to reduce the
+              human verification burden without hiding uncertainty.
+            </p>
+            <p>
+              Her answer is to move engineering knowledge out of the reviewer's
+              head and into the environment. A verification skill lets the agent
+              run the product, inspect UI or runtime behavior, capture traces,
+              and prove the original problem is gone. Skills preserve hard-won
+              methods. Evals keep those skills from silently degrading.
+              Architecture and CI make undesirable code difficult or impossible
+              to merge.
+            </p>
+            <div class="callout">
+              <strong>The core idea</strong>
+              <p>
+                Agent autonomy is not granted by confidence in the model. It is
+                earned by shortening the loop between action, observable
+                evidence, and enforceable standards.
+              </p>
+            </div>
+          </section>
+
+          <section id="trust">
+            <p class="section-label">The trust curve</p>
+            <h2>
+              Agent count should rise only after confidence in one agent rises
+            </h2>
+            <p>
+              Tan describes starting with one to three local agents and
+              personally reviewing everything. Over roughly five months, she
+              moved toward agents producing and merging large numbers of changes
+              while she increasingly reviewed behavior and architecture rather
+              than every line.
+            </p>
+            <figure class="slide-figure">
+              <div class="diagram-panel">
+                <p class="diagram-label">Trust must rise before agent count</p>
+                <div class="trust-chart">
+                  <div class="trust-stage"><span>LOW TRUST</span><strong>One agent, constant supervision</strong><p>The human relays observations, checks every result, and remains the execution bottleneck.</p></div>
+                  <div class="trust-stage"><span>PROVEN LOOP</span><strong>Several agents, executable verification</strong><p>Agents can run the product, collect evidence, and follow tested engineering skills.</p></div>
+                  <div class="trust-stage"><span>BOUNDED AUTONOMY</span><strong>Cloud parallelism and automated merges</strong><p>Strict architecture, CI, evals, and recovery controls make wider delegation defensible.</p></div>
+                </div>
+              </div>
+              <figcaption>
+                <strong>What to notice:</strong> This redraw preserves the
+                workshop's qualitative trust curve without relying on a blurry
+                video frame. Scaling from one agent to hundreds is not a tooling
+                switch. It requires evidence to rise first. <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g&t=240s">Watch the source explanation.</a>
+              </figcaption>
+            </figure>
+            <p>
+              The reupload emphasizes volume, but Tan repeatedly warns against
+              jumping directly to hundreds or thousands of cloud agents. Without
+              reliable checks, parallelism multiplies token spend, review work,
+              and wrong answers.
+            </p>
+            <div class="compare">
+              <div>
+                <strong>Low-trust mode</strong>
+                <p>
+                  The human watches the chat, reads every diff, reruns the app,
+                  explains failures, and becomes the queue through which all
+                  work must pass.
+                </p>
+              </div>
+              <div>
+                <strong>High-trust mode</strong>
+                <p>
+                  The agent can reproduce the issue, make a change, run the real
+                  product, collect evidence, satisfy CI, and leave a reviewable
+                  result.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="verification">
+            <p class="section-label">Verification first</p>
+            <h2>“Tests passed” is not proof that the user problem is fixed</h2>
+            <p>
+              Tan calls verification the most important skill in the toolbox.
+              The exact mechanism depends on the product: browser automation and
+              DOM inspection for web apps, simulators for mobile software, CPU
+              and heap traces for performance work, logs and network inspection
+              for distributed behavior.
+            </p>
+            <p>
+              The agent must interact with the same observable surface the user
+              experiences. If the bug is duplicate messages, the evidence should
+              show that duplicates no longer appear. A green unit test written
+              by the same agent may be useful, but it does not replace
+              behavioral proof.
+            </p>
+            <figure class="slide-figure">
+              <div class="diagram-panel">
+                <p class="diagram-label">A verification skill gives the agent hands and eyes</p>
+                <div class="verification-grid">
+                  <div><small>01</small><b>Launch</b><p>Start the correct build in the correct worktree and diagnose the environment before changing code.</p></div>
+                  <div><small>02</small><b>Operate</b><p>Use browser, simulator, CLI, traces, or logs to reproduce the behavior through the real product surface.</p></div>
+                  <div><small>03</small><b>Observe</b><p>Collect screenshots, runtime state, performance data, and failure signals instead of relying on self-report.</p></div>
+                  <div><small>04</small><b>Prove</b><p>Repeat the user path after the change and leave evidence that the original problem is gone.</p></div>
+                </div>
+              </div>
+              <figcaption>
+                <strong>What to notice:</strong> Control Glass is operational
+                documentation, not a vague persona prompt. It explains how to
+                launch, inspect, verify, and preserve isolation. <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g&t=420s">Watch the source explanation.</a>
+              </figcaption>
+            </figure>
+            <p>
+              Without this machinery, the human is the runtime. The agent asks
+              the person to open the application, click around, report what
+              happened, and decide whether the change worked. That arrangement
+              cannot support unattended or parallel work.
+            </p>
+          </section>
+
+          <section id="feature-map">
+            <p class="section-label">Feature maps</p>
+            <h2>Tool access is insufficient without navigation knowledge</h2>
+            <p>
+              Tan's early verification tool could technically control the
+              application but often wandered because it did not understand how
+              product concepts mapped to UI surfaces. She added a feature map
+              describing routes, tabs, selectors, shortcuts, and the path to
+              important functionality.
+            </p>
+            <p>
+              This is a form of context engineering. The map does not tell the
+              model every click for every future task. It supplies stable
+              orientation so the model spends its reasoning budget on the
+              problem rather than rediscovering the application structure.
+            </p>
+            <div class="steps">
+              <div>
+                <strong>Product concept</strong><span>“Agent PR details”</span>
+              </div>
+              <div>
+                <strong>Entry point</strong><span>route, tab, or command</span>
+              </div>
+              <div>
+                <strong>Stable handle</strong
+                ><span>selector or accessibility label</span>
+              </div>
+              <div>
+                <strong>Evidence</strong
+                ><span>screenshot, trace, or assertion</span>
+              </div>
+            </div>
+            <p>
+              The same principle applies beyond UI testing: give agents a
+              service map, ownership boundaries, canonical commands, data
+              contracts, and failure signals. A large repository without a map
+              forces every session to reconstruct institutional memory.
+            </p>
+          </section>
+
+          <section id="skills">
+            <p class="section-label">pstack and skills</p>
+            <h2>Turn repeated corrections into reusable engineering methods</h2>
+            <p>
+              Tan built pstack incrementally by observing recurring agent
+              failures. When an agent guessed instead of inspecting code,
+              skipped a design step, or performed shallow debugging, she encoded
+              the better procedure as a skill. This resembles coaching an
+              employee: do not only fix today's output; teach a method that
+              changes the next attempt.
+            </p>
+            <p>
+              The public pstack plugin describes the goal as writing less but
+              higher-quality code. It packages workflows for investigation,
+              architecture, implementation, review, testing, verification, and
+              reflection. The value is not the slash-command syntax. It is the
+              accumulated judgment inside each playbook and the routing logic
+              that selects an appropriate process.
+            </p>
+            <p>
+              Skills also create leverage across models. A strong procedure can
+              help a cheaper or faster model perform more reliably, while
+              multi-model panels can assign mechanical code, prose, and
+              architectural judgment to different strengths.
+            </p>
+          </section>
+
+          <section id="evals">
+            <p class="section-label">Evals as unit tests</p>
+            <h2>A skill is production code and needs regression tests</h2>
+            <p>
+              Skills drift as they are edited, models change, and repositories
+              evolve. Tan's mental model is direct: an eval is a unit test for
+              an agent skill. A coordinator creates a rubric, delegates cases to
+              isolated subagents, and scores the results. Separate directories
+              and neutral naming reduce the chance that a worker changes
+              behavior merely because it knows it is being evaluated.
+            </p>
+            <figure class="visual">
+              <div class="eval-loop">
+                <div>
+                  <strong>1. Define</strong><br />Write the task and rubric.
+                </div>
+                <div>
+                  <strong>2. Isolate</strong><br />Run cases in clean
+                  directories.
+                </div>
+                <div>
+                  <strong>3. Execute</strong><br />Test across relevant models.
+                </div>
+                <div class="score">
+                  <strong>4. Score</strong><br />Judge evidence, not confidence.
+                </div>
+                <div>
+                  <strong>5. Hill-climb</strong><br />Improve and rerun the
+                  skill.
+                </div>
+              </div>
+              <figcaption>
+                <strong>What to notice:</strong> The builder does not simply
+                declare its own process successful. A separate evaluator applies
+                explicit criteria, and the workflow can loop until it reaches
+                the required score.
+              </figcaption>
+            </figure>
+            <p>
+              Tan applies the same idea to verification itself: test whether the
+              verifier notices real failures, navigates correctly, and produces
+              meaningful evidence. This guards against a dangerous
+              false-confidence state where the agent says it checked the product
+              but the checking procedure is broken.
+            </p>
+          </section>
+
+          <section id="cloud">
+            <p class="section-label">Local before cloud</p>
+            <h2>Scale observation only after the feedback loop works</h2>
+            <p>
+              Tan recommends beginning locally because the developer can
+              directly observe what the agent does. Once the workflow reliably
+              reproduces issues and verifies changes, cloud agents become
+              powerful: they can run on persistent computers, respond to
+              incoming signals, and work without occupying the developer's
+              machine.
+            </p>
+            <p>
+              Her example is an agent that receives bug reports, opens its cloud
+              desktop, runs the application, and attempts to reproduce the
+              issue. Sometimes it discovers that the problem is already fixed on
+              the main branch. The organization benefits because the result is
+              reusable triage, not merely generated code.
+            </p>
+            <p>
+              The sequence is the lesson: local observability, repeatable
+              verification, then cloud parallelism. Reversing that order creates
+              an expensive fleet whose output still queues behind a human
+              reviewer.
+            </p>
+          </section>
+
+          <section id="architecture">
+            <p class="section-label">Agent-friendly codebases</p>
+            <h2>Make the correct change the easiest change</h2>
+            <p>
+              Verification can show that behavior works, but it does not
+              guarantee maintainable code. Tan argues that codebase architecture
+              must carry taste and judgment that would otherwise live in senior
+              reviewers' heads.
+            </p>
+            <p>
+              For GrokBot, she describes an internal architecture called Dune,
+              roughly framed as a Next.js-like structure for Electron
+              applications. It imposes strict boundaries and standard ways to
+              build features. The point is not that every team should reproduce
+              Dune; it is that agents perform better when modules have obvious
+              ownership, narrow contracts, and a canonical path.
+            </p>
+            <figure class="visual">
+              <div class="architecture">
+                <div>
+                  <b>Clear boundaries</b
+                  ><small
+                    >Feature folders and explicit ownership reduce the search
+                    space.</small
+                  >
+                </div>
+                <div>
+                  <b>Canonical primitives</b
+                  ><small
+                    >One approved way to fetch, mutate, render, and
+                    communicate.</small
+                  >
+                </div>
+                <div>
+                  <b>Mechanical checks</b
+                  ><small
+                    >CI rejects forbidden dependencies and patterns before
+                    review.</small
+                  >
+                </div>
+              </div>
+              <figcaption>
+                <strong>Interpretation:</strong> Good architecture acts like a
+                guardrail around the model's action space. The agent needs less
+                taste at every line because the repository makes many bad
+                choices unavailable.
+              </figcaption>
+            </figure>
+            <p>
+              Tan reports more than 600 refactoring PRs while moving GrokBot
+              toward this architecture. That number is self-reported throughput,
+              not an independent quality metric. The deeper evidence is whether
+              the resulting codebase reduces rework, escaped defects, review
+              time, and performance regressions.
+            </p>
+            <p>
+              She also prefers work to be split into coherent pull requests.
+              Git history becomes durable context: each change explains one
+              intent, can be reverted independently, and narrows the search when
+              a regression appears. There is no universal line-count limit, but
+              a 40,000-line change destroys much of that recovery value.
+            </p>
+          </section>
+
+          <section id="ci">
+            <p class="section-label">CI as executable taste</p>
+            <h2>
+              Do not ask a prompt to remember rules the repository can enforce
+            </h2>
+            <p>
+              Tan describes strict CI rules, including banning React's
+              <code>useEffect</code> in the Dune codebase and rejecting most
+              ordinary code comments. Her rationale for comments is specific:
+              agents frequently produce historical narration that becomes stale
+              rather than clarifying the current invariant.
+            </p>
+            <p>
+              These choices are opinionated and context-dependent. The
+              transferable pattern is to convert stable preferences into
+              deterministic checks. Dependency direction, module size, forbidden
+              APIs, schema compatibility, performance budgets, and accessibility
+              requirements should not depend on whether a model remembered a
+              style document.
+            </p>
+            <div class="compare">
+              <div>
+                <strong>Prompt-only rule</strong>
+                <p>
+                  Consumes context, can be forgotten, and produces inconsistent
+                  compliance across agents and sessions.
+                </p>
+              </div>
+              <div>
+                <strong>CI-enforced rule</strong>
+                <p>
+                  Applies to every contributor, fails immediately, and turns a
+                  subjective review comment into a repeatable contract.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="economics">
+            <p class="section-label">Cost and ROI</p>
+            <h2>Agent readiness is an upfront investment, not free velocity</h2>
+            <p>
+              Tan openly notes that she works in an environment with unusually
+              generous token access. Refactoring a codebase, building skills,
+              creating evals, and running verification loops can consume
+              substantial compute before the workflow pays back.
+            </p>
+            <div class="numbers">
+              <div>
+                <strong>Upfront</strong
+                ><span>refactors, maps, skills, CI, eval cases</span>
+              </div>
+              <div>
+                <strong>Recurring</strong
+                ><span>tokens, cloud machines, evaluation, maintenance</span>
+              </div>
+              <div>
+                <strong>Return</strong
+                ><span
+                  >accepted changes, less review, fewer escaped defects</span
+                >
+              </div>
+            </div>
+            <p>
+              PR count alone is a weak measure. A rational scorecard should
+              include accepted work, cycle time, reviewer minutes, rework,
+              escaped bugs, operational incidents, and cost per change. The
+              investment makes sense when it creates durable throughput across
+              future tasks and more contributors.
+            </p>
+          </section>
+
+          <section id="grokbot">
+            <p class="section-label">The GrokBot ending</p>
+            <h2>
+              Strict infrastructure can let non-engineers contribute safely
+            </h2>
+            <p>
+              Near the end, Tan explains that an agent-friendly architecture and
+              strict constraints can empower product managers, designers, and
+              go-to-market colleagues to implement bounded changes. Their
+              contribution is not safe because natural-language coding became
+              infallible. It is safer because the system narrows valid
+              implementations and rejects violations automatically.
+            </p>
+            <p>
+              This is the credible route from one coding assistant to a team of
+              agents or broader organizational participation: a trusted
+              engineering substrate underneath the conversational interface. A
+              Chief of Staff agent or overnight loop is useful only when
+              delegated work inherits those verification and policy layers.
+            </p>
+          </section>
+
+          <section id="playbook">
+            <p class="section-label">Adoption playbook</p>
+            <h2>Build the system in this order</h2>
+            <ol>
+              <li>
+                Choose one repetitive, observable engineering task with a clear
+                finish condition.
+              </li>
+              <li>
+                Teach the agent how to run the real product and collect
+                behavioral evidence.
+              </li>
+              <li>
+                Add a feature or service map so it can navigate without
+                rediscovering the system.
+              </li>
+              <li>
+                Turn repeated review feedback into focused, reusable skills.
+              </li>
+              <li>
+                Create eval rubrics and run skills in isolated environments
+                across the models you use.
+              </li>
+              <li>
+                Refactor the repository toward clear boundaries and canonical
+                implementation paths.
+              </li>
+              <li>
+                Move stable rules from prose into CI, linters, types, and
+                architecture checks.
+              </li>
+              <li>
+                Measure accepted work and review burden before increasing agent
+                count.
+              </li>
+              <li>
+                Scale proven workflows to cloud agents, schedules, loops, and
+                coordinators.
+              </li>
+              <li>
+                Keep external sends, production changes, money movement, and
+                irreversible actions behind approvals until evidence supports
+                relaxing them.
+              </li>
+            </ol>
+          </section>
+
+          <section id="timeline">
+            <p class="section-label">Video map</p>
+            <h2>Navigate the workshop</h2>
+            <div class="timeline">
+              <p>
+                <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g&t=0s"
+                  >00:00</a
+                >
+                · Building trust in coding agents.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g&t=96s"
+                  >01:36</a
+                >
+                · From micromanagement toward autonomy.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g&t=216s"
+                  >03:36</a
+                >
+                · The trust curve and reported PR velocity.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g&t=396s"
+                  >06:36</a
+                >
+                · Verification through Control Glass.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g&t=668s"
+                  >11:08</a
+                >
+                · Feature maps and pstack.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g&t=1050s"
+                  >17:30</a
+                >
+                · Evals as unit tests for skills.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g&t=1432s"
+                  >23:52</a
+                >
+                · Local verification before cloud agents.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g&t=1776s"
+                  >29:36</a
+                >
+                · Refactoring toward agent-friendly architecture.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g&t=2304s"
+                  >38:24</a
+                >
+                · Dune and strict CI constraints.
+              </p>
+              <p>
+                <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g&t=2854s"
+                  >47:34</a
+                >
+                · Token economics, ROI, and product-team empowerment.
+              </p>
+            </div>
+          </section>
+
+          <section id="sources">
+            <p class="section-label">Sources and method</p>
+            <h2>
+              Complete captions, corrected source identity, and qualified claims
+            </h2>
+            <p>
+              The primary source is the complete 1,394-row English caption track
+              for the supplied
+              <a href="https://www.youtube.com/watch?v=yw_QhowlZ2g"
+                >YouTube reupload</a
+              >, reaching 55:36 of a 55:39 video. The video's descriptive title
+              was checked against the original Maven listing for
+              <a
+                href="https://maven.com/p/e23d9c/how-cursor-turned-ai-agents-into-better-engineers"
+                >How Cursor Turned AI Agents Into Better Engineers</a
+              >.
+            </p>
+            <p>
+              pstack's purpose and authorship were checked against the public
+              <a href="https://github.com/cursor/plugins/tree/main/pstack"
+                >Cursor plugin repository</a
+              >. The trust and verification visuals were redrawn as responsive
+              HTML diagrams because the available reupload frames were only
+              854 by 480 pixels. The eval-loop, architecture diagram, cautions
+              about metrics, and adoption checklist are editorial synthesis
+              grounded in the workshop.
+            </p>
+            <p>
+              Completeness was checked again on October 5, 2026 against the
+              55-minute transcript from a second reupload,
+              <a href="https://www.youtube.com/watch?v=u1hqfjrMhwQ"
+                >SpaceX AI Engineer: Stop Using AI Agents Like This</a
+              >. That pass added the pair-programming boundary and the role of
+              atomic pull requests as context and recovery. The remaining core
+              topics were already represented in this article.
+            </p>
+            <p>
+              Company-wide adoption percentages and viral descriptions of a
+              fixed 20-agent hierarchy were not treated as verified facts
+              because the accessible first-party workshop and repository do not
+              establish them.
+            </p>
+          </section>
+        </article>
+        <aside class="sidebar">
+          <nav class="toc">
+            <h2>On this page</h2>
+            <ul>
+              <li><a href="#framing">Source correction</a></li>
+              <li><a href="#summary">Overview</a></li>
+              <li><a href="#trust">Trust curve</a></li>
+              <li><a href="#verification">Verification</a></li>
+              <li><a href="#feature-map">Feature maps</a></li>
+              <li><a href="#skills">pstack and skills</a></li>
+              <li><a href="#evals">Evals</a></li>
+              <li><a href="#cloud">Cloud agents</a></li>
+              <li><a href="#architecture">Architecture</a></li>
+              <li><a href="#ci">CI constraints</a></li>
+              <li><a href="#economics">ROI</a></li>
+              <li><a href="#grokbot">GrokBot</a></li>
+              <li><a href="#playbook">Playbook</a></li>
+              <li><a href="#timeline">Video map</a></li>
+              <li><a href="#sources">Sources</a></li>
+            </ul>
+          </nav>
+        </aside>
+      </div>
+    </main>
+    <footer class="footer-note">
+      A source-corrected engineering guide: verification before parallelism.
+    </footer>
+  </body>
+</html>

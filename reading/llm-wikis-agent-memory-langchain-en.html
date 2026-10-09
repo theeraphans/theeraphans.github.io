@@ -1,0 +1,1248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>LLM Wikis and Agent Memory - Detailed Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5b6870;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f5f7f1;
+      --line: #d8dfd8;
+      --teal: #1b756d;
+      --blue: #2c6381;
+      --green: #557d54;
+      --gold: #a97725;
+      --coral: #bd503f;
+      --plum: #665987;
+      --mint: #e3f0ec;
+      --sky: #e6eef6;
+      --sand: #f7edd8;
+      --rose: #f5e5df;
+      --lavender: #ece8f2;
+      --shadow: 0 24px 68px rgb(23 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(27 117 109 / 6%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(44 99 129 / 5%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--green), var(--gold), var(--coral), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 86%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.55rem, 5.85vw, 5.15rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 860px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: #e8ede7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 28px;
+      margin: 34px 0 0;
+      padding: 24px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .quick-summary h2,
+    .section h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.85rem, 3.2vw, 2.7rem);
+      font-weight: 740;
+      line-height: 1.06;
+      letter-spacing: 0;
+    }
+
+    .quick-summary p {
+      margin-top: 14px;
+      color: #303a41;
+      font-size: 1.04rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .summary-list li {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+      color: var(--muted);
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+    }
+
+    .stat {
+      display: grid;
+      min-height: 74px;
+      padding: 12px;
+      background: var(--mint);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat:nth-child(2) { background: var(--sky); }
+    .stat:nth-child(3) { background: var(--sand); }
+
+    .stat strong {
+      font-size: 1.4rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 820;
+      text-transform: uppercase;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 46px;
+      align-items: start;
+      padding-top: 38px;
+    }
+
+    .article-layout > *,
+    .sidebar,
+    .sidebar-block,
+    .toc,
+    .content {
+      min-width: 0;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .sidebar-block,
+    .toc {
+      padding: 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .sidebar h2,
+    .toc h2 {
+      margin-bottom: 10px;
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .glance {
+      display: grid;
+      gap: 11px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: grid;
+      gap: 2px;
+      padding-bottom: 11px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .glance li:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .glance span {
+      color: var(--quiet);
+      font-size: 0.75rem;
+      font-weight: 820;
+      text-transform: uppercase;
+    }
+
+    .glance strong { font-size: 0.95rem; }
+
+    .toc {
+      display: grid;
+      gap: 8px;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--blue);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+      font-weight: 780;
+      text-decoration: none;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+    }
+
+    .section {
+      min-width: 0;
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .label {
+      display: inline-flex;
+      margin-bottom: 13px;
+      color: var(--coral);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .lead {
+      margin-top: 16px;
+      color: #303a41;
+      font-size: 1.12rem;
+      line-height: 1.72;
+    }
+
+    .section p:not(.lead),
+    .section ul,
+    .section ol {
+      margin-top: 15px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .section strong { color: var(--ink); }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card.mint { background: var(--mint); }
+    .card.sky { background: var(--sky); }
+    .card.sand { background: var(--sand); }
+    .card.rose { background: var(--rose); }
+    .card.lavender { background: var(--lavender); }
+
+    .card h3 {
+      margin-top: 10px;
+      font-size: 1.02rem;
+      line-height: 1.25;
+    }
+
+    .card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      color: #fff;
+      background: var(--blue);
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .pill.green { background: var(--green); }
+    .pill.gold { background: var(--gold); }
+    .pill.coral { background: var(--coral); }
+    .pill.plum { background: var(--plum); }
+    .pill.teal { background: var(--teal); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .flow-step {
+      min-height: 132px;
+      padding: 14px;
+      background: var(--mint);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .flow-step:nth-child(2) { background: var(--sky); }
+    .flow-step:nth-child(3) { background: var(--sand); }
+    .flow-step:nth-child(4) { background: var(--rose); }
+    .flow-step:nth-child(5) { background: var(--lavender); }
+
+    .flow-step span {
+      color: var(--coral);
+      font-size: 0.76rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .flow-step strong {
+      display: block;
+      margin-top: 8px;
+      line-height: 1.25;
+    }
+
+    .flow-step p {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 112px minmax(0, 1fr);
+      gap: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .timeline-item:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .time {
+      color: var(--coral);
+      font-size: 0.8rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .timeline-item h3 {
+      font-size: 1.08rem;
+      line-height: 1.3;
+    }
+
+    .timeline-item p {
+      margin-top: 5px;
+      color: var(--muted);
+    }
+
+    .matrix {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .matrix th,
+    .matrix td {
+      padding: 12px;
+      vertical-align: top;
+      border: 1px solid var(--line);
+    }
+
+    .matrix th {
+      color: var(--ink);
+      background: var(--mint);
+      text-align: left;
+    }
+
+    .matrix td {
+      color: var(--muted);
+      background: #fff;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 13px 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .quote-box {
+      margin-top: 20px;
+      padding: 18px;
+      color: #263138;
+      background: linear-gradient(90deg, rgb(27 117 109 / 11%), rgb(189 80 63 / 10%));
+      border-left: 5px solid var(--teal);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.16rem;
+      line-height: 1.55;
+    }
+
+    .mini-spec {
+      margin: 20px 0 0;
+      padding: 18px;
+      overflow-x: auto;
+      color: #f7fbfb;
+      background: #1f2a30;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.88rem;
+      line-height: 1.58;
+      white-space: pre;
+    }
+
+    .note {
+      margin-top: 18px;
+      padding: 14px;
+      color: var(--muted);
+      background: var(--sky);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 26px 24px 38px;
+      color: var(--quiet);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar { position: static; }
+
+      .toc {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .toc h2 { grid-column: 1 / -1; }
+
+      .flow,
+      .three {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions { justify-content: flex-start; }
+      .page { padding-inline: 18px; }
+
+      .hero {
+        gap: 26px;
+        padding-top: 36px;
+      }
+
+      h1 { font-size: clamp(2.25rem, 13vw, 3.2rem); }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .two,
+      .three,
+      .flow,
+      .toc {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline-item {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+
+      .matrix {
+        table-layout: fixed;
+      }
+
+      .matrix th,
+      .matrix td {
+        padding: 10px;
+      }
+
+      .mini-spec { white-space: pre-wrap; }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./">YouTube Extractor</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#thesis">Thesis</a>
+      <a class="action-link" href="#demos">Demos</a>
+      <a class="action-link" href="#definition">Wiki</a>
+      <a class="action-link" href="#maintenance">Maintenance</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=Lsut4TCfygw">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Agent Memory - LLM Wikis</span>
+        <h1>LLM Wikis and How to Give Your Agents Memory</h1>
+        <p class="subtitle">
+          A detailed summary of LangChain's panel on OpenWiki, Dosu, Chroma, and the emerging idea of
+          LLM wikis as an agent memory layer: part cache, part index, part organizational state, and part
+          human-readable control surface.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> LLM Wikis and how to give your agents memory</span>
+          <span><strong>Creator:</strong> LangChain</span>
+          <span><strong>Transcript:</strong> 8,927 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/Lsut4TCfygw/hqdefault.jpg" alt="Video thumbnail for LLM Wikis and how to give your agents memory">
+        <figcaption>
+          The panel treats wikis less as documentation pages and more as a living memory system that agents
+          can read, write, search, correct, and use to reduce repeated context gathering.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          The strongest idea in the video is that an LLM wiki is not just "docs for agents." It is a compiled
+          knowledge layer that helps agents avoid rediscovering the same context every run. Done well, it can
+          reduce token use, stabilize outputs, support long-horizon work, and become a shared state layer across
+          humans and agents.
+        </p>
+        <ul class="summary-list">
+          <li>A wiki can act like a cache: store knowledge that is expensive to recompute, frequently accessed, or not available elsewhere.</li>
+          <li>Agent wikis should be optimized for agent use, but still human-interpretable so teams can steer, inspect, and correct them.</li>
+          <li>The hard parts are not first-page generation. The hard parts are maintenance, freshness, consistency, access control, measurement, and cost.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>44m</strong><span>runtime</span></div>
+        <div class="stat"><strong>1,255</strong><span>caption rows</span></div>
+        <div class="stat"><strong>8,927</strong><span>words</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Main lens</span><strong>Agent memory layer</strong></li>
+            <li><span>Speakers</span><strong>LangChain, Dosu, Chroma</strong></li>
+            <li><span>Best metaphor</span><strong>Wiki as cache and index</strong></li>
+            <li><span>Best artifact</span><strong>Memory subsystem spec</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#thesis">Core Thesis</a>
+          <a href="#demos">Product Demos</a>
+          <a href="#definition">What Is a Wiki?</a>
+          <a href="#cache">Cache vs Documentation</a>
+          <a href="#human">Human and Agent Use</a>
+          <a href="#maintenance">Maintenance Problem</a>
+          <a href="#measurement">Measuring Impact</a>
+          <a href="#future">Future Shape</a>
+          <a href="#retrieval">Retrieval and Storage</a>
+          <a href="#platform">Platform Takeaways</a>
+          <a href="#templates">Flow Markdown</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="thesis">
+          <span class="label">Core Thesis</span>
+          <h2>Agent memory is becoming a compiled knowledge layer, not just a bigger context window.</h2>
+          <p class="lead">
+            The panel begins from a familiar problem: agents spend a lot of time rediscovering context. Every coding session,
+            research session, support task, or workflow run may scan the same files, messages, docs, decisions, and implicit
+            rules. LLM wikis try to turn repeated exploration into reusable knowledge.
+          </p>
+          <p>
+            That makes a wiki different from ordinary documentation. A normal wiki is often written for a human reader who
+            browses pages. An LLM wiki is closer to a memory index for future agents. It stores conclusions, links, open
+            questions, references, and compressed explanations so future runs can start from a better place.
+          </p>
+          <div class="flow" aria-label="Agent memory pipeline">
+            <div class="flow-step">
+              <span>Step 1</span>
+              <strong>Observe work</strong>
+              <p>The agent reads code, Slack, email, docs, tickets, PRs, or other sources.</p>
+            </div>
+            <div class="flow-step">
+              <span>Step 2</span>
+              <strong>Extract learnings</strong>
+              <p>The system identifies reusable knowledge, not every raw detail.</p>
+            </div>
+            <div class="flow-step">
+              <span>Step 3</span>
+              <strong>Write pages</strong>
+              <p>A librarian process creates short, linked, referential topic pages.</p>
+            </div>
+            <div class="flow-step">
+              <span>Step 4</span>
+              <strong>Retrieve later</strong>
+              <p>Future agents use the wiki to skip repeated context gathering.</p>
+            </div>
+            <div class="flow-step">
+              <span>Step 5</span>
+              <strong>Self-correct</strong>
+              <p>The memory layer is updated as code, processes, and facts change.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="demos">
+          <span class="label">Three Views</span>
+          <h2>The speakers show three complementary ways to think about agent memory.</h2>
+          <p class="lead">
+            The panel includes short introductions from Brace at LangChain, Devin from Dosu, and Jeff from Chroma. Each gives
+            a different product lens on the same problem: how to make knowledge persistent, searchable, and useful to future
+            agent runs.
+          </p>
+          <div class="grid three">
+            <article class="card mint">
+              <span class="pill teal">OpenWiki</span>
+              <h3>Memory as a background CLI</h3>
+              <p>LangChain's OpenWiki is described as a CLI that can document personal memory or codebases. It asks for a wiki brief, connects data sources, and updates itself on a cron schedule.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill">Dosu</span>
+              <h3>Memory as knowledge infrastructure</h3>
+              <p>Dosu plugs into coding-agent workflows through MCP. As agents learn how an organization works, a librarian agent converts those learnings into concise, agent-optimized topic pages.</p>
+            </article>
+            <article class="card sand">
+              <span class="pill gold">Chroma</span>
+              <h3>Memory as programmable search</h3>
+              <p>Chroma frames the problem as storing massive unstructured data and making it queryable. A wiki is treated as a new kind of index layered over that data.</p>
+            </article>
+          </div>
+          <p>
+            The most useful synthesis is that these are not mutually exclusive. A production memory system may need a background
+            ingestion agent, a knowledge librarian, a queryable unstructured-data store, and analytics that show whether memory
+            actually improves agent work.
+          </p>
+        </section>
+
+        <section class="section" id="definition">
+          <span class="label">Definition</span>
+          <h2>A wiki is a network of linked knowledge pages, but an LLM wiki has a different job.</h2>
+          <p class="lead">
+            The host proposes a simple definition: a set of files in a directory, usually generated by an agent and usually for
+            an agent. The panel pushes back. A wiki is not necessarily a file system. Wikipedia is not just a folder of files.
+            A more abstract definition is a set of hyperlinked informational pages.
+          </p>
+          <p>
+            For LLM agents, the definition gets more specific. An LLM wiki is compiled knowledge. It takes raw sources and
+            creates a map that is easier for agents to traverse. Jeff compares this to adding roads and connections on top of a
+            topology. Embeddings may help you guess nearby regions, but the wiki can provide explicit routes, references, and
+            structure.
+          </p>
+          <table class="matrix" aria-label="Wiki definition matrix">
+            <thead>
+              <tr>
+                <th>View</th>
+                <th>What it emphasizes</th>
+                <th>Risk if overused</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Wiki as files</td>
+                <td>Easy to inspect, diff, version, and expose to coding agents.</td>
+                <td>Overfits the concept to today's markdown-in-repo implementation.</td>
+              </tr>
+              <tr>
+                <td>Wiki as pages</td>
+                <td>Human-readable linked knowledge, like a small internal internet.</td>
+                <td>May become too human-oriented for agents that need concise retrieval.</td>
+              </tr>
+              <tr>
+                <td>Wiki as cache</td>
+                <td>Compiled conclusions that avoid repeated context gathering.</td>
+                <td>Must handle eviction, freshness, and source-of-truth alignment.</td>
+              </tr>
+              <tr>
+                <td>Wiki as index</td>
+                <td>A navigable map over unstructured organizational knowledge.</td>
+                <td>Can become hard to maintain without search, links, and observability.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="cache">
+          <span class="label">Cache Metaphor</span>
+          <h2>The strongest abstraction is wiki as a knowledge cache.</h2>
+          <p class="lead">
+            Devin's most important point is that LLM wikis should not automatically mimic human wikis. If the purpose is to
+            help agents, the content should be optimized for what agents need: concise, referential, information-dense knowledge
+            that prevents unnecessary rediscovery.
+          </p>
+          <p>
+            He separates two types of knowledge. First is necessary knowledge: information the agent cannot access elsewhere.
+            Second is functional compiled knowledge: information that the agent could rediscover, but that is expensive or slow
+            to recompute. This is why the cache analogy works. A cache should not contain the entire database. It should contain
+            the knowledge that is valuable to reuse.
+          </p>
+          <div class="grid two">
+            <article class="card rose">
+              <span class="pill coral">Necessary knowledge</span>
+              <h3>Facts not available elsewhere</h3>
+              <p>Team-specific rules, undocumented processes, hidden constraints, private decisions, customer context, and operational history.</p>
+            </article>
+            <article class="card lavender">
+              <span class="pill plum">Functional knowledge</span>
+              <h3>Expensive conclusions</h3>
+              <p>Summaries, architecture maps, decision traces, migration patterns, known pitfalls, and repeated answers that save tokens and tool calls.</p>
+            </article>
+          </div>
+          <div class="quote-box">
+            A good agent wiki should not hoard everything. It should preserve knowledge that is repeatedly useful,
+            expensive to rediscover, or strategically important.
+          </div>
+        </section>
+
+        <section class="section" id="human">
+          <span class="label">Human and Agent Use</span>
+          <h2>The wiki should be agent-optimized, but still human-interpretable.</h2>
+          <p class="lead">
+            The panel debates whether LLM wikis are for humans, agents, or both. One extreme would be a memory system stored
+            entirely in latent vectors that agents can use but humans cannot read. The group rejects that as too opaque. Human
+            legibility matters because teams need steerability, review, and shared control.
+          </p>
+          <p>
+            The compromise is subtle: the audience can be agents, while the representation remains readable to humans. That means
+            pages can be terse, referential, and structured for retrieval, while still being inspectable, correctable, and useful
+            as a shared workspace.
+          </p>
+          <ul class="checklist">
+            <li><strong>Code memory can use PR review.</strong> If wiki updates live in a repo, humans can review memory changes like code changes.</li>
+            <li><strong>Personal memory may need lighter controls.</strong> Fully approving every update would be too tedious, so systems need summaries and change logs.</li>
+            <li><strong>Open questions are useful.</strong> Agents can record uncertainty, ask humans for answers, or mark questions resolved when future evidence appears.</li>
+            <li><strong>Eventually consistent knowledge may be acceptable.</strong> If agents can detect stale or wrong entries and correct them, memory can improve over time.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="maintenance">
+          <span class="label">Hard Part</span>
+          <h2>First-page generation is easy. Keeping the wiki fresh is the real systems problem.</h2>
+          <p class="lead">
+            The panel is clear that agents can often write a first-pass wiki. The harder problem is what happens after hundreds
+            of updates. New information may require modifying an existing page, inserting a new page, deleting stale claims, or
+            changing links. Agents often prefer adding more text instead of carefully editing old knowledge.
+          </p>
+          <p>
+            This turns wiki maintenance into harness engineering. The system must balance accuracy, cost, and freshness. If every
+            ingestion and update uses an expensive model and full-context scan, the cost can overwhelm the benefit. If updates are
+            too cheap or shallow, the wiki drifts out of date.
+          </p>
+          <div class="timeline">
+            <div class="timeline-item">
+              <span class="time">Scale</span>
+              <div>
+                <h3>Generation gets harder in large organizations</h3>
+                <p>Small repositories are manageable. Large codebases, many teams, and millions of lines make "what matters" a hard selection problem.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="time">Freshness</span>
+              <div>
+                <h3>Memory must update without becoming noisy</h3>
+                <p>The agent needs to know whether to revise, remove, merge, split, or defer a memory update.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="time">Control</span>
+              <div>
+                <h3>Humans need visibility without review overload</h3>
+                <p>Change logs, summaries, open questions, and targeted review may be better than approving every edit.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="time">Cost</span>
+              <div>
+                <h3>Maintenance must pay for itself</h3>
+                <p>A wiki that costs more to maintain than it saves in agent work is not a successful memory layer.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="measurement">
+          <span class="label">Measurement</span>
+          <h2>The core metric is whether agents perform better because the wiki exists.</h2>
+          <p class="lead">
+            Everyone agrees that measuring wiki impact is hard. It is not enough to count pages created. The question is whether
+            future agent runs are cheaper, faster, more reliable, more consistent, or able to perform tasks that were previously
+            unrealistic.
+          </p>
+          <p>
+            The most concrete evaluation idea is an A/B test: run the same task with and without the wiki. If the agent reaches
+            the same correct answer with fewer tokens, fewer tool calls, less context gathering, and fewer human interventions,
+            the wiki is working. Dosu also reports that wiki entries can make outputs more consistent by giving repeated runs the
+            same starting point.
+          </p>
+          <div class="grid three">
+            <article class="card mint">
+              <span class="pill green">Efficiency</span>
+              <h3>Fewer tokens and tool calls</h3>
+              <p>The agent spends less time searching because the relevant conclusion is already compiled.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill">Reliability</span>
+              <h3>More consistent trajectories</h3>
+              <p>Repeated runs start from the same memory seed, reducing random exploration and output variance.</p>
+            </article>
+            <article class="card sand">
+              <span class="pill gold">Capability</span>
+              <h3>Longer-horizon tasks</h3>
+              <p>Persistent organizational memory may let agents take on tasks that require continuity across time and teams.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="future">
+          <span class="label">Future Shape</span>
+          <h2>The future may look less like a human wiki and more like an agent-first cache or organization state layer.</h2>
+          <p class="lead">
+            Devin's hot take is that "wiki" may be the wrong abstraction if it pulls teams toward human-facing pages. The
+            long-term shape may be closer to a cache or index: concise, highly referential, aggressively linked, and willing to
+            evict knowledge that is not useful.
+          </p>
+          <p>
+            Jeff pushes the idea further by saying that this memory layer could become the state layer of an organization. If
+            multiple agents across teams read and write to a shared knowledge substrate, it can become a coordination and execution
+            layer, not only a documentation layer.
+          </p>
+          <ul class="checklist">
+            <li><strong>Agent-first pages:</strong> less prose, more compact facts, references, links, constraints, and update metadata.</li>
+            <li><strong>Progressive disclosure:</strong> headings and summaries first, then deeper linked pages or source evidence when needed.</li>
+            <li><strong>Eviction:</strong> remove or downgrade entries that are not accessed, easy to recompute, stale, or low value.</li>
+            <li><strong>Proactive memory:</strong> agents may monitor approved sources and suggest new memories or actions without a direct prompt.</li>
+            <li><strong>Agent collaboration:</strong> different team agents may coordinate by contributing to and reading from the same shared state.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="retrieval">
+          <span class="label">Retrieval and Storage</span>
+          <h2>Agents need multiple retrieval modes, and storage should not be confused with the interface.</h2>
+          <p class="lead">
+            The Q&A section covers knowledge graphs, vector databases, and file systems. The panel's answer is pragmatic: a wiki
+            is graph-like because pages link to each other, but a rigid RDF or Neo4j-style graph may be too opinionated for the
+            semantic flexibility agents need.
+          </p>
+          <p>
+            The same pragmatism applies to search. Agents should likely have several ways to find information: file-system search,
+            full-text search, sparse retrieval, dense semantic retrieval, and agentic search. The best route depends on the task.
+            The storage backend may be a database, file system, vector index, or hybrid system, while the agent-facing interface
+            exposes read, write, search, and correction tools.
+          </p>
+          <table class="matrix" aria-label="Retrieval tools matrix">
+            <thead>
+              <tr>
+                <th>Retrieval mode</th>
+                <th>Good for</th>
+                <th>Platform implication</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>File system tools</td>
+                <td>Code-agent workflows, diffs, markdown pages, local repo context.</td>
+                <td>Useful interface, but not always the best durable storage layer.</td>
+              </tr>
+              <tr>
+                <td>Full-text search</td>
+                <td>Exact terms, APIs, error strings, table names, customer IDs.</td>
+                <td>Expose simple keyword lookup as a first-class tool.</td>
+              </tr>
+              <tr>
+                <td>Semantic search</td>
+                <td>Conceptual similarity, fuzzy questions, related documents.</td>
+                <td>Pair with citations and verification to avoid plausible misses.</td>
+              </tr>
+              <tr>
+                <td>Linked wiki traversal</td>
+                <td>Progressive disclosure, dependency maps, topic navigation.</td>
+                <td>Maintain links, back-links, freshness, and page summaries.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your agentic AI platform.</h2>
+          <p class="lead">
+            This video maps directly to the Master Agent, Sub-Agent, Skill, MCP, and BA workflow problem. It suggests that
+            memory should be modeled as its own subsystem, not hidden inside persona prompts. The memory layer needs its own
+            authoring rules, tools, permissions, evals, and improvement loops.
+          </p>
+          <ul class="checklist">
+            <li><strong>Create a Memory/Wiki primitive.</strong> Treat memory pages as versioned artifacts with owners, sources, confidence, freshness, links, and access policies.</li>
+            <li><strong>Separate source of truth from compiled memory.</strong> Source systems remain authoritative. The wiki is a compiled cache/index that must cite or point back to sources.</li>
+            <li><strong>Give BA users a memory brief.</strong> Let non-engineers define what the agent should remember, ignore, ask about, and summarize for each business flow.</li>
+            <li><strong>Make librarian agents explicit.</strong> A dedicated sub-agent should write, update, merge, evict, and audit wiki entries rather than letting every agent write freely.</li>
+            <li><strong>Define cognitive and actionable memory skills.</strong> Cognitive skills summarize, link, classify, and detect stale entries. Actionable skills write pages, update indexes, call MCP search, and open review requests.</li>
+            <li><strong>Add access control to memory retrieval.</strong> A wiki for customer success, finance, HR, or engineering cannot be one global memory blob. Retrieval must respect role and data policy.</li>
+            <li><strong>Measure impact, not page count.</strong> Track tokens saved, tool calls avoided, time to answer, task success, consistency, human interventions, and stale-entry corrections.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">Flow Markdown</span>
+          <h2>A practical Memory/Wiki subsystem spec for agents.</h2>
+          <p class="lead">
+            This template turns the panel's ideas into a platform artifact. It is designed so a BA or platform designer can
+            define memory behavior before engineers wire up storage, MCP tools, retrieval, and evals.
+          </p>
+          <pre class="mini-spec"># Agent Memory/Wiki Subsystem Spec
+
+goal: Give agents persistent, inspectable, and access-controlled organizational memory.
+owner: Agent Platform Team
+business_owner: Knowledge Domain Owner
+flow_type: memory_wiki_subsystem
+
+memory_scope:
+  domain: product_engineering
+  audience:
+    - coding_agents
+    - support_agents
+    - human_reviewers
+  source_of_truth:
+    - github
+    - docs
+    - slack
+    - tickets
+    - customer_notes
+
+memory_brief:
+  remember:
+    - architecture decisions
+    - recurring implementation patterns
+    - known pitfalls
+    - ownership boundaries
+    - unresolved questions
+  ignore:
+    - one-off chatter
+    - low-confidence claims
+    - data outside user permissions
+  style:
+    - concise
+    - highly_referential
+    - cite_sources
+    - optimized_for_agent_retrieval
+    - human_interpretable
+
+agents:
+  memory_librarian:
+    responsibilities:
+      - ingest_sources
+      - extract_reusable_knowledge
+      - create_or_update_topic_pages
+      - merge_duplicate_entries
+      - mark_stale_entries
+      - maintain_links_and_backlinks
+      - produce_change_log
+
+  task_agent:
+    responsibilities:
+      - query_memory_before_context_gathering
+      - cite_memory_used
+      - flag_incorrect_or_stale_memory
+      - propose_new_memory_when_learning_reusable_context
+
+  human_reviewer:
+    responsibilities:
+      - review_high_risk_changes
+      - answer_open_questions
+      - approve_policy_sensitive_entries
+
+skills:
+  cognitive:
+    - topic_extraction
+    - memory_compression
+    - stale_entry_detection
+    - duplicate_detection
+    - link_suggestion
+    - confidence_scoring
+  actionable:
+    - write_memory_page
+    - update_memory_index
+    - search_sources_mcp
+    - open_review_request
+    - create_change_log
+    - evict_low_value_entry
+
+retrieval_modes:
+  - linked_page_traversal
+  - full_text_search
+  - semantic_search
+  - source_lookup
+  - agentic_search
+
+permissions:
+  read_policy:
+    role_based_access: required
+    source_permissions_inherited: true
+  write_policy:
+    low_risk_updates: auto_write_with_changelog
+    codebase_memory: pull_request_review
+    sensitive_domains: human_approval_required
+  audit_policy:
+    log_memory_reads: true
+    log_memory_writes: true
+    cite_sources: required
+
+quality_controls:
+  open_questions:
+    enabled: true
+    human_answer_allowed: true
+    agent_answer_allowed_with_source: true
+  freshness:
+    stale_after_days: 45
+    revisit_when_source_changes: true
+  eviction:
+    remove_if:
+      - low_access_count
+      - easy_to_recompute
+      - outdated_without_source
+      - duplicate_or_superseded
+
+evals:
+  ab_tests:
+    - task_without_memory
+    - task_with_memory
+  metrics:
+    - tokens_saved
+    - tool_calls_saved
+    - time_to_answer
+    - task_success_rate
+    - output_consistency
+    - human_interventions
+    - stale_corrections
+    - accepted_memory_updates
+
+operating_loop:
+  daily:
+    - ingest_new_sources
+    - update_changed_topics
+    - create_change_log
+  weekly:
+    - review_high_impact_memory_changes
+    - inspect_roi_metrics
+    - answer_open_questions
+  monthly:
+    - prune_low_value_pages
+    - revise_memory_brief
+    - expand_eval_dataset</pre>
+          <p class="note">
+            Summary generated from public YouTube captions for this video. Names and product capabilities should be verified
+            against the relevant repositories or docs before implementation.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>LLM Wikis and how to give your agents memory</strong>.
+    Source: LangChain. Video ID: Lsut4TCfygw.
+  </footer>
+</body>
+</html>

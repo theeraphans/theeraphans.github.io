@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="A detailed field guide to vLLM Bangkok Day 2026: limited-GPU optimization, enterprise adoption, production serving, llm-d, LMCache, Thai-language inference, and practical platform decisions.">
+  <title>vLLM Bangkok Day 2026: A Field Guide to Production Inference</title>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+  <style>
+    .hero-card img { aspect-ratio: 16 / 9 !important; object-fit: cover !important; }
+    .source-note { margin-top: 1rem; padding-left: 1rem; border-left: 3px solid var(--green); }
+    .thesis { margin: 1.15rem 0; padding: 1rem; background: var(--surface); border-left: 3px solid var(--ink); }
+    .thesis strong { display: block; margin-bottom: 0.35rem; font-weight: 600; }
+    .architecture { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin: 1.2rem 0; border: 1px solid var(--line-strong); }
+    .architecture-step { position: relative; min-width: 0; padding: 0.9rem; border-right: 1px solid var(--line); }
+    .architecture-step:last-child { border-right: 0; }
+    .architecture-step span { display: block; margin-bottom: 0.35rem; color: var(--green); font-size: 0.78rem; font-weight: 600; }
+    .architecture-step strong { display: block; font-size: 0.94rem; font-weight: 500; }
+    .architecture-step small { display: block; margin-top: 0.35rem; color: var(--muted); font-size: 0.78rem; line-height: 1.35; }
+    .session-list, .decision-list, .tech-list, .lesson-list { margin-top: 1rem; border-top: 1px solid var(--line-strong); }
+    .session-row, .decision-row, .tech-row, .lesson-row { display: grid; grid-template-columns: minmax(8.5rem, 0.9fr) minmax(0, 2.1fr); gap: 1.2rem; padding: 0.95rem 0; border-bottom: 1px solid var(--line); }
+    .session-row strong, .decision-row strong, .tech-row strong, .lesson-row strong { font-weight: 500; }
+    .session-row p, .decision-row p, .tech-row p, .lesson-row p { margin: 0 !important; }
+    .metric-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 1rem 0; border: 1px solid var(--line-strong); }
+    .metric { padding: 1rem; border-right: 1px solid var(--line); }
+    .metric:last-child { border-right: 0; }
+    .metric strong { display: block; margin-bottom: 0.3rem; font-size: 1.2rem; font-weight: 500; }
+    .metric span { color: var(--muted); font-size: 0.86rem; line-height: 1.35; }
+    .formula { margin: 1rem 0; padding: 1rem; overflow-wrap: anywhere; color: var(--ink); background: var(--surface); border: 1px solid var(--line); }
+    .formula code { color: var(--ink) !important; background: transparent !important; }
+    .mobile-table { margin-top: 1rem; }
+    .chapter-link { white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .source-links { display: grid; gap: 0.7rem; padding-left: 1.2rem; }
+    @media (max-width: 760px) {
+      .architecture, .metric-grid { grid-template-columns: 1fr; }
+      .architecture-step, .metric { border-right: 0; border-bottom: 1px solid var(--line); }
+      .architecture-step:last-child, .metric:last-child { border-bottom: 0; }
+    }
+    @media (max-width: 640px) {
+      .session-row, .decision-row, .tech-row, .lesson-row { grid-template-columns: 1fr; gap: 0.35rem; }
+      .mobile-table table, .mobile-table tbody, .mobile-table tr, .mobile-table td { display: block; width: 100%; min-width: 0 !important; }
+      .mobile-table thead { display: none; }
+      .mobile-table tr { padding: 0.8rem 0; border-bottom: 1px solid var(--line); }
+      .mobile-table tr:last-child { border-bottom: 0; }
+      .mobile-table td { padding: 0.25rem 0 !important; border: 0 !important; }
+      .mobile-table td::before { display: block; content: attr(data-label); margin-bottom: 0.1rem; color: var(--quiet); font-size: 0.78rem; font-weight: 600; }
+      .chapter-link { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation">
+    <a class="brand" href="./">Reading room</a>
+    <div class="top-actions">
+      <a class="action-link" href="https://www.facebook.com/creatorsgarten/videos/2166530687262705/">Watch source</a>
+      <a class="action-link" href="/">Add a source</a>
+    </div>
+  </nav>
+
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Inference engineering · Open models · Thailand</p>
+        <h1>vLLM Bangkok Day 2026: A Field Guide to Production Inference</h1>
+        <p class="subtitle">Five hours of practical lessons on making open models fast, affordable, governable, and useful: from one limited GPU to distributed llm-d clusters and reusable KV-cache infrastructure.</p>
+        <div class="meta">
+          <span><strong>Creatorsgarten · vLLM Bangkok</strong></span>
+          <span>Special event recording</span>
+          <span>5h 18m</span>
+          <span>Summary run September 6, 2026 · 20:57 ICT</span>
+        </div>
+        <p class="source-note">This page is a detailed editorial paraphrase built from the full event audio, Facebook's partial captions, and the official agenda. Technical names have been normalized against the agenda. Benchmarks and forecasts remain speaker claims, not independent validation.</p>
+      </div>
+      <figure class="hero-card">
+        <a href="https://www.facebook.com/creatorsgarten/videos/2166530687262705/" aria-label="Watch Special Event: vLLM Bangkok Day 2026 on Facebook">
+          <img src="vllm-bangkok-day-2026-thumbnail.jpg" alt="vLLM Bangkok Day 2026 event stage">
+        </a>
+        <figcaption>A community event connecting vLLM maintainers, infrastructure companies, Thai enterprise practitioners, researchers, and GPU specialists.</figcaption>
+      </figure>
+    </header>
+
+    <div class="layout">
+      <article class="content">
+        <section id="summary">
+          <p class="section-label">Executive summary</p>
+          <h2>Inference is where a capable model becomes an economically usable product</h2>
+          <p>The event's central argument is that model intelligence is only one layer of an AI system. A model creates business value when an inference stack can deliver its tokens at acceptable latency, concurrency, reliability, privacy, and cost. That shifts attention from model leaderboards toward serving mechanics: memory allocation, batching, KV-cache reuse, routing, prefill and decode separation, autoscaling, observability, and governance after deployment.</p>
+          <p>vLLM sits in the middle of this system. It turns open-weight models into production endpoints and brings together model integrations, hardware support, scheduling, PagedAttention, continuous batching, quantization, speculative decoding, and cache connectors. Around it, projects such as llm-d coordinate many replicas across Kubernetes, while LMCache extends reusable context beyond scarce GPU memory.</p>
+          <p>The Thailand-specific message is equally important. The country is unlikely to win by buying the most GPUs or reproducing frontier foundation models. The speakers repeatedly point toward local advantages: Thai-language tokenization, data residency, agriculture, SME workflows, enterprise integration, product taste, and engineers who understand both infrastructure and the problem being solved.</p>
+          <div class="thesis"><strong>The shortest useful interpretation</strong><p>Do not optimize “the LLM” in the abstract. Measure the workload, identify whether it is compute-bound, memory-bound, cache-friendly, latency-sensitive, or sovereignty-constrained, then assemble only the serving layers that change that workload's economics.</p></div>
+        </section>
+
+        <section id="event-map">
+          <p class="section-label">Event map</p>
+          <h2>A five-hour path from one GPU to a national ecosystem</h2>
+          <p>The official programme ran on September 6, 2026 at JAS Green Village Ramkhamhaeng. The recording includes introductions, breaks, and closing activities, so the chapter positions below follow the actual video rather than the scheduled start times.</p>
+          <div class="table-wrap mobile-table">
+            <table>
+              <thead><tr><th>Video</th><th>Session</th><th>What to listen for</th></tr></thead>
+              <tbody>
+                <tr><td data-label="Video"><a class="chapter-link" href="https://www.facebook.com/creatorsgarten/videos/2166530687262705/">00:28:00</a></td><td data-label="Session">Opening and ecosystem roadmap</td><td data-label="What to listen for">Why a local vLLM community matters and how it connects Thailand to upstream development.</td></tr>
+                <tr><td data-label="Video"><a class="chapter-link" href="https://www.facebook.com/creatorsgarten/videos/2166530687262705/">00:45:43</a></td><td data-label="Session">Tun Jian Tan: limited-GPU serving</td><td data-label="What to listen for">Quantization, prefix caching, KV offloading, speculative decoding, and sleep mode.</td></tr>
+                <tr><td data-label="Video"><a class="chapter-link" href="https://www.facebook.com/creatorsgarten/videos/2166530687262705/">01:10:49</a></td><td data-label="Session">AI adoption in Thailand panel</td><td data-label="What to listen for">POC-to-production gates, self-hosting economics, sovereignty, and outcome-based governance.</td></tr>
+                <tr><td data-label="Video"><a class="chapter-link" href="https://www.facebook.com/creatorsgarten/videos/2166530687262705/">02:26:43</a></td><td data-label="Session">CK: Thai and global perspective</td><td data-label="What to listen for">Problem-first national strategy, the agent as interface, and product-minded engineers.</td></tr>
+                <tr><td data-label="Video"><a class="chapter-link" href="https://www.facebook.com/creatorsgarten/videos/2166530687262705/">02:50:40</a></td><td data-label="Session">Tiezhen Wang: inside vLLM</td><td data-label="What to listen for">Production recipes, batching trade-offs, day-zero model integration, and roadmap.</td></tr>
+                <tr><td data-label="Video"><a class="chapter-link" href="https://www.facebook.com/creatorsgarten/videos/2166530687262705/">03:05:14</a></td><td data-label="Session">Jing Wen Ng: llm-d</td><td data-label="What to listen for">Intelligent routing, disaggregated serving, multi-tenancy, and predictive autoscaling.</td></tr>
+                <tr><td data-label="Video"><a class="chapter-link" href="https://www.facebook.com/creatorsgarten/videos/2166530687262705/">03:33:32</a></td><td data-label="Session">Dai Tran: LMCache</td><td data-label="What to listen for">Tiered cache storage, non-prefix reuse, benchmarks, isolation, and observability.</td></tr>
+                <tr><td data-label="Video"><a class="chapter-link" href="https://www.facebook.com/creatorsgarten/videos/2166530687262705/">04:23:35</a></td><td data-label="Session">vLLM developers in Thailand panel</td><td data-label="What to listen for">Thai tokenization, inference careers, local opportunity, and how to begin.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="mental-model">
+          <p class="section-label">Mental model</p>
+          <h2>The production inference path</h2>
+          <p>The talks describe a stack in which each layer solves a different bottleneck. A gateway protects and accounts for access. A scheduler chooses the best replica. vLLM performs efficient model execution. Cache infrastructure preserves expensive context. Hardware supplies compute, memory bandwidth, and interconnect.</p>
+          <div class="architecture" role="figure" aria-label="Production inference architecture from client request to hardware">
+            <div class="architecture-step"><span>01</span><strong>Client or agent</strong><small>Prompt, history, tools, tenant, latency objective</small></div>
+            <div class="architecture-step"><span>02</span><strong>AI gateway</strong><small>Authentication, quotas, rate limits, token accounting</small></div>
+            <div class="architecture-step"><span>03</span><strong>Endpoint picker</strong><small>Model route, queue load, prefix affinity, predicted latency</small></div>
+            <div class="architecture-step"><span>04</span><strong>vLLM workers</strong><small>Batching, PagedAttention, prefill, decode, parallelism</small></div>
+            <div class="architecture-step"><span>05</span><strong>Memory and GPUs</strong><small>HBM, CPU RAM, SSD, remote cache, accelerators</small></div>
+          </div>
+          <p>This makes the boundaries clearer. vLLM is the inference engine, not the entire platform. llm-d adds distributed orchestration and request-aware scheduling. LMCache adds a durable, shareable memory tier for computed context. An enterprise platform still needs identity, policy, observability, rollout controls, evaluation, and business ownership around those components.</p>
+        </section>
+
+        <section id="limited-gpu">
+          <p class="section-label">Limited GPUs</p>
+          <h2>Make memory a design variable, not a fixed wall</h2>
+          <p>Tun Jian Tan begins with a practical distinction: Ollama is optimized for a convenient local experience, while vLLM is designed for production serving, although vLLM can also run on consumer hardware. A desktop GPU may be enough for one or a few users if the workload is understood and its memory budget is actively managed.</p>
+          <p>That budget contains more than model weights. It also includes activations, KV cache, CUDA graphs, and persistent buffers. Long-running agent workloads amplify the KV-cache component because hundreds of thousands of earlier tokens may remain relevant to every new token.</p>
+          <div class="tech-list">
+            <div class="tech-row"><strong>Weight quantization</strong><p>Reduce model precision, such as BF16 to FP8 or lower-bit formats, to fit larger models or leave more memory for active sequences. Hardware support matters, and quality must be checked on the actual domain.</p></div>
+            <div class="tech-row"><strong>KV-cache quantization</strong><p>Compress keys and values so more context can stay resident. This reduces memory traffic and can improve decode performance, but calibration or online scale calculation may be needed to control accuracy loss.</p></div>
+            <div class="tech-row"><strong>Prefix caching</strong><p>Reuse KV blocks when requests share a stable prefix, such as a long system prompt. It is particularly valuable when many users or agents begin from the same instructions.</p></div>
+            <div class="tech-row"><strong>KV offloading</strong><p>Move reusable context from GPU memory to CPU RAM, SSD, or remote storage. Fetching a saved cache can be faster than recomputing a 200K or 500K-token history.</p></div>
+            <div class="tech-row"><strong>Speculative decoding</strong><p>Use a smaller draft mechanism to propose future tokens, then verify them with the main model. Techniques discussed include MTP, Eagle, and DFlash-style methods. Speed gains require extra memory for the draft components.</p></div>
+            <div class="tech-row"><strong>Sleep mode</strong><p>Temporarily evict model weights and KV cache while preserving selected runtime metadata. This allows several models to time-share one GPU without paying the full cold-start and graph-capture cost each time.</p></div>
+          </div>
+          <div class="thesis"><strong>The speaker's checklist</strong><p>Choose the model, context length, input/output profile, concurrency, and task type before choosing an optimization. “Enable everything” is not a strategy: quantization may affect quality, speculative decoding consumes additional VRAM, and offloading adds transfer costs.</p></div>
+        </section>
+
+        <section id="adoption">
+          <p class="section-label">Enterprise adoption</p>
+          <h2>The hard step is not demo to pilot; it is pilot to accountable production</h2>
+          <p>The first panel connects infrastructure to organizational readiness. Dr Komes Chandavimol describes a staged system at KBTG: establish AI literacy, let knowledge workers create prototypes, evaluate whether an idea has measurable value, sponsor a smaller set of pilots, test internally, and require explicit exit criteria before customer-facing production.</p>
+          <p>His governance model continues after launch. Teams monitor quality, hallucination, loops, token consumption, and business impact, with a rollback or fallback plan for customer-facing failures. Governance therefore becomes a resource-allocation and learning system, not merely a list of prohibited actions.</p>
+          <div class="architecture" role="figure" aria-label="Enterprise AI idea-to-production gates">
+            <div class="architecture-step"><span>01</span><strong>Literacy</strong><small>People understand capabilities, limits, and responsibility</small></div>
+            <div class="architecture-step"><span>02</span><strong>Prototype</strong><small>Broad access to tools and low-cost experimentation</small></div>
+            <div class="architecture-step"><span>03</span><strong>Value gate</strong><small>Impact hypothesis, budget, owner, success measure</small></div>
+            <div class="architecture-step"><span>04</span><strong>Internal pilot</strong><small>Real employees, bounded risk, defined exit criteria</small></div>
+            <div class="architecture-step"><span>05</span><strong>Production</strong><small>Scale, monitor, govern, rollback, and learn</small></div>
+          </div>
+          <p>Dr Pin Siang Tan adds a different ROI lens. AI is not only about making each employee slightly faster. It can raise the quality and ambition of what a small team can build. That value may not appear in a short POC; it emerges when capable agents become part of real work for several weeks.</p>
+          <p>Tuan Luong calls out the productivity paradox: individuals often feel immediate gains while enterprises struggle to prove aggregate return. The missing link is usually workflow redesign, adoption, and measurement, not just access to a model.</p>
+        </section>
+
+        <section id="host-or-api">
+          <p class="section-label">Build or buy</p>
+          <h2>Self-hosting is an economic and control decision, not an ideological one</h2>
+          <p>The panel rejects one universal answer. Public APIs are the fastest route to frontier capability and early validation. Self-hosting becomes attractive when token volume is large and predictable, an open model meets the quality threshold, data must remain within a jurisdiction, latency benefits from local serving, or the team can exploit owned hardware.</p>
+          <div class="table-wrap mobile-table">
+            <table>
+              <thead><tr><th>Decision factor</th><th>Prefer API</th><th>Prefer self-hosting</th></tr></thead>
+              <tbody>
+                <tr><td data-label="Decision factor">Stage</td><td data-label="Prefer API">Exploration, prototypes, uncertain demand</td><td data-label="Prefer self-hosting">Stable production workload with known volume</td></tr>
+                <tr><td data-label="Decision factor">Capability</td><td data-label="Prefer API">Frontier quality is essential</td><td data-label="Prefer self-hosting">An open model passes task-specific evaluation</td></tr>
+                <tr><td data-label="Decision factor">Economics</td><td data-label="Prefer API">Low or irregular token usage</td><td data-label="Prefer self-hosting">High utilization can amortize hardware and operations</td></tr>
+                <tr><td data-label="Decision factor">Data</td><td data-label="Prefer API">Provider terms and location satisfy policy</td><td data-label="Prefer self-hosting">Residency, sovereignty, or IP controls require local custody</td></tr>
+                <tr><td data-label="Decision factor">Team</td><td data-label="Prefer API">No inference operations capability</td><td data-label="Prefer self-hosting">Engineers can benchmark, tune, observe, and operate the stack</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>A hybrid policy is often strongest: route each project by sensitivity, quality, cost, and workload. This requires a gateway that can enforce quotas, guardrails, provider choice, and tenant boundaries. The operational headcount, on-call attention, upgrade risk, and idle capacity must be counted alongside GPU price.</p>
+        </section>
+
+        <section id="thailand-strategy">
+          <p class="section-label">Thailand strategy</p>
+          <h2>Compete at the problem and application layers</h2>
+          <p>CK from Fastwork argues that Thailand should begin with problems it is unusually positioned to solve rather than defaulting to a foundation-model race. Agriculture is his central example: a large share of the workforce and land is tied to farming, while its economic output remains disproportionately low. Precision farming, water management, crop rotation, and decision support offer places where globally available AI can be combined with local context.</p>
+          <p>He also predicts that the agent may become the primary interface while conventional SaaS products become backends. Instead of opening a CRM and navigating menus, a person states an outcome and the agent operates the systems. Whether that prediction arrives exactly as described is uncertain, but its product implication is useful: APIs, permissions, semantic actions, and trustworthy execution may become more strategic than another polished navigation layer.</p>
+          <p>The role of the engineer changes with it. When coding becomes faster, differentiation moves toward problem selection, product taste, systems thinking, and co-creation. His “new full stack” engineer can move between customer need, product decision, design, implementation, and business outcome rather than waiting for a perfectly complete requirement.</p>
+          <div class="thesis"><strong>A stronger national KPI</strong><p>Measure successful products and solved citizen problems, not only installed GPUs, consumed tokens, or cloud capacity. Compute is an input; useful outcomes are the point.</p></div>
+        </section>
+
+        <section id="production-vllm">
+          <p class="section-label">Inside vLLM</p>
+          <h2>Production configuration begins with workload economics</h2>
+          <p>Tiezhen Wang presents vLLM recipes as a starting point, then warns that defaults cannot know the service's latency and throughput objectives. Two configuration ideas receive special attention: maximum model length and maximum number of sequences.</p>
+          <div class="decision-list">
+            <div class="decision-row"><strong>Maximum model length</strong><p>A model may support a million-token context, but reserving for that maximum can consume GPU memory that could otherwise serve concurrent users. A short chatbot and a long-horizon coding agent should not receive the same limit.</p></div>
+            <div class="decision-row"><strong>Maximum sequences</strong><p>Batch size trades per-user interactivity against aggregate throughput. Serving one user extremely quickly may underutilize the GPU; maximizing total tokens can make every user feel slow. The correct point sits on a workload-specific curve.</p></div>
+          </div>
+          <p>The model-integration process is also instructive. For selected releases, the team works with a vendor before public launch, verifies model outputs against the vendor implementation, packages temporary dependencies and in-flight changes in a day-zero container, then upstreams the integration after review. Correctness comes first; kernel fusion, quantization, speculative decoding, and hardware-specific optimization follow.</p>
+          <p>The broader roadmap spans model performance, additional accelerators such as TPU and AMD, multimodal work, and reinforcement-learning infrastructure including weight synchronization and reducing the mismatch between training and inference. The architectural lesson is that a production engine is a moving compatibility layer across model architectures, hardware, kernels, and serving contracts.</p>
+        </section>
+
+        <section id="llmd">
+          <p class="section-label">Distributed inference</p>
+          <h2>llm-d replaces blind round-robin with request-aware orchestration</h2>
+          <p>Traditional web requests are often short, uniform, and cheap enough for simple load balancing. LLM requests are long, stateful, non-uniform, and expensive. A replica may already hold the right prefix, have almost no KV-cache headroom, or have a long queue. Round-robin cannot see any of this.</p>
+          <p>llm-d introduces an inference gateway and an Endpoint Picker, or EPP, that uses workload signals to choose a vLLM replica. It runs as a Kubernetes-native distributed inference framework and groups replicas into inference pools by base model.</p>
+          <div class="tech-list">
+            <div class="tech-row"><strong>Prefix-aware routing</strong><p>Prefer a replica that already owns reusable KV blocks for the incoming request, reducing recomputation and preserving cache locality.</p></div>
+            <div class="tech-row"><strong>Load-aware routing</strong><p>Consider queue depth and capacity rather than sending a large request to an already saturated worker.</p></div>
+            <div class="tech-row"><strong>Predicted latency</strong><p>A lightweight predictor can learn from completed traffic and estimate latency for new requests, replacing fixed routing weights with continuously updated behavior.</p></div>
+            <div class="tech-row"><strong>KV-cache management</strong><p>Keep useful context resident across GPU, CPU, and shared storage tiers, and route repeat traffic toward the replica where reuse is possible.</p></div>
+            <div class="tech-row"><strong>Prefill/decode disaggregation</strong><p>Separate compute-heavy parallel prefill from sequential, memory-bound decode so each pool can use a configuration suited to its phase.</p></div>
+            <div class="tech-row"><strong>Expert parallelism</strong><p>Distribute mixture-of-experts components across nodes and route work to the relevant experts rather than forcing a large model into one server.</p></div>
+            <div class="tech-row"><strong>Flow control</strong><p>Apply tenant identity, priorities, queues, and fair scheduling when the cluster is saturated.</p></div>
+            <div class="tech-row"><strong>Proactive autoscaling</strong><p>Use queue and cache pressure as leading indicators instead of waiting for GPU utilization and user latency to deteriorate.</p></div>
+          </div>
+          <p>The session reports substantial benchmark improvements for selected setups, including a large reduction in streaming latency with disaggregated prefill and decode. Those numbers demonstrate potential, not a portable guarantee. Network transfer, model shape, prompt distribution, cache hit rate, topology, and concurrency determine whether disaggregation helps a specific deployment.</p>
+        </section>
+
+        <section id="lmcache">
+          <p class="section-label">Reusable context</p>
+          <h2>LMCache treats computed context as a data asset</h2>
+          <p>Dai Tran's session begins with the size of the problem. In his illustrative calculation for Llama 3.1 70B, KV cache occupies roughly 320 KB per token in the stated precision and architecture. A 120K-token context therefore approaches 40 GB, enough to consume a large share of one H100's memory. Keeping every conversation entirely in HBM is not viable at scale.</p>
+          <div class="formula"><code>Request → find longest reusable span → load cached blocks → prefill only the missing span → decode → store asynchronously</code></div>
+          <p>LMCache extends the cache hierarchy from GPU HBM to CPU RAM, local disk, and remote shared storage. CacheGen compresses KV data before transfer to reduce bandwidth pressure. The point is not that slower storage beats GPU memory; it is that retrieving reusable context can beat paying the model to compute it again.</p>
+          <p>The talk identifies four ways expensive context “dies young”: GPU memory pressure evicts it, an engine process crash destroys locally attached cache, a request is routed to a replica that never saw the cache, or a tiny prompt change causes a prefix miss. CacheBlend addresses part of the last problem by dividing context into reusable blocks and recomputing only the portions needed to preserve attention accuracy.</p>
+          <div class="metric-grid" aria-label="Selected LMCache benchmark claims from the presentation">
+            <div class="metric"><strong>Up to 6×</strong><span>better time to first token in the long-document QA setup described by the speaker</span></div>
+            <div class="metric"><strong>Up to 10×</strong><span>higher throughput in the same reported comparison</span></div>
+            <div class="metric"><strong>Up to 7.6×</strong><span>better reported P99 time to first token for that tested workload</span></div>
+          </div>
+          <p>Cache infrastructure is most promising for multi-turn chat, document QA, retrieval workflows, and coding agents where large spans recur. It is less useful for unique one-shot prompts or very short inputs. A valid rollout therefore starts with instrumentation: cache lookup and hit rates, tier latency, transferred bytes, TTFT, throughput, cost by model and tenant, and prompt-template stability.</p>
+          <p>At enterprise scale, performance alone is insufficient. The session calls for cluster-level cache services that survive engine replacement, tested version compatibility between vLLM and cache components, tenant-scoped cache keys, per-model and per-tenant metrics, air-gapped deployment, and operational service levels.</p>
+        </section>
+
+        <section id="thai-inference">
+          <p class="section-label">Thai inference engineering</p>
+          <h2>Thailand's gap is also its opportunity</h2>
+          <p>The final panel defines inference engineering as the work that makes model capability affordable and deliverable to many users. Sattaya Singkul highlights a concrete local issue: Thai text may consume more tokens than comparable English text under many tokenizers. That can increase prefill work, KV-cache demand, time to first token, and ultimately the cost assumptions used to size a service.</p>
+          <p>Pongsasit Thongpramoon recommends turning “the model is slow” into measurable questions. Is the complaint about time to first token, which is heavily influenced by prompt processing, or inter-token latency, which describes generation speed? Is the bottleneck scheduling, model execution, memory bandwidth, networking, interconnect, or hardware capacity?</p>
+          <p>Natthanan Bhukan describes research on distributing long context across GPUs while avoiding idle time and excessive communication. The broader lesson is to look beneath framework abstractions. Teams that can formulate a local workload problem precisely may find research and product opportunities that frontier labs are not incentivized to solve.</p>
+          <div class="lesson-list">
+            <div class="lesson-row"><strong>For policy makers</strong><p>Fund engineers and operational knowledge alongside hardware. A GPU cluster without serving expertise is expensive idle capacity. Keep data-residency rules clear enough that companies can build locally.</p></div>
+            <div class="lesson-row"><strong>For entrepreneurs</strong><p>Do not default to another chatbot. Build the layer that lets Thai companies run an appropriate open model, under local constraints, at a price and service level they can approve.</p></div>
+            <div class="lesson-row"><strong>For engineers</strong><p>Serve a small model on available hardware, send realistic traffic, measure TTFT and inter-token latency, alter one parameter at a time, inspect why benchmarks differ, and connect the improvement to business value.</p></div>
+          </div>
+        </section>
+
+        <section id="platform-blueprint">
+          <p class="section-label">Platform blueprint</p>
+          <h2>What this means for an agentic AI platform</h2>
+          <p>For a platform team, the sessions suggest a workload-aware control plane rather than one universal model endpoint. Each agent or business flow should declare enough intent for the platform to choose a serving policy.</p>
+          <div class="table-wrap mobile-table">
+            <table>
+              <thead><tr><th>Contract field</th><th>Why it matters</th><th>Platform response</th></tr></thead>
+              <tbody>
+                <tr><td data-label="Contract field">Data classification</td><td data-label="Why it matters">Determines provider, region, isolation, and logging policy</td><td data-label="Platform response">API, private cloud, or on-prem route</td></tr>
+                <tr><td data-label="Contract field">Quality target</td><td data-label="Why it matters">Defines the minimum model capability</td><td data-label="Platform response">Select only models that pass task evals</td></tr>
+                <tr><td data-label="Contract field">Context pattern</td><td data-label="Why it matters">Stable prefixes and multi-turn history can be reused</td><td data-label="Platform response">Enable prefix affinity and cache tiers</td></tr>
+                <tr><td data-label="Contract field">Latency objective</td><td data-label="Why it matters">Interactive and background agents need different scheduling</td><td data-label="Platform response">Priority, batching, and prefill/decode policy</td></tr>
+                <tr><td data-label="Contract field">Volume and concurrency</td><td data-label="Why it matters">Changes API economics and cluster sizing</td><td data-label="Platform response">Quota, autoscaling, or self-host break-even review</td></tr>
+                <tr><td data-label="Contract field">Fallback behavior</td><td data-label="Why it matters">Customer workflows need controlled failure</td><td data-label="Platform response">Alternate model, degraded flow, human handoff, or rollback</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>This contract gives Business Analysts a meaningful role without asking them to tune kernels. They describe business criticality, user experience, sensitive data, expected repetition, volume, and failure policy. Platform engineers translate those requirements into model, gateway, scheduler, cache, and hardware configurations.</p>
+        </section>
+
+        <section id="assessment">
+          <p class="section-label">Critical assessment</p>
+          <h2>The event is strongest when it connects a technique to a workload</h2>
+          <h3>What is convincing</h3>
+          <p>The talks repeatedly reject infrastructure by fashion. Prefix caching only helps shared prefixes. LMCache needs enough reuse to justify another data layer. Self-hosting requires sustained demand and operating capability. Larger context limits and batches are not automatically better. This workload-first framing is the most transferable lesson.</p>
+          <h3>What deserves caution</h3>
+          <p>Several benchmark figures are “up to” results from selected configurations and should not become procurement assumptions. The recording also contains forward-looking claims about open models, agent interfaces, productivity, and national opportunity. They are useful hypotheses, but platform decisions still need task-specific evals, load tests, total-cost models, and security review.</p>
+          <h3>What is missing</h3>
+          <p>The event goes deep on serving but less deeply on output quality under optimization, evaluation design, incident response, model-risk ownership, energy cost, and the operational complexity introduced by distributed cache and routing. A complete production programme should test semantic quality and safety alongside latency, throughput, and cost.</p>
+          <div class="thesis"><strong>Balanced conclusion</strong><p>vLLM, llm-d, and LMCache form a compelling open serving stack, but architecture should be earned by observed traffic. Begin with a measured endpoint, add the layer that removes the current bottleneck, and verify that the business outcome improves after every addition.</p></div>
+        </section>
+
+        <section id="takeaways">
+          <p class="section-label">Takeaways</p>
+          <h2>What to remember after five hours</h2>
+          <ol class="summary-list">
+            <li>Model quality is only the beginning; inference turns intelligence into a service.</li>
+            <li>Measure TTFT, inter-token latency, throughput, concurrency, cost, and quality separately.</li>
+            <li>Context length is a capacity decision. Do not reserve the model maximum by default.</li>
+            <li>KV cache is both a memory cost and a reusable asset for long-running agents.</li>
+            <li>Route requests with knowledge of load and cache locality, not blind round-robin.</li>
+            <li>Separate prefill and decode only when tests show the added network and operational complexity pays back.</li>
+            <li>Use APIs for speed and uncertainty; self-host when control, volume, residency, or owned capacity makes the economics real.</li>
+            <li>Move ideas through explicit value, pilot, production, and post-launch governance gates.</li>
+            <li>Thai tokenization, data residency, and local workflows are product and research opportunities.</li>
+            <li>Buy expertise with the hardware. A serving platform is an operating capability, not a GPU purchase.</li>
+          </ol>
+        </section>
+
+        <section id="sources">
+          <p class="section-label">Sources and method</p>
+          <h2>Recording, agenda, and evidence boundaries</h2>
+          <ul class="source-links">
+            <li><a href="https://www.facebook.com/creatorsgarten/videos/2166530687262705/">Special Event: vLLM Bangkok Day 2026</a> by Creatorsgarten. The full event audio is the primary source for this editorial summary.</li>
+            <li><a href="https://vllmbangkok.com/en/agenda/">Official vLLM Bangkok Day agenda</a>. Used to verify session titles, speaker names, roles, and planned technical topics.</li>
+            <li><a href="https://vllmbangkok.com/en/blog/vllm-bangkok-day-announced/">Official event announcement</a>. Used for event context, audience, venue, and the organizers' stated purpose.</li>
+          </ul>
+          <p>The Facebook caption track covered only part of the recording, so the remaining audio was transcribed locally with speech recognition. The recording mixes accented English, Thai names, and dense infrastructure vocabulary; uncertain wording was paraphrased rather than quoted. Product names and speaker identities were normalized using the official agenda.</p>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Article contents">
+        <nav class="toc" aria-labelledby="toc-title">
+          <h2 id="toc-title">On this page</h2>
+          <ul>
+            <li><a href="#summary">Executive summary</a></li>
+            <li><a href="#event-map">Event map</a></li>
+            <li><a href="#mental-model">Production stack</a></li>
+            <li><a href="#limited-gpu">Limited GPUs</a></li>
+            <li><a href="#adoption">Enterprise adoption</a></li>
+            <li><a href="#host-or-api">Self-host or API</a></li>
+            <li><a href="#thailand-strategy">Thailand strategy</a></li>
+            <li><a href="#production-vllm">Inside vLLM</a></li>
+            <li><a href="#llmd">Distributed llm-d</a></li>
+            <li><a href="#lmcache">LMCache</a></li>
+            <li><a href="#thai-inference">Thai inference</a></li>
+            <li><a href="#platform-blueprint">Platform blueprint</a></li>
+            <li><a href="#assessment">Critical assessment</a></li>
+            <li><a href="#takeaways">Takeaways</a></li>
+            <li><a href="#sources">Sources</a></li>
+          </ul>
+        </nav>
+        <div class="note-card">
+          <h2>Source scope</h2>
+          <p>One 5h 18m event recording, a partial publisher caption track, a full local speech-recognition pass, and the official event programme.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer-note">Detailed paraphrase for study. Follow the source links for the complete talks and current project details.</footer>
+</body>
+</html>

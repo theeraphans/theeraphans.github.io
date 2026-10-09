@@ -1,0 +1,848 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>Model Routing Belongs in the Agent Harness</title>
+    <meta
+      name="description"
+      content="A critical guide to LangChain's Open SWE model-router experiment: task analysis, model tiers, harness middleware, A/B results, cost savings, limitations, and a production routing blueprint."
+    />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .visual {
+        margin: 1.65rem 0 2rem;
+      }
+      .visual img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: #fff;
+      }
+      .visual figcaption {
+        margin-top: 0.65rem;
+        color: var(--muted);
+        font-size: 0.89rem;
+        line-height: 1.5;
+      }
+      .visual figcaption strong {
+        color: var(--ink);
+      }
+      .callout {
+        margin: 1.45rem 0;
+        padding: 1rem !important;
+        border-left: 3px solid var(--green) !important;
+        background: var(--surface) !important;
+      }
+      .callout.warning {
+        border-left-color: #8a6417 !important;
+      }
+      .callout p:last-child {
+        margin-bottom: 0;
+      }
+      .metric-grid,
+      .tier-grid,
+      .control-grid,
+      .contract-grid {
+        display: grid;
+        gap: 1px;
+        margin: 1.5rem 0;
+        background: var(--line);
+        border: 1px solid var(--line);
+      }
+      .metric-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .tier-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .control-grid,
+      .contract-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .metric-grid > div,
+      .tier-grid > div,
+      .control-grid > div,
+      .contract-grid > div {
+        padding: 1rem;
+        background: var(--paper);
+      }
+      .metric-grid span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.76rem;
+        text-transform: uppercase;
+      }
+      .metric-grid strong {
+        display: block;
+        margin: 0.35rem 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+      .metric-grid small,
+      .tier-grid p,
+      .control-grid p,
+      .contract-grid p {
+        display: block;
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.89rem;
+        line-height: 1.5;
+      }
+      .tier-grid h3,
+      .control-grid h3,
+      .contract-grid h3 {
+        margin: 0 0 0.45rem;
+        font-size: 1.03rem;
+      }
+      .route-flow {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 0.45rem;
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background: var(--surface);
+        border: 1px solid var(--line);
+      }
+      .route-flow > div {
+        padding: 0.75rem;
+        background: var(--paper);
+        border: 1px solid var(--line);
+      }
+      .route-flow strong,
+      .route-flow small {
+        display: block;
+      }
+      .route-flow small {
+        margin-top: 0.3rem;
+        color: var(--muted);
+        line-height: 1.4;
+      }
+      .comparison-table {
+        width: 100%;
+        min-width: 0 !important;
+        margin: 1.5rem 0;
+        table-layout: fixed;
+        border-collapse: collapse;
+      }
+      .comparison-table th,
+      .comparison-table td {
+        padding: 0.75rem 0.55rem;
+        text-align: left;
+        vertical-align: top;
+        overflow-wrap: anywhere;
+        border-bottom: 1px solid var(--line);
+      }
+      .comparison-table th {
+        font-weight: 600;
+      }
+      @media (max-width: 850px) {
+        .metric-grid,
+        .tier-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .route-flow {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 750px) {
+        .metric-grid,
+        .tier-grid,
+        .control-grid,
+        .contract-grid {
+          grid-template-columns: 1fr;
+        }
+        .comparison-table {
+          font-size: 0.86rem;
+        }
+        .comparison-table thead {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip: rect(0 0 0 0);
+        }
+        .comparison-table,
+        .comparison-table tbody,
+        .comparison-table tr,
+        .comparison-table td {
+          display: block;
+          width: 100%;
+        }
+        .comparison-table tr {
+          padding: 0.55rem 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .comparison-table td {
+          display: grid;
+          grid-template-columns: 6.7rem minmax(0, 1fr);
+          gap: 0.65rem;
+          padding: 0.32rem 0.2rem;
+          border: 0;
+        }
+        .comparison-table td::before {
+          color: var(--muted);
+          font-weight: 600;
+        }
+        .comparison-table td:nth-child(1)::before {
+          content: "Concern";
+        }
+        .comparison-table td:nth-child(2)::before {
+          content: "Harness";
+        }
+        .comparison-table td:nth-child(3)::before {
+          content: "Gateway";
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Reading room</a>
+      <div class="top-actions">
+        <a
+          class="action-link"
+          href="https://www.langchain.com/blog/how-to-build-a-model-router-in-the-harness"
+          >Read source</a
+        >
+      </div>
+    </nav>
+
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Agent architecture · Model economics</p>
+          <h1>Model Routing Belongs in the Agent Harness</h1>
+          <p class="subtitle">
+            LangChain routed Open SWE coding tasks across fast, balanced, and
+            performance tiers. The experiment reduced median thread cost by 64%,
+            but the durable lesson is how to couple routing policy with task
+            context, observability, and outcome evaluation.
+          </p>
+          <div class="meta">
+            <span>7-minute article</span
+            ><span>Sydney Runkle · Eugene Yurtsev</span
+            ><span>Published October 01, 2026</span
+            ><span>Summary run: October 02, 2026 · 22:55 ICT</span>
+          </div>
+        </div>
+        <figure class="hero-card">
+          <img
+            src="2026-10-02-langchain-model-router-thumbnail.png"
+            alt="LangChain model router illustration"
+          />
+          <figcaption>
+            A router is useful only when it selects the least expensive model
+            that can still complete the task. Cheap classification without
+            trustworthy outcome signals merely automates cost cutting.
+          </figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="section-label">Executive summary</p>
+            <h2>
+              Route from evidence about your workload, not a generic model
+              ranking
+            </h2>
+            <p>
+              LangChain's Open SWE agent had been sending every coding request
+              to a top-tier model. That was easy to operate but economically
+              wasteful: asking a repository question, running a test, and
+              implementing a difficult feature all paid the same intelligence
+              premium. The team used production traces to map its task mix,
+              selected three models along a cost-capability curve, and added a
+              classifier to choose one model at the beginning of each thread.
+            </p>
+            <p>
+              In a randomized experiment covering 973 threads, routed work had a
+              median LLM cost of $0.94 versus $2.61 for the control that always
+              used GPT-6 Astra. The reported merged-PR and PR-open rates were
+              not statistically distinguishable. This supports a practical
+              claim: a heterogeneous coding workload can contain enough easy
+              work for task-aware routing to reduce spend without an obvious
+              quality loss. It does not establish that this router is optimal,
+              that merged PRs fully measure code quality, or that the result
+              transfers to other agents.
+            </p>
+            <ul class="summary-list">
+              <li>
+                <strong>Understand traffic before choosing tiers.</strong> The
+                router criteria came from real Open SWE traces, not only public
+                model benchmarks.
+              </li>
+              <li>
+                <strong>Put task-aware policy near the harness.</strong> The
+                harness knows the domain, tools, user request, and expected
+                work; a generic gateway often sees only a model-shaped API call.
+              </li>
+              <li>
+                <strong>Route to the cheapest sufficient model.</strong> The
+                objective is constrained cost minimization, not predicting which
+                model is globally “best.”
+              </li>
+              <li>
+                <strong>Measure business outcomes.</strong> Cost is meaningful
+                only beside a success signal such as merged PRs, review quality,
+                task completion, or user acceptance.
+              </li>
+              <li>
+                <strong>Keep an escalation path.</strong> A router will be
+                wrong. Production design must detect under-routing and move work
+                upward without losing state or repeating unsafe actions.
+              </li>
+            </ul>
+            <div class="callout warning">
+              <strong>Evidence boundary</strong>
+              <p>
+                The data and charts are published by LangChain about its own
+                internal use of Open SWE. The experiment is stronger than a
+                testimonial because it reports sample size, controls, outcome
+                rates, and p-values, but it is not an independent replication.
+                Exact model names, prices, benchmark positions, and router
+                behavior will change. Treat 64% as this experiment's result, not
+                a universal routing discount.
+              </p>
+            </div>
+          </section>
+
+          <section id="tasks">
+            <p class="section-label">Step 1 · Understand the tasks</p>
+            <h2>
+              Production traces reveal where frontier intelligence is being
+              wasted
+            </h2>
+            <p>
+              The team analyzed one week of interactive Open SWE threads from
+              LangSmith. An LLM classifier grouped requests by title and
+              metadata. New features represented 22% of threads, bug fixes 17%,
+              and test or no-op runs 16%. Those labels are useful heuristics
+              rather than ground truth, but they show that the workload is not
+              one homogeneous “coding” task.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-02-langchain-model-router-task-mix.png"
+                alt="Open SWE threads grouped by task type"
+              />
+              <figcaption>
+                <strong>LangChain source chart.</strong> Feature work, bug
+                fixes, tests, releases, questions, and no-op requests create
+                different capability and cost requirements.
+              </figcaption>
+            </figure>
+            <p>
+              Cost and invocation count were used as rough complexity signals.
+              Feature investigations tended to be longer and more expensive;
+              testing and release procedures were generally shorter. Neither
+              signal is a pure measure of difficulty. A weak model may create
+              more turns because it is struggling, while a concise but dangerous
+              migration could require few turns and still deserve the strongest
+              reasoning and review controls.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-02-langchain-model-router-task-profile.png"
+                alt="Open SWE task categories compared by thread count, agent invocations, cost, and complexity mix"
+              />
+              <figcaption>
+                <strong>LangChain source chart.</strong> Cost and turn count
+                vary across categories. A useful router should combine these
+                historical patterns with risk, tool access, and explicit task
+                requirements.
+              </figcaption>
+            </figure>
+          </section>
+
+          <section id="models">
+            <p class="section-label">Step 2 · Understand the models</p>
+            <h2>
+              Choose a small set of tiers with meaningfully different economics
+            </h2>
+            <p>
+              LangChain started with the Artificial Analysis Intelligence Index,
+              then chose three models at different points on the
+              cost-intelligence curve. A public benchmark helped identify
+              candidates; provider guidance and the observed Open SWE workload
+              informed the final tier descriptions.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-02-langchain-model-router-pareto.png"
+                alt="Model intelligence versus cost with selected fast, balanced, and performance tiers"
+              />
+              <figcaption>
+                <strong
+                  >LangChain source chart, September 9, 2026 snapshot.</strong
+                >
+                The Pareto frontier is a starting point, not a production
+                routing policy. Capability on your tools and traces matters more
+                than a global benchmark rank.
+              </figcaption>
+            </figure>
+            <div class="tier-grid">
+              <div>
+                <h3>Fast</h3>
+                <p>
+                  GLM-5.3-Flash at xhigh effort for straightforward questions,
+                  tests, small changes, and low-risk work.
+                </p>
+              </div>
+              <div>
+                <h3>Balanced</h3>
+                <p>
+                  GPT-5.6 Sol at medium effort for ordinary feature and bug-fix
+                  work needing stronger reasoning.
+                </p>
+              </div>
+              <div>
+                <h3>Performance</h3>
+                <p>
+                  GPT-6 Astra at low effort for complex, ambiguous, or
+                  high-stakes requests where failure is expensive.
+                </p>
+              </div>
+            </div>
+            <p>
+              The names matter less than the spacing. If two tiers have similar
+              price and capability, a classifier call and cache loss can consume
+              the expected savings. A useful tier set has a clear economic gap,
+              a measurable capability boundary, and models that satisfy the same
+              tool, context, structured-output, security, and data-residency
+              requirements.
+            </p>
+          </section>
+
+          <section id="router">
+            <p class="section-label">Step 3 · Build the router</p>
+            <h2>The routing decision is a typed policy inside the harness</h2>
+            <p>
+              The Open SWE router runs once on the first human message. Its base
+              instruction asks for the least expensive model likely to finish
+              the task. Plain-language criteria describe each tier, and a
+              classifier returns the selected tier as structured output. The
+              first version used a general LLM; the current implementation uses
+              Jev, which LangChain reports made classification nearly 50 times
+              faster.
+            </p>
+            <div
+              class="route-flow"
+              role="img"
+              aria-label="Task-aware model routing flow"
+            >
+              <div>
+                <strong>Observe</strong
+                ><small
+                  >Initial request, user, repository, tools, and risk
+                  metadata.</small
+                >
+              </div>
+              <div>
+                <strong>Classify</strong
+                ><small
+                  >Return a typed tier, confidence, and reason code.</small
+                >
+              </div>
+              <div>
+                <strong>Bind</strong
+                ><small
+                  >Select model, effort, limits, and compatible tool
+                  contract.</small
+                >
+              </div>
+              <div>
+                <strong>Execute</strong
+                ><small
+                  >Trace cost, latency, tool calls, retries, and
+                  artifacts.</small
+                >
+              </div>
+              <div>
+                <strong>Evaluate</strong
+                ><small
+                  >Record outcome and feed routing mistakes back into
+                  policy.</small
+                >
+              </div>
+            </div>
+            <p>
+              LangChain implements the choice as middleware, so the agent's
+              surrounding workflow remains unchanged while the model binding is
+              replaced. This is a clean ownership boundary: the agent still owns
+              task state and tools; the router owns a decision contract;
+              provider adapters own model invocation.
+            </p>
+            <div class="callout">
+              <strong>Router output should be inspectable</strong>
+              <p>
+                Store the chosen tier, policy version, classifier version,
+                features used, confidence, reason code, estimated cost,
+                fallback, and escalation trigger. Without those fields, a
+                cheaper answer cannot be distinguished from a silent routing
+                mistake.
+              </p>
+            </div>
+          </section>
+
+          <section id="placement">
+            <p class="section-label">Harness versus gateway</p>
+            <h2>
+              Task policy belongs near the agent; provider governance can remain
+              centralized
+            </h2>
+            <p>
+              LangChain argues that routing belongs in the harness because the
+              harness already knows the agent's domain, prompt, tools, and task
+              semantics. That is persuasive for capability selection. A gateway
+              that receives only a generic completion request may not know that
+              a short message requests a production database migration.
+            </p>
+            <p>
+              The choice need not be binary. A platform can let the harness
+              select a capability tier while a gateway enforces the allowed
+              provider, region, budget, rate limit, failover, and audit policy.
+              The harness answers “what level of reasoning does this task
+              need?”; the gateway answers “which approved deployment can supply
+              it now?”
+            </p>
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th>Concern</th>
+                  <th>Harness</th>
+                  <th>Gateway</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Task meaning</td>
+                  <td>Rich domain and workflow context</td>
+                  <td>Usually limited request metadata</td>
+                </tr>
+                <tr>
+                  <td>Capability tier</td>
+                  <td>Best owner of task-fit policy</td>
+                  <td>Can map tier to available deployment</td>
+                </tr>
+                <tr>
+                  <td>Security and residency</td>
+                  <td>Declares task constraints</td>
+                  <td>Enforces organization-wide provider policy</td>
+                </tr>
+                <tr>
+                  <td>Availability</td>
+                  <td>Defines acceptable fallback behavior</td>
+                  <td>Tracks health, quotas, and failover</td>
+                </tr>
+                <tr>
+                  <td>Evaluation</td>
+                  <td>Connects routing to task outcome</td>
+                  <td>Measures provider latency, errors, and spend</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="experiment">
+            <p class="section-label">The experiment</p>
+            <h2>
+              Cost fell clearly; the reported quality metrics stayed
+              statistically flat
+            </h2>
+            <p>
+              The first A/B test randomized 973 threads between the router and a
+              control that always used GPT-6 Astra. The router sent 56% of its
+              threads to the balanced tier, 34% to fast, and 10% to performance.
+              Median cost fell from $2.61 to $0.94. Mean cost fell 42% and p90
+              cost fell 37%, suggesting the reduction was not caused only by a
+              handful of unusually cheap threads.
+            </p>
+            <div class="metric-grid">
+              <div>
+                <span>Threads</span><strong>973</strong
+                ><small>Router and performance-model control combined.</small>
+              </div>
+              <div>
+                <span>Median cost</span><strong>−64%</strong
+                ><small>$0.94 routed versus $2.61 control.</small>
+              </div>
+              <div>
+                <span>Merged PR</span><strong>29.2% / 27.3%</strong
+                ><small>Router versus control; p = 0.49.</small>
+              </div>
+              <div>
+                <span>PR opened</span><strong>38.9% / 39.6%</strong
+                ><small>Router versus control; p = 0.82.</small>
+              </div>
+            </div>
+            <figure class="visual">
+              <img
+                src="2026-10-02-langchain-model-router-experiment.png"
+                alt="A/B experiment results comparing routed Open SWE threads with GPT-6 Astra control"
+              />
+              <figcaption>
+                <strong>LangChain source chart.</strong> The observed
+                quality-rate differences are small relative to their
+                uncertainty. “No measurable change” is more accurate than
+                claiming routing improved quality.
+              </figcaption>
+            </figure>
+            <figure class="visual">
+              <img
+                src="2026-10-02-langchain-model-router-cost.png"
+                alt="Distribution of LLM cost per Open SWE thread by model tier and control"
+              />
+              <figcaption>
+                <strong>LangChain source chart.</strong> Median routed cost was
+                $0.94. Within routed traffic, medians were $0.097 for fast,
+                $1.50 for balanced, and $2.88 for performance: roughly a 30-fold
+                spread.
+              </figcaption>
+            </figure>
+          </section>
+
+          <section id="limitations">
+            <p class="section-label">Critical reading</p>
+            <h2>What the experiment does not prove</h2>
+            <div class="control-grid">
+              <div>
+                <h3>The main control was expensive</h3>
+                <p>
+                  Always using the strongest model creates ample room for
+                  savings. The study shows that frontier-only was wasteful, not
+                  that this router is cheaper than every sensible fixed-model
+                  baseline.
+                </p>
+              </div>
+              <div>
+                <h3>The fast-only test was stopped early</h3>
+                <p>
+                  Engineers reported immediate quality problems, but the test
+                  ended before statistical conclusions were possible. It is
+                  operational evidence, not a quantified comparison.
+                </p>
+              </div>
+              <div>
+                <h3>Merged PR is a proxy</h3>
+                <p>
+                  Merge decisions reflect usefulness, task selection, reviewer
+                  behavior, and urgency. They do not directly measure defect
+                  rate, maintainability, security, or time spent correcting the
+                  patch.
+                </p>
+              </div>
+              <div>
+                <h3>Routing happened only once</h3>
+                <p>
+                  A question can become a bug fix mid-thread. Fixed routing
+                  avoids cache loss and complexity but cannot react when the
+                  task changes or the selected model begins to fail.
+                </p>
+              </div>
+              <div>
+                <h3>Categories were model-generated</h3>
+                <p>
+                  The task map is a useful exploratory artifact. Mislabeling and
+                  incomplete metadata can shape tier criteria before the router
+                  is ever evaluated.
+                </p>
+              </div>
+              <div>
+                <h3>Router overhead is part of economics</h3>
+                <p>
+                  Classification latency, decision-model cost, lost prompt
+                  cache, duplicate work after escalation, and provider
+                  integration must be included in total cost and user latency.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="production">
+            <p class="section-label">Production blueprint</p>
+            <h2>
+              A model router is a governed decision service, not a clever prompt
+            </h2>
+            <div class="contract-grid">
+              <div>
+                <h3>Inputs</h3>
+                <p>
+                  Task type, risk class, tools, expected context, artifact type,
+                  user role, latency SLO, budget, and data-residency
+                  constraints.
+                </p>
+              </div>
+              <div>
+                <h3>Decision</h3>
+                <p>
+                  Capability tier, model policy, effort level, context limit,
+                  confidence, reason code, and policy version.
+                </p>
+              </div>
+              <div>
+                <h3>Fallback</h3>
+                <p>
+                  Approved equivalent model for outages, plus explicit behavior
+                  when no compliant deployment is available.
+                </p>
+              </div>
+              <div>
+                <h3>Escalation</h3>
+                <p>
+                  Trigger on repeated tool errors, failed tests, low-confidence
+                  decisions, user correction, risk increase, or budget overrun.
+                </p>
+              </div>
+              <div>
+                <h3>Observability</h3>
+                <p>
+                  Record decision trace, model, tokens, cache status, latency,
+                  retries, tool trajectory, outcome, and reviewer intervention.
+                </p>
+              </div>
+              <div>
+                <h3>Evaluation</h3>
+                <p>
+                  Maintain a frozen offline routing set and an online experiment
+                  with quality guardrails, rollback thresholds, and cohort
+                  checks.
+                </p>
+              </div>
+            </div>
+            <p>
+              For a multi-agent platform, route at the narrowest useful
+              boundary. A Master Agent may need a balanced model for planning
+              while a retrieval subagent uses fast inference and a
+              production-change reviewer uses the performance tier. However,
+              per-call routing can destroy cache reuse and make traces difficult
+              to reason about. Start with per-thread or per-subagent routing,
+              then introduce mid-flight changes only where failure data
+              justifies them.
+            </p>
+            <p>
+              Business analysts should configure capability policy rather than
+              provider names: “simple read-only lookup,” “standard analysis,” or
+              “high-risk irreversible decision.” Platform owners then map those
+              tiers to approved deployments. This keeps business intent stable
+              when model rankings, prices, and vendors change.
+            </p>
+          </section>
+
+          <section id="playbook">
+            <p class="section-label">Adoption sequence</p>
+            <h2>A defensible way to introduce routing</h2>
+            <ol>
+              <li>
+                Instrument one fixed-model baseline and attach outcomes to
+                complete agent traces.
+              </li>
+              <li>
+                Cluster real traffic by task, risk, cost, latency, tool pattern,
+                and failure mode.
+              </li>
+              <li>
+                Choose two or three economically distinct tiers and verify
+                tool-contract compatibility.
+              </li>
+              <li>
+                Write explicit tier criteria and label a representative offline
+                routing dataset.
+              </li>
+              <li>
+                Run shadow routing first: record decisions without changing the
+                serving model.
+              </li>
+              <li>
+                Compare router choices with outcomes, reviewer overrides, and
+                counterfactual model results where affordable.
+              </li>
+              <li>
+                Launch a bounded A/B test with quality, safety, cost, and
+                latency guardrails.
+              </li>
+              <li>
+                Review routing mistakes by cohort and version the policy before
+                expanding scope.
+              </li>
+            </ol>
+          </section>
+
+          <section id="sources">
+            <p class="section-label">Sources and limitations</p>
+            <h2>What this article is based on</h2>
+            <ul>
+              <li>
+                <a
+                  href="https://www.langchain.com/blog/how-to-build-a-model-router-in-the-harness"
+                  >How to Build a Model Router in the Harness</a
+                >
+                by Sydney Runkle and Eugene Yurtsev. This is the primary source
+                for the Open SWE experiment, charts, and implementation
+                description.
+              </li>
+              <li>
+                <a
+                  href="https://github.com/langchain-ai/open-swe/blob/main/agent/middleware/model_selection.py"
+                  >Open SWE model-selection middleware</a
+                >
+                for the source implementation referenced by the article.
+              </li>
+              <li>
+                <a
+                  href="https://docs.langchain.com/oss/python/langchain/models#dynamic-model-selection"
+                  >LangChain dynamic model-selection documentation</a
+                >
+                for the middleware model-binding pattern.
+              </li>
+              <li>
+                <a
+                  href="https://docs.langchain.com/oss/python/integrations/providers/typesafe#model-routing"
+                  >LangChain TypeSafe model-routing documentation</a
+                >
+                for the current Jev integration.
+              </li>
+              <li>
+                <a
+                  href="https://www.langchain.com/blog/building-a-harness-with-jev"
+                  >Building a Harness with Jev</a
+                >
+                for background on typed decision models inside an agent harness.
+              </li>
+            </ul>
+            <p>
+              Charts are reproduced from the LangChain source page and retain
+              their original data labels. This summary did not access
+              LangChain's raw thread data, independently reproduce the A/B
+              analysis, or benchmark the three models. All economic and quality
+              figures are therefore attributed to LangChain.
+            </p>
+          </section>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <p class="section-label">On this page</p>
+          <ol>
+            <li><a href="#summary">Executive summary</a></li>
+            <li><a href="#tasks">Understand the tasks</a></li>
+            <li><a href="#models">Understand the models</a></li>
+            <li><a href="#router">Build the router</a></li>
+            <li><a href="#placement">Harness vs gateway</a></li>
+            <li><a href="#experiment">The experiment</a></li>
+            <li><a href="#limitations">Limitations</a></li>
+            <li><a href="#production">Production blueprint</a></li>
+            <li><a href="#playbook">Adoption sequence</a></li>
+            <li><a href="#sources">Sources</a></li>
+          </ol>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>

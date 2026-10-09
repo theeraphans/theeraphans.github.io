@@ -1,0 +1,870 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>We Cut 94% of AI Coding Tokens With a Local Code Index - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #182026;
+      --muted: #5d6b72;
+      --paper: #fffdf8;
+      --soft: #f3f0e8;
+      --line: #ddd6c8;
+      --red: #b4473f;
+      --green: #2c7163;
+      --blue: #2d587f;
+      --gold: #a87529;
+      --violet: #665a84;
+      --code: #1f2a31;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--soft);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--red), var(--green), var(--blue), var(--gold));
+    }
+
+    h1, h2, h3, p, ul, ol, figure, pre { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--green);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--red);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 7.4vw, 6.35rem);
+      font-weight: 760;
+      line-height: 0.94;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 820px;
+      margin-top: 24px;
+      color: #2d363d;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.16rem, 2.1vw, 1.55rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 28px 60px rgb(24 32 39 / 14%);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: #1f3734;
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 84%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: rgb(255 255 255 / 88%);
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .stat {
+      padding: 14px;
+      color: var(--ink);
+      background: #fff;
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--red);
+      font-size: 1.7rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 238px minmax(0, 1fr);
+      gap: 40px;
+      align-items: start;
+      margin-top: 38px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 6px;
+      padding: 16px;
+      background: rgb(255 255 255 / 58%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .toc span {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 750;
+      text-decoration: none;
+      border-top: 1px solid rgb(217 210 195 / 70%);
+    }
+
+    .content {
+      display: grid;
+      gap: 28px;
+      min-width: 0;
+    }
+
+    .section {
+      min-width: 0;
+      padding: 34px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; padding-top: 0; }
+
+    .label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--red);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      max-width: 820px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 4.2vw, 3.45rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      max-width: 880px;
+      margin-top: 14px;
+      color: #2d363b;
+      font-size: 1.08rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      margin-bottom: 12px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--green);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+      counter-reset: step;
+    }
+
+    .flow-step {
+      display: grid;
+      grid-template-columns: 56px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      counter-increment: step;
+    }
+
+    .flow-step::before {
+      content: counter(step, decimal-leading-zero);
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      color: #fff;
+      background: var(--red);
+      border-radius: 50%;
+      font-weight: 950;
+    }
+
+    .flow-step p {
+      margin-top: 5px;
+      color: var(--muted);
+    }
+
+    .table-wrap {
+      min-width: 0;
+      margin-top: 24px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+    }
+
+    table {
+      width: 100%;
+      min-width: 780px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: #fff;
+      background: var(--blue);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    td {
+      color: #344047;
+      font-size: 0.95rem;
+    }
+
+    .formula {
+      margin-top: 24px;
+      padding: 22px;
+      color: #fff;
+      background: var(--code);
+      border-radius: 8px;
+    }
+
+    .formula strong {
+      display: block;
+      margin-bottom: 8px;
+      color: #fff;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.45rem;
+      line-height: 1.2;
+    }
+
+    .formula p { color: rgb(255 255 255 / 84%); }
+
+    .quote {
+      margin-top: 24px;
+      padding: 22px;
+      color: #fff;
+      background: var(--violet);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.25rem, 2.5vw, 1.9rem);
+      line-height: 1.35;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 14px 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 46px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .toc { position: static; }
+
+      .grid,
+      .two,
+      .tldr {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .page { padding-inline: 16px; }
+
+      .hero {
+        padding-top: 36px;
+        gap: 28px;
+      }
+
+      h1 {
+        max-width: 10ch;
+        font-size: clamp(2.8rem, 15vw, 4.5rem);
+      }
+
+      .grid,
+      .two,
+      .tldr {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-step {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./">YouTube Extractor</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#architecture">Architecture</a>
+      <a class="action-link" href="#caveats">Caveats</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=dRmWYHuIJxM">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">AI Coding Cost</span>
+        <h1>Cut Context Before You Cut Output</h1>
+        <p class="subtitle">
+          A practical summary of Rajkumar Sakthivel's talk on reducing AI coding token usage with a local code index.
+          The core idea is simple: most cost comes from the context you send, not the answer the model writes back.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> We Cut 94% of AI Coding Tokens With a Local Code Index</span>
+          <span><strong>Creator:</strong> AI Engineer</span>
+          <span><strong>Transcript:</strong> 1,320 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/dRmWYHuIJxM/hqdefault.jpg" alt="Video thumbnail for local code index talk">
+        <figcaption>
+          Source video: Rajkumar Sakthivel, Tesco, on AI Engineer.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="quick-summary-title">
+      <div>
+        <h2 id="quick-summary-title">The Short Version</h2>
+        <p>
+          The talk argues that AI coding tools often waste money by sending too much irrelevant code as context.
+          Shorter prompts and compressed answers help only a little because the major cost sits in input tokens.
+          The proposed fix is a local code index that retrieves only the code slices the model needs.
+        </p>
+        <ul class="tldr">
+          <li>Input context is the real cost center.</li>
+          <li>Local retrieval beats dumping whole files.</li>
+          <li>Hybrid search works better than one search type.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Key numbers">
+        <div class="stat"><strong>45k</strong><span>tokens sent before</span></div>
+        <div class="stat"><strong>5k</strong><span>tokens that mattered</span></div>
+        <div class="stat"><strong>94%</strong><span>less in test setup</span></div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Table of contents">
+        <span>Read</span>
+        <a href="#problem">Problem</a>
+        <a href="#cost-math">Cost math</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#scoring">Scoring</a>
+        <a href="#numbers">Results</a>
+        <a href="#caveats">Caveats</a>
+        <a href="#platform">Platform takeaways</a>
+      </nav>
+
+      <article class="content">
+        <section class="section" id="problem">
+          <span class="label">Problem</span>
+          <h2>The bill did not explode because the model thought harder. It exploded because the tool sent too much.</h2>
+          <p class="lead">
+            Raj describes a familiar pattern: the team used the same AI coding tools on the same project, but the bill jumped.
+            Their investigation found that most of the spend came from unnecessary context, not from the model's final code output.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Wrong Fix</span>
+              <h3>Make the prompt shorter</h3>
+              <p>The prompt is read after the context has already been sent, so this does not prevent input-token spend.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Wrong Fix</span>
+              <h3>Tune model settings</h3>
+              <p>Settings like max tokens and temperature shape the response, but they do not shrink the context payload.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Partial Fix</span>
+              <h3>Compress the output</h3>
+              <p>Short answers can reduce output cost, but output is only a small part of total spend in this example.</p>
+            </article>
+          </div>
+
+          <p class="quote">
+            The practical lesson: fix the input first. That is where most AI coding cost is hiding.
+          </p>
+        </section>
+
+        <section class="section" id="cost-math">
+          <span class="label">Cost Math</span>
+          <h2>Why output compression is not enough</h2>
+          <p class="lead">
+            The talk frames the cost split as roughly 90% input and 10% output. That means even aggressive output compression has limited impact
+            if the tool is still sending large, irrelevant context to the model.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Optimization</th>
+                  <th>What it reduces</th>
+                  <th>Claimed impact</th>
+                  <th>Why it matters</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Shorter answers</td>
+                  <td>Output tokens</td>
+                  <td>75% output reduction, about 8% total saving</td>
+                  <td>Useful, but the output side is too small to solve the main cost problem.</td>
+                </tr>
+                <tr>
+                  <td>Local code index</td>
+                  <td>Input context</td>
+                  <td>94% input reduction in the measured test setup</td>
+                  <td>High leverage because the large cost sits in files, search results, and context.</td>
+                </tr>
+                <tr>
+                  <td>Index plus compression</td>
+                  <td>Input and output</td>
+                  <td>523 tokens per question in their FastAPI test</td>
+                  <td>The strongest result comes from combining retrieval with compact context packaging.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="formula">
+            <strong>Rule of thumb from the talk</strong>
+            <p>If a coding tool sends 45,000 context tokens but only 5,000 matter, the first product problem is retrieval quality, not model choice.</p>
+          </div>
+        </section>
+
+        <section class="section" id="architecture">
+          <span class="label">Architecture</span>
+          <h2>The local code index sits between the codebase and the AI coding tool</h2>
+          <p class="lead">
+            Instead of sending whole files, the tool searches a local index and returns only the relevant functions, classes, methods, or connected snippets.
+            Everything runs locally, so the search layer does not need to send the codebase to a cloud indexing service.
+          </p>
+
+          <div class="flow">
+            <article class="flow-step">
+              <div>
+                <h3>Parse code into meaningful units</h3>
+                <p>Split code into functions, classes, and methods rather than arbitrary chunks. The retrieval unit should match how developers reason about code.</p>
+              </div>
+            </article>
+            <article class="flow-step">
+              <div>
+                <h3>Run two searches in parallel</h3>
+                <p>Use semantic search for meaning and keyword search for exact names. Each search type covers the other's weakness.</p>
+              </div>
+            </article>
+            <article class="flow-step">
+              <div>
+                <h3>Compress retrieved results</h3>
+                <p>Represent large functions with names, summaries, and the smallest useful slice instead of sending every line.</p>
+              </div>
+            </article>
+            <article class="flow-step">
+              <div>
+                <h3>Track code connections</h3>
+                <p>Record which functions call which other functions so the index can pull related code when one relevant piece is found.</p>
+              </div>
+            </article>
+            <article class="flow-step">
+              <div>
+                <h3>Score and filter results</h3>
+                <p>If relevance is too low, send nothing rather than poisoning the model with bad context.</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="scoring">
+          <span class="label">Search Quality</span>
+          <h2>Hybrid search works because semantic and keyword search fail differently</h2>
+          <p class="lead">
+            Semantic search can find related ideas but miss exact identifiers. Keyword search can find exact names but miss synonyms such as login versus sign in.
+            The talk claims each approach misses about one in four results alone, while the combined approach misses about one in ten.
+          </p>
+
+          <div class="grid two">
+            <article class="card">
+              <span class="pill">Semantic</span>
+              <h3>Good for related meaning</h3>
+              <p>It can find conceptually related code, but may return the wrong auth function when the exact function name matters.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Keyword</span>
+              <h3>Good for exact names</h3>
+              <p>It finds specific identifiers, but may miss related vocabulary or renamed flows.</p>
+            </article>
+          </div>
+
+          <div class="formula">
+            <strong>The scoring formula they landed on</strong>
+            <p>50% semantic score + 30% keyword score + 20% recency, with an adaptive threshold. The talk says this runs in 0.4 milliseconds and avoids extra AI calls.</p>
+          </div>
+        </section>
+
+        <section class="section" id="numbers">
+          <span class="label">Results</span>
+          <h2>The measured result is impressive, but it should be read carefully</h2>
+          <p class="lead">
+            Their public test used FastAPI with 53 files and 20 realistic developer questions. The comparison was against a full-file baseline,
+            which makes the savings dramatic and measurable.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Baseline</span>
+              <h3>83k tokens per question</h3>
+              <p>The no-index setup sent large file context for every question.</p>
+            </article>
+            <article class="card">
+              <span class="pill">With Tool</span>
+              <h3>4.9k tokens per question</h3>
+              <p>The local index reduced context by retrieving only relevant code slices.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Compressed</span>
+              <h3>523 tokens per question</h3>
+              <p>Additional compression pushed the context smaller after retrieval.</p>
+            </article>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Reported measurement</th>
+                  <th>Value</th>
+                  <th>Interpretation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>FastAPI test size</td>
+                  <td>53 files, 20 questions</td>
+                  <td>A small but concrete benchmark focused on real developer questions.</td>
+                </tr>
+                <tr>
+                  <td>Code retrieval accuracy</td>
+                  <td>About 90%</td>
+                  <td>The system found the right code in most cases, but not perfectly.</td>
+                </tr>
+                <tr>
+                  <td>Real project report</td>
+                  <td>247 queries, 12.4M tokens saved</td>
+                  <td>The tool tracks what would have been sent versus what was actually sent.</td>
+                </tr>
+                <tr>
+                  <td>Savings split</td>
+                  <td>84% from search layer</td>
+                  <td>Most of the value came from retrieval, not final answer compression.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="caveats">
+          <span class="label">Caveats</span>
+          <h2>The 94% number is a worst-case baseline, not a universal promise</h2>
+          <p class="lead">
+            The speaker is explicit about the limits. The 94% result is measured against a full-file baseline.
+            Modern AI coding tools are already smarter than blindly sending every file, so real-world savings may be lower.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <h3>Mixed large codebases are harder</h3>
+              <p>When files each do one thing, retrieval works well. When files do many unrelated things, recall can drop badly.</p>
+            </article>
+            <article class="card">
+              <h3>Speed was chosen over perfection</h3>
+              <p>They used a small fast model for search. Bigger models could find more, but would add cost and latency.</p>
+            </article>
+            <article class="card">
+              <h3>The benchmark baseline matters</h3>
+              <p>Compare against your current tools, not against the full-file worst case, before expecting the same percentage.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for an AI coding or agentic platform</h2>
+          <p class="lead">
+            The deeper lesson is not only about coding cost. It is about context governance. A platform should decide what context is useful,
+            measurable, shareable, and safe before it sends anything to a model.
+          </p>
+
+          <ul class="checklist">
+            <li>Build a shared local project index instead of making every AI tool rediscover the codebase independently.</li>
+            <li>Treat context retrieval as a first-class product surface, not hidden plumbing.</li>
+            <li>Measure tokens saved per query and show the user what would have been sent versus what was sent.</li>
+            <li>Use hybrid retrieval: semantic search, keyword search, graph/call relationships, and adaptive filtering.</li>
+            <li>Do not send low-confidence context. Bad context can make the model confidently wrong.</li>
+            <li>Keep memory at the project/index layer so Cursor, Copilot, Claude Code, Codex, or internal agents can share the same learned context.</li>
+            <li>For agentic platforms, apply the same principle to business tools: retrieve the smallest sufficient policy, record, workflow, and code context.</li>
+          </ul>
+
+          <p class="quote">
+            Fix the input, and the model choice matters less than you think.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for <strong>We Cut 94% of AI Coding Tokens With a Local Code Index</strong>. Source: AI Engineer interview/talk with Rajkumar Sakthivel, Tesco.
+  </footer>
+</body>
+</html>

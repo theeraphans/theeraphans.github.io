@@ -1,0 +1,1270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>WF26 Harness Engineering and Startup Battlefield - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18201d;
+      --muted: #5f6a65;
+      --quiet: #7a8580;
+      --paper: #fffef9;
+      --canvas: #f5f7f1;
+      --line: #d8ded5;
+      --charcoal: #24313a;
+      --teal: #146f68;
+      --blue: #315f86;
+      --coral: #bd503f;
+      --gold: #9a711f;
+      --violet: #665987;
+      --mint: #e3f0eb;
+      --sky: #e7eef6;
+      --sand: #f8efd9;
+      --rose: #f4e5df;
+      --shadow: 0 24px 62px rgb(24 32 29 / 11%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(20 111 104 / 7%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(49 95 134 / 6%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 46px 46px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--coral), var(--gold), var(--violet));
+    }
+
+    h1, h2, h3, p, ul, ol, figure, blockquote { margin: 0; }
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 84%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.55rem, 6.05vw, 5.2rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2.05vw, 1.48rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e6ece7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 86%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: #f8fbf8;
+      background: rgb(255 255 255 / 9%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-height: 86px;
+      padding: 14px;
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: rgb(255 255 255 / 72%);
+      font-size: 0.84rem;
+      font-weight: 760;
+      text-transform: uppercase;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      gap: 42px;
+      align-items: start;
+      margin-top: 36px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 22px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .sidebar-block {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+    }
+
+    .sidebar-block h2,
+    .toc h2 {
+      margin-bottom: 12px;
+      color: var(--quiet);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .glance {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .glance strong {
+      color: var(--ink);
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .toc {
+      padding-left: 18px;
+      border-left: 4px solid var(--gold);
+    }
+
+    .toc a {
+      display: block;
+      padding: 7px 0;
+      color: var(--ink);
+      font-size: 0.94rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .content {
+      min-width: 0;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(24 32 29 / 8%);
+    }
+
+    .section {
+      padding: 34px 42px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; }
+
+    .label {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .section h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 3.3vw, 3.1rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .section h3 {
+      margin-top: 20px;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      margin-top: 16px;
+      color: #313d44;
+      font-size: 1.08rem;
+    }
+
+    .section p + p { margin-top: 14px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card.mint { background: var(--mint); }
+    .card.sky { background: var(--sky); }
+    .card.sand { background: var(--sand); }
+    .card.rose { background: var(--rose); }
+
+    .card h3 {
+      margin-top: 8px;
+      font-size: 1.02rem;
+    }
+
+    .card p {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.62;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pill.blue { background: var(--blue); }
+    .pill.coral { background: var(--coral); }
+    .pill.gold { background: var(--gold); }
+    .pill.violet { background: var(--violet); }
+
+    .note {
+      margin-top: 22px;
+      padding: 18px 20px;
+      background: #f8f3e6;
+      border-left: 5px solid var(--gold);
+      border-radius: 8px;
+      color: #3b3424;
+    }
+
+    .map {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(130px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+      align-items: stretch;
+    }
+
+    .map-step {
+      min-height: 152px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .map-step:nth-child(2) { border-top-color: var(--blue); }
+    .map-step:nth-child(3) { border-top-color: var(--coral); }
+    .map-step:nth-child(4) { border-top-color: var(--gold); }
+
+    .map-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .map-step span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .pipeline-step {
+      min-height: 144px;
+      padding: 14px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .pipeline-step:nth-child(2) { background: var(--teal); }
+    .pipeline-step:nth-child(3) { background: var(--blue); }
+    .pipeline-step:nth-child(4) { background: var(--coral); }
+    .pipeline-step:nth-child(5) { background: var(--violet); }
+
+    .pipeline-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.92rem;
+      line-height: 1.3;
+    }
+
+    .pipeline-step span {
+      color: rgb(255 255 255 / 82%);
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    .compare {
+      width: 100%;
+      margin-top: 22px;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .compare th,
+    .compare td {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .compare th {
+      color: #fff;
+      background: var(--charcoal);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .compare td { background: #fff; }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+      color: #303b42;
+    }
+
+    .checklist li:nth-child(2n) { border-left-color: var(--blue); }
+    .checklist li:nth-child(3n) { border-left-color: var(--coral); }
+    .checklist strong { color: var(--ink); }
+
+    .quote-strip {
+      margin-top: 24px;
+      padding: 24px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      border-radius: 8px;
+    }
+
+    .quote-strip p {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.28rem, 2.8vw, 2.15rem);
+      line-height: 1.28;
+    }
+
+    .mini-spec {
+      margin-top: 22px;
+      padding: 18px;
+      color: #f8fbf8;
+      background: #1d2b32;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.9rem;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1000px) {
+      .map,
+      .pipeline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .grid,
+      .two {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .page {
+        padding-inline: 16px;
+      }
+
+      .hero {
+        gap: 28px;
+        padding-top: 38px;
+      }
+
+      h1 {
+        font-size: clamp(2.25rem, 13vw, 3.25rem);
+      }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .tldr,
+      .sidebar,
+      .map,
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+
+      .compare {
+        table-layout: fixed;
+      }
+
+      .compare th,
+      .compare td {
+        padding: 11px 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./">YouTube Extractor</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#harness">Harness</a>
+      <a class="action-link" href="#security">Security</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link" href="#templates">Flow Markdown</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=I2cbIws9j10">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">AI Engineer World's Fair 2026 - Conference Field Guide</span>
+        <h1>WF26 Harness Engineering and Startup Battlefield</h1>
+        <p class="subtitle">
+          A selective, blog-style summary of the final day main-stage recording from AI Engineer World's Fair 2026:
+          harness engineering, DSPy, agent loops, security, tool layers, company memory, and the Startup Battlefield.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> WF26: Harness Engineering &amp; Startup Battlefield</span>
+          <span><strong>Creator:</strong> AI Engineer</span>
+          <span><strong>Transcript:</strong> 91,485 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/I2cbIws9j10/hqdefault.jpg" alt="Video thumbnail for WF26 Harness Engineering and Startup Battlefield">
+        <figcaption>
+          This is a conference-long source, not a single talk. The page compresses public captions into a structured reading guide for people building agentic AI platforms.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          The core message is that production agents are no longer just about picking the smartest model.
+          The durable advantage is the harness around the model: evals, tool routing, permissions, context strategy,
+          memory, identity, attribution, observability, and operating loops that keep human owners in control.
+        </p>
+        <ul class="tldr">
+          <li>Models are rented capability. The company-owned asset is the harness, workflow memory, eval data, and skill library.</li>
+          <li>Agents need smaller verified loops before they can become trusted end-to-end business automation.</li>
+          <li>For a BA-facing platform, the product surface should assemble Master Agents, Sub-Agents, Skills, MCP tools, and Flow Markdown from reusable patterns.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>9h 11m</strong><span>conference recording</span></div>
+        <div class="stat"><strong>13,403</strong><span>caption rows</span></div>
+        <div class="stat"><strong>91k</strong><span>caption words</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Main lens</span><strong>Harness engineering</strong></li>
+            <li><span>Useful for</span><strong>Agent platform design</strong></li>
+            <li><span>Source type</span><strong>Conference day</strong></li>
+            <li><span>Best artifact</span><strong>Flow Markdown</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#scope">Scope</a>
+          <a href="#opening">Opening</a>
+          <a href="#harness">Harness</a>
+          <a href="#dspy">DSPy</a>
+          <a href="#builders">Builders</a>
+          <a href="#strategies">Strategies</a>
+          <a href="#security">Security</a>
+          <a href="#loops">Loops</a>
+          <a href="#systems">Systems</a>
+          <a href="#personas">Personas</a>
+          <a href="#startup">Startup</a>
+          <a href="#platform">Platform</a>
+          <a href="#templates">Templates</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="scope">
+          <span class="label">Source Note</span>
+          <h2>This page is a conference-long field guide, not a full transcript.</h2>
+          <p class="lead">
+            The source video spans the final day of AI Engineer World's Fair 2026 at Moscone West in San Francisco.
+            It includes keynotes, technical talks, fireside conversations, panels, sponsor segments, Startup Battlefield,
+            and live-event transitions. The public captions contain more than ninety thousand words, so this page extracts
+            the themes that matter most for agentic platform architecture.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Included</span>
+              <h3>Technical operating patterns</h3>
+              <p>Harness design, evals, agent loops, tool layers, context strategy, security, memory, and team workflows.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Compressed</span>
+              <h3>Speaker-by-speaker detail</h3>
+              <p>The page summarizes recurring ideas rather than documenting every panel exchange or stage transition.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Caution</span>
+              <h3>Captions are imperfect</h3>
+              <p>Some names and technical terms may be auto-captioned inconsistently, so use this as a study guide, not a legal transcript.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="opening">
+          <span class="label">Opening Signal</span>
+          <h2>The event frames agents as an engineering discipline.</h2>
+          <p class="lead">
+            The opening positions the day around harness engineering: the code, controls, protocols, and practices that
+            turn model capability into reliable systems. The captions emphasize that standardization is happening around
+            tools and platforms, not around any single model provider.
+          </p>
+          <div class="map" aria-label="Opening signals">
+            <div class="map-step">
+              <strong>Cost becomes an SLA-like metric</strong>
+              <span>Teams are watching spend just below quality, because agentic workflows can multiply calls quickly.</span>
+            </div>
+            <div class="map-step">
+              <strong>Agents leave demo mode</strong>
+              <span>The event survey points to broad agent usage and much more willingness to give agents write access.</span>
+            </div>
+            <div class="map-step">
+              <strong>Experimentation accelerates</strong>
+              <span>Cheaper prototypes and trials let teams make more bets, but they also increase review burden.</span>
+            </div>
+            <div class="map-step">
+              <strong>Technical understanding is at risk</strong>
+              <span>The benefit of speed comes with the danger that teams lose deep codebase and system knowledge.</span>
+            </div>
+          </div>
+          <p class="note">
+            The lesson for platform teams: do not measure only automation success. Measure review load, cost per outcome,
+            escalation rate, and whether humans still understand the system they are shipping.
+          </p>
+        </section>
+
+        <section class="section" id="harness">
+          <span class="label">Harness Engineering</span>
+          <h2>The harness is the product boundary around model intelligence.</h2>
+          <p class="lead">
+            Across the recording, "harness" means the operational wrapper that gives an AI system shape:
+            prompts, tools, runtime loops, graders, context retrieval, memories, permissions, traces, tests,
+            and human checkpoints. A strong harness lets the same task become reusable, inspectable, and improvable.
+          </p>
+          <div class="pipeline" aria-label="Harness architecture">
+            <div class="pipeline-step">
+              <strong>Intent</strong>
+              <span>Capture the business goal, user role, constraints, and definition of done.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Context</strong>
+              <span>Select documents, memories, examples, schema, policies, and current state.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Action</strong>
+              <span>Route work through tools, MCP servers, APIs, CLIs, or human approvals.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Verification</strong>
+              <span>Use evals, graders, validators, tests, traces, and review gates.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Learning</strong>
+              <span>Turn successful work into skills, memories, datasets, and reusable flows.</span>
+            </div>
+          </div>
+          <div class="quote-strip">
+            <p>The agent is not the model call. The agent is the loop, the tools, the judgment, and the memory around it.</p>
+          </div>
+        </section>
+
+        <section class="section" id="dspy">
+          <span class="label">DSPy</span>
+          <h2>DSPy treats AI programs like composable, testable functions.</h2>
+          <p class="lead">
+            The DSPy segment is useful because it gives a programming-language lens for prompts. Instead of baking
+            everything into one prompt, the system separates the task from the model, harness, and implementation details.
+            Natural-language signatures express inputs and outputs, while code enforces constraints.
+          </p>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Idea</th>
+                <th>Meaning</th>
+                <th>Platform Translation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Signature</strong></td>
+                <td>A clear contract for what goes in and what must come out.</td>
+                <td>Let BAs define Flow Markdown input and output shapes before agent design begins.</td>
+              </tr>
+              <tr>
+                <td><strong>Module</strong></td>
+                <td>A reusable AI program block such as predict, reason, retry, or extract.</td>
+                <td>Represent Sub-Agent and Skill blocks as composable units with typed responsibilities.</td>
+              </tr>
+              <tr>
+                <td><strong>Optimizer</strong></td>
+                <td>A way to improve prompts and examples against an evaluation target.</td>
+                <td>Connect skills to golden examples, rubrics, and automated eval runs.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="note">
+            The practical takeaway is not "use DSPy everywhere." It is that prompt behavior should be packaged as
+            reusable programs with contracts, tests, and measurable improvement loops.
+          </p>
+        </section>
+
+        <section class="section" id="builders">
+          <span class="label">Builders</span>
+          <h2>Mike Krieger's thread: startups win by understanding the vertical.</h2>
+          <p class="lead">
+            In the fireside portion, the useful startup lesson is that frontier labs and platform providers will not fully
+            understand every vertical workflow. Startups and internal product teams can win by knowing the user, the industry,
+            the workflow exceptions, and the messy operational details better than a general model lab can.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Goal-first prompting</span>
+              <h3>Models can surface tradeoffs</h3>
+              <p>As models improve, builders can describe higher-level goals and let the system ask questions or expose options.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Vertical obsession</span>
+              <h3>Domain detail is the moat</h3>
+              <p>The team that deeply knows the audience, constraints, and existing workflow can build a sharper agent.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Experiment speed</span>
+              <h3>AI compresses iteration cycles</h3>
+              <p>Code generation and model capability make prototypes cheaper, but product judgment still decides what matters.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="strategies">
+          <span class="label">Token Roles</span>
+          <h2>Tokens are not fungible; assign them jobs.</h2>
+          <p class="lead">
+            One of the strongest system-design ideas in the recording is that tokens have roles. A token used by an executor
+            is different from a token used by a grader, dreamer, planner, critic, memory writer, or advisor. Reliability often
+            improves when the harness deliberately spends tokens on verification and reflection, not only direct execution.
+          </p>
+          <div class="map" aria-label="Token job map">
+            <div class="map-step">
+              <strong>Executor</strong>
+              <span>Uses tools and changes system state. Needs permissions, rollback, and exact task boundaries.</span>
+            </div>
+            <div class="map-step">
+              <strong>Grader</strong>
+              <span>Checks work against rubrics, examples, policies, tests, or expected outputs.</span>
+            </div>
+            <div class="map-step">
+              <strong>Dreamer</strong>
+              <span>Inspects transcripts or traces after a run and writes findings back to memory.</span>
+            </div>
+            <div class="map-step">
+              <strong>Advisor</strong>
+              <span>Surfaces risks, tradeoffs, and next questions before the execution loop proceeds.</span>
+            </div>
+          </div>
+          <p class="note">
+            This maps cleanly to Master Agent design: the Master should not simply delegate work. It should decide which
+            token job is needed at each phase and whether the next step is execution, critique, learning, or escalation.
+          </p>
+        </section>
+
+        <section class="section" id="security">
+          <span class="label">Tools, MCP, Skills</span>
+          <h2>Security belongs in the infrastructure around the loop.</h2>
+          <p class="lead">
+            Several segments converge on the same warning: a capable agent will pursue its goal through whatever context and
+            tools are available. That means credentials, tenant boundaries, tool permissions, identity, and approval gates
+            must be enforced outside the model, not merely requested in a prompt.
+          </p>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Layer</th>
+                <th>Use When</th>
+                <th>Main Failure Mode</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>CLI</strong></td>
+                <td>One agent needs a transparent, reproducible command for a narrow task.</td>
+                <td>Wrong command, hidden environment assumptions, or missing audit trail.</td>
+              </tr>
+              <tr>
+                <td><strong>MCP</strong></td>
+                <td>Multiple agents need shared access to a service, database, registry, or tool provider.</td>
+                <td>Weak validation, poor tenant isolation, broad credentials, or vague tool schemas.</td>
+              </tr>
+              <tr>
+                <td><strong>Skill</strong></td>
+                <td>Multiple workflows share a repeatable procedure, policy, method, or playbook.</td>
+                <td>Outdated instructions, missing verification, or too much hidden persona logic.</td>
+              </tr>
+            </tbody>
+          </table>
+          <ul class="checklist">
+            <li><strong>Do not share raw credentials with agents.</strong> Give scoped tool access through infrastructure gates.</li>
+            <li><strong>Enforce tenant isolation below the model.</strong> The model should not be trusted to remember boundaries perfectly.</li>
+            <li><strong>Track agent identity and human accountability.</strong> A human owner must remain attributable for consequential actions.</li>
+            <li><strong>Treat registration as its own problem.</strong> MCP gives tool access, but agent-native onboarding and legitimacy need additional patterns.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="loops">
+          <span class="label">Loops</span>
+          <h2>Do not automate the whole company first. Build small loops that compound.</h2>
+          <p class="lead">
+            The panel content repeatedly argues for incremental loops. Instead of handing an entire business process to an
+            autonomous system, teams should automate a bounded loop, verify it, give it a clear owner, and expand only after
+            the evals, traces, and permission model are trustworthy.
+          </p>
+          <div class="pipeline" aria-label="Loop maturity path">
+            <div class="pipeline-step">
+              <strong>Assist</strong>
+              <span>Agent drafts, searches, summarizes, or proposes work while humans execute.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Act</strong>
+              <span>Agent performs low-risk actions inside clear boundaries with approval gates.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Review</strong>
+              <span>Humans inspect diffs, traces, logs, cost, and quality before promotion.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Learn</strong>
+              <span>Successful work becomes examples, skill files, flow changes, or memory updates.</span>
+            </div>
+            <div class="pipeline-step">
+              <strong>Scale</strong>
+              <span>Only then does the loop expand to broader tasks or more users.</span>
+            </div>
+          </div>
+          <p class="note">
+            This is especially relevant for BA-created flows. The BA should define the business loop and escalation points,
+            while the platform turns that into an executable agent graph with approval and attribution built in.
+          </p>
+        </section>
+
+        <section class="section" id="systems">
+          <span class="label">System Patterns</span>
+          <h2>The talks keep returning to context, specs, and tool routing.</h2>
+          <p class="lead">
+            The middle of the recording spans many system talks. The unifying pattern is that agent quality depends on
+            what the agent sees, which tools it can call, how concrete the spec is, and whether the runtime can inspect
+            or improve the work afterward.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Fat agent risk</span>
+              <h3>Too many tools create routing confusion</h3>
+              <p>Giving every tool definition to every request works at small scale, but prompt size and tool ambiguity become real failure modes.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Concrete specs</span>
+              <h3>Abstract goals need implementation detail</h3>
+              <p>Agents struggle when an abstract product spec hides database, consistency, store, and runtime assumptions.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Frameworks</span>
+              <h3>Boilerplate should be abstracted</h3>
+              <p>Agent frameworks can handle generation loops, function calling, retries, routing, state, and error handling.</p>
+            </article>
+          </div>
+          <div class="grid two">
+            <article class="card sand">
+              <span class="pill gold">Polygraph-style context</span>
+              <h3>Make many repos feel readable</h3>
+              <p>Meta-harnesses can analyze dependency graphs and code relationships so agents do not act like every repo is isolated.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Provider abstraction</span>
+              <h3>Keep the app above model churn</h3>
+              <p>SDK and runtime layers let teams switch providers or models without rewriting the agent product surface.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="personas">
+          <span class="label">Persona Evals</span>
+          <h2>Persona performance can look good while being historically wrong.</h2>
+          <p class="lead">
+            One later talk gives a useful warning for role-based agents. A model may pass a persona-style evaluation while
+            still blending modern culture, fictional representations, and training data artifacts into the output. The issue
+            is not only tone. It is source separation and temporal correctness.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Persona prompt</span>
+              <h3>Defines role and behavior</h3>
+              <p>Useful for style and scope, but not enough to guarantee factual grounding.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Knowledge source</span>
+              <h3>Defines what the agent may know</h3>
+              <p>Domain agents need explicit allowed sources, time windows, and retrieval rules.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">Eval</span>
+              <h3>Defines what correctness means</h3>
+              <p>Persona evals should check source grounding, contradictions, and historical or policy boundaries.</p>
+            </article>
+          </div>
+          <p class="note">
+            For your platform, persona should be just one field in the Agent Spec. It should not swallow business rules,
+            skill instructions, knowledge boundaries, or tool permissions.
+          </p>
+        </section>
+
+        <section class="section" id="startup">
+          <span class="label">Startup Battlefield</span>
+          <h2>The closing arc is about agent-native companies.</h2>
+          <p class="lead">
+            The final stretch moves from technical harnesses to company design. Theo's segment raises the bigger question
+            of what people should build now that agents can perform more work. Garry Tan's YC-centered thread emphasizes
+            thin teams, founder involvement, skillifying repeated wins, and building a company brain rather than only renting
+            model quality.
+          </p>
+          <div class="map" aria-label="Startup closing map">
+            <div class="map-step">
+              <strong>Skillify successful work</strong>
+              <span>When an agent run works, capture the process as a reusable skill or flow.</span>
+            </div>
+            <div class="map-step">
+              <strong>Build a company brain</strong>
+              <span>Memory, examples, policies, and lessons should become shared infrastructure.</span>
+            </div>
+            <div class="map-step">
+              <strong>Stay close to code and product</strong>
+              <span>AI-native teams still need owners who understand the system and can make architectural calls.</span>
+            </div>
+            <div class="map-step">
+              <strong>Oversee fleets, not isolated chats</strong>
+              <span>The event frames the future as humans supervising many agents, not simply using one assistant.</span>
+            </div>
+          </div>
+          <p class="note">
+            Startup Battlefield closes with finalists and prizes. The important platform takeaway is that agent-native
+            organizations need a memory and skill layer that captures what they learn instead of starting fresh every day.
+          </p>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>How this maps to a Master Agent, Sub-Agent, Skill, and MCP platform</h2>
+          <p class="lead">
+            For your BA-facing agentic AI platform, this video is valuable because it argues for separating business intent
+            from execution mechanics. The BA should describe the business flow, policy, exception path, and success criteria.
+            The platform should assemble the agent graph, tools, skills, evals, and permissions.
+          </p>
+          <ul class="checklist">
+            <li><strong>Make Flow Markdown the contract.</strong> Business Flow should become a structured spec with actors, triggers, states, data, risks, decisions, and definition of done.</li>
+            <li><strong>Keep persona small.</strong> Persona should describe role, communication style, and responsibility boundary, not hide all business logic.</li>
+            <li><strong>Separate cognitive and actionable skills.</strong> Cognitive skills guide reasoning and judgment. Actionable skills require tools, inputs, permissions, and verification gates.</li>
+            <li><strong>Attach MCP tools through capability policies.</strong> A tool should be available only when the flow, user, tenant, and agent role allow it.</li>
+            <li><strong>Represent Master Agent as orchestrator.</strong> It routes token jobs, delegates Sub-Agents, asks for human approval, and writes learning back to memory.</li>
+            <li><strong>Represent Sub-Agent as bounded worker.</strong> Each Sub-Agent should have input contract, output contract, allowed tools, stop conditions, and escalation rules.</li>
+            <li><strong>Make evals first-class.</strong> Every important flow needs examples, rubrics, cost targets, trace checks, and regression tests.</li>
+            <li><strong>Capture successful work into the company brain.</strong> Good prompts, decisions, exception handling, and tool recipes should become versioned skills or memory assets.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">Flow Markdown</span>
+          <h2>A BA-friendly Flow Markdown can turn business process into agent harness.</h2>
+          <p class="lead">
+            The artifact below is the shape I would give BAs. It keeps business language at the top, then lets the platform
+            compile that into Master Agent orchestration, Sub-Agent scopes, skills, MCP tools, and verification gates.
+          </p>
+          <pre class="mini-spec"># Agentic Flow: Business Process to Harness
+
+goal: Convert a business flow into a governed multi-agent workflow.
+owner: Business Analyst
+runtime_owner: Master Agent
+flow_type: governed_multi_agent_harness
+
+business_context:
+  domain: claims_processing
+  target_user: operations_specialist
+  trigger: new_claim_received
+  desired_outcome: claim_ready_for_human_decision
+  risk_level: high
+
+master_agent:
+  persona:
+    role: claims_workflow_orchestrator
+    tone: concise_clear_audit_friendly
+  responsibilities:
+    - understand_business_goal
+    - select_sub_agents
+    - route_token_jobs
+    - enforce_policy_and_escalation
+    - write_lessons_to_memory
+
+sub_agents:
+  - id: intake_reader
+    job: extract_claim_facts
+    allowed_skills: [document_extraction, policy_grounding]
+    allowed_tools: [ocr_mcp, document_store_mcp]
+    output_contract: structured_claim_facts
+  - id: policy_checker
+    job: compare_facts_to_policy
+    allowed_skills: [policy_reasoning, exception_detection]
+    allowed_tools: [policy_mcp]
+    output_contract: coverage_assessment
+  - id: risk_reviewer
+    job: identify_uncertainty_and_escalation
+    allowed_skills: [risk_rubric, evidence_gap_analysis]
+    allowed_tools: []
+    output_contract: review_recommendation
+
+skills:
+  cognitive:
+    - policy_reasoning
+    - exception_detection
+    - evidence_gap_analysis
+  actionable:
+    - document_extraction:
+        required_tools: [ocr_mcp, document_store_mcp]
+        verification: extraction_confidence_check
+    - policy_lookup:
+        required_tools: [policy_mcp]
+        verification: source_citation_required
+
+permissions:
+  tenant_isolation: required
+  write_access: disabled_until_human_approval
+  secret_access: never_exposed_to_model
+  human_owner_required: true
+
+evals:
+  examples:
+    - approved_claim_with_complete_documents
+    - claim_with_missing_evidence
+    - exception_case_requiring_escalation
+  graders:
+    - factual_extraction_accuracy
+    - policy_source_grounding
+    - escalation_correctness
+    - cost_per_completed_review
+
+loop:
+  steps:
+    - receive_input
+    - retrieve_context
+    - delegate_to_sub_agents
+    - synthesize_result
+    - grade_and_validate
+    - request_human_approval
+    - write_reusable_learning
+  stop_conditions:
+    - missing_required_document
+    - policy_conflict
+    - confidence_below_threshold
+    - human_rejects_recommendation
+
+memory:
+  write_when:
+    - human_approves_result
+    - reviewer_corrects_agent
+    - new_exception_pattern_found
+  assets:
+    - examples
+    - decision_rationales
+    - tool_recipes
+    - updated_skill_instructions</pre>
+          <div class="grid two">
+            <article class="card sand">
+              <span class="pill gold">BA view</span>
+              <h3>Describe the work, not the prompt</h3>
+              <p>The BA defines process, policy, risk, exception, owner, and outcome. They do not need to know prompt engineering details.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Runtime view</span>
+              <h3>Compile the harness</h3>
+              <p>The platform maps the flow to agents, skills, MCP tools, permissions, memory writes, evals, and human checkpoints.</p>
+            </article>
+          </div>
+          <p class="note">
+            Summary generated from public YouTube captions for this video. Because the source is a long live conference recording,
+            use this page as a navigable study guide and validate important implementation decisions against primary project docs,
+            actual talks, and your own production constraints.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>WF26: Harness Engineering &amp; Startup Battlefield ft. Garry Tan, Mike Krieger, @t3dotgg, DSPy</strong>.
+    Source: AI Engineer. Video ID: I2cbIws9j10.
+  </footer>
+</body>
+</html>

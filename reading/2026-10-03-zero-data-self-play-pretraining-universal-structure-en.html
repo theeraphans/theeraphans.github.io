@@ -1,0 +1,932 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>Self-Play Pretraining with Zero Data</title>
+    <meta
+      name="description"
+      content="A detailed, critical guide to Self-Play Pretraining with Zero Data: the generator-learner loop, gradient-alignment reward, universal transfer, in-context learning, pre-pretraining, evidence, and limitations."
+    />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .visual {
+        margin: 1.7rem 0 2rem;
+      }
+      .visual img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: #fff;
+      }
+      .visual figcaption {
+        margin-top: 0.65rem;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+      .visual figcaption strong {
+        color: var(--ink);
+      }
+      .callout {
+        margin: 1.5rem 0;
+        padding: 1rem !important;
+        border-left: 3px solid var(--green) !important;
+        background: var(--surface) !important;
+      }
+      .callout.warning {
+        border-left-color: #8a6417 !important;
+      }
+      .callout p:last-child {
+        margin-bottom: 0;
+      }
+      .metric-grid,
+      .concept-grid,
+      .risk-grid,
+      .practice-grid {
+        display: grid;
+        gap: 1px;
+        margin: 1.5rem 0;
+        background: var(--line);
+        border: 1px solid var(--line);
+      }
+      .metric-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .concept-grid,
+      .risk-grid,
+      .practice-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .metric-grid > div,
+      .concept-grid > div,
+      .risk-grid > div,
+      .practice-grid > div {
+        padding: 1rem;
+        background: var(--paper);
+      }
+      .metric-grid span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.76rem;
+        text-transform: uppercase;
+      }
+      .metric-grid strong {
+        display: block;
+        margin: 0.35rem 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+      .metric-grid small,
+      .concept-grid p,
+      .risk-grid p,
+      .practice-grid p {
+        display: block;
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+      .concept-grid h3,
+      .risk-grid h3,
+      .practice-grid h3 {
+        margin: 0 0 0.45rem;
+        font-size: 1.03rem;
+      }
+      .loop {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 0.45rem;
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background: var(--surface);
+        border: 1px solid var(--line);
+      }
+      .loop > div {
+        padding: 0.75rem;
+        background: var(--paper);
+        border: 1px solid var(--line);
+      }
+      .loop strong,
+      .loop small {
+        display: block;
+      }
+      .loop small {
+        margin-top: 0.3rem;
+        color: var(--muted);
+        line-height: 1.4;
+      }
+      .sequence-table {
+        width: 100%;
+        min-width: 0 !important;
+        margin: 1.5rem 0;
+        table-layout: fixed;
+        border-collapse: collapse;
+      }
+      .sequence-table th,
+      .sequence-table td {
+        padding: 0.75rem 0.55rem;
+        text-align: left;
+        vertical-align: top;
+        overflow-wrap: anywhere;
+        border-bottom: 1px solid var(--line);
+      }
+      .sequence-table th {
+        font-weight: 600;
+      }
+      @media (max-width: 850px) {
+        .metric-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .loop {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 750px) {
+        .metric-grid,
+        .concept-grid,
+        .risk-grid,
+        .practice-grid {
+          grid-template-columns: 1fr;
+        }
+        .sequence-table {
+          font-size: 0.86rem;
+        }
+        .sequence-table thead {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip: rect(0 0 0 0);
+        }
+        .sequence-table,
+        .sequence-table tbody,
+        .sequence-table tr,
+        .sequence-table td {
+          display: block;
+          width: 100%;
+        }
+        .sequence-table tr {
+          padding: 0.55rem 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .sequence-table td {
+          display: grid;
+          grid-template-columns: 7.4rem minmax(0, 1fr);
+          gap: 0.65rem;
+          padding: 0.32rem 0.2rem;
+          border: 0;
+        }
+        .sequence-table td::before {
+          color: var(--muted);
+          font-weight: 600;
+        }
+        .sequence-table td:nth-child(1)::before {
+          content: "Family";
+        }
+        .sequence-table td:nth-child(2)::before {
+          content: "Example";
+        }
+        .sequence-table td:nth-child(3)::before {
+          content: "Self-play";
+        }
+        .sequence-table td:nth-child(4)::before {
+          content: "Fixed prior";
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Reading room</a>
+      <div class="top-actions">
+        <a
+          class="action-link"
+          href="https://www.youtube.com/watch?v=mGMiiPpWBSo"
+          >Watch video</a
+        >
+        <a class="action-link" href="https://arxiv.org/abs/2609.30063"
+          >Read paper</a
+        >
+      </div>
+    </nav>
+
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">AI research · Synthetic data · Self-play</p>
+          <h1>Self-Play Pretraining with Zero Data</h1>
+          <p class="subtitle">
+            Two randomly initialized models create an adaptive curriculum from
+            executable programs. The surprising result is not knowledge from
+            nothing, but transferable predictive structure learned without
+            natural training data.
+          </p>
+          <div class="meta">
+            <span>1:31:27 video</span
+            ><span>Paper by Aditya Cowsik and six coauthors</span
+            ><span>Submitted September 24, 2026</span
+            ><span>Summary run: October 03, 2026 · 07:30 ICT</span>
+          </div>
+        </div>
+        <figure class="hero-card">
+          <img
+            src="2026-10-03-zero-data-self-play-overview.png"
+            alt="Self-play pretraining architecture with a generator, universal Turing machine, learner, scaling curves, and in-context learning results"
+          />
+          <figcaption>
+            A generator proposes executable programs, a learner predicts their
+            byte outputs, and reinforcement learning keeps the curriculum near
+            the learner's frontier.
+          </figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="section-label">Executive summary</p>
+            <h2>The paper separates structure from facts</h2>
+            <p>
+              Modern pretraining scales by feeding models more curated natural
+              data. This paper asks a deliberately extreme question: can useful
+              pretraining happen when neither the learner nor the data generator
+              has ever seen text, images, speech, code, or any other natural
+              dataset? The authors initialize two small transformers from
+              scratch. One writes programs for a minimal universal Turing
+              machine. Executing those programs produces byte sequences. The
+              other model learns to predict those bytes.
+            </p>
+            <p>
+              The generator is not rewarded for making examples merely hard.
+              Random noise is hard but useless. Instead, it receives a
+              learning-progress signal: candidate gradients are valuable when
+              they align with the learner's recent parameter movement under an
+              AdamW-derived preconditioner. This pushes the generator toward
+              examples that are not yet mastered but are still connected to
+              structure the learner can absorb.
+            </p>
+            <p>
+              The resulting learners improve predictably on unseen natural data
+              as self-play compute increases. They also develop in-context
+              learning and discover recognizable mathematical sequences. That is
+              meaningful evidence that some reusable predictive regularities can
+              be generated from computation alone. It is not evidence that a
+              model can invent historical facts, scientific observations, or
+              knowledge of our world without encountering that world.
+            </p>
+            <ul class="summary-list">
+              <li>
+                <strong>Self-play changes data selection.</strong> The key
+                comparison is against programs sampled from the same fixed
+                universal prior. Adaptation scales much better.
+              </li>
+              <li>
+                <strong>The reward targets learnable novelty.</strong> It tries
+                to avoid both already-mastered examples and arbitrary noise.
+              </li>
+              <li>
+                <strong>Transfer spans modalities.</strong> Zero-shot loss falls
+                on text, images, melody, audio, speech, and code even though
+                none was used for gradient updates.
+              </li>
+              <li>
+                <strong>In-context learning emerges.</strong> The self-play
+                learner infers held-out transformations from demonstrations,
+                unlike the fixed universal-prior baseline.
+              </li>
+              <li>
+                <strong>The practical near-term use is warm-starting.</strong>
+                Self-play initialization reduced the natural-data tokens needed
+                to reach comparable losses in the reported small-model tests.
+              </li>
+            </ul>
+            <div class="callout warning">
+              <strong>Evidence boundary</strong>
+              <p>
+                YouTube exposes no public caption track for this video. This is
+                therefore not a transcript and does not attribute unsupported
+                remarks to the presenter. The technical summary is grounded in
+                the linked paper, official figure repository, evaluation code,
+                and released learner checkpoints. The experiments use models
+                below 25 million parameters with a 4K context, so claims about
+                frontier-scale pretraining remain untested.
+              </p>
+            </div>
+          </section>
+
+          <section id="thesis">
+            <p class="section-label">The central distinction</p>
+            <h2>Universal structure is not contingent information</h2>
+            <div class="concept-grid">
+              <div>
+                <h3>Universal predictive structure</h3>
+                <p>
+                  Reusable regularities such as copying, iteration, recursion,
+                  composition, periodicity, and learning a rule from examples.
+                  These can appear across very different data-generating
+                  processes.
+                </p>
+              </div>
+              <div>
+                <h3>Contingent information</h3>
+                <p>
+                  Facts specific to the world or dataset: who won an election,
+                  the appearance of a city, a company's revenue, or the wording
+                  of a document. This must enter through observation or data.
+                </p>
+              </div>
+            </div>
+            <p>
+              The paper's hypothesis is that ordinary natural-data pretraining
+              teaches both resources at once. A model learns facts and surface
+              patterns, but it also learns broadly reusable ways that sequences
+              are structured. Self-play holds contingent information near zero
+              and asks whether compute can grow the universal component by
+              searching across program-generated data.
+            </p>
+            <p>
+              This framing makes the phrase "zero data" precise but easy to
+              misread. There is no external natural training corpus. There is
+              still a stream of synthetic training sequences, a hand-chosen
+              universal machine, a byte vocabulary, optimization algorithms,
+              compute, and natural-data validation used for some hyperparameter
+              selection. It is zero natural training data, not zero inductive
+              bias or zero information in the system design.
+            </p>
+          </section>
+
+          <section id="loop">
+            <p class="section-label">How the method works</p>
+            <h2>A generator and learner co-evolve through executable data</h2>
+            <div
+              class="loop"
+              role="img"
+              aria-label="Five-stage self-play pretraining loop"
+            >
+              <div>
+                <strong>1. Propose</strong
+                ><small>The generator samples short programs.</small>
+              </div>
+              <div>
+                <strong>2. Execute</strong
+                ><small>A universal machine turns programs into bytes.</small>
+              </div>
+              <div>
+                <strong>3. Learn</strong
+                ><small>The learner predicts the next output byte.</small>
+              </div>
+              <div>
+                <strong>4. Score</strong
+                ><small>Gradient alignment estimates learning progress.</small>
+              </div>
+              <div>
+                <strong>5. Adapt</strong
+                ><small>RL shifts generation toward useful programs.</small>
+              </div>
+            </div>
+            <p>
+              Both models are decoder-only Llama-style transformers with the
+              same architecture but separate parameters. Programs use a
+              Brainf*ck-like Turing-complete language. Its small instruction set
+              manipulates a byte-valued tape, loops, reads input, and emits
+              output. The execution semantics make every generated string valid
+              and bound its runtime, avoiding a syntax-failure cliff in the
+              search space.
+            </p>
+            <p>
+              The learner never sees the program itself. It sees only the output
+              bytes and performs standard autoregressive next-byte prediction
+              over a 256-value vocabulary. This common byte interface lets the
+              same model be evaluated on UTF-8 text, raw image bytes, audio,
+              code, DNA, and other modalities without a modality-specific
+              tokenizer.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-03-zero-data-self-play-overview.png"
+                alt="Full paper overview of self-play pretraining and its main results"
+              />
+              <figcaption>
+                <strong>Paper Figure 1.</strong> Natural data is excluded from
+                training. The feedback loop uses learner progress to improve the
+                generated curriculum, while held-out natural datasets are used
+                to measure transfer.
+              </figcaption>
+            </figure>
+          </section>
+
+          <section id="reward">
+            <p class="section-label">The technical center</p>
+            <h2>Difficulty alone rewards noise; progress needs direction</h2>
+            <p>
+              A naive curriculum could reward whatever the learner predicts
+              poorly. That immediately creates a degenerate strategy: emit
+              unpredictable random bytes. The loss is high, but no reusable
+              regularity is available to learn. The authors instead compare the
+              gradient induced by a candidate sequence with the direction the
+              learner's parameters have moved over a growing lookback window.
+            </p>
+            <p>
+              In plain language, a sequence receives high reward when it asks
+              the learner to continue moving in a direction that recent learning
+              has already made useful, while still producing a substantial
+              gradient. Mastered content has almost no gradient. Unrelated noise
+              points in an unhelpful direction. Material at the frontier can be
+              both challenging and aligned.
+            </p>
+            <p>
+              The score uses an AdamW-derived diagonal preconditioner and is
+              computed with forward-mode automatic differentiation to avoid
+              materializing full gradients. The generator then receives a
+              KL-regularized, GRPO-style policy-gradient update. A second
+              reward-weighted supervised objective distills successful programs
+              back into the generator to reduce forgetting.
+            </p>
+            <div class="concept-grid">
+              <div>
+                <h3>Fresh samples</h3>
+                <p>Explore globally under the current generator policy.</p>
+              </div>
+              <div>
+                <h3>Mutations</h3>
+                <p>
+                  Search locally around programs that already earned reward.
+                </p>
+              </div>
+              <div>
+                <h3>Replay</h3>
+                <p>Preserve useful structures discovered in earlier rounds.</p>
+              </div>
+              <div>
+                <h3>Expert iteration</h3>
+                <p>
+                  Imitate high-reward programs so the generator retains them.
+                </p>
+              </div>
+            </div>
+            <div class="callout">
+              <strong>The reward is a designed heuristic</strong>
+              <p>
+                Gradient alignment is a plausible proxy for learnable novelty,
+                not a proof that each rewarded program teaches transferable
+                structure. The paper reports that this reward was selected after
+                small-scale exploration among alternatives. That makes reward
+                ablations and independent replication especially important.
+              </p>
+            </div>
+          </section>
+
+          <section id="transfer">
+            <p class="section-label">Result 1 · Zero-shot transfer</p>
+            <h2>Natural-data loss falls predictably with self-play compute</h2>
+            <p>
+              The evaluation builds compute-optimal frontiers across model
+              sizes, training checkpoints, and ensemble sizes. Loss is measured
+              in bits per byte, and the authors fit an asymptotic power law to
+              each held-out dataset. The important pattern is not one absolute
+              score. It is that more self-play compute produces smooth,
+              predictable improvement across unrelated modalities without
+              gradient updates on those datasets.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-03-zero-data-self-play-transfer.png"
+                alt="Eight transfer plots comparing self-play, a fixed universal prior, and PCFG pretraining"
+              />
+              <figcaption>
+                <strong>Paper Figure 2.</strong> Self-play scales more strongly
+                than fixed sampling from the same program space. PCFG
+                pretraining is stronger on language-like text and code, while
+                self-play is broader across images, melody, audio, and speech.
+              </figcaption>
+            </figure>
+            <div class="metric-grid">
+              <div>
+                <span>Largest learner</span><strong>24.4M</strong
+                ><small>Parameters, still tiny by modern LLM standards.</small>
+              </div>
+              <div>
+                <span>Context</span><strong>4,096</strong
+                ><small>Byte tokens for every reported scale.</small>
+              </div>
+              <div>
+                <span>Max budget</span><strong>34.36B</strong
+                ><small>Training tokens per long scaling run.</small>
+              </div>
+              <div>
+                <span>Training corpus</span><strong>0 natural</strong
+                ><small>Natural data is not used for gradient updates.</small>
+              </div>
+            </div>
+            <p>
+              Two baselines sharpen the conclusion. A fixed Solomonoff-style
+              prior samples the same universal program space but does not adapt
+              to the learner; it improves much more slowly. This supports the
+              value of the learned curriculum rather than universality alone. A
+              probabilistic context-free grammar provides specialized
+              hierarchical structure and performs especially well on text and
+              code. That result prevents an overbroad claim: the self-play prior
+              is more general, but a well-matched hand-designed prior can still
+              win in its domain.
+            </p>
+          </section>
+
+          <section id="curriculum">
+            <p class="section-label">Result 2 · Curriculum quality</p>
+            <h2>Later generators produce richer, more transferable data</h2>
+            <p>
+              Falling validation loss alone could hide a narrow or repetitive
+              curriculum. The authors therefore freeze corpora sampled from
+              generator checkpoints at different training endpoints and train
+              fresh 1M-parameter learners on them. Later curricula have higher
+              epiplexity, a measure of structured information extractable by a
+              compute-bounded learner, and produce lower out-of-distribution
+              loss on held-out text, images, and audio.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-03-zero-data-self-play-curriculum.png"
+                alt="Curriculum structure and out-of-distribution validation improve with later generator checkpoints"
+              />
+              <figcaption>
+                <strong>Paper Figure 3.</strong> Later generator snapshots are
+                not merely replaying the same easy patterns. Their fixed corpora
+                contain more extractable structure and train new learners that
+                transfer better.
+              </figcaption>
+            </figure>
+            <p>
+              The discovered programs also become qualitatively recognizable.
+              Self-play finds arithmetic, geometric, Fibonacci-like, quadratic,
+              and cubic sequences modulo 256. A large fixed-prior sampling run
+              found arithmetic sequences but none of the other four families.
+            </p>
+            <table class="sequence-table">
+              <thead>
+                <tr>
+                  <th>Sequence family</th>
+                  <th>Example output</th>
+                  <th>Earliest saved self-play round</th>
+                  <th>Expected fixed-prior round</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Arithmetic</td>
+                  <td>1, 3, 5, 7, 9, ...</td>
+                  <td>0</td>
+                  <td>About 105</td>
+                </tr>
+                <tr>
+                  <td>Geometric</td>
+                  <td>1, 3, 9, 27, 81, ...</td>
+                  <td>256</td>
+                  <td>More than 53,000</td>
+                </tr>
+                <tr>
+                  <td>Fibonacci-like</td>
+                  <td>1, 1, 2, 3, 5, ...</td>
+                  <td>512</td>
+                  <td>More than 53,000</td>
+                </tr>
+                <tr>
+                  <td>Quadratic</td>
+                  <td>Constant second difference</td>
+                  <td>512</td>
+                  <td>More than 53,000</td>
+                </tr>
+                <tr>
+                  <td>Cubic</td>
+                  <td>Constant third difference</td>
+                  <td>512</td>
+                  <td>More than 53,000</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>
+              This is evidence that adaptation finds rare structured programs
+              efficiently. It does not show that these particular mathematical
+              families cause the natural-data transfer. The authors explicitly
+              leave that causal question to future circuit analysis and
+              curriculum ablations.
+            </p>
+          </section>
+
+          <section id="icl">
+            <p class="section-label">Result 3 · In-context learning</p>
+            <h2>The learner infers new rules from examples</h2>
+            <p>
+              The models are evaluated on six held-out tasks: reversing a
+              string, stack behavior, associative recall, summation, maximum,
+              and minimum. No fine-tuning occurs. The model receives several
+              input-output demonstrations in context and must infer the rule for
+              the next example.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-03-zero-data-self-play-icl.png"
+                alt="In-context learning accuracy across self-play, universal-prior, and PCFG-pretrained models"
+              />
+              <figcaption>
+                <strong>Paper Figure 4.</strong> Self-play improves across all
+                six tasks as demonstrations increase. The fixed universal prior
+                shows almost no useful ICL; the PCFG model is strong mainly on
+                associative recall.
+              </figcaption>
+            </figure>
+            <p>
+              The summation task offers a useful window into how a strategy
+              forms. Initially the model emits frequent prior tokens. After a
+              few examples it tries copying, then becomes less confident as that
+              hypothesis fails. Around four examples it begins handling the low
+              four bits correctly; around eight it starts handling the high
+              bits. Confidence rises only after the correct algorithmic behavior
+              stabilizes.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-03-zero-data-self-play-sum.png"
+                alt="Model strategy and predictive entropy during the in-context summation task"
+              />
+              <figcaption>
+                <strong>Paper Figure 5.</strong> The strategy transition is not
+                a smooth confidence increase. The learner first explores wrong
+                rules, becomes uncertain, and then locks onto low-bit and
+                high-bit addition.
+              </figcaption>
+            </figure>
+          </section>
+
+          <section id="warm-start">
+            <p class="section-label">Practical result · Pre-pretraining</p>
+            <h2>
+              Self-play is more plausible as a warm start than a replacement
+            </h2>
+            <p>
+              The most operational experiment initializes a 24.4M-parameter
+              model either from random weights or from the final self-play
+              learner, then trains both normally on DCLM text, CIFAR-10 images,
+              or ESC-50 audio. The warm-start arm reaches each loss level
+              earlier. The advantage narrows near convergence, which suggests
+              faster acquisition rather than a permanently different endpoint.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-10-03-zero-data-self-play-warm-start.png"
+                alt="Natural-data pretraining curves from random initialization and a self-play warm start"
+              />
+              <figcaption>
+                <strong>Paper Figure 6.</strong> The warm start needed 320M
+                versus 496M tokens on ESC-50 and 421M versus 588M on CIFAR-10 to
+                reach the reported convergence criterion. The comparison does
+                not charge the earlier self-play compute.
+              </figcaption>
+            </figure>
+            <p>
+              This is promising but economically incomplete. Self-play is a
+              one-time initialization that could be reused across domains, so
+              excluding its cost can be defensible for a heavily reused
+              checkpoint. It still prevents the chart from proving lower total
+              compute for a single downstream run. A production decision would
+              need the full amortization model: self-play cost, checkpoint reuse
+              count, natural-data savings, wall-clock constraints, and final
+              quality.
+            </p>
+          </section>
+
+          <section id="scaling">
+            <p class="section-label">How the authors interpret scaling</p>
+            <h2>A useful ansatz, not a demonstrated law of nature</h2>
+            <p>
+              The paper extends the familiar model-and-data scaling equation by
+              splitting effective data into contingent information and universal
+              structure. During self-play, the contingent term stays fixed while
+              the supply of universal structure can grow with training time. If
+              that growth follows a power law, natural-data validation loss can
+              also follow a power law even though the model never trains on
+              natural data.
+            </p>
+            <p>
+              The authors compare fitted self-play exponents with values
+              reported for ordinary natural-data training and cautiously suggest
+              that universal structure may explain an important part of standard
+              scaling. This is an interpretation layered over the empirical
+              curves. Similar exponents do not prove identical mechanisms, equal
+              data efficiency, or equivalent final losses. The fitted asymptote
+              can also absorb the missing contingent knowledge.
+            </p>
+          </section>
+
+          <section id="limitations">
+            <p class="section-label">Critical reading</p>
+            <h2>What remains uncertain</h2>
+            <div class="risk-grid">
+              <div>
+                <h3>Scale is untested</h3>
+                <p>
+                  Every model is below 25M parameters. Larger systems may need a
+                  richer programming language, reusable abstractions, and a more
+                  efficient search process.
+                </p>
+              </div>
+              <div>
+                <h3>Validation influences selection</h3>
+                <p>
+                  DCLM and DNA validation loss help select hyperparameters.
+                  Natural data never supplies gradients, but it is not absent
+                  from every research decision.
+                </p>
+              </div>
+              <div>
+                <h3>The reward was selected empirically</h3>
+                <p>
+                  Several reward candidates were explored at small scale. More
+                  independent ablation and replication are needed to establish
+                  robustness.
+                </p>
+              </div>
+              <div>
+                <h3>Transfer is measured as prediction loss</h3>
+                <p>
+                  Lower bits-per-byte and synthetic ICL are meaningful, but they
+                  do not demonstrate factual knowledge, reasoning quality, or
+                  useful language generation at product scale.
+                </p>
+              </div>
+              <div>
+                <h3>Warm-start economics are partial</h3>
+                <p>
+                  Natural-data token savings exclude the compute needed to
+                  produce the self-play checkpoint. Reuse determines whether the
+                  investment pays back.
+                </p>
+              </div>
+              <div>
+                <h3>Causality is open</h3>
+                <p>
+                  Mathematical sequences are a vivid signal of curriculum
+                  structure, but the paper does not prove that they cause
+                  cross-modal transfer or ICL.
+                </p>
+              </div>
+            </div>
+            <p>
+              One result deserves special caution: the reported DNA scaling
+              exponent is exceptional relative to the literature values the
+              paper compares against, and DNA is also one of the two validation
+              domains used for hyperparameter selection. That does not negate
+              the broader transfer result, but it makes the DNA curve less
+              persuasive as independent confirmation.
+            </p>
+          </section>
+
+          <section id="engineering">
+            <p class="section-label">Implications for AI engineers</p>
+            <h2>The reusable idea is adaptive curriculum design</h2>
+            <div class="practice-grid">
+              <div>
+                <h3>Optimize for learning progress</h3>
+                <p>
+                  Hardness alone selects noise. Curriculum systems need signals
+                  that distinguish unresolved but learnable structure from
+                  irreducible uncertainty.
+                </p>
+              </div>
+              <div>
+                <h3>Use executable generators</h3>
+                <p>
+                  Programs provide cheap, exact, diverse supervision and make
+                  every generated example traceable to a data-producing process.
+                </p>
+              </div>
+              <div>
+                <h3>Keep adaptive and fixed baselines</h3>
+                <p>
+                  Comparing against the same search space without adaptation is
+                  what shows that the curriculum policy adds value.
+                </p>
+              </div>
+              <div>
+                <h3>Measure transfer, not self-reward</h3>
+                <p>
+                  A generator can game its intrinsic objective. Held-out domains
+                  and fresh learners test whether its curriculum remains useful
+                  outside the loop.
+                </p>
+              </div>
+              <div>
+                <h3>Separate structure from knowledge</h3>
+                <p>
+                  Synthetic experience may teach procedures and abstractions;
+                  real-world facts still require trusted observation and data
+                  governance.
+                </p>
+              </div>
+              <div>
+                <h3>Account for total compute</h3>
+                <p>
+                  A warm start is valuable only when downstream savings and
+                  reuse exceed the cost of creating, validating, and storing it.
+                </p>
+              </div>
+            </div>
+            <p>
+              For an agentic platform, the closest analogy is not letting an
+              agent freely invent SOPs. It is building a governed environment
+              where agents can generate executable practice tasks, receive
+              objective feedback, retain productive strategies, and advance to
+              harder cases as competence improves. Business facts and policy
+              still come from approved sources; self-play supplies structured
+              experience around them.
+            </p>
+          </section>
+
+          <section id="verdict">
+            <p class="section-label">Bottom line</p>
+            <h2>A strong proof of concept with a deliberately narrow claim</h2>
+            <p>
+              The paper convincingly shows that an adaptive generator can
+              discover synthetic structures that train a small learner better
+              than fixed sampling from the same universal program space. The
+              cross-modal scaling, fresh-learner curriculum test, ICL behavior,
+              and warm-start experiment reinforce one another.
+            </p>
+            <p>
+              Its most important contribution is conceptual: data has at least
+              two jobs. It tells a model about the world, and it teaches general
+              ways to predict structured sequences. Self-play cannot replace the
+              first job. This work suggests that compute may produce more of the
+              second, and that an adaptive curriculum can make that process
+              substantially more efficient than blind sampling.
+            </p>
+          </section>
+
+          <section id="sources">
+            <p class="section-label">Sources and reproducibility</p>
+            <h2>What this article is based on</h2>
+            <ul>
+              <li>
+                <a href="https://www.youtube.com/watch?v=mGMiiPpWBSo"
+                  >Zero Data Self Play Pretraining</a
+                >, the 1:31:27 source video by hu-po. No public YouTube caption
+                track was available at the time of this summary.
+              </li>
+              <li>
+                <a href="https://arxiv.org/abs/2609.30063"
+                  >Self-Play Pretraining with Zero Data</a
+                >, the primary paper by Aditya Cowsik, Kfir Dolev, Michael Y.
+                Li, G. Bruno De Luca, Nourya Cohen, Noah D. Goodman, and Yoav
+                Levine.
+              </li>
+              <li>
+                <a href="https://github.com/nourya-aliz/self_play_pretraining"
+                  >Official figure and evaluation repository</a
+                >, containing published plots, underlying plot data, benchmark
+                preparation, and checkpoint scoring code.
+              </li>
+              <li>
+                <a href="https://huggingface.co/nourya-cohen/solomonoff-paper"
+                  >Released learner checkpoints</a
+                >, including self-play, fixed-prior, reward-ablation, and
+                curriculum arms. Generator weights, optimizer state, and full
+                training code are not included.
+              </li>
+            </ul>
+            <p>
+              Figures are reproduced from the authors' arXiv HTML and official
+              repository at their published resolution. This article is a
+              source-grounded synthesis, not an independent training replication
+              or a verbatim account of the video.
+            </p>
+          </section>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <p class="section-label">On this page</p>
+          <ol>
+            <li><a href="#summary">Executive summary</a></li>
+            <li><a href="#thesis">Structure versus facts</a></li>
+            <li><a href="#loop">Self-play loop</a></li>
+            <li><a href="#reward">Learning-progress reward</a></li>
+            <li><a href="#transfer">Cross-modal transfer</a></li>
+            <li><a href="#curriculum">Curriculum quality</a></li>
+            <li><a href="#icl">In-context learning</a></li>
+            <li><a href="#warm-start">Pre-pretraining</a></li>
+            <li><a href="#scaling">Scaling interpretation</a></li>
+            <li><a href="#limitations">Limitations</a></li>
+            <li><a href="#engineering">Engineering implications</a></li>
+            <li><a href="#verdict">Bottom line</a></li>
+            <li><a href="#sources">Sources</a></li>
+          </ol>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>

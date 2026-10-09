@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Encoded token position by rotating query and key vectors so their dot product naturally contains relative-position information.">
+  <meta name="resource-file" content="2026-09-08-rope-rotary-position-embedding-roformer-en.html">
+  <title>RoPE · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2104.09864">Read paper</a><a class="action-link" href="./">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Transformer Foundations · Paper 5 of 37</p>
+        <h1>RoFormer: Enhanced Transformer with Rotary Position Embedding</h1>
+        <p class="subtitle">Encoded token position by rotating query and key vectors so their dot product naturally contains relative-position information.</p>
+        <div class="meta"><span><strong>Jianlin Su, Yu Lu, Shengfeng Pan, Ahmed Murtadha, Bo Wen, Yunfeng Liu</strong></span><span>2021</span><span>Intermediate</span><span>12 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>RoPE</h2><p>Zhuiyi Technology and Shenzhen University</p><p><strong>Prerequisites:</strong> Self-attention, complex numbers or 2D rotations, and positional encoding.</p><a href="https://arxiv.org/abs/2104.09864">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Intermediate</strong></div><div class="paper-fact"><span>Place in path</span><strong>5 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Self-attention is permutation-invariant, so it needs position information. Absolute learned or sinusoidal embeddings mark where a token is, while many language tasks depend strongly on how far two tokens are from each other.</p>
+<p>Relative-position schemes existed but could complicate attention or fail to integrate cleanly with linear-attention variants. RoPE seeks a simple transformation that represents absolute positions while making pairwise attention explicitly relative.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Group vector dimensions into pairs and rotate each pair by an angle proportional to token position and a dimension-specific frequency. Apply the rotation to queries and keys before their dot product.</p>
+<p>The algebra composes rotations: comparing a query at position m with a key at position n introduces a rotation by their difference. Values do not need the same transformation.</p><div class="equation">qₘ = R(m)Wq xₘ, kₙ = R(n)Wk xₙ; qₘᵀkₙ depends on R(n − m)</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Project token states into queries and keys. For each two-dimensional coordinate pair, compute sine and cosine at the token’s position. Rotate the pair, then perform ordinary dot-product attention.</p>
+<p>Low-frequency dimensions vary slowly and can represent broad distances; high-frequency dimensions vary rapidly and distinguish nearby positions. The method adds no learned position table and little arithmetic relative to attention.</p><figure class="concept-flow" aria-label="Rotary attention score">
+    <div class="flow-step"><span>Token m</span><strong>Project query</strong><p>Compute Wq times the token state.</p></div>
+<div class="flow-step"><span>Rotate m</span><strong>Apply R(m)</strong><p>Use position-specific sine and cosine.</p></div>
+<div class="flow-step"><span>Token n</span><strong>Project key</strong><p>Compute Wk times another token state.</p></div>
+<div class="flow-step"><span>Rotate n</span><strong>Apply R(n)</strong><p>Rotate with the key position.</p></div>
+<div class="flow-step"><span>Compare</span><strong>Relative score</strong><p>Dot product depends on n minus m.</p></div>
+    <figcaption>Queries and keys rotate at their own positions; their dot product exposes the relative offset.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>RoPE can be written with block-diagonal rotation matrices or complex multiplication. Because R(m) transpose times R(n) equals R(n−m), the score has a clean relative-position form.</p>
+<p>Context extension is not guaranteed by the algebra alone. At positions far beyond training, phases and frequency coverage shift. Later methods rescale positions or frequencies, trading short-context fidelity against extrapolation.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>RoFormer experiments reported improvements over alternative position methods on long-text classification and language modeling, with theoretical analysis of distance-dependent behavior.</p>
+<p>The original experiments are much smaller than modern LLM deployments. Today’s widespread use is later engineering evidence, not part of the paper’s original benchmark claim.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>RoPE became a standard positional method in decoder-only LLMs because it is parameter-free, efficient, and compatible with cached autoregressive attention. It also became the foundation for many context-extension techniques.</p>
+<p>Its adoption made rotary scaling, frequency base, precision, and cache position handling operational concerns in inference libraries.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Rotate queries and newly computed keys using their absolute cache positions; an off-by-one error can silently destroy generation quality. Keep sin/cos computation numerically stable and consistent across sharded execution.</p>
+<p>Do not assume a longer configured cache means the model understands longer inputs. Validate perplexity, retrieval, and task quality across position ranges when applying interpolation or extrapolation.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>Periodic rotation can alias or behave unpredictably beyond the trained range. Different dimensions have different usable horizons, and aggressive scaling may damage local position resolution.</p>
+<p>RoPE describes position inside attention; it does not solve quadratic compute, KV-cache growth, or the broader problem of selecting useful long-context information.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>ALiBi offers a simpler score bias with a different extrapolation trade-off. MQA and GQA change how many key/value heads are cached while retaining positional treatment such as RoPE.</p><div class="article-nav"><a href="2026-09-08-gpt-2-scaling-zero-shot-language-models-en.html">← GPT-2</a><a href="2026-09-08-alibi-attention-linear-biases-long-context-en.html">ALiBi →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>RoPE applies position to queries and keys, not as a separate token feature alone.</li><li>Rotation composition turns absolute indices into relative score behavior.</li><li>The method adds no learned position table.</li><li>Frequency design controls local detail and long-range behavior.</li><li>Long context still requires empirical validation.</li><li>Cache positions must remain exact during decoding.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2104.09864">RoFormer: Enhanced Transformer with Rotary Position Embedding</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>The key insight is not merely “rotate embeddings.” Inspect why the attention dot product depends on relative distance and how frequency choices affect long-context behavior.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

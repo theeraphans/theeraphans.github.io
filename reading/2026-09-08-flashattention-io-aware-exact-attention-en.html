@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Reordered exact attention into SRAM-sized tiles, avoiding materialization of the full score matrix in high-bandwidth memory and improving speed plus memory usage.">
+  <meta name="resource-file" content="2026-09-08-flashattention-io-aware-exact-attention-en.html">
+  <title>FlashAttention · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2205.14135">Read paper</a><a class="action-link" href="./">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Efficient Attention and Inference · Paper 28 of 37</p>
+        <h1>FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness</h1>
+        <p class="subtitle">Reordered exact attention into SRAM-sized tiles, avoiding materialization of the full score matrix in high-bandwidth memory and improving speed plus memory usage.</p>
+        <div class="meta"><span><strong>Tri Dao, Daniel Y. Fu, Stefano Ermon, Atri Rudra, Christopher Ré</strong></span><span>2022</span><span>Advanced</span><span>14 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>FlashAttention</h2><p>Stanford University and University at Buffalo</p><p><strong>Prerequisites:</strong> Attention, GPU memory hierarchy, tiling, softmax, and backward recomputation.</p><a href="https://arxiv.org/abs/2205.14135">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Advanced</strong></div><div class="paper-fact"><span>Place in path</span><strong>28 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Standard attention forms an N-by-N score matrix, writes it to GPU high-bandwidth memory, applies softmax, and reads it again. Those transfers dominate runtime before arithmetic capacity is exhausted.</p>
+<p>Approximate attention reduces computation but may change outputs. The paper asks whether exact attention can move far fewer bytes.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Process query and key/value blocks that fit in fast on-chip SRAM. Compute partial scores and update a numerically stable online softmax plus output accumulator, never storing the complete attention matrix in HBM.</p>
+<p>Backward recomputes score tiles from saved normalization statistics, trading cheap arithmetic for expensive memory traffic.</p><div class="equation">Tile Q,K,V; maintain running row max m and normalization ℓ for online softmax.</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Load a K/V tile, iterate over Q tiles, compute block scores, apply masks, update running maximum and denominator, and rescale the prior output accumulator before adding the new block.</p>
+<p>Write only the final output and small softmax statistics. During backward, reconstruct each tile and accumulate gradients.</p><figure class="concept-flow" aria-label="IO-aware attention">
+    <div class="flow-step"><span>HBM</span><strong>Load Q/K/V tiles</strong><p>Move bounded blocks on chip.</p></div>
+<div class="flow-step"><span>SRAM</span><strong>Compute scores</strong><p>Form one local attention tile.</p></div>
+<div class="flow-step"><span>Online</span><strong>Update softmax</strong><p>Track max and denominator.</p></div>
+<div class="flow-step"><span>Accumulate</span><strong>Update output</strong><p>Rescale and add partial values.</p></div>
+<div class="flow-step"><span>HBM</span><strong>Write final state</strong><p>Avoid N-by-N intermediates.</p></div>
+    <figcaption>Small tiles visit fast memory; only outputs and compact statistics return to HBM.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>Online softmax combines block statistics exactly: when a new block has a larger max, old sums and outputs are rescaled into the new exponent frame. This preserves numerical stability.</p>
+<p>IO complexity depends on SRAM size and tiling. Causal masking skips useless regions, and kernel fusion avoids launches and intermediate buffers.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>The paper reported substantial wall-clock speedups over PyTorch attention and much lower memory, enabling longer sequences on tested GPUs. End-to-end Transformer training also accelerated.</p>
+<p>Speedups vary with GPU, dtype, head dimension, sequence length, dropout, and competing kernels. The theoretical IO advantage does not imply one fixed multiplier.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>FlashAttention made hardware-aware exact algorithms central to LLM engineering and enabled longer contexts without changing model semantics.</p>
+<p>It became the foundation for production attention kernels and later improvements in work partitioning, decoding, and new accelerator generations.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Use framework-native fused scaled-dot-product attention when it dispatches to a supported kernel. Confirm masks, dropout, head size, and dtype do not trigger a slow fallback.</p>
+<p>Benchmark end to end with realistic sequence distributions. A faster attention kernel may not dominate when feed-forward layers, communication, or data loading are the bottleneck.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>Dense arithmetic remains quadratic in sequence length even though memory is linearized. Very long contexts eventually hit compute and KV-cache limits.</p>
+<p>Custom kernels are hardware- and shape-sensitive. Numerical differences from operation order are small but can complicate exact bitwise reproducibility.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>FlashAttention-2 improves parallel work partitioning. PagedAttention addresses cache allocation across requests, while MQA/GQA reduce cache size architecturally.</p><div class="article-nav"><a href="2026-09-08-muon-optimizer-scalable-llm-training-en.html">← Muon Optimizer</a><a href="2026-09-08-flashattention-2-parallelism-work-partitioning-en.html">FlashAttention-2 →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>FlashAttention is exact attention with a different IO schedule.</li><li>SRAM tiling avoids the full HBM score matrix.</li><li>Online softmax preserves stable normalization across tiles.</li><li>Backward recomputation saves memory.</li><li>Quadratic arithmetic remains.</li><li>Supported shapes and kernels determine actual speed.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2205.14135">FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>FlashAttention changes the algorithm’s IO schedule, not its mathematical attention result. Distinguish exactness from approximate sparse attention.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

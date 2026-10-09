@@ -1,0 +1,1138 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Agentic AI Platform YouTube Research Digest</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #182026;
+      --muted: #5f6c73;
+      --paper: #fffdfa;
+      --soft: #f3f0e8;
+      --line: #d9d2c3;
+      --navy: #253d55;
+      --green: #2c7163;
+      --red: #b4473f;
+      --gold: #aa762b;
+      --violet: #63577f;
+      --code: #1f2b32;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--soft);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--red), var(--green), var(--navy), var(--gold));
+    }
+
+    a {
+      color: var(--green);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    h1, h2, h3, p, ul, ol, pre { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td {
+      overflow-wrap: anywhere;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
+      gap: 44px;
+      align-items: end;
+      padding: 54px 0 42px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--red);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 7.4vw, 6.35rem);
+      font-weight: 760;
+      line-height: 0.94;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 780px;
+      margin-top: 24px;
+      color: #2b353b;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.16rem, 2.1vw, 1.55rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-panel {
+      padding: 24px;
+      color: #fff;
+      background: var(--navy);
+      border-radius: 8px;
+    }
+
+    .hero-panel h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.9rem, 4vw, 3rem);
+      line-height: 1.05;
+    }
+
+    .hero-panel p {
+      margin-top: 14px;
+      color: rgb(255 255 255 / 84%);
+      font-size: 1.04rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .stat {
+      padding: 14px;
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 15%);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: #fff;
+      font-size: 1.45rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 5px;
+      color: rgb(255 255 255 / 72%);
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 238px minmax(0, 1fr);
+      gap: 40px;
+      align-items: start;
+      margin-top: 38px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 6px;
+      padding: 16px;
+      background: rgb(255 255 255 / 56%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .toc span {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 750;
+      text-decoration: none;
+      border-top: 1px solid rgb(217 210 195 / 70%);
+    }
+
+    .content {
+      display: grid;
+      gap: 28px;
+      min-width: 0;
+    }
+
+    .section {
+      padding: 34px 0;
+      border-top: 1px solid var(--line);
+      min-width: 0;
+    }
+
+    .section:first-child { border-top: 0; padding-top: 0; }
+
+    .label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--red);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      max-width: 780px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 4.4vw, 3.6rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      max-width: 860px;
+      margin-top: 14px;
+      color: #2d363b;
+      font-size: 1.08rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      min-width: 0;
+    }
+
+    .card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      margin-bottom: 12px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--green);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .callout {
+      margin-top: 24px;
+      padding: 22px;
+      color: #fff;
+      background: #1f3734;
+      border-radius: 8px;
+    }
+
+    .callout strong {
+      display: block;
+      margin-bottom: 8px;
+      color: #fff;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.55rem;
+      line-height: 1.2;
+    }
+
+    .callout p { color: rgb(255 255 255 / 84%); }
+
+    .blueprint {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .blueprint-row {
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .blueprint-label {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      color: #fff;
+      background: var(--violet);
+      border-radius: 8px;
+      font-weight: 900;
+    }
+
+    .blueprint-body {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .node {
+      min-height: 92px;
+      padding: 14px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .node strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.98rem;
+    }
+
+    .node span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .source {
+      display: grid;
+      grid-template-columns: 160px minmax(0, 1fr);
+      gap: 16px;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .source img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+    }
+
+    .source-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      margin: 8px 0 10px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .source h3 a {
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .source p {
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .table-wrap {
+      margin-top: 24px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      min-width: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 820px;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: #fff;
+      background: var(--navy);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    td { color: #344047; font-size: 0.95rem; }
+
+    .steps {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+      counter-reset: step;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      gap: 14px;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      counter-increment: step;
+    }
+
+    .step::before {
+      content: counter(step, decimal-leading-zero);
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      color: #fff;
+      background: var(--red);
+      border-radius: 50%;
+      font-weight: 950;
+    }
+
+    .step p {
+      margin-top: 5px;
+      color: var(--muted);
+    }
+
+    pre {
+      margin-top: 18px;
+      padding: 18px;
+      color: #e9f2ef;
+      background: var(--code);
+      border-radius: 8px;
+      overflow-x: auto;
+      min-width: 0;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 46px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .layout,
+      .blueprint-row {
+        grid-template-columns: 1fr;
+      }
+
+      .toc { position: static; }
+
+      .grid,
+      .two,
+      .blueprint-body {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .page {
+        padding-inline: 16px;
+      }
+
+      .hero {
+        padding-top: 36px;
+        gap: 28px;
+      }
+
+      h1 {
+        max-width: 10ch;
+        font-size: clamp(2.8rem, 15vw, 4.5rem);
+      }
+
+      .stats,
+      .grid,
+      .two,
+      .blueprint-body,
+      .source {
+        grid-template-columns: 1fr;
+      }
+
+      .step {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./">YouTube Extractor</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="agentic-ai-platform-youtube-research-en.html">English Version</a>
+      <a class="action-link" href="#sources">Sources</a>
+      <a class="action-link" href="#templates">Templates</a>
+      <a class="action-link primary" href="#sop">BA SOP</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Research Digest</span>
+        <h1>Agentic AI Platform Playbook</h1>
+        <p class="subtitle">
+          สรุปจาก YouTube research 9 คลิป เพื่อแปลง insight เรื่อง multi-agent orchestration, MCP tools,
+          human-in-the-loop, workflow automation และ agent runtime ให้กลายเป็น framework ที่ BA และ engineer ใช้ร่วมกันได้
+        </p>
+        <div class="meta">
+          <span><strong>Focus:</strong> Master Agent, Sub-Agent, Skill, MCP Tools, Flow Markdown</span>
+          <span><strong>Extracted:</strong> 30 Jun 2026</span>
+        </div>
+      </div>
+
+      <aside class="hero-panel" aria-labelledby="short-version-title">
+        <h2 id="short-version-title">ข้อสรุปสั้นที่สุด</h2>
+        <p>
+          อย่าเริ่มจาก persona prompt ให้เริ่มจาก business flow ก่อน แล้ว compile flow นั้นเป็น graph runtime:
+          Master Agent เป็น router, Sub-Agent เป็น specialist, Skill เป็น reusable capability และ MCP Tool เป็น approved action boundary
+        </p>
+        <div class="stats">
+          <div class="stat"><strong>9</strong><span>videos</span></div>
+          <div class="stat"><strong>56.8k</strong><span>words</span></div>
+          <div class="stat"><strong>5h 12m</strong><span>captions</span></div>
+        </div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Table of contents">
+        <span>Read</span>
+        <a href="#takeaways">Core takeaways</a>
+        <a href="#architecture">Platform architecture</a>
+        <a href="#patterns">Patterns</a>
+        <a href="#sop">BA SOP</a>
+        <a href="#templates">Templates</a>
+        <a href="#sources">Video sources</a>
+        <a href="#decision">Decision guide</a>
+      </nav>
+
+      <article class="content">
+        <section class="section" id="takeaways">
+          <span class="label">Synthesis</span>
+          <h2>แก่นเดียวกันจากทุกคลิป: agent ต้องถูกควบคุมด้วย flow ไม่ใช่ปล่อยให้ prompt คิดเองทั้งหมด</h2>
+          <p class="lead">
+            คลิปจาก LangGraph, MCP, OpenAI Agents SDK, Azure AI Foundry, Camunda และ human-in-the-loop examples
+            ชี้ไปทางเดียวกัน: production agent ต้องมี state, tool boundary, approval, audit, eval และ orchestration ที่ตรวจสอบได้
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">01</span>
+              <h3>Master Agent ควรเป็น router</h3>
+              <p>หน้าที่หลักคือเลือก flow, ถือ conversation state, route ไป specialist และตัดสินใจ escalate ไม่ใช่ถือ tool ทุกตัวแล้วทำเองทั้งหมด</p>
+            </article>
+            <article class="card">
+              <span class="pill">02</span>
+              <h3>Sub-Agent คือ node ใน graph</h3>
+              <p>ให้คิดแบบ LangGraph: agent เป็น node, edge คือเงื่อนไขการส่งต่อ, state คือข้อมูลที่ทุก node ใช้อ้างอิงร่วมกัน</p>
+            </article>
+            <article class="card">
+              <span class="pill">03</span>
+              <h3>Skill คือ contract ไม่ใช่ prompt ก้อนหนึ่ง</h3>
+              <p>Skill ต้องมี input, output schema, owner, risk level, allowed tools, eval cases และ failure mode เพื่อให้ reuse และ govern ได้</p>
+            </article>
+            <article class="card">
+              <span class="pill">04</span>
+              <h3>MCP เป็น tool/context layer</h3>
+              <p>MCP ช่วยลดปัญหา N x M integration โดยให้ client/agent ต่อกับ server ที่ expose tools, prompts และ resources ผ่าน standard interface</p>
+            </article>
+            <article class="card">
+              <span class="pill">05</span>
+              <h3>Human-in-the-loop ต้องอยู่ที่ action boundary</h3>
+              <p>อย่าผูก approval แค่กับ agent ให้ผูกกับ risky tool หรือ actionable skill เช่น refund, payment, update CRM, send email</p>
+            </article>
+            <article class="card">
+              <span class="pill">06</span>
+              <h3>BA ต้องเขียน Flow Markdown</h3>
+              <p>BA ไม่ควรแก้ raw system prompt แต่ควรประกอบ flow, policy, exception และ eval scenario ในรูปแบบ markdown ที่ platform compile ได้</p>
+            </article>
+          </div>
+
+          <div class="callout">
+            <strong>Framework ที่ควรใช้</strong>
+            <p>
+              Workflow-first + Graph Orchestration + Router Master Agent + Specialist Sub-Agents + Skill Registry +
+              MCP Tool Registry + HITL Gate + Simulation/Eval ก่อน release
+            </p>
+          </div>
+        </section>
+
+        <section class="section" id="architecture">
+          <span class="label">Architecture</span>
+          <h2>โครงสร้าง platform ที่ BA ประกอบได้ แต่ engineer ยังคุม safety ได้</h2>
+          <p class="lead">
+            แยก ownership ให้ชัด: BA เป็นเจ้าของ business flow และ policy, engineer เป็นเจ้าของ MCP/tool integration,
+            platform เป็นตัว compile ทุกอย่างเป็น runnable multi-agent graph
+          </p>
+
+          <div class="blueprint" aria-label="Agentic platform architecture">
+            <div class="blueprint-row">
+              <div class="blueprint-label">BA Layer</div>
+              <div class="blueprint-body">
+                <div class="node"><strong>Flow Markdown</strong><span>trigger, goal, steps, exceptions, eval scenarios</span></div>
+                <div class="node"><strong>Policy Library</strong><span>rules, eligibility, escalation, SLA</span></div>
+                <div class="node"><strong>Skill Selection</strong><span>reuse existing skills or request new ones</span></div>
+                <div class="node"><strong>Release Notes</strong><span>business approval and change intent</span></div>
+              </div>
+            </div>
+            <div class="blueprint-row">
+              <div class="blueprint-label">Agent Layer</div>
+              <div class="blueprint-body">
+                <div class="node"><strong>Master Router</strong><span>intent, flow choice, state, handoff</span></div>
+                <div class="node"><strong>Specialist Agents</strong><span>identity, refund, policy, payment, knowledge</span></div>
+                <div class="node"><strong>Skill Registry</strong><span>cognitive and actionable contracts</span></div>
+                <div class="node"><strong>Graph Runtime</strong><span>nodes, edges, conditional routing, checkpoints</span></div>
+              </div>
+            </div>
+            <div class="blueprint-row">
+              <div class="blueprint-label">Tool Layer</div>
+              <div class="blueprint-body">
+                <div class="node"><strong>MCP Servers</strong><span>CRM, payment, ticketing, search, knowledge</span></div>
+                <div class="node"><strong>Tool Policies</strong><span>risk, auth scope, approval, audit</span></div>
+                <div class="node"><strong>Sandbox</strong><span>safe runtime for files, code, long-running work</span></div>
+                <div class="node"><strong>Observability</strong><span>threads, traces, outcomes, regression signals</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="patterns">
+          <span class="label">Patterns</span>
+          <h2>Pattern ที่ควรกลายเป็น standard ของทีม</h2>
+          <p class="lead">
+            จากคลิปทั้งหมด pattern ที่นำมาใช้กับ SOP ได้ทันทีมี 6 แบบนี้
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Pattern</th>
+                  <th>ใช้เมื่อไร</th>
+                  <th>Platform rule</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Graph-based orchestration</td>
+                  <td>มีหลาย agent, หลายขั้นตอน, ต้อง branch/loop/escalate</td>
+                  <td>ทุก production flow ต้อง compile เป็น graph ที่มี node, edge, state และ checkpoint</td>
+                </tr>
+                <tr>
+                  <td>Router Master Agent</td>
+                  <td>ต้องรับ user intent แล้วเลือก flow หรือ specialist</td>
+                  <td>Master Agent ห้ามถือ high-risk action tools โดยตรง ยกเว้น tool ที่เป็น read-only หรือ routing</td>
+                </tr>
+                <tr>
+                  <td>Skill Contract</td>
+                  <td>ต้อง reuse capability ข้าม flow หรือข้าม agent</td>
+                  <td>Skill ทุกตัวต้องมี input/output schema, owner, risk level, allowed tools, eval cases</td>
+                </tr>
+                <tr>
+                  <td>MCP Tool Registry</td>
+                  <td>ต้องเชื่อม external systems เช่น CRM, payment, database, search</td>
+                  <td>BA เลือก tool ผ่าน business-friendly card; engineer publish schema, auth, policy และ audit fields</td>
+                </tr>
+                <tr>
+                  <td>HITL Tool Wrapper</td>
+                  <td>tool มีผลกระทบจริง เช่น จ่ายเงิน แก้ข้อมูล ส่งข้อความ</td>
+                  <td>Risky tools ต้องถูก wrap ด้วย approval object ที่รองรับ accept, edit, respond, reject</td>
+                </tr>
+                <tr>
+                  <td>Deterministic shell + agent task</td>
+                  <td>process ส่วนใหญ่ predictable แต่บางขั้นต้องใช้ reasoning</td>
+                  <td>ให้ flow deterministic เป็นโครงหลัก แล้ววาง agent task เฉพาะจุดที่ต้องตีความ/สรุป/ตัดสินใจ</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="sop">
+          <span class="label">BA SOP</span>
+          <h2>SOP สำหรับให้ BA สร้างและประกอบ multi-agent system</h2>
+          <p class="lead">
+            เป้าหมายคือให้ BA ทำงานในภาษาของ business flow แต่ผลลัพธ์ยังถูก compile เป็น agent graph ที่ engineer ตรวจสอบและ release ได้
+          </p>
+
+          <div class="steps">
+            <article class="step">
+              <div>
+                <h3>เขียน Flow Markdown ก่อนเสมอ</h3>
+                <p>ระบุ trigger, goal, inputs, happy path, exception, policy, success metric และ eval scenarios อย่าเริ่มจาก prompt</p>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>แตก step เป็น skill candidates</h3>
+                <p>ทุก step ต้องถูก classify เป็น cognitive skill หรือ actionable skill เพื่อแยก reasoning ออกจาก action ที่กระทบระบบจริง</p>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>เลือก skill จาก registry</h3>
+                <p>ถ้ามี skill อยู่แล้วให้ reuse ถ้าไม่มีให้ request new skill พร้อม input/output และ eval cases</p>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>bind skill เข้ากับ specialist agent</h3>
+                <p>Agent หนึ่งตัวควรมี scope ชัด เช่น identity, eligibility, payment, ticketing, knowledge ไม่ควรรวมทุกอย่างไว้ใน agent เดียว</p>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>bind actionable skill เข้ากับ approved tools</h3>
+                <p>Tool/MCP ต้องมี risk level, auth scope, approval policy, audit fields และ failure handling ก่อนให้ agent เรียกใช้</p>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>compile เป็น graph แล้ว run simulation</h3>
+                <p>ใช้ eval scenarios จาก BA เพื่อทดสอบ happy path, edge case, policy conflict, missing data และ risky action ก่อน release</p>
+              </div>
+            </article>
+            <article class="step">
+              <div>
+                <h3>release แบบมี monitoring loop</h3>
+                <p>ทุก conversation ต้องเก็บ outcome, tool call, approval, handoff และ failure reason เพื่อย้อนกลับมา update flow/skill/eval</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">Templates</span>
+          <h2>Template ที่ platform ควรรองรับ</h2>
+          <p class="lead">
+            นี่คือ format ที่ BA อ่านได้ และ platform สามารถ parse/compile ต่อได้
+          </p>
+
+          <h3>Flow Markdown</h3>
+          <pre><code>---
+flow_id: refund_request_v1
+owner: CX Operations
+status: draft
+primary_agent: cx_master_agent
+risk_level: high
+trigger:
+  - customer asks for refund
+success_metric:
+  - correct refund decision
+  - no unauthorized payment action
+data_sources:
+  - refund_policy
+  - order_summary
+release_gates:
+  - simulation_pass_rate &gt;= 95%
+  - payment_ops_approval
+---
+
+# Refund Request Flow
+
+## Goal
+Help the customer request a refund while following company policy.
+
+## Steps
+
+### 1. Understand Request
+agent: cx_master_agent
+skill: classify_customer_intent
+type: cognitive
+output: refund_request | non_refund_request | unclear
+
+### 2. Verify Customer
+agent: identity_agent
+skill: verify_customer_identity
+type: actionable
+required_tools:
+  - crm.customer.lookup
+human_approval: none
+
+### 3. Check Refund Eligibility
+agent: refund_eligibility_agent
+skill: refund_eligibility_check
+type: cognitive
+required_resources:
+  - refund_policy_v3
+
+### 4. Issue Refund
+condition: eligibility = true
+agent: payment_action_agent
+skill: issue_refund
+type: actionable
+required_tools:
+  - payments.refund.create
+human_approval:
+  - amount &gt; 5000
+  - confidence &lt; 0.85
+
+## Exceptions
+- If identity fails, ask customer to verify.
+- If policy is unclear, escalate to human.
+- If payment tool fails, create support ticket.
+
+## Eval Scenarios
+- eligible refund within policy
+- ineligible refund outside policy
+- missing order ID
+- angry customer
+- high-value refund requiring approval</code></pre>
+
+          <h3>Skill Card</h3>
+          <pre><code>skill_id: issue_refund
+skill_type: actionable
+business_owner: Payments Ops
+technical_owner: Platform Engineering
+description: Create a refund transaction after eligibility is approved.
+inputs:
+  order_id: string
+  amount: number
+  reason_code: string
+outputs:
+  refund_id: string
+  status: success | failed | pending_approval
+allowed_agents:
+  - payment_action_agent
+required_tools:
+  - payments.refund.create
+risk_level: high
+approval_policy:
+  human_required_when:
+    - amount &gt; 5000
+    - confidence &lt; 0.85
+audit_required: true
+failure_mode:
+  - create_support_ticket
+  - notify_payment_ops
+eval_cases:
+  - approved refund
+  - rejected refund
+  - payment gateway timeout
+  - approval required</code></pre>
+
+          <h3>Agent Contract</h3>
+          <pre><code>agent_id: refund_eligibility_agent
+role: Refund Eligibility Specialist
+mission: Decide whether a customer refund request is eligible.
+scope:
+  can_do:
+    - read order summary
+    - read refund policy
+    - return eligibility decision
+  cannot_do:
+    - issue refund
+    - update payment records
+decision_rules:
+  - follow refund_policy_v3
+  - never invent missing order data
+  - escalate when policy is ambiguous
+allowed_skills:
+  - refund_eligibility_check
+  - policy_gap_detection
+handoff_to:
+  - payment_action_agent
+  - human_support_agent
+output_contract:
+  eligible: boolean
+  reason: string
+  confidence: number
+  next_step: approve_refund | reject_refund | escalate</code></pre>
+
+          <h3>MCP Tool Card</h3>
+          <pre><code>tool_id: payments.refund.create
+mcp_server: payments_mcp
+operation: create_refund
+description: Create a refund transaction for an approved order.
+risk_level: high
+auth_scope:
+  - payments:refund:create
+allowed_skills:
+  - issue_refund
+approval_policy:
+  human_required_when:
+    - amount &gt; 5000
+    - customer_tier = enterprise
+audit_fields:
+  - order_id
+  - amount
+  - approver_id
+  - refund_id
+  - agent_run_id
+schema_summary:
+  input: order_id, amount, currency, reason_code
+  output: refund_id, status, error_code
+failure_handling:
+  timeout: retry_once_then_ticket
+  declined: escalate_to_payment_ops</code></pre>
+        </section>
+
+        <section class="section" id="sources">
+          <span class="label">Video Sources</span>
+          <h2>คลิปที่ดึง transcript มาสรุป</h2>
+          <p class="lead">
+            ใช้ public captions จาก YouTube และสรุปเป็น synthesis สำหรับโจทย์ agentic AI platform ของคุณ
+          </p>
+
+          <div class="source-list">
+            <article class="source">
+              <img src="https://i.ytimg.com/vi/hvAPnpSfSGo/hqdefault.jpg" alt="LangGraph Multi-Agent Workflows thumbnail">
+              <div>
+                <h3><a href="https://www.youtube.com/watch?v=hvAPnpSfSGo">LangGraph: Multi-Agent Workflows</a></h3>
+                <div class="source-meta"><span>LangChain</span><span>4,854 words</span></div>
+                <p>ให้ mental model ที่ดีมากสำหรับ multi-agent: agent เป็น node, edge เป็น routing/transition, state เป็น memory กลางของ graph</p>
+              </div>
+            </article>
+
+            <article class="source">
+              <img src="https://i.ytimg.com/vi/OX89LkTvNKQ/hqdefault.jpg" alt="Using MCP with LangGraph agents thumbnail">
+              <div>
+                <h3><a href="https://www.youtube.com/watch?v=OX89LkTvNKQ">Using MCP with LangGraph agents</a></h3>
+                <div class="source-meta"><span>LangChain</span><span>1,105 words</span></div>
+                <p>แสดงการนำ MCP server ที่มี tools/data sources มาใช้กับ LangGraph agent ได้ตรง ๆ เป็นตัวอย่างของ tool adapter layer</p>
+              </div>
+            </article>
+
+            <article class="source">
+              <img src="https://i.ytimg.com/vi/tK32trvj_b4/hqdefault.jpg" alt="Build Hour Agents SDK thumbnail">
+              <div>
+                <h3><a href="https://www.youtube.com/watch?v=tK32trvj_b4">Build Hour: Agents SDK</a></h3>
+                <div class="source-meta"><span>OpenAI</span><span>9,927 words</span></div>
+                <p>ชี้ว่าการทำ production agents ต้องคิดเรื่อง runtime, sandbox, long-running work, handoffs และการแยก environment ของ agent</p>
+              </div>
+            </article>
+
+            <article class="source">
+              <img src="https://i.ytimg.com/vi/PLyCki2K0Lg/hqdefault.jpg" alt="Why we built MCP thumbnail">
+              <div>
+                <h3><a href="https://www.youtube.com/watch?v=PLyCki2K0Lg">Why we built-and donated-the Model Context Protocol (MCP)</a></h3>
+                <div class="source-meta"><span>Anthropic</span><span>7,394 words</span></div>
+                <p>อธิบายเหตุผลเชิง ecosystem ของ MCP: open standard, trust, registry, security และปัญหา context bloat เมื่อมี tools มากเกินไป</p>
+              </div>
+            </article>
+
+            <article class="source">
+              <img src="https://i.ytimg.com/vi/kQmXtrmQ5Zg/hqdefault.jpg" alt="Building Agents with MCP workshop thumbnail">
+              <div>
+                <h3><a href="https://www.youtube.com/watch?v=kQmXtrmQ5Zg">Building Agents with Model Context Protocol</a></h3>
+                <div class="source-meta"><span>AI Engineer</span><span>16,295 words</span></div>
+                <p>ลงรายละเอียด core MCP concepts: prompts, tools, resources, client/server และการแก้ N x M integration problem</p>
+              </div>
+            </article>
+
+            <article class="source">
+              <img src="https://i.ytimg.com/vi/8pIBH2dMTI0/hqdefault.jpg" alt="Unified human in the loop thumbnail">
+              <div>
+                <h3><a href="https://www.youtube.com/watch?v=8pIBH2dMTI0">Standardize Human in the Loop Workflows</a></h3>
+                <div class="source-meta"><span>GrabDuck!</span><span>2,897 words</span></div>
+                <p>เหมาะมากสำหรับ approval design เพราะเสนอ unified interrupt/response object แทนการทำ approval format กระจัดกระจาย</p>
+              </div>
+            </article>
+
+            <article class="source">
+              <img src="https://i.ytimg.com/vi/snI7BvB4Qxg/hqdefault.jpg" alt="Tool-level HITL thumbnail">
+              <div>
+                <h3><a href="https://www.youtube.com/watch?v=snI7BvB4Qxg">Add Human in the Loop Control Directly to Tools</a></h3>
+                <div class="source-meta"><span>GrabDuck!</span><span>2,218 words</span></div>
+                <p>pattern สำคัญ: wrap risky tools รวมถึง MCP tools ด้วย human approval โดยไม่ต้องแก้ implementation ของ tool เดิม</p>
+              </div>
+            </article>
+
+            <article class="source">
+              <img src="https://i.ytimg.com/vi/66fYrB1frUg/hqdefault.jpg" alt="Azure AI Foundry Agent Service thumbnail">
+              <div>
+                <h3><a href="https://www.youtube.com/watch?v=66fYrB1frUg">Azure AI Foundry Agent Service: Transform agentic workflows</a></h3>
+                <div class="source-meta"><span>Microsoft Developer</span><span>9,189 words</span></div>
+                <p>ให้ enterprise angle: connected agents, workflow/process framework, evaluated agents, threads/observability และ human-in-the-loop</p>
+              </div>
+            </article>
+
+            <article class="source">
+              <img src="https://i.ytimg.com/vi/8bGUJuI-YO4/hqdefault.jpg" alt="Agentic orchestration thumbnail">
+              <div>
+                <h3><a href="https://www.youtube.com/watch?v=8bGUJuI-YO4">Learn Agentic Orchestration 15 Minutes</a></h3>
+                <div class="source-meta"><span>Camunda</span><span>2,936 words</span></div>
+                <p>เน้น deterministic orchestration, BPMN, auditability, transparency และ maintainability ซึ่งสำคัญมากถ้า BA ต้องเป็นคนถือ flow</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="decision">
+          <span class="label">Decision Guide</span>
+          <h2>ถ้าจะเอาไปทำ platform จริง ให้ตัดสินใจแบบนี้</h2>
+          <p class="lead">
+            นี่คือ recommendation ที่ผมจะใช้เป็น north star ให้ทีมตอนออกแบบ SOP และ product surface
+          </p>
+
+          <div class="grid two">
+            <article class="card">
+              <h3>ให้ BA สร้าง flow ไม่ใช่ agent prompt</h3>
+              <p>UI ของ BA ควรเหมือน flow builder + markdown editor + scenario editor มากกว่า prompt playground</p>
+            </article>
+            <article class="card">
+              <h3>ให้ prompt เป็น compile target</h3>
+              <p>persona/system prompt ควรถูกสร้างจาก Agent Contract, Skill Card และ Flow Markdown เพื่อให้ governance ทำงานได้</p>
+            </article>
+            <article class="card">
+              <h3>แยก cognitive/actionable skill ให้เด็ดขาด</h3>
+              <p>cognitive skill ใช้คิดและจัดประเภทได้ ส่วน actionable skill ต้องมี tool binding, risk policy และ audit</p>
+            </article>
+            <article class="card">
+              <h3>ทำ tool approval ที่ wrapper level</h3>
+              <p>เพราะ MCP tools อาจมาจากหลาย server การ wrap ที่ tool registry จะควบคุมความเสี่ยงได้ดีกว่าแก้ agent prompt ทีละตัว</p>
+            </article>
+            <article class="card">
+              <h3>ใช้ simulation เป็น release gate</h3>
+              <p>ทุก flow ต้องมี scenario set จาก BA และ regression run ก่อน release โดยเฉพาะ flow ที่มี payment, identity, compliance</p>
+            </article>
+            <article class="card">
+              <h3>อย่าทำ swarm ก่อนมี governance</h3>
+              <p>free-form multi-agent ดูฉลาดตอน demo แต่ debug ยาก ให้เริ่มจาก graph ที่มี state, edge, handoff และ escalation ชัดก่อน</p>
+            </article>
+          </div>
+
+          <div class="callout">
+            <strong>คำแนะนำสุดท้าย</strong>
+            <p>
+              สร้าง platform surface เป็น 4 registries: Flow Registry, Agent Registry, Skill Registry, Tool/MCP Registry.
+              จากนั้นให้ release ทุกครั้งผ่าน Simulation Registry และ Audit Trail เดียวกัน
+            </p>
+          </div>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Generated from public YouTube captions for agentic AI platform research. This page is a synthesis for product and architecture planning, not a verbatim transcript.
+  </footer>
+</body>
+</html>

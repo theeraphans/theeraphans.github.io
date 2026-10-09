@@ -1,0 +1,771 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>Jev or BERT? The Real Trade-Off Behind Decision Models</title>
+    <meta
+      name="description"
+      content="A critical reading of Denis Timonin's Jev essay: typed decisions, request-time labels, BERT classifiers, zero-shot classification, calibration, economics, deployment, and unresolved evidence."
+    />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .visual {
+        margin: 1.75rem 0 2rem;
+      }
+      .visual img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+      }
+      .visual figcaption {
+        margin-top: 0.7rem;
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.55;
+      }
+      .visual figcaption strong {
+        color: var(--ink);
+      }
+      .callout {
+        margin: 1.4rem 0;
+        padding: 1rem !important;
+        border-left: 3px solid var(--green) !important;
+      }
+      .callout.warning {
+        border-left-color: var(--gold) !important;
+      }
+      .model-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1px;
+        margin: 1.5rem 0;
+        background: var(--line);
+      }
+      .model-grid > div {
+        padding: 1rem;
+        background: var(--paper);
+      }
+      .model-grid strong {
+        display: block;
+        margin-bottom: 0.35rem;
+      }
+      .model-grid p {
+        margin: 0;
+        color: var(--muted) !important;
+        font-size: 0.9rem !important;
+      }
+      .spectrum {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        margin: 1.5rem 0;
+        border: 1px solid var(--line);
+      }
+      .spectrum > div {
+        min-height: 7rem;
+        padding: 1rem;
+        border-right: 1px solid var(--line);
+      }
+      .spectrum > div:last-child {
+        border-right: 0;
+      }
+      .spectrum span {
+        display: block;
+        margin-bottom: 0.4rem;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+      .calibration-demo {
+        display: grid;
+        grid-template-columns: repeat(10, minmax(0, 1fr));
+        gap: 0.45rem;
+        margin: 1rem 0 0.7rem;
+      }
+      .calibration-demo i {
+        display: block;
+        aspect-ratio: 1;
+        border: 2px solid var(--ink);
+        border-radius: 50%;
+      }
+      .calibration-demo i.hit {
+        background: var(--ink);
+      }
+      .evidence-table {
+        width: 100%;
+        min-width: 0 !important;
+        margin: 1.25rem 0;
+        table-layout: fixed;
+        border-collapse: collapse;
+      }
+      .evidence-table th,
+      .evidence-table td {
+        padding: 0.75rem 0.55rem;
+        text-align: left;
+        vertical-align: top;
+        border-bottom: 1px solid var(--line);
+      }
+      .evidence-table th {
+        font-weight: 500;
+      }
+      .quote-stack {
+        display: grid;
+        gap: 0;
+        margin-top: 1rem;
+        border-top: 1px solid var(--line);
+      }
+      .quote-stack blockquote {
+        margin: 0;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .quote-stack p {
+        margin: 0;
+      }
+      .quote-stack cite {
+        display: block;
+        margin-top: 0.45rem;
+        color: var(--muted);
+        font-size: 0.86rem;
+        font-style: normal;
+      }
+      @media (max-width: 750px) {
+        .model-grid,
+        .spectrum {
+          grid-template-columns: 1fr;
+        }
+        .spectrum > div {
+          min-height: 0;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .spectrum > div:last-child {
+          border-bottom: 0;
+        }
+        .calibration-demo {
+          gap: 0.3rem;
+        }
+        .visual {
+          margin: 1.35rem 0 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Reading room</a>
+      <div class="top-actions">
+        <a
+          class="action-link"
+          href="https://www.linkedin.com/pulse/jev-llm-decisions-chat-denis-timonin-nzxue"
+          >Read source</a
+        >
+      </div>
+    </nav>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Denis Timonin · Critical reading</p>
+          <h1>Jev or BERT? The Real Trade-Off Behind Decision Models</h1>
+          <p class="subtitle">
+            Jev makes a compelling software contract for bounded AI decisions.
+            The harder question is whether that contract needs a new model, or
+            whether a classifier already does the job better once the labels
+            stop moving.
+          </p>
+          <div class="meta">
+            <span>Source: LinkedIn article</span><span>English deep dive</span
+            ><span>Summary run: September 27, 2026</span>
+          </div>
+        </div>
+        <figure class="hero-card">
+          <img
+            src="2026-09-27-jev-one-call-three-decisions.png"
+            alt="One support ticket evaluated by three independent Jev questions"
+          />
+          <figcaption>
+            One shared state, three typed decisions. Diagram from the supplied
+            article.
+          </figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="source">
+            <p class="section-label">Source correction</p>
+            <h2>This is a practitioner essay, not a Jev research paper</h2>
+            <p>
+              The supplied PDF is a one-page export of Denis Timonin's LinkedIn
+              article, published on September 21, 2026. It explains Jev through
+              TypeSafe documentation, BERT and zero-shot classification papers,
+              a FlyMyAI integration, cost arithmetic, and reader comments. It
+              does not reveal Jev's architecture, training data, parameter
+              count, or independently measured benchmark results.
+            </p>
+            <p>
+              That limitation is central to the article's argument. TypeSafe
+              calls Jev a new System One architecture, but has not published
+              enough technical detail for outsiders to determine whether it is
+              architecturally related to BERT, another encoder, an NLI model, or
+              something else. “BERT in a mask” is therefore a useful
+              provocation, not an established lineage.
+            </p>
+            <div class="callout warning">
+              <strong>What can be evaluated today</strong>
+              <p>
+                We can evaluate Jev's interface, documented answer shapes,
+                pricing, limits, and behavior on our own datasets. We cannot
+                infer its internal architecture from latency or API shape alone.
+              </p>
+            </div>
+          </section>
+
+          <section id="summary">
+            <p class="section-label">Executive summary</p>
+            <h2>The strongest innovation may be the product boundary</h2>
+            <p>
+              Jev accepts a state plus typed questions and returns bounded
+              decisions: a Choice among labels, a Score across ordered levels,
+              or a Noul probability for a yes-or-no proposition. It does not
+              write a reply. This makes the model easy to place inside ordinary
+              software where code owns policy and execution.
+            </p>
+            <p>
+              Timonin's sharper contribution is the comparison with classic
+              classifiers. A fine-tuned BERT classifier is usually fast and
+              cheap, but its output labels are learned during training. Jev
+              sends labels and their descriptions with each request, so a
+              developer can add or redefine a category without training new
+              weights. The real trade-off is therefore not simply “classifier
+              versus LLM.” It is
+              <strong>stable task versus changing task</strong>.
+            </p>
+            <ul class="summary-list">
+              <li>
+                Use deterministic code when the answer can be calculated
+                exactly.
+              </li>
+              <li>
+                Use a trained classifier when the labels are stable, volume is
+                high, and you have representative examples.
+              </li>
+              <li>
+                Consider Jev or another request-time classifier when labels or
+                criteria change often and the answer remains bounded.
+              </li>
+              <li>
+                Use a generative LLM when the product needs writing, planning,
+                explanation, or unfamiliar reasoning.
+              </li>
+              <li>
+                Evaluate all of them on task accuracy, calibration, latency,
+                throughput, and total handling cost, not token price alone.
+              </li>
+            </ul>
+            <p>
+              For the introductory explanation of Jev's Python API and the three
+              primitives, read the companion article
+              <a href="2026-09-23-jev-system-one-python-typed-decisions-en.html"
+                >Jev: Typed AI Decisions Instead of Generated Text</a
+              >. This page focuses on the model-selection debate.
+            </p>
+          </section>
+
+          <section id="contract">
+            <p class="section-label">The software contract</p>
+            <h2>One state can produce several independent decisions</h2>
+            <p>
+              A support ticket can be classified by team, scored for urgency,
+              and checked for an explicit refund request in one call. Every
+              question reads the same state independently. A later question
+              cannot secretly depend on an earlier answer; a real dependency
+              requires a second request assembled by code.
+            </p>
+            <figure class="visual">
+              <img
+                src="2026-09-27-jev-one-call-three-decisions.png"
+                alt="Support ticket branching into team, urgency, and refund decisions"
+              />
+              <figcaption>
+                <strong>Bounded output, not generated prose.</strong> The labels
+                and example values are illustrative. A 95 percent Noul output
+                means estimated support for “yes”; it does not approve a refund.
+              </figcaption>
+            </figure>
+            <p>
+              This contract is valuable even if Jev's hidden architecture turns
+              out to be familiar. It makes developers state the allowed answer
+              space, exposes probabilities, prevents invented labels, and keeps
+              business effects in code. Those are architectural improvements
+              over asking a chat model for JSON and hoping the prompt remains
+              stable.
+            </p>
+          </section>
+
+          <section id="comparison">
+            <p class="section-label">Jev, BERT, and generative LLMs</p>
+            <h2>They optimize different parts of the lifecycle</h2>
+            <div class="model-grid">
+              <div>
+                <strong>Fine-tuned BERT</strong>
+                <p>
+                  Labels are encoded into a task-specific output layer. Changing
+                  the label set normally means new examples and another training
+                  run.
+                </p>
+              </div>
+              <div>
+                <strong>Jev</strong>
+                <p>
+                  Labels, criteria, and instructions travel with the request.
+                  The task can change without customer-specific fine-tuning.
+                </p>
+              </div>
+              <div>
+                <strong>Generative LLM</strong>
+                <p>
+                  The answer space is open. It can explain, write, and reason,
+                  but generation adds latency, cost, and output-control work.
+                </p>
+              </div>
+            </div>
+            <p>
+              The comparison needs an important correction. Request-time labels
+              are not unique to Jev. Zero-shot classification based on natural
+              language inference also converts candidate labels into hypotheses
+              and can evaluate new labels without task-specific training. Jev's
+              distinctive proposition is the combination of request-defined
+              tasks, three typed primitives, probability distributions, parallel
+              evaluation, and an API designed for software decisions.
+            </p>
+            <div class="spectrum" aria-label="Task stability decision guide">
+              <div>
+                <span>Stable and measurable</span>
+                <strong>Train or use a small classifier</strong>
+                <p>Best candidate when labels and traffic are settled.</p>
+              </div>
+              <div>
+                <span>Bounded but changing</span>
+                <strong>Use request-time decisions</strong>
+                <p>Useful when criteria evolve faster than a training cycle.</p>
+              </div>
+              <div>
+                <span>Open-ended</span>
+                <strong>Use a generative model</strong>
+                <p>Needed for explanations, plans, and new language.</p>
+              </div>
+            </div>
+
+            <h3>Where the crossover happens</h3>
+            <p>
+              Early in a product, labels often move. Teams discover that
+              “billing” needs to split into payments, subscriptions, and fraud,
+              or that a moderation policy needs another boundary case. A
+              request-time model lowers experimentation cost because the task is
+              described in the request. Once the taxonomy stabilizes and enough
+              labeled traffic accumulates, a smaller trained classifier may win
+              on latency, unit cost, privacy, and operational control.
+            </p>
+            <p>
+              This suggests a lifecycle rather than a permanent winner: use a
+              flexible decision model to learn the task, collect reviewed
+              examples, then periodically test whether a trained model now meets
+              the quality bar more efficiently.
+            </p>
+          </section>
+
+          <section id="calibration">
+            <p class="section-label">Calibration</p>
+            <h2>
+              Probability is only useful when its meaning survives contact with
+              data
+            </h2>
+            <p>
+              A model is calibrated when predictions made at a given probability
+              match outcomes at roughly that frequency. If many comparable cases
+              receive 0.7, approximately 70 percent should be true. That is a
+              property of a group of predictions, not a promise that one ticket
+              is “70 percent correct.”
+            </p>
+            <div
+              class="calibration-demo"
+              aria-label="Idealized calibration example"
+            >
+              <i class="hit"></i><i class="hit"></i><i class="hit"></i
+              ><i class="hit"></i><i class="hit"></i><i class="hit"></i
+              ><i class="hit"></i><i></i><i></i><i></i>
+            </div>
+            <p>
+              <strong>Teaching illustration:</strong> seven positives among ten
+              cases assigned 0.7. Ten examples are far too few for a real
+              calibration study.
+            </p>
+            <p>
+              Jev's Choice and Score answers also include a confidence value.
+              TypeSafe documents confidence as a statistic derived from the
+              shape of the returned probability distribution. It is not a
+              second, independently validated probability of correctness. High
+              confidence can still be confidently wrong when criteria are vague,
+              state is misleading, or the workload differs from training.
+            </p>
+            <div class="callout">
+              <strong>Thresholds belong to actions, not models</strong>
+              <p>
+                Routing a ticket to the wrong queue is recoverable. Approving a
+                transfer or denying a claim is not. The same model should use
+                different automation thresholds for different consequences.
+              </p>
+            </div>
+          </section>
+
+          <section id="economics">
+            <p class="section-label">Cost and latency</p>
+            <h2>Token arithmetic is not a total-cost benchmark</h2>
+            <p>
+              The article reproduces TypeSafe's list price of $0.042 per million
+              input tokens with free output. At exactly 1,000 billed input
+              tokens per call, one million calls would cost $42. The arithmetic
+              is correct under those assumptions. Questions count as input, and
+              current pricing can change.
+            </p>
+            <p>
+              Timonin then compares that with a hypothetical generative model at
+              $1 per million input tokens and $3 per million output tokens. With
+              1,000 input and 100 output tokens per call, one million calls cost
+              $1,300, about 31 times more. This is a planning scenario, not a
+              measured provider comparison. Different prompts, caching, retries,
+              batch pricing, model quality, and escalation rates change the
+              result.
+            </p>
+            <table class="evidence-table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>What must be measured</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Decision quality</td>
+                  <td>
+                    Errors by class, edge case, language, and business
+                    consequence
+                  </td>
+                </tr>
+                <tr>
+                  <td>Calibration</td>
+                  <td>
+                    Observed outcomes inside each probability or confidence
+                    bucket
+                  </td>
+                </tr>
+                <tr>
+                  <td>Latency</td>
+                  <td>
+                    End-to-end percentiles from the actual region and
+                    integration path
+                  </td>
+                </tr>
+                <tr>
+                  <td>Throughput</td>
+                  <td>
+                    Accepted decisions per second under quotas and concurrency
+                  </td>
+                </tr>
+                <tr>
+                  <td>Total cost</td>
+                  <td>
+                    Inference, retries, human review, downstream failures, and
+                    operations
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p>
+              TypeSafe reports fast response times, but vendor timing near the
+              service is not the same as application latency. Network distance,
+              gateways, evidence retrieval, logging, and the human escalation
+              path can dominate a small model call. The correct comparison is
+              cost per acceptable decision, not cost per token.
+            </p>
+          </section>
+
+          <section id="architecture">
+            <p class="section-label">Production architecture</p>
+            <h2>Save expensive cognition for cases that need it</h2>
+            <p>
+              The most useful architecture in the article is a cascade. Code
+              handles exact rules. A bounded decision model filters, routes, or
+              scores routine cases. Low-confidence or high-risk cases go to a
+              generative model or a person. Tools perform approved effects.
+            </p>
+            <div class="spectrum" aria-label="Decision cascade">
+              <div>
+                <span>Exact</span>
+                <strong>Deterministic code</strong>
+                <p>Validate formats, compare dates, calculate money.</p>
+              </div>
+              <div>
+                <span>Fuzzy but bounded</span>
+                <strong>Decision model</strong>
+                <p>Classify intent, score risk, check conditions.</p>
+              </div>
+              <div>
+                <span>Ambiguous or novel</span>
+                <strong>LLM or human</strong>
+                <p>Investigate, explain, plan, and resolve exceptions.</p>
+              </div>
+            </div>
+            <p>
+              Cascades create a new failure mode: the cheap first stage can drop
+              the only useful document or misroute the case before the stronger
+              model sees it. Evaluate recall at the gate, not only precision on
+              the cases that passed. Savings are real only if avoided work does
+              not erase needed evidence or move cost into incident handling.
+            </p>
+          </section>
+
+          <section id="deployment">
+            <p class="section-label">FlyMyAI integration</p>
+            <h2>
+              Treat the hosted route as an adapter, not the domain contract
+            </h2>
+            <p>
+              The PDF shows a FlyMyAI-hosted Jev endpoint and describes response
+              fields for answers, input-token usage, charge, request ID, and
+              idempotent retries. Those details are useful implementation clues,
+              but the linked guide returned HTTP 503 during this summary run.
+              This page therefore records them as claims from the supplied
+              article, not independently verified current service behavior.
+            </p>
+            <p>
+              A production application should isolate any provider behind a
+              small decision interface. Pin model versions, log the model and
+              provider request ID, apply timeouts, distinguish retryable errors,
+              and define a human or deterministic fallback. Confirm retention,
+              regional processing, and private-data terms before sending
+              customer records through either TypeSafe or an intermediary.
+            </p>
+          </section>
+
+          <section id="limits">
+            <p class="section-label">Known limits</p>
+            <h2>A valid answer shape can still contain a bad decision</h2>
+            <p>
+              TypeSafe's own Jev 1.13 jaggedness page lists literal reading,
+              arithmetic, counting, date comparisons, indirection, irrelevant
+              context, adversarial input, contradictory criteria, structural
+              invariants, and generation as weak areas. These are not cosmetic
+              prompt problems. They determine what belongs in the model and what
+              should remain in code.
+            </p>
+            <ul class="summary-list">
+              <li>Keep arithmetic, counting, and date ordering in code.</li>
+              <li>Send only the fields needed for the current judgment.</li>
+              <li>
+                Write one direct question per decision and include boundary
+                cases.
+              </li>
+              <li>
+                Do not assume separate questions obey probability identities.
+              </li>
+              <li>
+                Test prompt injection and text that argues for its own
+                classification.
+              </li>
+              <li>
+                Use a generative model when the answer cannot be enumerated.
+              </li>
+            </ul>
+          </section>
+
+          <section id="voices">
+            <p class="section-label">Reader debate</p>
+            <h2>The comments sharpen the build-versus-buy question</h2>
+            <p>
+              The PDF preserves several responses that are useful as competing
+              hypotheses rather than evidence. Together they outline what an
+              evaluation should test.
+            </p>
+            <div class="quote-stack">
+              <blockquote>
+                <p>
+                  The practical value is selecting which directives matter so a
+                  later LLM receives tighter context and deterministic code can
+                  own high-confidence actions.
+                </p>
+                <cite>Joshua Waller, paraphrased from the supplied PDF</cite>
+              </blockquote>
+              <blockquote>
+                <p>
+                  Jev may be most valuable while labels are moving. Once they
+                  settle, a local fine-tuned encoder can win on latency and
+                  cost.
+                </p>
+                <cite>Jack Rudenko, paraphrased from the supplied PDF</cite>
+              </blockquote>
+              <blockquote>
+                <p>
+                  Classification is not the whole of decision-making, and a
+                  simple trained model may beat zero- or few-shot methods when
+                  labeled data exists.
+                </p>
+                <cite
+                  >Peter van der Putten, paraphrased from the supplied PDF</cite
+                >
+              </blockquote>
+              <blockquote>
+                <p>
+                  End-to-end latency can be dominated by surrounding retrieval,
+                  even when the decision model itself is fast.
+                </p>
+                <cite>Ilia Sorokin, paraphrased from the supplied PDF</cite>
+              </blockquote>
+            </div>
+          </section>
+
+          <section id="playbook">
+            <p class="section-label">Evaluation playbook</p>
+            <h2>Run a bake-off before choosing the architecture</h2>
+            <ol class="summary-list">
+              <li>
+                <strong>Define one repeated decision.</strong> Specify allowed
+                answers, consequences, and the abstain or human-review path.
+              </li>
+              <li>
+                <strong>Assemble representative examples.</strong> Include
+                normal traffic, rare classes, negation, ambiguity, adversarial
+                wording, long context, and recent distribution shifts.
+              </li>
+              <li>
+                <strong>Establish baselines.</strong> Compare rules, a trained
+                classifier, Jev or zero-shot classification, and a generative
+                LLM only where each is plausible.
+              </li>
+              <li>
+                <strong>Measure business-weighted errors.</strong> A false
+                refund, missed safety case, and wrong queue should not have
+                equal cost.
+              </li>
+              <li>
+                <strong>Calibrate thresholds.</strong> Plot reliability by class
+                and probability bucket; choose action-specific cutoffs.
+              </li>
+              <li>
+                <strong>Measure the full path.</strong> Include network latency,
+                retries, retrieval, human review, and downstream failures.
+              </li>
+              <li>
+                <strong>Plan the migration point.</strong> If labels stabilize,
+                retest a small trained model against the hosted decision
+                service.
+              </li>
+            </ol>
+          </section>
+
+          <section id="verdict">
+            <p class="section-label">Verdict</p>
+            <h2>Jev is interesting even if “BERT in a mask” is partly right</h2>
+            <p>
+              The essay is right to resist category hype. Classification,
+              ranking, and scoring existed long before chat models, and mature
+              systems should not pay for open-ended generation when the answer
+              is bounded. A fine-tuned encoder can be the best production answer
+              for a stable, high-volume task.
+            </p>
+            <p>
+              It is also too early to dismiss Jev as merely old technology with
+              a new name. Request-defined tasks, parallel typed questions,
+              probability distributions, and a decision-first SDK remove real
+              product friction. The responsible conclusion is empirical: Jev has
+              a compelling interface and attractive published economics, but its
+              architectural novelty and workload advantage remain claims to
+              test, not facts to assume.
+            </p>
+          </section>
+
+          <section id="sources">
+            <p class="section-label">Sources and method</p>
+            <h2>What this analysis is based on</h2>
+            <ul class="source-list">
+              <li>
+                <a
+                  href="https://www.linkedin.com/pulse/jev-llm-decisions-chat-denis-timonin-nzxue"
+                  >Denis Timonin, Jev: an LLM for decisions, not chat</a
+                >. The complete supplied PDF export and its preserved comments
+                were reviewed.
+              </li>
+              <li>
+                <a href="https://docs.typesafe.ai/models"
+                  >TypeSafe model reference</a
+                >,
+                <a href="https://docs.typesafe.ai/confidence"
+                  >confidence guide</a
+                >, and
+                <a href="https://docs.typesafe.ai/model-jaggedness/jev-1.13"
+                  >Jev 1.13 jaggedness</a
+                >. Checked September 27, 2026.
+              </li>
+              <li>
+                <a href="https://arxiv.org/abs/1810.04805">BERT</a> and
+                <a href="https://arxiv.org/abs/1909.00161"
+                  >Benchmarking Zero-shot Text Classification</a
+                >.
+              </li>
+              <li>
+                The FlyMyAI Jev guide linked by the source returned HTTP 503 on
+                September 27, 2026, so its route and response details were not
+                independently confirmed for this summary.
+              </li>
+            </ul>
+            <p>
+              Vendor pricing and model behavior may change. Cost scenarios are
+              labeled as arithmetic examples, comments are paraphrased as
+              opinions, and architectural inferences are separated from
+              documented product behavior.
+            </p>
+          </section>
+        </article>
+
+        <aside class="sidebar">
+          <nav class="toc" aria-labelledby="toc-title">
+            <h2 id="toc-title">In this article</h2>
+            <ul>
+              <li><a href="#source">Source correction</a></li>
+              <li><a href="#summary">Executive summary</a></li>
+              <li><a href="#contract">Software contract</a></li>
+              <li><a href="#comparison">Jev vs BERT vs LLM</a></li>
+              <li><a href="#calibration">Calibration</a></li>
+              <li><a href="#economics">Cost and latency</a></li>
+              <li><a href="#architecture">Production architecture</a></li>
+              <li><a href="#deployment">FlyMyAI integration</a></li>
+              <li><a href="#limits">Known limits</a></li>
+              <li><a href="#voices">Reader debate</a></li>
+              <li><a href="#playbook">Evaluation playbook</a></li>
+              <li><a href="#verdict">Verdict</a></li>
+            </ul>
+          </nav>
+          <div class="note-card">
+            <h2>Decision rule</h2>
+            <p>
+              Stable labels favor training. Moving labels favor request-time
+              decisions. Open answers favor generation.
+            </p>
+          </div>
+          <div class="tag-grid">
+            <span class="tag">Jev</span><span class="tag">BERT</span
+            ><span class="tag">Classification</span
+            ><span class="tag">Calibration</span
+            ><span class="tag">Model routing</span>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>

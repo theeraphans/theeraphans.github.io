@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="A detailed summary of Matt Pocock's agentic engineering workflow: strategic programming, skills, harness design, sandboxed AFK agents, queues, review, agent experience, and self-improving software systems.">
+  <title>Matt Pocock's Agentic Engineering Workflow</title>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+  <style>
+    .hero-card img { aspect-ratio: 16 / 9 !important; }
+    .source-note { margin-top: 1rem; padding-left: 1rem; border-left: 3px solid var(--green); }
+    .workflow { margin-top: 1rem; border-top: 1px solid var(--line); }
+    .workflow-step { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 1rem; padding: 0.9rem 0; border-bottom: 1px solid var(--line); }
+    .workflow-step strong, .axis strong, .platform-row strong { font-weight: 500; }
+    .workflow-step p, .axis p, .platform-row p { margin: 0 !important; }
+    .step-label { color: var(--green); font-size: 0.86rem; font-weight: 600; }
+    .thesis { margin: 1rem 0; padding: 1rem; background: var(--surface); border-left: 3px solid var(--ink); }
+    .thesis strong { display: block; margin-bottom: 0.35rem; }
+    .axis-list, .platform-list { display: grid; gap: 0; margin-top: 1rem; border-top: 1px solid var(--line); }
+    .axis, .platform-row { display: grid; grid-template-columns: minmax(8rem, 0.9fr) minmax(0, 2.1fr); gap: 1rem; padding: 0.9rem 0; border-bottom: 1px solid var(--line); }
+    .chapter-list { margin: 1rem 0 0 !important; padding: 0 !important; list-style: none !important; border-top: 1px solid var(--line); }
+    .chapter { display: grid; grid-template-columns: 5.6rem minmax(0, 1fr); gap: 1.1rem; padding: 1.1rem 0; border-bottom: 1px solid var(--line); }
+    .chapter time { color: var(--muted); font-size: 0.9rem; white-space: nowrap; }
+    .chapter h3 { margin: 0 0 0.45rem !important; }
+    .chapter p { margin: 0 !important; }
+    .chapter p + p { margin-top: 0.72rem !important; }
+    .comparison { margin-top: 1rem; }
+    .comparison th:first-child { width: 22%; }
+    .source-links { display: grid; gap: 0.65rem; padding-left: 1.2rem; }
+    @media (max-width: 640px) {
+      .workflow-step, .axis, .platform-row, .chapter { grid-template-columns: 1fr; gap: 0.35rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation">
+    <a class="brand" href="./">Reading room</a>
+    <div class="top-actions">
+      <a class="action-link" href="https://www.youtube.com/watch?v=nQwJVHCtDDY">Watch video</a>
+      <a class="action-link" href="/">Add a video</a>
+    </div>
+  </nav>
+
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Agentic engineering · Skills · Harnesses · AFK agents</p>
+        <h1>Matt Pocock's Agentic Engineering Workflow</h1>
+        <p class="subtitle">A practical operating model for keeping humans in charge of strategy while agents execute scoped work through reusable skills, isolated sandboxes, queues, reviews, and feedback loops.</p>
+        <div class="meta">
+          <span><strong>David Ondrej with Matt Pocock</strong></span>
+          <span>1:02:24 video</span>
+          <span>Published June 18, 2026</span>
+          <span>Summary run September 6, 2026 · 05:57 ICT</span>
+        </div>
+        <p class="source-note">This detailed editorial summary is based on 1,759 public English caption rows, approximately 12,490 words. It paraphrases the discussion and separates the speakers' claims from added interpretation.</p>
+      </div>
+      <figure class="hero-card">
+        <a href="https://www.youtube.com/watch?v=nQwJVHCtDDY" aria-label="Watch the original video on YouTube">
+          <img src="https://i.ytimg.com/vi/nQwJVHCtDDY/hqdefault.jpg" alt="Matt Pocock's Agentic Engineering Workflow video thumbnail">
+        </a>
+        <figcaption>Matt Pocock discusses strategic programming, teachable agent skills, Sandcastle, AFK development, and why better engineering environments matter as much as better models.</figcaption>
+      </figure>
+    </header>
+
+    <div class="layout">
+      <article class="content">
+        <section id="summary">
+          <p class="section-label">Executive summary</p>
+          <h2>The model is only one part of the engineering system</h2>
+          <p>Matt Pocock's central argument is that the AI coding conversation overweights model capability and underweights everything the engineer can actually control: the harness, task definition, skills, codebase architecture, tests, documentation, execution environment, review process, and feedback loop. A stronger model helps, but a well-designed environment can make a cheaper model productive while a tangled codebase can waste the intelligence of an expensive one.</p>
+          <p>He describes AI as having absorbed much of tactical programming: producing syntax, tracing a local bug, making a commit, or completing a tightly scoped implementation. The human's leverage therefore shifts toward strategic programming: deciding what should exist, designing boundaries and interfaces, breaking work into independent tasks, establishing tests, prioritizing the roadmap, and judging whether the result serves the product.</p>
+          <p>The workflow is deliberately human-directed. Pocock prefers user-invoked procedural skills over a large catalog of abilities automatically available to the model. The human chooses when to clarify an idea, write a product requirement, split it into issues, launch an implementation agent, or request review. This preserves judgment and prevents every skill description from consuming the agent's context before the work even begins.</p>
+          <p>Execution increasingly happens away from the keyboard. Scoped tasks are placed in a queue, picked up by agents running in isolated sandboxes, and returned as commits or pull requests. Human checkpoints move later as evidence and trust improve, but do not disappear blindly. The engineer reviews both the code and the system that produced the code, then converts recurring failures into better tests, instructions, architecture, or automated checks.</p>
+        </section>
+
+        <section id="takeaways">
+          <p class="section-label">Core takeaways</p>
+          <h2>Ten ideas worth keeping</h2>
+          <ol class="summary-list">
+            <li><strong>Optimize the harness, not only the model.</strong> Models change rapidly; good task boundaries, tests, documentation, isolation, and code structure survive model cycles.</li>
+            <li><strong>Keep strategic work human-owned.</strong> Product direction, architecture, interfaces, priorities, and acceptance criteria are the high-leverage decisions.</li>
+            <li><strong>Treat domain expertise as an AI multiplier.</strong> The quality of delegation and review is constrained by what the operator understands.</li>
+            <li><strong>Use skills to encode repeatable process.</strong> A useful skill makes a method predictable; it should not be a large pile of generic instructions.</li>
+            <li><strong>Separate procedure from ability.</strong> A procedure is intentionally invoked to run a workflow. An ability is selected by the agent when relevant and therefore carries discovery and context costs.</li>
+            <li><strong>State changes what a skill can do.</strong> A teaching skill becomes more valuable when it remembers the learner's mission, progress, misconceptions, and next step.</li>
+            <li><strong>Make AFK work scoped and isolated.</strong> Parallelism comes from safely delegating independent tasks, not from letting an unrestricted agent wander indefinitely.</li>
+            <li><strong>Think in queues, not magical infinite loops.</strong> Real engineering has a backlog, triage states, work ownership, completion signals, and multiple workers.</li>
+            <li><strong>Review the production system as well as its output.</strong> A discovered bug should improve the test suite or harness so the same class of failure becomes less likely.</li>
+            <li><strong>AI accelerates implementation, not customer discovery.</strong> Teams still need direct conversations, product judgment, and the discipline to remove unnecessary features.</li>
+          </ol>
+        </section>
+
+        <section id="workflow">
+          <p class="section-label">Visual workflow</p>
+          <h2>The operating model behind the interview</h2>
+          <div class="workflow" role="figure" aria-label="Agentic engineering workflow from intent to learning">
+            <div class="workflow-step"><span class="step-label">1 · Intent</span><p><strong>Human sets mission and constraints.</strong> Define the product problem, the user, the desired outcome, and the boundaries that cannot be delegated.</p></div>
+            <div class="workflow-step"><span class="step-label">2 · Clarify</span><p><strong>Use an adversarial interview.</strong> A short procedural skill such as “grill me” exposes consequential decisions and ambiguity before implementation begins.</p></div>
+            <div class="workflow-step"><span class="step-label">3 · Design</span><p><strong>Human owns the hard interfaces.</strong> Establish architecture, module boundaries, data contracts, risk points, and acceptance tests.</p></div>
+            <div class="workflow-step"><span class="step-label">4 · Queue</span><p><strong>Turn the design into bounded work items.</strong> Issues carry enough context for an independent worker and move through explicit exploration, implementation, and review states.</p></div>
+            <div class="workflow-step"><span class="step-label">5 · Execute</span><p><strong>An AFK agent works inside a sandbox.</strong> It receives one task, runs tools and tests, and returns commits or a pull request without unrestricted access to the host.</p></div>
+            <div class="workflow-step"><span class="step-label">6 · Review</span><p><strong>Agents prepare evidence; humans judge risk.</strong> Automated checks, review agents, screenshots, demonstrations, or narrated videos make inspection faster and richer.</p></div>
+            <div class="workflow-step"><span class="step-label">7 · Integrate</span><p><strong>Merge only when the defined gate is satisfied.</strong> Low-risk changes may become more automated over time; consequential changes retain human approval.</p></div>
+            <div class="workflow-step"><span class="step-label">8 · Improve</span><p><strong>Feed observations back into the system.</strong> Repeated mistakes become tests, clearer skills, better architecture, new security checks, or tighter task templates.</p></div>
+          </div>
+          <div class="thesis"><strong>The compact version</strong><p>Human judgment creates direction. Skills make the process repeatable. Sandboxes contain execution. Queues create scalable coordination. Review produces evidence. Feedback improves the harness.</p></div>
+        </section>
+
+        <section id="strategic-programming">
+          <p class="section-label">Strategic programming</p>
+          <h2>AI changes which engineering skills create the most leverage</h2>
+          <p>Pocock borrows the distinction between tactical and strategic programming. Tactical work is close to the code: editing syntax, following an implementation plan, fixing a localized defect, and preparing commits. Strategic work shapes the system over time: deciding the architecture, creating interfaces, making tasks separable, protecting quality with tests, and improving the team's ability to change the codebase.</p>
+          <p>His provocative formulation is that AI has “eaten” tactical programming. The useful underlying point is less absolute: tactical execution is becoming cheap and parallel, so weak strategic decisions can generate bad software faster than before. An engineer who can define the right task and recognize a correct result can multiply through agents; an operator without those skills may produce more code without producing more value.</p>
+          <div class="table-wrap comparison">
+            <table>
+              <thead><tr><th>Dimension</th><th>Tactical execution</th><th>Strategic ownership</th></tr></thead>
+              <tbody>
+                <tr><td>Primary question</td><td>How do we implement this change?</td><td>Should this change exist, and where does it belong?</td></tr>
+                <tr><td>Typical output</td><td>Code, tests, commit, local fix</td><td>Architecture, interfaces, task boundaries, roadmap</td></tr>
+                <tr><td>Agent fit</td><td>High when scope and feedback are clear</td><td>Useful as adviser, but human judgment remains central</td></tr>
+                <tr><td>Main failure</td><td>Incorrect implementation</td><td>Correctly implementing the wrong system</td></tr>
+                <tr><td>Improvement lever</td><td>Better tools, context, tests, and model</td><td>Domain knowledge, taste, customer insight, and wisdom</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="skills">
+          <p class="section-label">Skill design</p>
+          <h2>Three independent questions define an agent skill</h2>
+          <p>The interview uses several overlapping labels, so it helps to separate them into independent axes. First is invocation: who decides to use the skill? Second is state: does the method rely on durable information from earlier sessions? Third is purpose: does the skill coordinate a procedure or supply reusable domain capability?</p>
+          <div class="axis-list">
+            <div class="axis"><strong>User-invoked procedure</strong><p>The operator intentionally starts a known process such as adversarial interviewing, producing a PRD, or splitting a requirement into issues. Pocock prefers this mode because the human remains the workflow driver.</p></div>
+            <div class="axis"><strong>Model-invoked ability</strong><p>The agent discovers and loads guidance when a task matches, such as React coding standards. This can be convenient, but descriptions must remain visible enough for discovery and therefore consume context.</p></div>
+            <div class="axis"><strong>Stateless skill</strong><p>Every invocation can begin from the current request and workspace. The skill does not need a personal history to perform correctly.</p></div>
+            <div class="axis"><strong>Stateful skill</strong><p>The skill keeps a learning record, mission, preferences, or past decisions. The Teach demonstration uses local files so lessons can build on what the learner has already understood.</p></div>
+            <div class="axis"><strong>Knowledge and technique</strong><p>Reusable facts and practiced methods can be packaged and shared. They raise the team's floor by turning one expert's repeated method into a common workflow.</p></div>
+            <div class="axis"><strong>Contextual wisdom</strong><p>Knowing when a method applies is harder to encode. Wisdom comes from operating in the real domain, seeing consequences, and making decisions under its actual constraints.</p></div>
+          </div>
+          <p>The key design warning is context load. If a platform exposes hundreds of automatically discoverable skills, each description competes for attention before any skill body is opened. A smaller, curated ability set plus explicit procedural workflows is often more predictable than a giant skill marketplace attached to every agent.</p>
+        </section>
+
+        <section id="teach-skill">
+          <p class="section-label">Teach skill demonstration</p>
+          <h2>Personalized learning as a stateful agent workflow</h2>
+          <p>Pocock demonstrates a Teach skill by role-playing a novice developer who wants to build a scheduling and practice application for singing students. The initial prompt communicates the mission rather than dictating a curriculum. The agent inspects the workspace, asks what “ship better software” means, records a concrete goal, and chooses Git as the first high-leverage concept because the learner needs a safe way to experiment.</p>
+          <p>The skill creates local artifacts: a mission document, reference material, a learning record, and an HTML lesson. The browser presentation supports explanations and exercises more naturally than a terminal stream. Short retrieval questions then reinforce concepts such as status, staging, commits, and restore. Progress is not inferred from exposure alone; the skill records what was taught and uses that state to choose the next reachable lesson.</p>
+          <p>This example reveals a broader pattern for cognitive skills. Good personalization is not merely inserting a user's name into a prompt. It needs a durable model of purpose, current capability, evidence of understanding, misconceptions, resources already used, and the next appropriate challenge.</p>
+        </section>
+
+        <section id="harness">
+          <p class="section-label">Harness over hype</p>
+          <h2>Improve the environment that receives the model</h2>
+          <p>The hosts challenge Pocock's emphasis on the harness: if a new model is materially better, why not optimize the system and use the strongest model? He agrees model quality matters, but argues the attention split should be closer to 50/50. Builders cannot control frontier-model progress; they can control whether their repository is understandable, changes are localized, tests provide feedback, and an agent can recover from mistakes.</p>
+          <p>A well-structured codebase reduces token cost indirectly. The agent spends less time searching, encounters fewer accidental dependencies, and needs fewer attempts. The team may then use a less expensive model for bounded execution. A poor codebase has the opposite effect: it demands more intelligence merely to overcome preventable ambiguity.</p>
+          <p>Pocock acknowledges the “bitter lesson” counterargument that raw compute eventually beats hand-crafted optimizations. His response is pragmatic rather than predictive: build on software principles that have remained useful for decades, keep the workflow agent-agnostic, and benefit from new models when they arrive without redesigning the organization around every release.</p>
+        </section>
+
+        <section id="afk">
+          <p class="section-label">AFK execution</p>
+          <h2>Parallelism comes from independent work, isolation, and clear return artifacts</h2>
+          <p>Pocock uses Claude Code locally for planning and some implementation, but much of his work runs AFK, meaning away from the keyboard. His Sandcastle project launches coding agents inside isolated sandbox providers such as Docker, Podman, or remote environments. Agents can work in parallel without sharing the developer's unrestricted host environment, then return commits to the real repository.</p>
+          <p>GitHub Actions provides the coordination surface. A pull request can trigger a review agent that checks the branch, runs tests and type checks, inspects the changes, and reports a verdict. The important architectural unit is not “an autonomous AI developer.” It is a scoped worker with defined input, a constrained environment, observable activity, and a concrete handoff artifact.</p>
+          <div class="thesis"><strong>Why the sandbox matters</strong><p>AFK autonomy without isolation turns productivity into host, credential, and data risk. The sandbox is not decoration; it is the boundary that makes parallel unattended execution operationally reasonable.</p></div>
+        </section>
+
+        <section id="queues">
+          <p class="section-label">Queues, not infinite loops</p>
+          <h2>Software work already has a scalable coordination model</h2>
+          <p>Pocock pushes back on the fashion for endless agent loops. Human-in-the-loop sessions remain useful for planning, discovery, and unclear work. AFK agents are valuable when the work is sufficiently scoped. But repeatedly calling an agent forever is not the essence of an engineering organization.</p>
+          <p>He prefers the queue metaphor. Issues enter a backlog, receive triage, and move through exploration, implementation, review, and merge. Multiple human or agent workers can pick up eligible tasks. Labels can trigger automated stages. A task returns to the queue when more information or approval is needed and leaves when its completion condition is satisfied.</p>
+          <p>This model preserves human prioritization. Automation can enrich an incoming bug report with reproduction steps, codebase exploration, a candidate fix, tests, and a risk assessment before the person sees it. The human checkpoint moves to the right: instead of beginning with a raw report, the reviewer begins one informed decision away from resolution.</p>
+        </section>
+
+        <section id="review">
+          <p class="section-label">Review and self-improvement</p>
+          <h2>The goal is not zero review; it is higher-value review</h2>
+          <p>Review protects production from harmful changes, but it also teaches the team how well its engineering system works. Automatically merging trivial changes may be reasonable once risk is measurable, yet teams should still sample decisions and inspect whether the automation's classification remains trustworthy.</p>
+          <p>The review artifact itself can improve. For front-end work, an agent might attach screenshots or record a short walkthrough with generated narration. For infrastructure, it might attach test evidence, a risk summary, and an explicit rollback path. Rich evidence reduces the amount of code a human must reconstruct mentally.</p>
+          <p>When a stronger model uncovers a hidden security bug, the lesson is not only that the model is impressive. The team has discovered a missing system control. The durable response may be a regression test, scheduled security review, architecture change, or new review skill. This is how the harness becomes self-improving rather than permanently dependent on one exceptional model run.</p>
+        </section>
+
+        <section id="agent-experience">
+          <p class="section-label">Agent experience</p>
+          <h2>Good developer experience and good agent experience overlap</h2>
+          <p>Pocock distinguishes developer experience, or DX, from agent experience, or AX. A repository with clear names, small modules, explicit contracts, quick tests, reliable commands, useful errors, and focused documentation helps both people and agents. Senior developers often understand how to create good DX; AI-native juniors may be unusually comfortable experimenting with tools and harnesses. Strong teams need both perspectives.</p>
+          <p>This reframes the junior-versus-senior debate. Experience without experimentation may underuse the new leverage. Enthusiasm without software fundamentals may generate fragile systems. The valuable combination is curiosity about AI plus the discipline to improve the environment in which AI works.</p>
+        </section>
+
+        <section id="product">
+          <p class="section-label">Product fundamentals</p>
+          <h2>Faster implementation does not discover what customers need</h2>
+          <p>On the future of software businesses, Pocock is deliberately conservative. Teams must still talk to customers, identify a painful problem, test prototypes, and decide what not to build. AI makes implementation dramatically cheaper and can automate parts of research and delivery, but it does not eliminate the need for firsthand understanding or original product judgment.</p>
+          <p>The human should remain accountable for the vision and feature choices. A useful use of AI is often subtraction: simplify the product, improve the experience, and focus on the job customers actually value. Delegating the roadmap to a model risks building a larger but less coherent application.</p>
+        </section>
+
+        <section id="chapters">
+          <p class="section-label">Detailed chapter notes</p>
+          <h2>The conversation, in sequence</h2>
+          <ol class="chapter-list">
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=0s">00:00</a></time><div><h3>The harness is the controllable half of AI coding</h3><p>The opening establishes the core thesis: builders fixate on new models while neglecting prompts, skills, code structure, tests, and execution environments. Better software fundamentals can reduce both friction and token use.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=58s">00:58</a></time><div><h3>Tactical versus strategic programming</h3><p>Pocock argues that agents are increasingly effective tactical programmers. Human leverage moves toward designing systems, scoping work, defining interfaces, establishing tests, and delegating well.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=210s">03:30</a></time><div><h3>Expertise sets the ceiling on useful delegation</h3><p>AI amplifies the operator's domain skill. Senior engineers can often gain a larger multiplier because they know what to request, which constraints matter, and how to evaluate the result.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=375s">06:15</a></time><div><h3>The Teach skill turns educational practice into a workflow</h3><p>Pocock combines teaching concepts such as mission alignment and the zone of proximal development with local state. The demonstration begins from what the learner wants to accomplish rather than a generic syllabus.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=541s">09:01</a></time><div><h3>A mission creates the curriculum boundary</h3><p>The learner describes a real scheduling and practice application. The skill records success criteria, checks the local workspace, and selects Git as the first concept that will make experimentation safer.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=731s">12:11</a></time><div><h3>Stateful skills remember progress</h3><p>Mission files, learning records, references, and HTML lessons create continuity. Retrieval questions test whether knowledge is becoming usable rather than merely presented.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=1025s">17:05</a></time><div><h3>Procedure skills and ability skills serve different control models</h3><p>An ability can be loaded automatically when the agent needs standards. A procedure is explicitly launched by the person. Pocock favors short human-invoked workflows such as adversarial interviewing because they preserve operator control.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=1240s">20:40</a></time><div><h3>Automatic discoverability consumes context</h3><p>Every model-invoked skill needs a visible description. Large catalogs therefore create context overhead before the agent reads any full skill. User-only invocation can hide descriptions until the operator chooses the procedure.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=1350s">22:30</a></time><div><h3>Teams can package knowledge and technique, but not all wisdom</h3><p>Repeated engineering procedures can become reusable team skills, raising consistency and making expert methods shareable. Judgment about when a method fits still depends heavily on real-world context.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=1470s">24:30</a></time><div><h3>Sandcastle enables isolated AFK agents</h3><p>Pocock describes running coding agents inside pluggable sandboxes and connecting them to GitHub Actions. Parallel workers complete tasks and return commits without unconstrained access to the host machine.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=1640s">27:20</a></time><div><h3>Why he avoids chasing every model release</h3><p>He uses a stable setup and waits for new releases to settle. His preference is to invest in an agent-agnostic harness that will benefit automatically when models improve.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=1760s">29:20</a></time><div><h3>The bitter lesson challenges harness optimization</h3><p>The discussion acknowledges that scaling compute can overwhelm hand-crafted techniques. Pocock's response is to keep improving what works now while avoiding brittle model-specific patches.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=1920s">32:00</a></time><div><h3>Codebase architecture is a token optimization</h3><p>Clear boundaries and easy changes reduce exploration and retries. A simpler model may succeed in a good environment where a frontier model struggles inside a deeply tangled repository.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=2080s">34:40</a></time><div><h3>Powerful computer use does not remove the need for judgment</h3><p>The host describes an agent creating and testing API keys through a browser. Pocock separates capable execution from deciding whether the action was appropriate, secure, and complete.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=2240s">37:20</a></time><div><h3>Emergent discoveries versus deliberate checks</h3><p>A frontier model may notice a security issue outside the immediate task. Pocock argues teams should convert that lucky discovery into a repeatable security process rather than wait for future serendipity.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=2400s">40:00</a></time><div><h3>Build systems that improve after failure</h3><p>Tests, code review, refactoring, and scheduled checks are established self-improvement mechanisms. Agent observations should feed those mechanisms and strengthen the harness.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=2580s">43:00</a></time><div><h3>Human-in-the-loop and AFK are task modes</h3><p>Interactive work fits planning and ambiguity. AFK work fits bounded execution. The productivity gain comes from running several independent jobs without remaining present for every permission or tool call.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=2720s">45:20</a></time><div><h3>A queue better describes an engineering organization than one loop</h3><p>GitHub Issues, triage labels, multiple workers, pull requests, and merge states already form a coordination system. Agents can occupy roles inside it without replacing the whole model with an endless prompt loop.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=2880s">48:00</a></time><div><h3>Move human checkpoints toward consequential decisions</h3><p>An automated pipeline can turn a raw bug into investigation, candidate fix, test evidence, and review summary. The person then approves or redirects a well-developed proposal instead of starting the debugging session from zero.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=3070s">51:10</a></time><div><h3>Review the gatekeeper and sample its decisions</h3><p>Even when automation decides that a change is safe, teams need observability and periodic checks. They are evaluating the code-producing and risk-classifying system, not only individual patches.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=3205s">53:25</a></time><div><h3>Richer artifacts make review faster</h3><p>Agents can attach visual demonstrations, narrated walkthroughs, tests, and structured risk notes to a pull request. Human review becomes a focused judgment task instead of a reconstruction exercise.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=3270s">54:30</a></time><div><h3>Customer discovery and product judgment remain fundamental</h3><p>AI can accelerate prototypes and execution, but builders still need to understand customers and select the right problem. The human owns vision and should often ask what can be removed.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=3420s">57:00</a></time><div><h3>DX and AX reward complementary strengths</h3><p>Senior engineering principles help agents navigate the repository. AI-native experimentation helps teams discover new leverage. Curiosity plus fundamentals matters more than choosing one demographic profile.</p></div></li>
+            <li class="chapter"><time><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY&t=3600s">60:00</a></time><div><h3>Practical closing advice: reset the stack</h3><p>Pocock recommends removing accumulated skills, plugins, MCP servers, and instruction files, observing the baseline agent, then adding back only the procedures that solve observed problems. Customize them and delegate clear implementation work to AFK agents.</p></div></li>
+          </ol>
+        </section>
+
+        <section id="platform-translation">
+          <p class="section-label">Translation for an agentic AI platform</p>
+          <h2>What this means for Master Agents, Sub-Agents, Skills, and MCP</h2>
+          <div class="platform-list">
+            <div class="platform-row"><strong>Master Agent</strong><p>Model it as a queue-aware coordinator, not an omniscient personality. It should preserve mission, priorities, task states, acceptance criteria, and escalation decisions while delegating bounded work.</p></div>
+            <div class="platform-row"><strong>Sub-Agent</strong><p>Define workers by role and completion artifact: explorer returns findings, implementer returns commits, reviewer returns evidence and a verdict. Independence and failure containment matter more than elaborate personas.</p></div>
+            <div class="platform-row"><strong>Procedure Skill</strong><p>User- or workflow-invoked orchestration such as clarify, plan, decompose, implement, or review. Give it explicit steps and checkpoints; keep it out of every context until invoked.</p></div>
+            <div class="platform-row"><strong>Ability Skill</strong><p>Model-discoverable guidance such as coding standards or domain rules. Keep descriptions precise and the active catalog small enough that discovery does not overwhelm working context.</p></div>
+            <div class="platform-row"><strong>Stateful Skill</strong><p>Store durable mission and progress separately from transient prompt context. Define ownership, update rules, provenance, and how stale memory is corrected.</p></div>
+            <div class="platform-row"><strong>Tool / MCP</strong><p>Expose constrained capabilities with scoped credentials and structured results. Availability should follow the worker's role and task, rather than attaching every connector to every agent.</p></div>
+            <div class="platform-row"><strong>Sandbox</strong><p>Make isolation a runtime policy for AFK execution. The worker receives only the repository, network access, secrets, and compute required for its task.</p></div>
+            <div class="platform-row"><strong>Business Flow</strong><p>Represent work as a state machine or queue: entry criteria, allowed transitions, worker role, expected artifact, automated checks, human gate, retry policy, and terminal states.</p></div>
+            <div class="platform-row"><strong>Observability</strong><p>Show not only model traces but workflow movement: why a task became eligible, who picked it up, what evidence was produced, which gate approved it, and what system improvement followed a failure.</p></div>
+          </div>
+          <p>For BA users, the creation experience should begin with mission, outcome, constraints, risk, evidence, and escalation. The platform can derive agent roles and tool access from those fields. Beginning with a long persona prompt asks the BA to design model behavior before defining the business contract.</p>
+        </section>
+
+        <section id="assessment">
+          <p class="section-label">Critical assessment</p>
+          <h2>What is durable, what is opinion, and what needs caution</h2>
+          <h3>The strongest part</h3>
+          <p>The interview's most durable contribution is the systems view. Agent performance is a property of the model plus the environment, task, tools, feedback, architecture, and reviewer. The queue model also fits real organizational behavior better than narratives about a single autonomous loop completing an entire product.</p>
+          <h3>The claims to treat as provocation</h3>
+          <p>Statements that tactical programming is “gone” or that hiring juniors no longer makes sense are intentionally forceful and should not be read as settled labor-market evidence. Tactical understanding remains necessary for debugging, security, review, maintenance, and learning. A junior with mentorship can develop strategic judgment; eliminating junior pathways can weaken the future senior pipeline.</p>
+          <h3>The model-versus-harness tension is not either-or</h3>
+          <p>A superior model can reveal problems a narrower process never asked about. A stronger harness can make those discoveries systematic, cheaper, and auditable. The practical strategy is to use capable models while continuously turning their surprising successes and failures into durable engineering controls.</p>
+          <h3>Automation must remain risk-based</h3>
+          <p>Moving human review later is sensible when changes are reversible, tests are strong, and the blast radius is small. Credentials, production deployment, customer communication, financial actions, and data access require independent policy enforcement. An agent deciding that its own action is safe is not a sufficient control.</p>
+          <div class="thesis"><strong>My synthesis</strong><p>The winning workflow is not “let the agent code everything.” It is a managed learning system in which humans choose direction, agents create parallel execution capacity, and every review improves the environment for the next run.</p></div>
+        </section>
+
+        <section id="sources">
+          <p class="section-label">Sources</p>
+          <h2>Watch and explore further</h2>
+          <ul class="source-links">
+            <li><a href="https://www.youtube.com/watch?v=nQwJVHCtDDY">Matt Pocock's Agentic Engineering Workflow</a> — original David Ondrej interview and public captions.</li>
+            <li><a href="https://github.com/mattpocock/skills">mattpocock/skills</a> — the public skills repository demonstrated and discussed in the video.</li>
+            <li><a href="https://github.com/mattpocock/skills/blob/main/docs/productivity/writing-great-skills.md">Writing great skills</a> — Matt's current reference on predictable skill design.</li>
+            <li><a href="https://github.com/mattpocock/sandcastle">mattpocock/sandcastle</a> — the sandboxed coding-agent orchestration project discussed in the AFK workflow.</li>
+          </ul>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Article contents">
+        <nav class="toc" aria-labelledby="toc-title">
+          <h2 id="toc-title">On this page</h2>
+          <ul>
+            <li><a href="#summary">Executive summary</a></li>
+            <li><a href="#takeaways">Core takeaways</a></li>
+            <li><a href="#workflow">Visual workflow</a></li>
+            <li><a href="#strategic-programming">Strategic programming</a></li>
+            <li><a href="#skills">Skill design</a></li>
+            <li><a href="#teach-skill">Teach skill</a></li>
+            <li><a href="#harness">Harness design</a></li>
+            <li><a href="#afk">AFK execution</a></li>
+            <li><a href="#queues">Queues</a></li>
+            <li><a href="#review">Review</a></li>
+            <li><a href="#agent-experience">Agent experience</a></li>
+            <li><a href="#product">Product fundamentals</a></li>
+            <li><a href="#chapters">Chapter notes</a></li>
+            <li><a href="#platform-translation">Platform translation</a></li>
+            <li><a href="#assessment">Critical assessment</a></li>
+            <li><a href="#sources">Sources</a></li>
+          </ul>
+        </nav>
+        <div class="note-card">
+          <h2>Source scope</h2>
+          <p>1,759 caption rows · approximately 12,490 words · 62 minutes. Includes a sponsored segment. Summary prepared September 6, 2026.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer-note">Detailed paraphrase for study. No full transcript is reproduced.</footer>
+</body>
+</html>

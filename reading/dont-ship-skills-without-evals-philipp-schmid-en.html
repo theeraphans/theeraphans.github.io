@@ -1,0 +1,1203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Don't Ship Skills Without Evals - Philipp Schmid Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5b6870;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f5f7f1;
+      --line: #d8dfd8;
+      --teal: #16756d;
+      --blue: #2c6381;
+      --green: #557d54;
+      --gold: #a97725;
+      --coral: #bd503f;
+      --plum: #665987;
+      --charcoal: #223039;
+      --mint: #e3f0ec;
+      --sky: #e6eef6;
+      --leaf: #e9f1df;
+      --sand: #f7edd8;
+      --rose: #f5e5df;
+      --shadow: 0 24px 68px rgb(23 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(22 117 109 / 6%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(44 99 129 / 5%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--green), var(--teal), var(--blue), var(--gold), var(--coral), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure, blockquote { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td, code { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 86%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.96fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.45rem, 5.6vw, 5rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      object-fit: contain;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+      gap: 24px;
+      margin: 28px 0;
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 7%);
+    }
+
+    .quick-summary h2,
+    .section h2,
+    .sidebar h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-weight: 760;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+    }
+
+    .quick-summary p,
+    .section p,
+    .section li {
+      color: #334047;
+      font-size: 1.01rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .summary-list li::marker { color: var(--coral); }
+
+    .stats-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-width: 0;
+      min-height: 84px;
+      padding: 14px;
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.4rem;
+      line-height: 1.05;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .content {
+      display: grid;
+      gap: 22px;
+      min-width: 0;
+    }
+
+    .section {
+      padding: 34px 0;
+      background: transparent;
+      border-top: 1px solid var(--line);
+    }
+
+    .section h2 {
+      margin-bottom: 14px;
+      font-size: clamp(1.85rem, 3.2vw, 2.65rem);
+    }
+
+    .section h3 {
+      margin-top: 24px;
+      margin-bottom: 8px;
+      color: var(--charcoal);
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .section p + p { margin-top: 12px; }
+    .section ul, .section ol { display: grid; gap: 9px; margin-top: 12px; padding-left: 20px; }
+    .section li::marker { color: var(--teal); }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .toc,
+    .source-box {
+      padding: 18px;
+      background: rgb(255 254 249 / 94%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 14px 36px rgb(23 33 38 / 6%);
+    }
+
+    .toc h2,
+    .source-box h2 {
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+    }
+
+    .toc nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .toc a {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 780;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .source-box p,
+    .source-box li {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .callout {
+      margin-top: 18px;
+      padding: 18px;
+      background: var(--mint);
+      border: 1px solid rgb(22 117 109 / 18%);
+      border-left: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .callout.rose {
+      background: var(--rose);
+      border-color: rgb(189 80 63 / 18%);
+      border-left-color: var(--coral);
+    }
+
+    .callout.gold {
+      background: var(--sand);
+      border-color: rgb(169 119 37 / 22%);
+      border-left-color: var(--gold);
+    }
+
+    .quote-box {
+      margin: 18px 0 2px;
+      padding: 18px 20px;
+      color: #2a383f;
+      background: var(--sky);
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.12rem;
+      line-height: 1.58;
+    }
+
+    .tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0 10px;
+      color: var(--charcoal);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 820;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .flow li,
+    .role-card,
+    .metric-card,
+    .template-card,
+    .evidence-item {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .flow li {
+      position: relative;
+      min-height: 142px;
+      padding: 14px;
+    }
+
+    .flow li:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 48%;
+      right: -9px;
+      z-index: 1;
+      width: 14px;
+      height: 14px;
+      border-top: 2px solid var(--teal);
+      border-right: 2px solid var(--teal);
+      transform: rotate(45deg);
+      background: var(--paper);
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      margin-bottom: 10px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 50%;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .flow strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+      line-height: 1.25;
+    }
+
+    .flow span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.45;
+    }
+
+    .role-grid,
+    .metric-grid,
+    .template-grid,
+    .evidence-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .role-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .template-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .evidence-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .role-card,
+    .metric-card,
+    .template-card,
+    .evidence-item {
+      padding: 16px;
+    }
+
+    .role-card h3,
+    .metric-card h3,
+    .template-card h3,
+    .evidence-item h3 {
+      margin: 0 0 8px;
+      color: var(--ink);
+      font-size: 1rem;
+    }
+
+    .role-card p,
+    .metric-card p,
+    .template-card p,
+    .evidence-item p {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.94rem;
+    }
+
+    th {
+      color: var(--charcoal);
+      background: var(--leaf);
+      font-weight: 900;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+    td { color: #334047; }
+
+    .code-block {
+      overflow-x: auto;
+      margin-top: 16px;
+      padding: 18px;
+      color: #edf6f6;
+      background: #16242b;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      line-height: 1.62;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+      padding-left: 20px;
+    }
+
+    footer {
+      margin-top: 28px;
+      color: var(--quiet);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 1040px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        order: -1;
+      }
+
+      .flow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .flow li::after {
+        display: none;
+      }
+
+      .role-grid,
+      .metric-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .action-link {
+        flex: 1 1 auto;
+      }
+
+      .page {
+        padding: 0 16px 54px;
+      }
+
+      .hero {
+        gap: 24px;
+        padding: 32px 0 30px;
+      }
+
+      .quick-summary {
+        padding: 20px;
+      }
+
+      .section {
+        padding: 20px 0;
+      }
+
+      .stats-panel,
+      .flow,
+      .role-grid,
+      .metric-grid,
+      .template-grid,
+      .evidence-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">Video Notes Studio</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="./index.html">Library</a>
+      <a class="action-link" href="#templates">Templates</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=0vphxNt4wyk">Watch source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="kicker">AI Engineer x Google DeepMind summary</p>
+        <h1 id="page-title">Don't Ship Skills Without Evals</h1>
+        <p class="subtitle">
+          Philipp Schmid argues that agent skills should be treated like production code. A skill can improve performance,
+          waste tokens, over-trigger, under-trigger, or become obsolete as models improve. Without evals, you cannot know
+          which one happened.
+        </p>
+        <div class="meta">
+          <span><strong>Source:</strong> AI Engineer</span>
+          <span><strong>Speaker:</strong> Philipp Schmid, Google DeepMind</span>
+          <span><strong>Length:</strong> 21 minutes</span>
+          <span><strong>Transcript:</strong> 4.0k words</span>
+        </div>
+      </div>
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/0vphxNt4wyk/hqdefault.jpg" alt="YouTube thumbnail for Don't Ship Skills Without Evals">
+        <figcaption>
+          This page summarizes the talk and turns it into a practical eval playbook for agent skills, tool skills, and
+          customer-facing agent platforms.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" id="takeaways">
+      <div>
+        <h2>Executive Summary</h2>
+        <p>
+          The talk's core idea is that skills are not harmless prompt snippets. They are behavior-changing runtime assets.
+          They affect triggering, context cost, task quality, model portability, and customer experience. Therefore, every
+          serious skill needs a small eval suite, ablation tests, regression gates, and a retirement plan.
+        </p>
+        <ul class="summary-list">
+          <li>Distinguish agents you use from agents you build. Customer-facing agents cannot rely on users knowing skill names.</li>
+          <li>Skill descriptions are the critical trigger surface: weak descriptions cause over-triggering, under-triggering, or silent non-use.</li>
+          <li>Capability skills are temporary; preference skills are more durable. Evals tell you which type you are dealing with.</li>
+          <li>Start with 10 to 20 eval prompts: happy paths, negative cases, and production traces when available.</li>
+          <li>Always run ablations: with the skill loaded and without the skill loaded. That is how you know whether it helps.</li>
+        </ul>
+      </div>
+      <aside class="stats-panel" aria-label="Summary stats">
+        <div class="stat"><strong>50k+</strong><span>skills surveyed</span></div>
+        <div class="stat"><strong>~15%</strong><span>avg skill lift</span></div>
+        <div class="stat"><strong>117</strong><span>Gemini eval prompts</span></div>
+        <div class="stat"><strong>2-6</strong><span>trials per case</span></div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <article class="content">
+        <section class="section" id="thesis">
+          <h2>1. The Central Thesis</h2>
+          <p>
+            Philipp opens with a quick poll: many people use coding agents, many use skills, but far fewer have evals for
+            those skills. That gap is dangerous because agent behavior is non-deterministic. When a task fails, you may not
+            know whether the model was too weak, the skill was bad, the skill never triggered, or the skill made things
+            worse.
+          </p>
+          <p>
+            This is especially important when moving from internal coding assistants to customer-facing agents. A developer
+            using Claude Code, Cursor, Gemini CLI, or Antigravity can notice when a skill is missing and reprompt. A
+            customer using your app does not know that a refund skill, support skill, or policy skill exists.
+          </p>
+          <blockquote class="quote-box">
+            My read: this talk turns "skills" from a prompt convenience into a production quality problem. If a skill can
+            change behavior, it deserves tests.
+          </blockquote>
+          <div class="tag-grid" aria-label="Core concepts">
+            <span class="tag">agent skills</span>
+            <span class="tag">eval harness</span>
+            <span class="tag">ablation</span>
+            <span class="tag">progressive disclosure</span>
+            <span class="tag">skill triggering</span>
+            <span class="tag">regression gates</span>
+          </div>
+        </section>
+
+        <section class="section" id="skill-model">
+          <h2>2. What a Skill Is</h2>
+          <p>
+            A skill is a lightweight package of procedural context. In many ecosystems it looks like a folder with a
+            skill manifest or <code>SKILL.md</code> file plus optional assets, examples, scripts, docs, or reference files.
+            The important mechanism is progressive disclosure.
+          </p>
+          <ol class="flow" aria-label="Progressive disclosure skill layers">
+            <li>
+              <span class="step-number">1</span>
+              <strong>Name</strong>
+              <span>Human and system-readable identity for the skill.</span>
+            </li>
+            <li>
+              <span class="step-number">2</span>
+              <strong>Description</strong>
+              <span>Always-visible trigger surface that tells the model when to use it.</span>
+            </li>
+            <li>
+              <span class="step-number">3</span>
+              <strong>Body</strong>
+              <span>More detailed instructions, constraints, examples, and output expectations.</span>
+            </li>
+            <li>
+              <span class="step-number">4</span>
+              <strong>References</strong>
+              <span>Deep docs, cloud-specific instructions, examples, scripts, or schemas.</span>
+            </li>
+            <li>
+              <span class="step-number">5</span>
+              <strong>Evals</strong>
+              <span>Prompt cases, expected outcomes, trigger checks, and regression gates.</span>
+            </li>
+          </ol>
+          <div class="callout">
+            <p>
+              Platform implication: your BA-facing platform should treat a skill as a versioned artifact with metadata,
+              trigger policy, references, tool permissions, and evals. Do not store it as only a blob of prompt text.
+            </p>
+          </div>
+        </section>
+
+        <section class="section" id="skill-types">
+          <h2>3. Capability Skills vs Preference Skills</h2>
+          <p>
+            The talk separates two skill types with different lifecycles. Capability skills teach the model something it
+            cannot yet do consistently. Preference skills encode company-specific taste, policy, workflow, style, or domain
+            expectations that foundation models are unlikely to learn generically.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Skill Type</th>
+                  <th>Purpose</th>
+                  <th>Lifecycle</th>
+                  <th>Eval Question</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Capability Skill</td>
+                  <td>Close a model knowledge or reliability gap, such as a new SDK, log tracing workflow, or API migration.</td>
+                  <td>Temporary. Newer models may make it unnecessary.</td>
+                  <td>Does the model still need this skill to pass the task?</td>
+                </tr>
+                <tr>
+                  <td>Preference Skill</td>
+                  <td>Encode team-specific workflow, writing style, support policy, design system, or domain language.</td>
+                  <td>More durable. It represents your organization, not only model weakness.</td>
+                  <td>Does this protect the behavior our business wants?</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            This matters because capability skills should be retired aggressively when models improve, while preference
+            skills should be guarded against regressions when you change model, harness, or prompt stack.
+          </p>
+        </section>
+
+        <section class="section" id="triggering">
+          <h2>4. Model-Invoked vs User-Invoked Skills</h2>
+          <p>
+            User-invoked skills are explicitly requested by a human or command. They are powerful for internal development
+            workflows such as creating pull requests, staging documentation, or running a known script-like process. The
+            user knows the skill exists and can ask for it.
+          </p>
+          <p>
+            Model-invoked skills are harder. The model must infer from the user prompt whether a skill should be used. This
+            is the customer-facing agent problem: the customer does not say "use the refund skill." They just say what they
+            need. The skill description becomes the product interface.
+          </p>
+          <div class="role-grid">
+            <div class="role-card">
+              <h3>User-Invoked</h3>
+              <p>Best for slash commands, internal workflows, known dev tasks, and repeatable scripts.</p>
+            </div>
+            <div class="role-card">
+              <h3>Model-Invoked</h3>
+              <p>Best for customer agents and ambient assistance, but requires strong trigger evals.</p>
+            </div>
+            <div class="role-card">
+              <h3>Script Instead</h3>
+              <p>If the path is always step one, step two, step three, write a script and let the agent call it.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="evidence">
+          <h2>5. What the Data Suggests</h2>
+          <p>
+            Philipp references Skill Bench and related analysis of large public skill collections. The high-level finding:
+            skills can help, but most skills are not evaluated, many are AI-written, and some can degrade performance.
+            Human-written skills tend to be stronger because they encode actual domain judgment and reduce vague filler.
+          </p>
+          <p>
+            He also warns against bloated skills. Long descriptions and long skill bodies cost tokens and can confuse the
+            model. The description is paid on every model call. The body is paid whenever the skill is loaded. References
+            should be layered so the model only reads deep material when necessary.
+          </p>
+          <div class="callout gold">
+            <p>
+              Practical rule: keep the always-loaded surface tiny, keep the skill body directive, and move long cloud,
+              domain, or language-specific detail into reference files.
+            </p>
+          </div>
+        </section>
+
+        <section class="section" id="writing">
+          <h2>6. How to Write Better Skills</h2>
+          <p>
+            The talk gives a clear writing style: directive, lean, layered, and testable. A skill is not an essay. It is a
+            behavioral contract for an agent.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Rule</th>
+                  <th>Why It Matters</th>
+                  <th>Example Pattern</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Explain why, how, and when</td>
+                  <td>The model needs a trigger reason and a use pattern.</td>
+                  <td>Use this skill when building a React component with Tailwind CSS.</td>
+                </tr>
+                <tr>
+                  <td>Write directives, not essays</td>
+                  <td>Passive background text is easier to ignore.</td>
+                  <td>Use the Interactions API for chat apps; avoid old SDK patterns.</td>
+                </tr>
+                <tr>
+                  <td>Layer references</td>
+                  <td>Deep docs should not be loaded for every task.</td>
+                  <td>Put AWS, Google Cloud, and Azure deploy details in separate references.</td>
+                </tr>
+                <tr>
+                  <td>Define goals and constraints</td>
+                  <td>Rigid fixed paths may belong in scripts instead.</td>
+                  <td>Tell the model what success means, not every keystroke.</td>
+                </tr>
+                <tr>
+                  <td>Add negative cases</td>
+                  <td>Over-triggering is as harmful as under-triggering.</td>
+                  <td>Do not use the React skill for generic web or Angular tasks.</td>
+                </tr>
+                <tr>
+                  <td>Remove no-ops</td>
+                  <td>Instructions that do not change behavior waste tokens.</td>
+                  <td>Delete filler like "write clear, high-quality code" unless it changes something specific.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="eval-harness">
+          <h2>7. A Minimal Skill Eval Harness</h2>
+          <p>
+            The suggested starting point is simple: create 10 to 20 prompts. Include happy paths where the skill should
+            trigger, negative cases where it should not trigger, and real production traces when available. Then run the
+            same cases with and without the skill.
+          </p>
+          <ol class="flow" aria-label="Skill eval loop">
+            <li>
+              <span class="step-number">1</span>
+              <strong>Prompts</strong>
+              <span>User-like tasks, language, expected trigger behavior, and expected outputs.</span>
+            </li>
+            <li>
+              <span class="step-number">2</span>
+              <strong>Runner</strong>
+              <span>Script that launches the agent in a clean workspace and captures traces.</span>
+            </li>
+            <li>
+              <span class="step-number">3</span>
+              <strong>Checks</strong>
+              <span>Regex, AST, command traces, file assertions, or LLM-as-judge rubrics.</span>
+            </li>
+            <li>
+              <span class="step-number">4</span>
+              <strong>Trials</strong>
+              <span>Run multiple attempts per case to measure reliability, not one lucky pass.</span>
+            </li>
+            <li>
+              <span class="step-number">5</span>
+              <strong>Ablation</strong>
+              <span>Compare skill-loaded performance against no-skill performance.</span>
+            </li>
+          </ol>
+          <p>
+            For many coding skills, regex and script checks are enough. In the Gemini Interactions API example, checks can
+            inspect whether generated code uses the correct SDK, model ID, method names, and avoids old patterns. LLM-as-judge
+            is better reserved for more subjective or trace-level behaviors.
+          </p>
+        </section>
+
+        <section class="section" id="gemini-case">
+          <h2>8. Gemini Interactions API Case Study</h2>
+          <p>
+            Google DeepMind created a skill to help coding agents use the newer Gemini Interactions API. The reason is a
+            classic capability-skill problem: the API shipped after model training, so models may not know current SDK
+            patterns, model names, or migration guidance.
+          </p>
+          <p>
+            The team built an eval harness with 117 prompts across Python and TypeScript. Each test case included prompt,
+            language, whether the skill should trigger, and expected checks. A simple runner invoked the coding agent,
+            collected output, and scored whether the generated code used valid current patterns.
+          </p>
+          <div class="evidence-grid">
+            <div class="evidence-item">
+              <h3>Input</h3>
+              <p>Prompts drawn from real users, synthetic cases, feedback, and known failure patterns.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Languages</h3>
+              <p>Python and TypeScript, because both SDK patterns needed validation.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Checks</h3>
+              <p>Correct SDK, current model, correct methods, no legacy API patterns.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Outcome</h3>
+              <p>The talk reports large performance gains for valid Interactions API code when the skill was used.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="ci">
+          <h2>9. Put Evals Next to Skills</h2>
+          <p>
+            Internally, Philipp says skills are paired with evals. When a skill changes, the eval runs. If the change does
+            not improve the test cases or add new coverage, it should not merge. This is the same engineering discipline
+            teams already expect from code.
+          </p>
+          <p>
+            A useful pattern is to keep the skill, eval cases, workspace fixtures, startup commands, script checks, and
+            LLM-judge rubrics together. That makes the skill reviewable, measurable, and portable across model updates.
+          </p>
+          <div class="callout rose">
+            <p>
+              Governance rule for agent platforms: no production skill should be promoted without an eval artifact, and no
+              skill diff should be approved without eval results.
+            </p>
+          </div>
+        </section>
+
+        <section class="section" id="best-practices">
+          <h2>10. Eval Best Practices</h2>
+          <div class="metric-grid">
+            <div class="metric-card">
+              <h3>Test Triggering</h3>
+              <p>Evaluate whether the model uses the skill when needed and avoids it when irrelevant.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Test Outcomes</h3>
+              <p>Do not only check that the skill loaded. Check whether the task succeeded.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Isolate Runs</h3>
+              <p>Use clean workspaces so agents cannot leak answers from prior attempts.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Run Trials</h3>
+              <p>Non-deterministic systems need repeated runs to estimate reliability.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Cross Harnesses</h3>
+              <p>Test the actual model and harness combinations your users rely on.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Keep Evals</h3>
+              <p>Even after retiring a skill, keep the eval to detect future regressions.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Ablate</h3>
+              <p>Run with skill and without skill. Otherwise you cannot prove lift.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Retire Skills</h3>
+              <p>If the model passes without the skill, remove token cost and maintenance burden.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <h2>11. What This Means for Your Agentic AI Platform</h2>
+          <p>
+            For your Master Agent, Sub-Agent, Skill, Tool, and MCP platform, this talk is almost directly an SOP. Skills
+            should be owned, versioned, evaluated, promoted, monitored, and retired. BA users can author business intent,
+            but the platform should require testable cases before that skill becomes production behavior.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Platform Object</th>
+                  <th>Eval Requirement</th>
+                  <th>Promotion Gate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Cognitive Skill</td>
+                  <td>Prompt cases, expected reasoning output, negative cases, rubric.</td>
+                  <td>Improves decision quality without over-triggering.</td>
+                </tr>
+                <tr>
+                  <td>Actionable Skill</td>
+                  <td>Tool-call traces, side-effect checks, rollback checks, permission checks.</td>
+                  <td>Performs the action safely and attaches evidence.</td>
+                </tr>
+                <tr>
+                  <td>MCP Tool</td>
+                  <td>Schema validation, permission policy, successful/failed tool-call fixtures.</td>
+                  <td>Agent calls it only when allowed and with valid arguments.</td>
+                </tr>
+                <tr>
+                  <td>Master Agent</td>
+                  <td>Routing cases across multiple skills and sub-agents.</td>
+                  <td>Chooses the right skill, tool, or escalation path.</td>
+                </tr>
+                <tr>
+                  <td>Business Flow Markdown</td>
+                  <td>Business scenarios, happy paths, exception paths, and customer language.</td>
+                  <td>Customer prompts map to the correct policy, skill, or human gate.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="templates">
+          <h2>12. Templates: Skill and Eval Specs</h2>
+          <p>
+            These templates translate the talk into reusable artifacts for your platform design.
+          </p>
+          <div class="template-grid">
+            <div class="template-card">
+              <h3>Production Skill Spec</h3>
+              <p>Use when creating a skill for a business flow, agent role, or tool-backed action.</p>
+            </div>
+            <div class="template-card">
+              <h3>Skill Eval Spec</h3>
+              <p>Use before promoting a skill into a production agent or customer-facing workflow.</p>
+            </div>
+          </div>
+          <pre class="code-block"><code># Production Skill Spec
+
+name:
+owner:
+version:
+type: capability | preference
+trigger_mode: model_invoked | user_invoked
+
+## Description
+- Why to use:
+- When to use:
+- When not to use:
+- How to use:
+
+## Behavior Contract
+- Goal:
+- Constraints:
+- Required output:
+- Evidence:
+- Escalation:
+
+## References
+- short_body:
+- reference_files:
+- examples:
+- scripts:
+- tools:
+
+## Lifecycle
+- created_for:
+- expected_retirement_signal:
+- compatible_models:
+- compatible_harnesses:</code></pre>
+          <pre class="code-block"><code># Skill Eval Spec
+
+skill:
+eval_owner:
+run_mode: clean_workspace
+trials_per_case: 3
+
+## Cases
+- id:
+  prompt:
+  should_trigger: true
+  language:
+  expected_checks:
+    - regex:
+    - command:
+    - file_exists:
+  negative_checks:
+    - legacy_pattern:
+
+## Ablation
+- run_with_skill: true
+- run_without_skill: true
+- compare:
+  - task_success
+  - trigger_precision
+  - trigger_recall
+  - token_cost
+  - regression_count
+
+## Promotion Gate
+- minimum_pass_rate:
+- allowed_regressions:
+- must_improve_or_add_eval:
+- retirement_threshold:</code></pre>
+        </section>
+
+        <section class="section" id="sources">
+          <h2>13. Sources and Confidence</h2>
+          <p>
+            This page is based on the YouTube transcript and metadata, plus official Google sources that clarify the Gemini
+            skill and Interactions API context. The talk is paraphrased rather than quoted at length.
+          </p>
+          <ul class="source-list">
+            <li><a href="https://www.youtube.com/watch?v=0vphxNt4wyk">Don't Ship Skills Without Evals — Philipp Schmid, Google DeepMind</a> - AI Engineer on YouTube.</li>
+            <li><a href="https://developers.googleblog.com/closing-the-knowledge-gap-with-agent-skills/">Closing the knowledge gap with agent skills</a> - Google Developers Blog.</li>
+            <li><a href="https://ai.google.dev/gemini-api/docs/coding-agents">Set up your coding assistant with Gemini MCP and Skills</a> - Google AI for Developers.</li>
+            <li><a href="https://github.com/google-gemini/gemini-skills">google-gemini/gemini-skills</a> - GitHub repository.</li>
+            <li>Video metadata fetched July 20, 2026. Transcript length: 582 rows, about 3,967 words.</li>
+          </ul>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="toc">
+          <h2>Read Map</h2>
+          <nav>
+            <a href="#takeaways">Executive summary</a>
+            <a href="#thesis">Central thesis</a>
+            <a href="#skill-model">Skill model</a>
+            <a href="#skill-types">Skill types</a>
+            <a href="#triggering">Triggering</a>
+            <a href="#evidence">Evidence</a>
+            <a href="#writing">Writing rules</a>
+            <a href="#eval-harness">Eval harness</a>
+            <a href="#gemini-case">Gemini case</a>
+            <a href="#ci">CI gates</a>
+            <a href="#best-practices">Best practices</a>
+            <a href="#platform">Platform takeaways</a>
+            <a href="#templates">Templates</a>
+          </nav>
+        </div>
+        <div class="source-box">
+          <h2>Best Use</h2>
+          <p>
+            Use this as a production checklist for skill authoring, MCP tool behavior, BA-authored flow validation, and
+            eval-driven promotion gates.
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      Generated as a blog-style study note for the local Video Notes Studio resource library.
+    </footer>
+  </main>
+</body>
+</html>

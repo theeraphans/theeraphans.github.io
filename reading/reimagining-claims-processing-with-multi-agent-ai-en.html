@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>Reimagining Claims as a Governed Multi-Agent Workflow</title>
+    <meta name="description" content="A detailed, evidence-aware guide to multi-agent insurance claims processing: lifecycle, authority boundaries, architecture, human oversight, auditability, evaluation, and rollout." />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .visual { margin: 1.7rem 0 2rem; }
+      .visual img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 4px; }
+      .visual figcaption { margin-top: .65rem; color: var(--muted); font-size: .88rem; line-height: 1.55; text-align: center; }
+      .visual figcaption strong { color: var(--ink); }
+      .callout { margin: 1.5rem 0; padding: 1rem !important; border-left: 3px solid var(--green) !important; background: var(--surface) !important; }
+      .callout.warning { border-left-color: #8a6417 !important; }
+      .callout p:last-child { margin-bottom: 0; }
+      .workflow, .agent-grid, .metric-grid, .control-grid { display: grid; gap: 1px; margin: 1.5rem 0; background: var(--line); border: 1px solid var(--line); }
+      .workflow { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+      .agent-grid, .control-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metric-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .workflow > div, .agent-grid > div, .metric-grid > div, .control-grid > div { padding: 1rem; background: var(--paper); }
+      .workflow strong, .workflow small, .metric-grid span, .metric-grid strong, .metric-grid small { display: block; }
+      .workflow small, .agent-grid p, .control-grid p, .metric-grid small { margin: .35rem 0 0; color: var(--muted); font-size: .86rem; line-height: 1.5; }
+      .agent-grid h3, .control-grid h3 { margin: 0 0 .45rem; font-size: 1rem; }
+      .metric-grid span { color: var(--muted); font-size: .73rem; text-transform: uppercase; }
+      .metric-grid strong { margin: .35rem 0; font-size: 1.25rem; font-weight: 600; }
+      .comparison { width: 100%; min-width: 0 !important; margin: 1.5rem 0; table-layout: fixed; border-collapse: collapse; }
+      .comparison th, .comparison td { padding: .78rem .55rem; text-align: left; vertical-align: top; overflow-wrap: anywhere; border-bottom: 1px solid var(--line); }
+      .comparison th { font-weight: 600; }
+      .chapter-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 1.25rem 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
+      .chapter-list li { border-bottom: 1px solid var(--line); }
+      .chapter-list a { display: flex; gap: .7rem; min-height: 100%; padding: .8rem .45rem; color: var(--ink); text-decoration: none; }
+      .chapter-list time { flex: 0 0 3.25rem; color: var(--green); font-variant-numeric: tabular-nums; }
+      @media (max-width: 750px) {
+        .workflow, .agent-grid, .metric-grid, .control-grid, .chapter-list { grid-template-columns: 1fr; }
+        .comparison { font-size: .84rem; }
+        .comparison thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+        .comparison, .comparison tbody, .comparison tr, .comparison td { display: block; width: 100%; }
+        .comparison tr { padding: .55rem 0; border-bottom: 1px solid var(--line); }
+        .comparison td { display: grid; grid-template-columns: 6.4rem minmax(0, 1fr); gap: .6rem; padding: .32rem .2rem; border: 0; }
+        .comparison td::before { color: var(--muted); font-weight: 600; }
+        .comparison td:nth-child(1)::before { content: "Layer"; }
+        .comparison td:nth-child(2)::before { content: "Responsibility"; }
+        .comparison td:nth-child(3)::before { content: "Control"; }
+        .comparison td:nth-child(4)::before { content: "Evidence"; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Reading room</a>
+      <div class="top-actions"><a class="action-link" href="https://www.youtube.com/watch?v=xoWGs9Sf8WE">Watch video</a></div>
+    </nav>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Enterprise agent systems · Insurance claims</p>
+          <h1>Claims Are a Workflow, Not a Bot</h1>
+          <p class="subtitle">The useful idea in this MGAA and Encora briefing is not merely to add more agents. It is to turn a fragmented claims journey into a governed, observable workflow where each specialist has limited authority and humans retain control of consequential decisions.</p>
+          <div class="meta"><span>58:00 video</span><span>Auto-generated English captions</span><span>Published November 4, 2025</span><span>Summary rerun: October 3, 2026 · 18:40 ICT</span></div>
+        </div>
+        <figure class="hero-card">
+          <img src="2026-10-03-mgaa-claims-multi-agent-architecture.jpg" alt="Encora multi-agent claims architecture showing conversation, moderation, specialist agents, evidence processing, and fraud detection" />
+          <figcaption>A claims platform needs orchestration, evidence, integrations, policy controls, and audit records—not one general-purpose chatbot.</figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="eyebrow">Executive summary</p>
+            <h2>The strongest design move is bounded authority</h2>
+            <p>A claim is a long-running case with changing state, missing evidence, deadlines, financial consequences, and several accountable people. Treating it as one prompt hides those realities. The briefing instead decomposes the journey into intake, coverage, evidence, fraud, and supervisory responsibilities that cooperate over a shared claim record.</p>
+            <p>That decomposition is valuable only when it narrows authority. An intake agent may collect facts but must not approve payment. An evidence agent may identify inconsistencies but must not declare fraud. A coverage service may apply policy rules but must expose the exact clause and policy version. The supervisor routes work and enforces gates; it should not silently become an all-powerful agent.</p>
+            <ul>
+              <li><strong>The workflow is the product.</strong> Agents are replaceable workers inside an explicit lifecycle, not the architecture itself.</li>
+              <li><strong>Automate by risk tier.</strong> Low-risk, high-confidence cases can move straight through; uncertainty, material value, fraud signals, or customer vulnerability should lower autonomy.</li>
+              <li><strong>Evidence must remain inspectable.</strong> Every material conclusion needs source documents, policy clauses, model and prompt versions, tool results, confidence, and the human or rule that authorised the transition.</li>
+              <li><strong>Measure customer outcomes, not task completion.</strong> Faster extraction is useful, but it does not prove fair settlements, fewer complaints, or better support.</li>
+            </ul>
+            <div class="callout warning"><p><strong>Evidence boundary.</strong> This is a source-grounded synthesis of a vendor-presented webinar and its controlled demo, strengthened with UK regulatory guidance and external comparison. It is not proof that the demonstrated system is in production or that the business figures generalise to another insurer.</p></div>
+          </section>
+
+          <section id="problem">
+            <p class="eyebrow">The operating problem</p>
+            <h2>Claims fail at handoffs, not only at reasoning</h2>
+            <p>The presenters describe a familiar claims operation: data arrives through calls, email, forms, images, invoices, and legacy systems; adjusters copy information between tools; investigations wait on missing documents; and fraud checks happen late or in a separate queue. No single worker sees a complete, current record.</p>
+            <div class="workflow" aria-label="Claims lifecycle">
+              <div><strong>FNOL</strong><small>Capture the event, parties, damage, time, location, and initial evidence.</small></div>
+              <div><strong>Assignment</strong><small>Classify complexity and route to the right handler or automated lane.</small></div>
+              <div><strong>Investigation</strong><small>Request, validate, reconcile, and interpret evidence.</small></div>
+              <div><strong>Evaluation</strong><small>Apply coverage, liability, valuation, fraud, and policy rules.</small></div>
+              <div><strong>Resolution</strong><small>Approve, deny, negotiate, pay, repair, recover, or escalate.</small></div>
+              <div><strong>Closure</strong><small>Notify, document, retain, monitor outcomes, and reopen when required.</small></div>
+            </div>
+            <p>The webinar's audience poll placed integration and fragmented systems among the leading obstacles. That result is directional only: it was a small self-selected webinar poll, not a representative industry study. Still, it highlights the right systems question—whether the platform can maintain one case state across organisational boundaries.</p>
+          </section>
+
+          <section id="team">
+            <p class="eyebrow">Why a team</p>
+            <h2>Specialisation helps when it creates enforceable contracts</h2>
+            <figure class="visual"><img src="2026-10-03-mgaa-claims-smart-team.jpg" alt="Presentation slide comparing a single smart bot with a coordinated multi-agent smart team" loading="lazy" /><figcaption><strong>What the slide gets right:</strong> claims contain distinct jobs. The production requirement is stronger than the picture—each handoff needs a schema, allowed actions, timeout, failure path, and owner.</figcaption></figure>
+            <div class="agent-grid">
+              <div><h3>Orchestrator / supervisor</h3><p>Owns the state machine, dispatches tasks, checks preconditions, pauses for missing evidence, and escalates. It should not invent domain decisions.</p></div>
+              <div><h3>FNOL / data collection</h3><p>Runs the conversation, validates required fields, resolves identity, and writes structured facts with provenance.</p></div>
+              <div><h3>Coverage</h3><p>Retrieves the in-force policy and endorsements, applies deterministic rules, and returns clause-level evidence and unresolved ambiguity.</p></div>
+              <div><h3>Evidence analysis</h3><p>Classifies documents and images, extracts facts, compares submissions, and requests corrections without treating inconsistency as guilt.</p></div>
+              <div><h3>Fraud triage</h3><p>Combines rules, anomaly scores, known patterns, and network signals to prioritise review. It routes suspicion; it does not make a final accusation.</p></div>
+              <div><h3>Human claims professional</h3><p>Handles exceptions, exercises judgement, communicates difficult outcomes, approves high-impact actions, and remains accountable.</p></div>
+            </div>
+            <div class="callout"><p><strong>Not every box needs an LLM agent.</strong> Policy arithmetic, authority limits, deadline checks, duplicate detection, payment controls, and state transitions should usually remain deterministic services. Use language models where the input is ambiguous or unstructured, then constrain their outputs with schemas and policy gates.</p></div>
+          </section>
+
+          <section id="maturity">
+            <p class="eyebrow">Autonomy ladder</p>
+            <h2>Move authority one decision at a time</h2>
+            <figure class="visual"><img src="2026-10-03-mgaa-claims-maturity-model.jpg" alt="Claims maturity model comparing human-led, AI-assisted, and AI-led processing from FNOL to closure" loading="lazy" /><figcaption>The webinar presents three maturity levels across the lifecycle. A safer rollout promotes individual decisions, not the entire claim, after measured performance and control evidence.</figcaption></figure>
+            <table class="comparison"><thead><tr><th>Layer</th><th>Responsibility</th><th>Control</th><th>Evidence to advance</th></tr></thead><tbody>
+              <tr><td>Human-led</td><td>AI searches, extracts, summarises, and drafts.</td><td>A person makes every material decision.</td><td>Usability, extraction accuracy, citation coverage, and time saved.</td></tr>
+              <tr><td>AI-assisted</td><td>AI recommends a route, next action, or decision.</td><td>A person verifies and authorises the result.</td><td>Agreement, override quality, subgroup outcomes, and calibrated confidence.</td></tr>
+              <tr><td>AI-led</td><td>Approved low-risk decisions execute automatically.</td><td>Policy gates, confidence thresholds, value limits, sampling, and instant stop controls.</td><td>Shadow and canary results, financial reconciliation, complaints, reversals, and incident rates.</td></tr>
+            </tbody></table>
+            <p>The essential distinction is not “human in the loop” as a slogan. It is <em>which human, at which transition, with what information, response deadline, and legal authority</em>. A vague review queue simply moves the bottleneck downstream.</p>
+          </section>
+
+          <section id="demo">
+            <p class="eyebrow">Demo reconstruction</p>
+            <h2>The evidence mismatch is the most useful moment</h2>
+            <ol>
+              <li>The conversational intake collects claim details against a structured schema and checks that the policy can be located.</li>
+              <li>An email agent requests supporting photographs and receipts, turning a missing-evidence state into an explicit task.</li>
+              <li>The claimant submits material for a damaged television and other items.</li>
+              <li>The evidence agent spots that the reported Samsung television does not match a receipt for a Sony 75-inch television and that some claimed items lack support.</li>
+              <li>The system asks for corrected evidence instead of moving the claim forward on inconsistent data.</li>
+            </ol>
+            <p>This is a good example of an agent creating operational value without making a final claim decision: it closes an information gap early. The safe output is “these facts do not reconcile; request clarification,” not “this claimant committed fraud.” The latter requires a different evidence threshold, procedure, and accountable reviewer.</p>
+            <div class="callout warning"><p><strong>Demo limitation.</strong> The screen share had minor display interruptions and follows a prepared scenario. It demonstrates interaction design and intended orchestration, not production accuracy, resilience, throughput, or regulatory fitness.</p></div>
+          </section>
+
+          <section id="architecture">
+            <p class="eyebrow">Reference architecture</p>
+            <h2>Separate case state, reasoning, tools, and authority</h2>
+            <figure class="visual"><img src="2026-10-03-mgaa-claims-multi-agent-architecture.jpg" alt="Detailed multi-agent system architecture for insurance claims processing" loading="lazy" /><figcaption>The webinar architecture separates conversation from evidence processing and surrounds both with moderation. A production version also needs durable workflow state, identity, policy enforcement, observability, and recovery.</figcaption></figure>
+            <table class="comparison"><thead><tr><th>Layer</th><th>Responsibility</th><th>Control</th><th>Evidence captured</th></tr></thead><tbody>
+              <tr><td>Channels</td><td>Web, voice, email, handler UI, partner APIs.</td><td>Identity, consent, accessibility, rate limits.</td><td>Actor, timestamp, message, attachment hash.</td></tr>
+              <tr><td>Workflow runtime</td><td>Durable claim state, task queue, retries, timers, approvals.</td><td>State transition rules and idempotency.</td><td>Before/after state, event ID, owner, reason.</td></tr>
+              <tr><td>Specialist services</td><td>Intake, coverage, evidence, fraud triage, summarisation.</td><td>Typed input/output and bounded permissions.</td><td>Model, prompt, retrieval set, confidence, citations.</td></tr>
+              <tr><td>Tool gateway</td><td>Claims core, policy, CRM, documents, payments, fraud data.</td><td>Least privilege, schema validation, policy checks.</td><td>Tool arguments, response, latency, error, approval.</td></tr>
+              <tr><td>Human control</td><td>Review, correction, approval, exception handling, redress.</td><td>Authority matrix and segregation of duties.</td><td>Reviewer, decision, rationale, changed fields.</td></tr>
+              <tr><td>Assurance</td><td>Evaluation, monitoring, audit, incident response, outcomes.</td><td>Release gates, drift alerts, rollback and kill switch.</td><td>Test version, cohort metrics, incidents, customer impact.</td></tr>
+            </tbody></table>
+            <p>MCP can standardise how an agent host discovers and calls tools, resources, and prompts. That is useful at the integration boundary, but it does not provide business authorisation by itself. Every MCP tool still needs an owner, input schema, claims scope, identity propagation, permissions, idempotency contract, audit policy, timeout, and compensation behaviour.</p>
+          </section>
+
+          <section id="glass-box">
+            <p class="eyebrow">Auditability</p>
+            <h2>Decomposition is not explainability</h2>
+            <figure class="visual"><img src="2026-10-03-mgaa-claims-glass-box.jpg" alt="Presentation slide describing a change from a black box to a glass box" loading="lazy" /><figcaption>Specialist logs can make a workflow easier to inspect. They do not make an opaque model's internal reasoning faithful or automatically satisfy explanation duties.</figcaption></figure>
+            <p>The presenters call the decomposed system a move from “black box” to “glass box.” Operationally, that can be true: teams can see which service received a task, which document it used, which API it called, and which rule accepted the next state. But a readable agent message is not a guaranteed account of the model's internal reasoning.</p>
+            <p>A defensible explanation should be reconstructed from reliable artefacts: the observed facts, policy version and clause, deterministic calculations, material model outputs, uncertainty, alternatives, and the accountable decision-maker. The UK ICO guidance similarly asks organisations to choose an appropriate level of interpretability for the domain, document model selection and updates, measure performance, and communicate limitations of supplementary explanation tools.</p>
+          </section>
+
+          <section id="governance">
+            <p class="eyebrow">Control plane</p>
+            <h2>Govern transitions, not personas</h2>
+            <div class="control-grid">
+              <div><h3>Authority matrix</h3><p>For each transition, record who may recommend, approve, execute, reverse, or override; include value and risk limits.</p></div>
+              <div><h3>Evidence contract</h3><p>Define mandatory fields, accepted evidence types, provenance, freshness, contradiction handling, and what counts as insufficient.</p></div>
+              <div><h3>Policy-as-code</h3><p>Keep non-negotiable coverage, payment, privacy, and escalation rules outside prompts and version them independently.</p></div>
+              <div><h3>Evaluation gates</h3><p>Test each agent, each handoff, and end-to-end customer outcomes before increasing autonomy.</p></div>
+              <div><h3>Operational recovery</h3><p>Design timeouts, retries, duplicate suppression, manual takeover, rollback, replay, and reconciliation before launch.</p></div>
+              <div><h3>Customer recourse</h3><p>Make decisions understandable and contestable, with accessible support and a route to correct bad data or conclusions.</p></div>
+            </div>
+            <p>FCA insurance guidance makes the measurement boundary particularly clear: firms should assess, test, understand, and evidence the outcomes customers receive. The regulator warns against relying on process-completion metrics and calls for settlement analysis, decline and withdrawal root causes, complaints, quality assurance, and differentiated monitoring for vulnerable customers. “The agent completed the task” is therefore an operations metric, not proof of a good customer outcome.</p>
+          </section>
+
+          <section id="claims">
+            <p class="eyebrow">Business evidence</p>
+            <h2>Separate targets, observations, and verified outcomes</h2>
+            <div class="metric-grid">
+              <div><span>Webinar claim</span><strong>£1.6–2.4bn</strong><small>Potential industry savings cited by the presenters; the video does not disclose the underlying study or calculation.</small></div>
+              <div><span>Webinar claim</span><strong>85%</strong><small>Organisations said to be planning AI in 2026; source population and methodology are not provided in the session.</small></div>
+              <div><span>Webinar claim</span><strong>12–18 months</strong><small>Average payback stated in the presentation; treat as a hypothesis for a local business case.</small></div>
+            </div>
+            <p>As an external market comparison, Shift Technology reports that early adopters of its separate claims product achieved 3% lower claims losses, 30% faster handling, 60% automation, and over 99% assessment accuracy. These are vendor-reported figures from a product announcement, not an independent benchmark and not validation of the system in this webinar.</p>
+            <p>A credible local scorecard should contain at least four layers:</p>
+            <ul>
+              <li><strong>Model quality:</strong> extraction accuracy, coverage-rule agreement, calibration, contradiction detection, and subgroup performance.</li>
+              <li><strong>Workflow quality:</strong> first-contact completeness, evidence turnaround, exception rate, rework, duplicate actions, and manual takeover.</li>
+              <li><strong>Financial control:</strong> settlement accuracy, leakage, recovery, fraud referral precision, payment reconciliation, and cost per claim.</li>
+              <li><strong>Customer outcome:</strong> time to resolution, complaints, reversals, accessibility, vulnerable-customer outcomes, and reasons for declines.</li>
+            </ul>
+          </section>
+
+          <section id="roadmap">
+            <p class="eyebrow">Implementation</p>
+            <h2>A safer path from assistant to selective autonomy</h2>
+            <ol>
+              <li><strong>Map one claim segment.</strong> Choose a narrow, high-volume product and document states, owners, evidence, systems, authority, failure modes, and baseline metrics.</li>
+              <li><strong>Build the claim event model.</strong> Establish canonical IDs, typed events, document provenance, policy versioning, and immutable decision records before adding agents.</li>
+              <li><strong>Start read-only.</strong> Use AI for intake extraction, document classification, missing-evidence detection, and summaries with citations.</li>
+              <li><strong>Shadow recommendations.</strong> Compare routes and decisions with actual handlers without affecting customers; analyse disagreements and subgroup outcomes.</li>
+              <li><strong>Introduce bounded actions.</strong> Allow low-risk communications or task creation behind deterministic rules, approvals, idempotency, and reversible execution.</li>
+              <li><strong>Canary straight-through decisions.</strong> Restrict by claim type, value, confidence, evidence completeness, and policy clarity; sample outputs and reconcile money daily.</li>
+              <li><strong>Expand only on outcome evidence.</strong> Promote a decision when customer, operational, and financial measures remain acceptable—not because a demo looked fluent.</li>
+            </ol>
+          </section>
+
+          <section id="platform">
+            <p class="eyebrow">For an agentic AI platform</p>
+            <h2>Make the BA compose contracts, not prompts</h2>
+            <p>For a platform with Master Agent, Sub-Agent, Skill, and MCP Tool concepts, this claims example suggests a clearer authoring model. A business analyst should start from a flow state and decision contract, then attach the appropriate worker—not begin with persona prose.</p>
+            <table class="comparison"><thead><tr><th>Layer</th><th>Responsibility</th><th>Control</th><th>Deliverable</th></tr></thead><tbody>
+              <tr><td>Business flow</td><td>States, events, transitions, owners, SLAs, exception paths.</td><td>Versioned workflow schema.</td><td>Flow Markdown plus machine-readable state model.</td></tr>
+              <tr><td>Master agent</td><td>Coordinates the case against that state model.</td><td>No unrestricted domain or payment authority.</td><td>Routing policy, stop conditions, escalation rules.</td></tr>
+              <tr><td>Sub-agent</td><td>Performs one bounded role such as evidence reconciliation.</td><td>Typed inputs/outputs and narrow data scope.</td><td>Capability card with purpose, limits, evals, owner.</td></tr>
+              <tr><td>Cognitive skill</td><td>Classify, extract, compare, summarise, recommend.</td><td>Evidence and uncertainty contract.</td><td>Evaluated reasoning component.</td></tr>
+              <tr><td>Actionable skill</td><td>Changes external state through tools.</td><td>Preconditions, approvals, idempotency, rollback.</td><td>Workflow step bound to approved MCP tools.</td></tr>
+              <tr><td>MCP tool</td><td>Exposes a system capability or resource.</td><td>Identity, permissions, validation, audit, timeout.</td><td>Technical connector, not business policy.</td></tr>
+            </tbody></table>
+            <p>Persona prompts can still shape communication style, but they should be a thin presentation layer. The durable system is the contract: what this component knows, what it may do, what evidence it must return, what uncertainty blocks action, and who owns failure.</p>
+          </section>
+
+          <section id="future">
+            <p class="eyebrow">Beyond the demo</p>
+            <h2>Future ideas increase the governance burden</h2>
+            <figure class="visual"><img src="2026-10-03-mgaa-claims-future.jpg" alt="Slide showing proactive claims pathways, collaborative fraud defence, and embedded subrogation" loading="lazy" /><figcaption>The session closes with proactive pathways, cross-firm fraud collaboration, and embedded subrogation. Each expands data sharing, consent, security, fairness, and accountability requirements.</figcaption></figure>
+            <p>Proactive outreach can reduce friction; cross-carrier signals may improve fraud detection; and embedded subrogation can find recoveries earlier. But these are not merely extra agents. They are new data-sharing and decision regimes. The design review must therefore cover lawful purpose, minimum necessary data, false-positive harm, customer explanation, cross-firm responsibility, retention, and redress before technical implementation.</p>
+          </section>
+
+          <section id="take">
+            <p class="eyebrow">My take</p>
+            <h2>The architecture is directionally right; the proof is still missing</h2>
+            <p>The briefing correctly treats claims as collaborative work and recognises that integration, evidence, specialist roles, and human oversight matter. The mismatch demo is more persuasive than a generic chatbot because it shows a bounded task that improves case quality before a decision.</p>
+            <p>Where I disagree is the implication that decomposition itself creates a glass box or that low-code composition removes the need for substantial engineering. Production claims automation still requires data contracts, durable execution, permissions, policy-as-code, evals, observability, incident response, regulatory interpretation, and careful change management. A small data science team may build the model layer; it does not replace those operating capabilities.</p>
+            <p>The best adoption strategy is therefore modest: automate information work first, then individual low-risk decisions, then only the claim segments whose outcome evidence supports greater autonomy. The goal is not maximum automation. It is faster resolution with equal or better fairness, accuracy, traceability, and recourse.</p>
+          </section>
+
+          <section id="map">
+            <p class="eyebrow">Video map</p>
+            <h2>Where the key ideas appear</h2>
+            <ul class="chapter-list">
+              <li><a href="https://www.youtube.com/watch?v=xoWGs9Sf8WE&t=194s"><time>03:14</time><span>Agenda and framing</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=xoWGs9Sf8WE&t=360s"><time>06:00</time><span>Claims pain points</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=xoWGs9Sf8WE&t=843s"><time>14:03</time><span>From point tools to agent teams</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=xoWGs9Sf8WE&t=987s"><time>16:27</time><span>Smart bot versus smart team</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=xoWGs9Sf8WE&t=1053s"><time>17:33</time><span>Three-level maturity model</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=xoWGs9Sf8WE&t=1500s"><time>25:00</time><span>FNOL and evidence demo</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=xoWGs9Sf8WE&t=2422s"><time>40:22</time><span>Multi-agent architecture</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=xoWGs9Sf8WE&t=2570s"><time>42:50</time><span>Black box to glass box</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=xoWGs9Sf8WE&t=2690s"><time>44:50</time><span>Future opportunities</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=xoWGs9Sf8WE&t=3120s"><time>52:00</time><span>Integration, APIs, MCP, and team needs</span></a></li>
+            </ul>
+          </section>
+
+          <section id="sources">
+            <p class="eyebrow">Sources</p>
+            <h2>Primary material and reality checks</h2>
+            <ol>
+              <li><a href="https://www.youtube.com/watch?v=xoWGs9Sf8WE">MGAA and Encora — Reimagining Claims Processing with Multi-Agent AI</a>. Primary webinar and auto-generated transcript.</li>
+              <li><a href="https://mgaa.co.uk/programme-rec-cat/claims/">MGAA — Claims programme archive</a>. Session context and organiser description.</li>
+              <li><a href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/explaining-decisions-made-with-artificial-intelligence/part-2-explaining-ai-in-practice/task-3-build/">ICO — Building AI systems that support appropriate explanations</a>. Primary UK data-protection guidance on interpretability, documentation, testing, and limitations.</li>
+              <li><a href="https://www.fca.org.uk/publications/multi-firm-reviews/insurance-multi-firm-review-outcomes-monitoring-under-consumer-duty">FCA — Insurance outcomes monitoring under the Consumer Duty</a>. Primary regulator review of claims, settlements, complaints, vulnerable customers, and outcome evidence.</li>
+              <li><a href="https://modelcontextprotocol.io/specification/draft/server/index">Model Context Protocol — Server features overview</a>. Official distinction between prompts, resources, and executable tools.</li>
+              <li><a href="https://www.shift-technology.com/resources/news/shift-technology-launches-shift-claims-to-power-claims-transformation-with-agentic-ai">Shift Technology — Shift Claims announcement</a>. External market comparison; performance figures are vendor-reported.</li>
+            </ol>
+            <p class="source-note">Source review completed October 3, 2026. Regulatory links describe UK guidance and expectations, not legal advice. The article distinguishes webinar claims, vendor-reported outcomes, and regulator guidance throughout.</p>
+          </section>
+        </article>
+        <aside class="toc" aria-label="On this page">
+          <p>On this page</p>
+          <nav>
+            <a href="#summary">Executive summary</a><a href="#problem">Operating problem</a><a href="#team">Agent team</a><a href="#maturity">Autonomy ladder</a><a href="#demo">Demo</a><a href="#architecture">Architecture</a><a href="#glass-box">Explainability</a><a href="#governance">Governance</a><a href="#claims">Business evidence</a><a href="#roadmap">Roadmap</a><a href="#platform">Platform model</a><a href="#future">Future ideas</a><a href="#take">My take</a><a href="#map">Video map</a><a href="#sources">Sources</a>
+          </nav>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>

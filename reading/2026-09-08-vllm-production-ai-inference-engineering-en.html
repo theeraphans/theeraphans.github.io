@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="A production-focused guide to vLLM and AI inference: prefill, decode, KV cache, PagedAttention, continuous batching, latency metrics, optimization, scaling, routing, and cache infrastructure.">
+  <title>vLLM and Production AI Inference Engineering</title>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+  <style>
+    .source-note { margin-top: 1rem; padding-left: 1rem; border-left: 3px solid var(--green); }
+    .thesis { margin: 1.2rem 0; padding: 1rem; background: var(--surface); border-left: 3px solid var(--ink); }
+    .thesis strong { display: block; margin-bottom: .35rem; font-weight: 600; }
+    .metric-grid, .phase-grid, .decision-grid { display: grid; margin: 1.2rem 0; border: 1px solid var(--line-strong); }
+    .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .phase-grid, .decision-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .metric, .phase, .decision { min-width: 0; padding: 1rem; border-right: 1px solid var(--line); }
+    .metric:last-child, .phase:nth-child(even), .decision:nth-child(even) { border-right: 0; }
+    .phase:nth-child(n+3), .decision:nth-child(n+3) { border-top: 1px solid var(--line); }
+    .metric span, .phase span, .decision span { display: block; margin-bottom: .35rem; color: var(--green); font-size: .75rem; font-weight: 600; text-transform: uppercase; }
+    .metric strong, .phase strong, .decision strong { display: block; font-weight: 500; }
+    .metric p, .phase p, .decision p { margin: .5rem 0 0 !important; font-size: .92rem; }
+    .architecture { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin: 1.2rem 0; border: 1px solid var(--line-strong); }
+    .arch-step { min-width: 0; padding: .85rem; border-right: 1px solid var(--line); }
+    .arch-step:last-child { border-right: 0; }
+    .arch-step span { display: block; color: var(--green); font-size: .72rem; font-weight: 600; }
+    .arch-step strong { display: block; margin-top: .3rem; font-size: .88rem; font-weight: 500; }
+    .arch-step small { display: block; margin-top: .35rem; color: var(--muted); line-height: 1.4; }
+    .comparison { width: 100%; min-width: 0 !important; max-width: 100%; margin: 1.2rem 0; border-collapse: collapse; table-layout: fixed; font-size: .91rem; }
+    .comparison th, .comparison td { padding: .75rem; border: 1px solid var(--line); text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+    .comparison th { background: var(--surface); font-weight: 600; }
+    .formula { margin: 1rem 0; padding: .9rem 1rem; border: 1px solid var(--line); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+    .source-links { display: grid; gap: .7rem; padding-left: 1.2rem; }
+    @media (max-width: 900px) {
+      .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metric:nth-child(even) { border-right: 0; }
+      .metric:nth-child(n+3) { border-top: 1px solid var(--line); }
+      .architecture { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .arch-step:nth-child(3) { border-right: 0; }
+      .arch-step:nth-child(n+4) { border-top: 1px solid var(--line); }
+    }
+    @media (max-width: 640px) {
+      .metric-grid, .phase-grid, .decision-grid, .architecture { grid-template-columns: 1fr; }
+      .metric, .phase, .decision, .arch-step { border-right: 0; border-bottom: 1px solid var(--line); }
+      .metric:last-child, .phase:last-child, .decision:last-child, .arch-step:last-child { border-bottom: 0; }
+      .metric:nth-child(n+2), .phase:nth-child(n+2), .decision:nth-child(n+2), .arch-step:nth-child(n+2) { border-top: 0; }
+      .comparison th, .comparison td { padding: .6rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation">
+    <a class="brand" href="./">Reading room</a>
+    <div class="top-actions"><a class="action-link" href="#sources">Primary sources</a><a class="action-link" href="/">Add a source</a></div>
+  </nav>
+
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Research guide · LLM systems · GPU serving · Production architecture</p>
+        <h1>vLLM and Production AI Inference Engineering</h1>
+        <p class="subtitle">A model produces one token at a time. A production inference system must turn thousands of differently shaped requests into an efficient, observable, and reliable GPU workload.</p>
+        <div class="meta"><span><strong>Primary-source research</strong></span><span>15–20 min read</span><span>Updated September 8, 2026</span><span>Research run 22:38 ICT</span></div>
+        <p class="source-note">This guide synthesizes the vLLM paper and current official documentation with Orca, DistServe, llm-d, and LMCache sources. Feature support and defaults evolve quickly; production configuration should be checked against the deployed vLLM version.</p>
+      </div>
+      <figure class="hero-card"><img src="2026-09-08-vllm-production-ai-inference-cover.jpg" alt="Token streams arranged into paged blocks across a production GPU inference system"><figcaption>Inference performance is a scheduling and memory problem as much as a model problem.</figcaption></figure>
+    </header>
+
+    <div class="layout">
+      <article class="content">
+        <section id="summary">
+          <p class="section-label">Executive summary</p>
+          <h2>vLLM is the execution engine, not the whole inference platform</h2>
+          <p>vLLM turns an open-weight model into a high-throughput inference engine and OpenAI-compatible server. Its central contribution was to manage the rapidly changing key-value cache with PagedAttention, then combine that memory model with iteration-level scheduling and continuous batching. Modern vLLM adds chunked prefill, prefix caching, quantization, speculative decoding, optimized kernels, and several forms of parallelism.</p>
+          <p>Those mechanisms solve the single-engine problem: how to keep accelerators useful while requests arrive, grow, finish, and compete for memory. A production platform still needs authentication, quotas, model routing, overload policy, autoscaling, rollout safety, tracing, cost accounting, and evaluation. At larger scale, llm-d can add cache-aware routing and disaggregated serving, while LMCache can extend reusable KV state beyond one engine's GPU memory.</p>
+          <div class="thesis"><strong>The governing idea</strong><p>Do not optimize “tokens per second” in isolation. Optimize goodput: requests completed while meeting the latency, quality, reliability, and cost constraints of a real product.</p></div>
+        </section>
+
+        <section id="request">
+          <p class="section-label">Mental model</p>
+          <h2>One request has two very different computational phases</h2>
+          <div class="phase-grid">
+            <div class="phase"><span>Prefill</span><strong>Read and encode the prompt.</strong><p>The model processes many input tokens in parallel, builds attention state, and writes each layer's keys and values into the KV cache. Large matrix operations tend to make this phase compute-heavy.</p></div>
+            <div class="phase"><span>Decode</span><strong>Generate one new token per iteration.</strong><p>Each step reads model weights and the accumulated KV cache, samples a token, appends new KV entries, then repeats. The small amount of work per step often makes decode memory-bandwidth-heavy.</p></div>
+            <div class="phase"><span>Conflict</span><strong>Prefill can interrupt smooth generation.</strong><p>A very long incoming prompt consumes substantial compute and can create inter-token latency spikes for requests already decoding.</p></div>
+            <div class="phase"><span>Opportunity</span><strong>The phases use hardware differently.</strong><p>Schedulers can mix or separate them, tune token budgets, and allocate different parallelism according to product SLOs.</p></div>
+          </div>
+          <p><strong>Prefill is compute-heavy; decode is memory-bandwidth-heavy.</strong> This distinction explains much of inference engineering. Chat feels slow before the first token when queueing or prefill dominates. It feels choppy after generation starts when decode scheduling, memory bandwidth, or interference dominates.</p>
+          <div class="architecture" role="figure" aria-label="Lifecycle of an inference request">
+            <div class="arch-step"><span>01</span><strong>Tokenize</strong><small>Text becomes token IDs.</small></div>
+            <div class="arch-step"><span>02</span><strong>Queue</strong><small>Admission waits for token and KV budgets.</small></div>
+            <div class="arch-step"><span>03</span><strong>Prefill</strong><small>Prompt creates reusable KV state.</small></div>
+            <div class="arch-step"><span>04</span><strong>Decode</strong><small>One or several candidate tokens per step.</small></div>
+            <div class="arch-step"><span>05</span><strong>Stream</strong><small>Tokens reach the client incrementally.</small></div>
+            <div class="arch-step"><span>06</span><strong>Release</strong><small>Blocks return to the free pool.</small></div>
+          </div>
+        </section>
+
+        <section id="metrics">
+          <p class="section-label">Measurement</p>
+          <h2>Latency is not one number</h2>
+          <div class="metric-grid">
+            <div class="metric"><span>TTFT</span><strong>Time to first token</strong><p>Client send to first streamed token. Includes queueing, tokenization, and prefill.</p></div>
+            <div class="metric"><span>ITL</span><strong>Inter-token latency</strong><p>The gap between consecutive streamed outputs. It exposes jitter and interruptions.</p></div>
+            <div class="metric"><span>TPOT</span><strong>Time per output token</strong><p>Per-request average generation interval after the first token.</p></div>
+            <div class="metric"><span>E2EL</span><strong>End-to-end latency</strong><p>Total time until the final output arrives, including queue and all generation.</p></div>
+          </div>
+          <div class="formula">TPOT = (end-to-end latency − TTFT) / (output tokens − 1)</div>
+          <p>Throughput measures tokens or requests processed per unit time. It can look excellent while interactive users experience unacceptable tails. Goodput counts only work completed inside explicit SLOs, such as P99 TTFT below two seconds and P99 TPOT below 60 milliseconds. Capacity planning should therefore use percentile metrics under realistic arrival rates, prompt lengths, output lengths, sampling parameters, and cache-hit patterns.</p>
+          <p>Benchmark terminology differs across tools, so compare measurement points and formulas rather than labels. Warm prefix caches can also inflate repeated benchmark results. vLLM's benchmark documentation recommends resetting caches or varying reproducible inputs when reuse is not part of the intended workload.</p>
+        </section>
+
+        <section id="memory">
+          <p class="section-label">Core contribution</p>
+          <h2>PagedAttention makes KV cache allocatable</h2>
+          <p>Autoregressive generation avoids recomputing the full prefix by storing each layer's attention keys and values. That KV cache grows with sequence length, model depth, KV-head count, head dimension, concurrency, and bytes per element. Long contexts can make this runtime state consume more GPU memory than expected.</p>
+          <div class="formula">Approximate KV bytes per request = 2 × layers × KV heads × head dimension × cached tokens × bytes per element</div>
+          <p>Earlier serving designs often reserved contiguous memory for a request's maximum possible sequence. Variable lengths produced internal fragmentation; changing requests made external fragmentation difficult; beam search duplicated shared prefixes. Memory waste reduced the number of sequences that could be batched together.</p>
+          <p>PagedAttention borrows the operating-system idea of virtual memory. A request sees logical KV blocks, while a block table maps them to non-contiguous physical blocks in GPU memory. Blocks are allocated as needed and returned when requests finish. Copy-on-write permits generated branches to share blocks until they diverge. The vLLM paper reported roughly two-to-four-times throughput over its tested FasterTransformer and Orca-style baselines at comparable latency, especially with long, variable sequences and complex decoding.</p>
+          <p>This does not make memory infinite. When the working set exceeds available KV blocks, requests can queue or be preempted and later recompute state. Frequent preemption is usually a capacity signal: reduce maximum context, reduce concurrent sequences, use lower-precision KV cache where supported, add memory, or change the workload policy.</p>
+        </section>
+
+        <section id="batching">
+          <p class="section-label">Scheduling</p>
+          <h2>Continuous batching follows token iterations, not whole requests</h2>
+          <p>Static batching waits for a fixed group and holds its shape until every request completes. Generation lengths vary, so short requests waste capacity while waiting for the longest. Orca introduced iteration-level scheduling: reconsider the batch after each model iteration, remove completed sequences, and admit new work.</p>
+          <p><strong>Continuous batching</strong> applies this idea in production engines. The active batch changes as requests arrive and finish. vLLM V1 uses a unified scheduler with a fixed token budget per iteration rather than treating prefill and decode as entirely separate request types. This supports prefix hits, speculative tokens, and chunked prefills through the same accounting model.</p>
+          <p><strong>Chunked prefill</strong> divides a long prompt so decode requests do not wait behind one huge prefill operation. Current vLLM V1 documentation says it is enabled whenever possible and prioritizes pending decodes before using the remaining token budget for prefill. Smaller token budgets generally favor smoother ITL; larger budgets can improve prefill efficiency and TTFT or throughput, depending on workload and hardware. There is no universal best value.</p>
+        </section>
+
+        <section id="optimizations">
+          <p class="section-label">Optimization map</p>
+          <h2>Choose a mechanism that attacks the measured bottleneck</h2>
+          <table class="comparison">
+            <thead><tr><th>Mechanism</th><th>Primary benefit</th><th>Best fit</th><th>Main caution</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Prefix caching</strong></td><td>Skips repeated prefill for identical token prefixes.</td><td>Long shared system prompts, repeated document queries, multi-turn sessions.</td><td>It improves prefill, not decode; cache locality and eviction determine real hit rate.</td></tr>
+              <tr><td><strong>Quantization</strong></td><td>Reduces weight or KV memory and may increase effective bandwidth.</td><td>Memory-constrained deployment or higher concurrency.</td><td>Kernel support, calibration, quality, and hardware-specific speedups vary.</td></tr>
+              <tr><td><strong>Speculative decoding</strong></td><td>Verifies multiple proposed tokens in fewer target-model steps.</td><td>Medium-to-low QPS, memory-bound decode with a high acceptance rate.</td><td>Draft overhead can reduce throughput under saturation or poor acceptance.</td></tr>
+              <tr><td><strong>Chunked prefill</strong></td><td>Balances long prompt work against active decode.</td><td>Mixed prompt lengths and interactive streaming.</td><td>Chunk size trades overhead, TTFT, ITL, and throughput.</td></tr>
+              <tr><td><strong>Tensor parallelism</strong></td><td>Splits layer operations across devices.</td><td>Model does not fit one GPU or needs lower per-step latency.</td><td>Collective communication can dominate across slow links.</td></tr>
+              <tr><td><strong>Data parallel replicas</strong></td><td>Processes independent traffic on separate model copies.</td><td>Model fits one replica and demand needs horizontal scale.</td><td>Routing without queue and cache awareness can create hotspots.</td></tr>
+              <tr><td><strong>P/D disaggregation</strong></td><td>Isolates prefill and decode interference and scaling ratios.</td><td>Large, predictable fleets with distinct TTFT and TPOT SLOs.</td><td>KV transfer, network topology, scheduler complexity, and load shifts can erase gains.</td></tr>
+              <tr><td><strong>External KV tier</strong></td><td>Preserves expensive context across GPU eviction, pods, or engine restart.</td><td>Long-context agents, RAG, repeated prefixes, and multi-turn workloads.</td><td>Loading cached tensors must beat recomputation and satisfy isolation requirements.</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="parallelism">
+          <p class="section-label">Scaling inside an engine</p>
+          <h2>Fit first, then optimize communication</h2>
+          <p>vLLM supports tensor, pipeline, data, expert, and context parallel strategies, but they solve different constraints. Tensor parallelism shards matrix operations and usually performs best within a node with fast GPU interconnects. Pipeline parallelism partitions model layers into stages and can cross nodes, but bubbles and uneven partitions affect utilization. Data parallelism duplicates the model so replicas serve independent traffic. Expert parallelism distributes experts in mixture-of-experts models.</p>
+          <p>The official guidance commonly starts with tensor-parallel size equal to GPUs per node and pipeline-parallel size equal to node count when a model spans nodes. That is a starting topology, not a guaranteed optimum. Measure collective communication, uneven memory, queue depth, request shape, and failure behavior.</p>
+          <p>A model that fits on one GPU is often easier to scale with independent replicas. Sharding should be earned by model size or a demonstrated latency need because every collective operation creates synchronization and networking sensitivity.</p>
+        </section>
+
+        <section id="cluster">
+          <p class="section-label">Production architecture</p>
+          <h2>The cluster must understand more than HTTP load</h2>
+          <div class="architecture" role="figure" aria-label="Reference architecture for production vLLM serving">
+            <div class="arch-step"><span>01</span><strong>Gateway</strong><small>Identity, quotas, request limits, safety policy.</small></div>
+            <div class="arch-step"><span>02</span><strong>Inference router</strong><small>Model, adapter, queue, health, and cache-aware placement.</small></div>
+            <div class="arch-step"><span>03</span><strong>vLLM pool</strong><small>Scheduling, kernels, PagedAttention, streaming.</small></div>
+            <div class="arch-step"><span>04</span><strong>KV tier</strong><small>GPU, CPU, SSD, or remote reusable state.</small></div>
+            <div class="arch-step"><span>05</span><strong>Telemetry</strong><small>TTFT, TPOT, queue, cache, preemption, errors, cost.</small></div>
+            <div class="arch-step"><span>06</span><strong>Control plane</strong><small>Deployment, autoscaling, eval gates, rollback.</small></div>
+          </div>
+          <p>A generic round-robin load balancer ignores the most valuable runtime facts. One replica may already hold a long shared prefix, another may have a deep waiting queue, and another may be close to KV saturation. llm-d separates a Router, an InferencePool, and model servers such as vLLM. Its Endpoint Picker can score pods using real-time signals and cache affinity; precise routing can consume KV events emitted by engines.</p>
+          <p>LMCache extends the cache boundary. It can move KV state into CPU memory, local SSD, or remote backends; share it across engine instances; and keep cache state alive independently from a vLLM process. This can reduce repeated prefill for long-context agent and RAG workloads, but only when hit rate, transfer bandwidth, serialization overhead, and reuse distance justify the added layer.</p>
+        </section>
+
+        <section id="disaggregation">
+          <p class="section-label">Advanced architecture</p>
+          <h2>Disaggregated prefill and decode trades interference for transfer</h2>
+          <p>Aggregated serving runs both phases on the same workers. It is simpler and avoids moving KV tensors between pools, but long prefills can interfere with active decode and the two phases must share one scaling ratio. DistServe assigns them to different GPUs, optimizes each pool for its own SLO, and places workers according to network bandwidth.</p>
+          <p>The concept is compelling when traffic is large enough to keep specialized pools utilized and when TTFT and TPOT require different resource plans. The cost is substantial: the scheduler must select both workers, transfer KV state, handle partial failure, adapt the prefill-to-decode ratio, and avoid turning the network into the new bottleneck. Start aggregated. Disaggregate only after traces show phase interference or coupled scaling is limiting goodput.</p>
+        </section>
+
+        <section id="operations">
+          <p class="section-label">Operating model</p>
+          <h2>Production failures usually appear at the boundaries</h2>
+          <ol class="summary-list">
+            <li><strong>Admission:</strong> unbounded queues hide overload and convert it into extreme tail latency. Set explicit concurrency, queue, prompt, and output limits.</li>
+            <li><strong>Memory:</strong> monitor KV utilization and preemption together. High GPU utilization is not success if requests repeatedly recompute evicted context.</li>
+            <li><strong>Streaming:</strong> detect disconnected clients and cancel work promptly; otherwise the GPU generates tokens nobody will consume.</li>
+            <li><strong>Routing:</strong> include model revision, adapter, structured-output mode, multimodal capability, and cache affinity in placement decisions.</li>
+            <li><strong>Autoscaling:</strong> GPU utilization alone reacts late. Combine queue depth, waiting tokens, active sequences, arrival rate, and SLO headroom.</li>
+            <li><strong>Rollouts:</strong> warm model weights and kernels before traffic, then canary both quality and latency distributions. Engine upgrades can change defaults.</li>
+            <li><strong>Security:</strong> authenticate the public gateway, isolate tenants in cache keys and logs, restrict model repositories and remote code, and protect distributed worker networks.</li>
+            <li><strong>Evaluation:</strong> performance changes can alter precision, decoding, or output behavior. Run correctness and product evals alongside load tests.</li>
+          </ol>
+        </section>
+
+        <section id="choices">
+          <p class="section-label">Decision guide</p>
+          <h2>Choose the smallest serving system that meets the workload</h2>
+          <div class="decision-grid">
+            <div class="decision"><span>Managed API</span><strong>Choose operational leverage.</strong><p>Best when proprietary models, elastic demand, and team focus matter more than weight control or GPU-level optimization.</p></div>
+            <div class="decision"><span>llama.cpp or local runtime</span><strong>Choose portability and edge deployment.</strong><p>Best for laptops, CPU/Apple Silicon, embedded use, low concurrency, and compact quantized models.</p></div>
+            <div class="decision"><span>vLLM</span><strong>Choose high-throughput open-model serving.</strong><p>Best when you control accelerators, need concurrent streaming, and want a broad model and hardware ecosystem.</p></div>
+            <div class="decision"><span>SGLang</span><strong>Benchmark for structured agent workloads.</strong><p>Its runtime, structured generation, caching, and model support may outperform for some workloads; decide with identical traces.</p></div>
+            <div class="decision"><span>TensorRT-LLM</span><strong>Choose NVIDIA-specific optimization depth.</strong><p>Useful when the hardware fleet is stable and engine-building effort is justified by peak performance.</p></div>
+            <div class="decision"><span>llm-d plus external cache</span><strong>Choose fleet-level intelligence.</strong><p>Add after multiple replicas require cache-aware routing, tiered KV state, or phase-specialized scaling.</p></div>
+          </div>
+          <p>The engine decision should be benchmarked against a frozen model revision, tokenizer, quantization, sampling configuration, prompt/output distribution, concurrency curve, quality suite, and cost model. A leaderboard result is not a capacity plan.</p>
+        </section>
+
+        <section id="roadmap">
+          <p class="section-label">Practical adoption</p>
+          <h2>A conservative path from one GPU to a serving platform</h2>
+          <ol class="summary-list">
+            <li>Define product SLOs for TTFT, TPOT, E2EL, availability, output quality, and cost per useful request.</li>
+            <li>Capture representative traces: prompt length, output length, arrival pattern, shared prefixes, cancellations, and multimodal inputs.</li>
+            <li>Serve one fixed model revision on one engine and establish correctness plus latency percentiles.</li>
+            <li>Tune maximum context, batched token budget, concurrent sequences, memory utilization, and overload limits.</li>
+            <li>Add prefix caching, quantization, or speculative decoding only when the trace predicts a benefit.</li>
+            <li>Scale with replicas when the model fits; add tensor or pipeline parallelism when size or step latency requires it.</li>
+            <li>Introduce cache-aware routing, external KV storage, or P/D disaggregation only after measuring the bottleneck they solve.</li>
+            <li>Automate canary evaluation and rollback for model, engine, driver, kernel, and configuration changes.</li>
+          </ol>
+        </section>
+
+        <section id="takeaways">
+          <p class="section-label">Takeaways</p>
+          <h2>Twelve ideas worth keeping</h2>
+          <ol class="summary-list">
+            <li>Prefill and decode have different compute profiles and user-visible latency metrics.</li>
+            <li>KV cache, not only model weights, determines concurrency and serving cost.</li>
+            <li>PagedAttention reduces fragmentation by mapping logical cache blocks to physical blocks.</li>
+            <li>Continuous batching changes the active batch at token-iteration boundaries.</li>
+            <li>Chunked prefill trades prompt efficiency against smooth decode and tail latency.</li>
+            <li>Measure TTFT, ITL, TPOT, E2EL, throughput, and goodput at percentiles.</li>
+            <li>Prefix caching only helps when prompts share exact token prefixes and routing preserves locality.</li>
+            <li>Speculative decoding is workload-dependent, not a universal throughput switch.</li>
+            <li>Scale with replicas before sharding when the model comfortably fits one accelerator.</li>
+            <li>Disaggregation is an advanced answer to measured phase interference.</li>
+            <li>vLLM is the model execution layer; the product still needs a control and operations plane.</li>
+            <li>The correct optimization is the one that improves SLO-compliant useful work.</li>
+          </ol>
+        </section>
+
+        <section id="sources">
+          <p class="section-label">Sources and method</p>
+          <h2>Primary research and official documentation</h2>
+          <ul class="source-links">
+            <li><a href="https://arxiv.org/abs/2309.06180">Efficient Memory Management for Large Language Model Serving with PagedAttention</a>, the original vLLM systems paper.</li>
+            <li><a href="https://docs.vllm.ai/en/stable/">vLLM official documentation</a>, current capability overview.</li>
+            <li><a href="https://docs.vllm.ai/en/stable/configuration/optimization/">vLLM Optimization and Tuning</a>, scheduler, chunked prefill, and parallelism guidance.</li>
+            <li><a href="https://docs.vllm.ai/en/latest/benchmarking/cli/">vLLM Benchmark CLI</a>, metric definitions and benchmark caveats.</li>
+            <li><a href="https://docs.vllm.ai/en/latest/serving/parallelism_scaling/">vLLM Parallelism and Scaling</a>, multi-GPU and multi-node deployment.</li>
+            <li><a href="https://www.usenix.org/conference/osdi22/presentation/yu">Orca</a>, iteration-level scheduling for generative-model serving.</li>
+            <li><a href="https://arxiv.org/abs/2401.09670">DistServe</a>, goodput-oriented prefill/decode disaggregation.</li>
+            <li><a href="https://github.com/llm-d/llm-d/blob/main/docs/architecture/README.md">llm-d architecture</a>, routing, inference pools, cache awareness, and disaggregation.</li>
+            <li><a href="https://docs.lmcache.ai/">LMCache official documentation</a>, persistent and tiered KV-cache management.</li>
+          </ul>
+          <p>This article separates paper-reported results from general engineering interpretation. It is a conceptual production guide, not a claim that one configuration or engine will lead every workload.</p>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Article contents">
+        <nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul>
+          <li><a href="#summary">Executive summary</a></li><li><a href="#request">Request lifecycle</a></li><li><a href="#metrics">Inference metrics</a></li><li><a href="#memory">PagedAttention</a></li><li><a href="#batching">Continuous batching</a></li><li><a href="#optimizations">Optimization map</a></li><li><a href="#parallelism">Parallelism</a></li><li><a href="#cluster">Production cluster</a></li><li><a href="#disaggregation">P/D disaggregation</a></li><li><a href="#operations">Operations</a></li><li><a href="#choices">Engine choices</a></li><li><a href="#roadmap">Adoption roadmap</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li>
+        </ul></nav>
+        <div class="note-card"><h2>Reading lens</h2><p>Follow one request from tokenization to released KV blocks, then zoom out from one engine to a cache-aware production fleet.</p></div>
+      </aside>
+    </div>
+  </main>
+  <footer class="footer-note">Independent editorial research for engineering study. Verify fast-moving features against your deployed vLLM release.</footer>
+</body>
+</html>

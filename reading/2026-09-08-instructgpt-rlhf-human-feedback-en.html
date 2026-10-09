@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Combined supervised demonstrations, a learned human-preference reward model, and PPO to make language models follow user instructions more helpfully and safely.">
+  <meta name="resource-file" content="2026-09-08-instructgpt-rlhf-human-feedback-en.html">
+  <title>InstructGPT · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2203.02155">Read paper</a><a class="action-link" href="./">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Instruction and Preference Alignment · Paper 17 of 37</p>
+        <h1>Training language models to follow instructions with human feedback</h1>
+        <p class="subtitle">Combined supervised demonstrations, a learned human-preference reward model, and PPO to make language models follow user instructions more helpfully and safely.</p>
+        <div class="meta"><span><strong>Long Ouyang, Jeff Wu, Xu Jiang, Diogo Almeida, Carroll L. Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, John Schulman, Jacob Hilton, Fraser Kelton, Luke Miller, Maddie Simens, Amanda Askell, Peter Welinder, Paul Christiano, Jan Leike, Ryan Lowe</strong></span><span>2022</span><span>Intermediate</span><span>13 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>InstructGPT</h2><p>OpenAI</p><p><strong>Prerequisites:</strong> Language-model fine-tuning, ranking loss, reinforcement learning, PPO, and KL regularization.</p><a href="https://arxiv.org/abs/2203.02155">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Intermediate</strong></div><div class="paper-fact"><span>Place in path</span><strong>17 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Pretraining rewards next-token prediction over internet text, not helpful responses to user intent. Larger base models can be capable while ignoring instructions, producing unwanted continuations, or exploiting ambiguous prompts.</p>
+<p>The paper seeks a practical behavioral-training pipeline using human judgments without requiring annotators to write an ideal answer for every possible prompt.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Collect human-written demonstrations and fine-tune a base GPT-3 model. Then sample multiple answers, ask labelers to rank them, train a reward model to predict those rankings, and optimize the policy against the learned reward while constraining drift from supervised behavior.</p>
+<p>The three stages separate imitation from preference learning and policy optimization. Human feedback defines the target distribution; the reward model scales that feedback to more generated samples.</p><div class="equation">maximize E[reward_model(x,y) − β KL(π(y|x) || π_SFT(y|x))]</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Prompts come from API usage and labeler-written examples. Supervised fine-tuning teaches a starting policy. Pairwise rankings train a scalar reward model. PPO updates the policy, with a KL penalty and a pretraining-data term used to limit capability regression.</p>
+<p>Evaluation returns to humans: labelers compare outputs for helpfulness, truthfulness, and harmlessness, while automated benchmarks check whether alignment erased core abilities.</p><figure class="concept-flow" aria-label="InstructGPT RLHF pipeline">
+    <div class="flow-step"><span>01</span><strong>Demonstrate</strong><p>Humans write desired responses.</p></div>
+<div class="flow-step"><span>02</span><strong>Supervise</strong><p>Fine-tune an initial policy.</p></div>
+<div class="flow-step"><span>03</span><strong>Rank</strong><p>Compare sampled responses.</p></div>
+<div class="flow-step"><span>04</span><strong>Model reward</strong><p>Learn a preference score.</p></div>
+<div class="flow-step"><span>05</span><strong>Optimize</strong><p>Run PPO with a KL constraint.</p></div>
+    <figcaption>Human input appears in demonstrations, rankings, and final evaluation; the reward model scales but does not replace the value choice.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>The reward model uses a Bradley-Terry-style pairwise objective: preferred completions should receive higher scalar scores. PPO treats complete responses as trajectories and the reward-model output as terminal reward.</p>
+<p>KL regularization is essential because optimizing an imperfect learned reward can move the policy into regions where the reward model is unreliable. This is an early form of controlling reward hacking.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>Labelers preferred outputs from a 1.3B InstructGPT model over base GPT-3 175B outputs in the reported comparisons, showing behavioral training can outweigh raw scale for instruction following. The models also improved on truthfulness and toxicity evaluations without broad benchmark collapse.</p>
+<p>The evaluators were aligned with the project’s labeling guidance and largely English-speaking context. Preference rates are conditional on that population, prompt sample, and policy.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>InstructGPT established the modern assistant post-training pipeline and made alignment data, reward modeling, and online evaluation core product infrastructure.</p>
+<p>It also exposed a new failure surface: models can optimize the evaluator’s proxy, so reward-model drift, annotator consistency, and production feedback require continuous measurement.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Version prompt sources, labeling instructions, annotator groups, reward models, and policy checkpoints as one lineage. Hold out adversarial prompts and compare against both the base and SFT models.</p>
+<p>Use gateway-level safety controls in addition to model behavior. RLHF can reduce unwanted output frequency but does not guarantee authorization, privacy, or correct tool execution.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>A reward model inherits annotator biases and becomes less reliable off-distribution. PPO is operationally complex and sensitive to reward scale, KL strength, sampling, and policy instability.</p>
+<p>Helpful, honest, and harmless can conflict. The paper improves measured preferences; it does not solve value pluralism, factual verification, or specification gaming.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>Constitutional AI shifts more critique and preference generation to models under written principles. DPO later removes explicit reward-model and PPO training from the optimization loop.</p><div class="article-nav"><a href="2026-09-08-llama-open-efficient-foundation-language-models-en.html">← LLaMA</a><a href="2026-09-08-constitutional-ai-harmlessness-ai-feedback-en.html">Constitutional AI →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>Pretraining capability and instruction-following behavior are different objectives.</li><li>SFT supplies a stable starting policy.</li><li>Human rankings can train a scalable reward proxy.</li><li>KL regularization limits destructive policy drift.</li><li>Small aligned models can be preferred over much larger base models.</li><li>Preference optimization is not a guarantee of truth or safety.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2203.02155">Training language models to follow instructions with human feedback</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>RLHF aligns behavior with a sampled preference process. It does not make the model objectively truthful or encode every affected community’s values.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

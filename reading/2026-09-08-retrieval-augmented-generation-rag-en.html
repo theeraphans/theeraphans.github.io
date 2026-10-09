@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Combined a pretrained sequence generator with dense retrieval over an external document index, creating a model with parametric and non-parametric memory.">
+  <meta name="resource-file" content="2026-09-08-retrieval-augmented-generation-rag-en.html">
+  <title>Retrieval-Augmented Generation · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2005.11401">Read paper</a><a class="action-link" href="./">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Retrieval, Reasoning, and Agents · Paper 33 of 37</p>
+        <h1>Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</h1>
+        <p class="subtitle">Combined a pretrained sequence generator with dense retrieval over an external document index, creating a model with parametric and non-parametric memory.</p>
+        <div class="meta"><span><strong>Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir Karpukhin, Naman Goyal, Heinrich Küttler, Mike Lewis, Wen-tau Yih, Tim Rocktäschel, Sebastian Riedel, Douwe Kiela</strong></span><span>2020</span><span>Intermediate</span><span>14 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>Retrieval-Augmented Generation</h2><p>Facebook AI Research, UCL, and New York University</p><p><strong>Prerequisites:</strong> Encoder-decoder models, dense vector retrieval, maximum inner-product search, and latent variables.</p><a href="https://arxiv.org/abs/2005.11401">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Intermediate</strong></div><div class="paper-fact"><span>Place in path</span><strong>33 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Language-model parameters store broad knowledge but are difficult to update, inspect, or cite. Pure generation can produce fluent unsupported facts, while retrieval systems return evidence without composing an answer.</p>
+<p>The paper asks whether generation can condition on retrieved documents and learn which evidence helps the task.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Use a dense retriever to select passages from a Wikipedia index and a BART generator to produce the output conditioned on the input plus retrieved text. Treat the selected document as a latent variable and marginalize over top candidates.</p>
+<p>RAG-Sequence uses one document for the whole output; RAG-Token can choose a different document distribution for each generated token.</p><div class="equation">p(y|x) = Σ_z p_retriever(z|x) × p_generator(y|x,z)</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Encode the query, retrieve top-k passage vectors with maximum inner product, concatenate each passage with the input, and run the generator. Combine document-conditioned probabilities according to retriever scores.</p>
+<p>Train end to end for downstream tasks while keeping the document index fixed in the original setup. At inference, outputs can be traced to retrieved candidates.</p><figure class="concept-flow" aria-label="RAG answer path">
+    <div class="flow-step"><span>01</span><strong>Encode query</strong><p>Build a dense retrieval vector.</p></div>
+<div class="flow-step"><span>02</span><strong>Search index</strong><p>Select top-k passages.</p></div>
+<div class="flow-step"><span>03</span><strong>Condition</strong><p>Pair input with each passage.</p></div>
+<div class="flow-step"><span>04</span><strong>Generate</strong><p>Marginalize document-conditioned output.</p></div>
+<div class="flow-step"><span>05</span><strong>Verify</strong><p>Check support and citations.</p></div>
+    <figcaption>Retrieval creates candidate evidence; generation composes an answer but still needs attribution checks.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>The retriever begins from DPR question and passage encoders. Approximate nearest-neighbor search makes millions of passages practical. Marginalization couples retrieval probability with token likelihood.</p>
+<p>Modern RAG frequently separates retriever and generator training, adds hybrid search and reranking, and injects passages directly into decoder prompts. Those are descendants, not all claims of this paper.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>The paper reported state-of-the-art results on several open-domain question-answering tasks and generated more factual, specific language than a parametric-only baseline on knowledge-intensive generation.</p>
+<p>Wikipedia coverage, answer matching, and benchmark structure constrain the result. Retrieval can return convincing but irrelevant or outdated evidence.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>RAG became a dominant architecture for enterprise knowledge assistants because documents can be refreshed without retraining the full model and can support citations.</p>
+<p>It split application quality into retrieval, context construction, generation, and attribution, each requiring independent evaluation.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Evaluate retrieval recall before generation quality. If the required evidence is absent from top-k, prompt changes cannot recover it. Log query, index version, retrieved chunks, reranker scores, and cited spans.</p>
+<p>Design permission filtering before retrieval and recheck access at document delivery. Separate “retrieved,” “used,” and “cited” evidence; they are not equivalent.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>Retrieval adds latency and can amplify index errors, poisoning, or stale documents. A generator may ignore evidence or cite it without entailment.</p>
+<p>Chunking breaks document structure, dense similarity can miss exact constraints, and external memory does not make reasoning or attribution automatically faithful.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>BERT-style encoders support dense retrieval. ReAct extends the idea by letting a model decide when to query tools during a trajectory rather than retrieving once at the start.</p><div class="article-nav"><a href="2026-09-08-kv-cache-compression-optimization-h2o-kivi-snapkv-en.html">← KV Cache Compression and Optimization</a><a href="2026-09-08-chain-of-thought-prompting-reasoning-en.html">Chain-of-Thought Prompting →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>RAG combines parameter memory with an external document index.</li><li>Retrieval quality bounds answer quality.</li><li>Documents can be updated independently of model weights.</li><li>Top-k inclusion is not proof the answer used the evidence.</li><li>Permissions and provenance belong in the retrieval path.</li><li>Modern RAG is a larger family than the original architecture.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2005.11401">Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>The original RAG jointly trains retrieval and generation over Wikipedia passages. Modern pipeline RAG often uses different embedders, chunkers, rerankers, and prompts.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

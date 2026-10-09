@@ -1,0 +1,1266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Continuous Agent Evaluation with AWS Bedrock AgentCore and Langfuse</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5c6870;
+      --quiet: #7c858c;
+      --paper: #fffefa;
+      --canvas: #f4f7f2;
+      --line: #d8dfd7;
+      --red: #c94d3c;
+      --teal: #1e746c;
+      --blue: #2e6885;
+      --green: #5e7c50;
+      --gold: #a67823;
+      --plum: #665986;
+      --wash-red: #f8e5df;
+      --wash-teal: #e1f0ec;
+      --wash-blue: #e6eff6;
+      --wash-green: #e9f1df;
+      --wash-gold: #f7ecd6;
+      --shadow: 0 24px 68px rgb(23 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(30 116 108 / 6%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(46 104 133 / 5%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 46px 46px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--red), var(--teal), var(--blue), var(--green), var(--gold), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure, blockquote, pre { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td, code { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 88%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.94fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--red);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.45rem, 5.7vw, 5.25rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      margin-top: 24px;
+      color: #303b42;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      object-fit: contain;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+      gap: 24px;
+      margin: 28px 0;
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 7%);
+    }
+
+    .quick-summary h2,
+    .section h2,
+    .sidebar h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-weight: 760;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+    }
+
+    .quick-summary p,
+    .section p,
+    .section li {
+      color: #334047;
+      font-size: 1.01rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .stats-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat {
+      min-height: 116px;
+      padding: 18px;
+      background: linear-gradient(135deg, #fff, var(--wash-teal));
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--teal);
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 760;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 270px;
+      gap: 46px;
+      align-items: start;
+    }
+
+    .content {
+      display: grid;
+      gap: 24px;
+      min-width: 0;
+    }
+
+    .section {
+      padding: 30px;
+      background: rgb(255 254 250 / 92%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 14px 36px rgb(23 33 38 / 5%);
+    }
+
+    .section h2 {
+      margin-bottom: 18px;
+      color: var(--ink);
+      font-size: clamp(1.72rem, 3.2vw, 2.55rem);
+    }
+
+    .section h3 {
+      color: var(--ink);
+      font-size: 1.02rem;
+      line-height: 1.35;
+    }
+
+    .section p + p,
+    .section p + .callout,
+    .section p + .table-wrap,
+    .section p + .card-grid,
+    .section p + .flow,
+    .section p + .timeline,
+    .section p + .template-grid,
+    .section p + .quote-box,
+    .section p + pre {
+      margin-top: 18px;
+    }
+
+    .section ul,
+    .section ol {
+      padding-left: 22px;
+    }
+
+    .section li + li { margin-top: 8px; }
+
+    .sidebar {
+      position: sticky;
+      top: 22px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .toc,
+    .note-card {
+      padding: 18px;
+      background: rgb(255 254 250 / 92%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .toc h2,
+    .note-card h2 {
+      margin-bottom: 12px;
+      color: var(--quiet);
+      font-size: 0.78rem;
+      font-family: inherit;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .toc nav {
+      display: grid;
+      gap: 9px;
+    }
+
+    .toc a {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .note-card p {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .callout {
+      padding: 18px;
+      background: var(--wash-blue);
+      border: 1px solid rgb(46 104 133 / 24%);
+      border-left: 6px solid var(--blue);
+      border-radius: 8px;
+    }
+
+    .callout.gold {
+      background: var(--wash-gold);
+      border-color: rgb(166 120 35 / 25%);
+      border-left-color: var(--gold);
+    }
+
+    .callout.green {
+      background: var(--wash-green);
+      border-color: rgb(94 124 80 / 25%);
+      border-left-color: var(--green);
+    }
+
+    .quote-box {
+      padding: 22px;
+      color: #263039;
+      background: linear-gradient(135deg, var(--wash-red), #fff);
+      border: 1px solid rgb(201 77 60 / 20%);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.28rem;
+      line-height: 1.55;
+    }
+
+    .card-grid,
+    .map,
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .three-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card,
+    .map-node,
+    .template-card {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card h3,
+    .map-node h3,
+    .template-card h3 {
+      margin-bottom: 8px;
+    }
+
+    .card p,
+    .map-node p,
+    .template-card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .map-node:nth-child(1) { background: var(--wash-teal); }
+    .map-node:nth-child(2) { background: var(--wash-blue); }
+    .map-node:nth-child(3) { background: var(--wash-gold); }
+    .map-node:nth-child(4) { background: var(--wash-green); }
+    .map-node:nth-child(5) { background: var(--wash-red); }
+    .map-node:nth-child(6) { background: #eeeaf6; }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .flow li {
+      min-height: 170px;
+      padding: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      margin-bottom: 12px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 50%;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .flow strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ink);
+      line-height: 1.25;
+    }
+
+    .flow span:last-child {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--ink);
+      background: #f8faf5;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    td {
+      color: #334047;
+      font-size: 0.94rem;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+    }
+
+    .time-item {
+      display: grid;
+      grid-template-columns: 82px minmax(0, 1fr);
+      gap: 14px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .time-item time {
+      color: var(--red);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .time-item h3 {
+      margin-bottom: 4px;
+    }
+
+    .time-item p {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    pre {
+      overflow-x: auto;
+      padding: 18px;
+      color: #243036;
+      background: #f9fbf6;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 10px;
+      padding-left: 20px;
+    }
+
+    footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 46px;
+      color: var(--quiet);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar { position: static; }
+      h1 { max-width: 14ch; }
+      .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .map,
+      .card-grid,
+      .template-grid,
+      .three-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .action-link { flex: 1 1 auto; }
+      .page { padding: 0 18px 56px; }
+      .hero { padding: 36px 0 34px; }
+      .quick-summary,
+      .section { padding: 20px; }
+      .stats-panel,
+      .card-grid,
+      .three-grid,
+      .template-grid,
+      .flow,
+      .map {
+        grid-template-columns: 1fr;
+      }
+
+      .time-item {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">Video Notes Library</a>
+    <div class="top-actions">
+      <a class="action-link" href="./index.html">All summaries</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=api-Z4TfDvM">Watch source</a>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="kicker">Langfuse + AWS AgentOps summary</p>
+        <h1 id="page-title">Continuous Agent Evaluation</h1>
+        <p class="subtitle">A detailed reading guide to Langfuse and AWS on continuous evaluation, monitoring, and operations of AI agents with Amazon Bedrock AgentCore, Langfuse, OpenTelemetry, offline experiments, CI/CD quality gates, and production feedback loops.</p>
+        <div class="meta">
+          <span><strong>Source:</strong> Langfuse</span>
+          <span><strong>Speakers:</strong> Marc Klingen and Aris Tsakpinis</span>
+          <span><strong>Length:</strong> about 82 minutes</span>
+          <span><strong>Transcript:</strong> 1,986 caption rows, about 13,772 words</span>
+        </div>
+      </div>
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/api-Z4TfDvM/hqdefault.jpg" alt="YouTube thumbnail for continuous evaluation and operations of AI agents with AWS Bedrock AgentCore and Langfuse">
+        <figcaption>Source video thumbnail. The original link starts around 53:35, where the talk explains experimentation, ephemeral agents, CI/CD QA, and promotion into production.</figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" id="executive-summary">
+      <div>
+        <h2>Executive Summary</h2>
+        <p>The session argues that agent development needs the same lifecycle discipline that DevOps brought to software, but adapted for probabilistic, tool-using AI systems. The speakers frame AgentOps as a combination of infrastructure, tooling, people, process, and culture. Their concrete blueprint uses Amazon Bedrock AgentCore as the runtime and operations layer, Langfuse as the tracing and evaluation layer, and OpenTelemetry as the common data transport.</p>
+        <ul class="summary-list">
+          <li><strong>AgentOps is an evolution of DevOps:</strong> overloaded mono-agents should be decomposed into smaller agent components that teams can own across the lifecycle.</li>
+          <li><strong>AgentCore provides production primitives:</strong> runtime, memory, gateway, identity, browser, code interpreter, and observability can be combined or used independently.</li>
+          <li><strong>Langfuse provides the tooling layer:</strong> tracing, monitoring, prompt management, datasets, experiments, annotation queues, and online or offline evaluations.</li>
+          <li><strong>OpenTelemetry is the bridge:</strong> traces from AgentCore-hosted agents can flow into Langfuse so teams can inspect LLM calls, tool calls, MCP interactions, latency, cost, and errors.</li>
+          <li><strong>Evaluation is a flywheel:</strong> production traces reveal failures, failures become dataset items, datasets power experiments, and passing variants move through CI/CD into production.</li>
+          <li><strong>The practical lifecycle has three stages:</strong> experimentation and HPO, QA/testing with CI/CD gates, and production operations with continuous monitoring.</li>
+        </ul>
+      </div>
+      <div class="stats-panel" aria-label="Summary stats">
+        <div class="stat"><strong>82m</strong><span>Technical session length</span></div>
+        <div class="stat"><strong>13.8k</strong><span>Transcript words</span></div>
+        <div class="stat"><strong>3</strong><span>Lifecycle stages</span></div>
+        <div class="stat"><strong>1</strong><span>Closed evaluation flywheel</span></div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <article class="content">
+        <section class="section" id="core-thesis">
+          <h2>Core Thesis</h2>
+          <p>The main thesis is that production agents cannot be managed as one-off demos. They need an operating model. The speakers compare the current agent moment to earlier software eras: teams first build one big thing, scope expands, maintenance gets hard, and eventually the system has to be decomposed into smaller parts with clear ownership, testing, deployment, monitoring, and incident learning.</p>
+          <p>For agents, the problem is harder because quality is not just uptime. A request can finish successfully at the infrastructure level while still being wrong, irrelevant, toxic, too expensive, too slow, or using the wrong tool. That is why tracing and evals must be continuous, not an afterthought at the end of development.</p>
+          <div class="quote-box">AgentOps means treating traces, evals, datasets, prompts, tools, and deployment gates as one continuous operating system.</div>
+        </section>
+
+        <section class="section" id="from-devops">
+          <h2>From DevOps To AgentOps</h2>
+          <p>The talk starts by showing how teams drift into overloaded mono-agents. A simple agent begins with one scope, then adds more tools, more subflows, more sub-agents, and more responsibilities. Eventually it becomes hard to reason about and hard to operate. The proposed response is similar to microservices: decompose the agent system into smaller agent components that a small team can own.</p>
+          <p>The DevOps analogy matters because the speakers do not define AgentOps as a dashboard. They define it as a system of ownership. The same team should be able to develop, deploy, evaluate, monitor, and improve the agent across its lifecycle.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Old agent pattern</th>
+                  <th>AgentOps pattern</th>
+                  <th>Why it matters</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>One overloaded mono-agent.</td>
+                  <td>Smaller agents and tools with clear ownership.</td>
+                  <td>Teams can test, trace, debug, and improve smaller responsibility boundaries.</td>
+                </tr>
+                <tr>
+                  <td>Evaluation done manually after launch.</td>
+                  <td>Continuous offline and online evaluation.</td>
+                  <td>Regression and production failures feed the next development cycle.</td>
+                </tr>
+                <tr>
+                  <td>Local notebooks and ad hoc demos.</td>
+                  <td>Cloud-hosted dev, test, and prod environments.</td>
+                  <td>Agents are tested in infrastructure close to the real target environment.</td>
+                </tr>
+                <tr>
+                  <td>Debugging by reading final answers.</td>
+                  <td>Tracing reasoning, tool calls, costs, latency, errors, and outputs.</td>
+                  <td>Teams can see where an agent failed, not only that it failed.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="agentcore">
+          <h2>AgentCore Production Primitives</h2>
+          <p>Aris presents Amazon Bedrock AgentCore as a modular set of primitives for building, deploying, and operating agents. The runtime hosts agent implementations in a serverless, scalable, secure way. Memory provides managed context. Gateway wraps APIs, Lambda functions, or MCP servers as tools. Identity gives agents a security model. Browser and code interpreter provide managed tools. Observability gives the operational layer required for tracing and debugging.</p>
+          <p>The practical point is that AgentCore is not only an agent framework. It is a production substrate around agents. Teams can bring different frameworks or models, then rely on managed runtime, security, tool access, and observability primitives.</p>
+          <div class="map" aria-label="AgentCore primitives map">
+            <div class="map-node">
+              <h3>Runtime</h3>
+              <p>Serverless, scalable hosting for agent implementations, regardless of chosen framework or model.</p>
+            </div>
+            <div class="map-node">
+              <h3>Memory</h3>
+              <p>Managed short-term and long-term context for more stateful agent interactions.</p>
+            </div>
+            <div class="map-node">
+              <h3>Gateway</h3>
+              <p>Turns APIs, Lambda functions, and MCP servers into governed tools agents can call.</p>
+            </div>
+            <div class="map-node">
+              <h3>Identity</h3>
+              <p>Gives agents a secure identity and access-management boundary.</p>
+            </div>
+            <div class="map-node">
+              <h3>Built-In Tools</h3>
+              <p>Managed browser and code interpreter capabilities for web and code execution tasks.</p>
+            </div>
+            <div class="map-node">
+              <h3>Observability</h3>
+              <p>Trace, debug, and monitor workflow steps, tool usage, latency, tokens, errors, and production behavior.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="langfuse">
+          <h2>Langfuse As The Tooling Layer</h2>
+          <p>Marc describes Langfuse as the LLM engineering platform layer: observability, production monitoring, tracing, prompt management, datasets, experiments, annotation, and evaluations. The important point for enterprise platforms is API-first interoperability. Teams can use SDKs, framework integrations, OpenTelemetry clients, gateway-level instrumentation, or direct APIs.</p>
+          <p>The talk emphasizes that nontechnical domain experts often need to collaborate on prompts and evaluation. That matters for your BA-side platform: the people who understand domain quality should not be blocked by raw code. They need controlled interfaces for prompts, datasets, labels, scoring, and review.</p>
+          <div class="card-grid three-grid">
+            <div class="card">
+              <h3>Tracing</h3>
+              <p>Inspect each execution: inputs, outputs, LLM calls, tool calls, errors, latency, token counts, and cost.</p>
+            </div>
+            <div class="card">
+              <h3>Prompt Management</h3>
+              <p>Version and collaborate on prompts so changes are reviewable and deployable.</p>
+            </div>
+            <div class="card">
+              <h3>Evaluation</h3>
+              <p>Run online and offline scores with human feedback, model-based evaluators, rule-based checks, and datasets.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="otel">
+          <h2>OpenTelemetry Connects The Stack</h2>
+          <p>The integration is powered by OpenTelemetry. AgentCore emits telemetry in an OTEL-compatible format, and Langfuse can receive OTEL traces through its ingestion endpoint. The demo shows configuring environment variables and adding a small amount of code so an AgentCore-hosted Strands agent sends traces to Langfuse.</p>
+          <p>This is a key architecture lesson: do not lock agent observability into one proprietary SDK if the platform needs to support multiple frameworks, teams, and languages. A common telemetry standard lets you plug in tracing, dashboards, quality evaluation, and data pipelines without rewriting every agent.</p>
+          <div class="callout">
+            <p><strong>Platform rule:</strong> instrument once, then reuse traces across local experiments, CI, production debugging, cost analysis, and evaluation datasets.</p>
+          </div>
+        </section>
+
+        <section class="section" id="evaluation-taxonomy">
+          <h2>Evaluation Taxonomy</h2>
+          <p>Marc lays out a practical evaluation taxonomy. Online evaluation uses production behavior: explicit feedback such as thumbs up and thumbs down, implicit feedback such as whether a user accepts or edits a suggestion, manual annotation, model-based scoring, and rule-based checks. Offline evaluation uses datasets and experiments to test changes before deployment.</p>
+          <p>The most important advice is to start with final response evaluation because it can stay stable while the implementation changes. Then add agent-specific checks such as trajectory evaluation, tool usage quality, safety or toxicity checks, cost, and latency.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Evaluation method</th>
+                  <th>Where it fits</th>
+                  <th>What it catches</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Explicit user feedback</td>
+                  <td>Production</td>
+                  <td>Direct user dissatisfaction, usefulness, or trust signals.</td>
+                </tr>
+                <tr>
+                  <td>Implicit user feedback</td>
+                  <td>Production</td>
+                  <td>Edits, acceptance, reverts, retries, abandoned flows, or human corrections.</td>
+                </tr>
+                <tr>
+                  <td>Manual annotation</td>
+                  <td>Online and offline</td>
+                  <td>Ground truth, evaluator alignment, and root-cause labels.</td>
+                </tr>
+                <tr>
+                  <td>LLM-as-a-judge</td>
+                  <td>Online and offline</td>
+                  <td>Flexible qualitative checks such as relevance, factuality, helpfulness, and toxicity.</td>
+                </tr>
+                <tr>
+                  <td>Rule-based checks</td>
+                  <td>Online and offline</td>
+                  <td>Deterministic requirements such as required fields, format, citations, or forbidden content.</td>
+                </tr>
+                <tr>
+                  <td>Trajectory evaluation</td>
+                  <td>Agent-specific testing</td>
+                  <td>Whether the agent chose the right tools, sequence, and intermediate reasoning path.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="flywheel">
+          <h2>The Continuous Evaluation Flywheel</h2>
+          <p>The operating model is a closed loop. Offline, the team maintains datasets covering happy paths, edge cases, and adversarial inputs. They run experiments against those datasets, compare quality/cost/latency, and deploy the best candidates. Online, they trace real user behavior, monitor quality, sample traces into annotation queues, and add new production failures back into the dataset.</p>
+          <p>This prevents eval datasets from becoming stale. Without production feedback, test sets quickly stop matching real user behavior. The flywheel keeps the evaluation system honest because it continuously absorbs the mistakes users actually experience.</p>
+          <ol class="flow" aria-label="Continuous evaluation flywheel">
+            <li><span class="step-number">1</span><strong>Collect Data</strong><span>Capture traces, user feedback, errors, latency, cost, and tool behavior.</span></li>
+            <li><span class="step-number">2</span><strong>Annotate</strong><span>Review sampled traces and classify failures into reusable categories.</span></li>
+            <li><span class="step-number">3</span><strong>Update Dataset</strong><span>Turn real production failures into test items, edge cases, and adversarial cases.</span></li>
+            <li><span class="step-number">4</span><strong>Experiment</strong><span>Try model, prompt, tool, logic, and hyperparameter variants against the dataset.</span></li>
+            <li><span class="step-number">5</span><strong>Gate</strong><span>Use CI/CD quality thresholds before production promotion.</span></li>
+            <li><span class="step-number">6</span><strong>Monitor</strong><span>Watch production traces and online evaluators after deployment.</span></li>
+          </ol>
+        </section>
+
+        <section class="section" id="environments">
+          <h2>Multi-Environment Setup</h2>
+          <p>Aris strongly recommends separate dev, test, and production environments. This is partly for engineering discipline and partly for data security. Teams should avoid experimenting in production and should avoid casually using production data for development when policy or privacy does not allow it.</p>
+          <p>He also argues for cloud-native development early, especially when the production target is a cloud environment with managed tools and remote dependencies. The goal is to avoid spending weeks building something that only works on a laptop and fails once deployed into the actual runtime.</p>
+          <div class="callout gold">
+            <p><strong>Practical read:</strong> for enterprise agents, "works locally" is not enough. The agent must work where the tools, permissions, network paths, telemetry, and security controls actually live.</p>
+          </div>
+        </section>
+
+        <section class="section" id="hpo">
+          <h2>Experimentation And HPO</h2>
+          <p>The timestamp in the user's link lands in this part of the talk. The speakers describe a cloud-based experimentation and hyperparameter optimization phase. Instead of guessing which model, prompt, and configuration is best, the team deploys a fleet of ephemeral agents, each with a different combination, evaluates them against a golden dataset, compares quality, latency, and cost, then tears down the temporary agents.</p>
+          <p>The sample repository implements this with an <code>experimentation/hpo.py</code> script and configuration files that define combinations such as models and system prompts. The important design pattern is the use of ephemeral infrastructure: create only what is needed for the experiment, collect the results, then clean up resources to control cost and reduce clutter.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Experiment variable</th>
+                  <th>Example</th>
+                  <th>Evaluation signal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Model</td>
+                  <td>Different foundation models or model sizes.</td>
+                  <td>Quality, cost, latency, tool success, and hallucination rate.</td>
+                </tr>
+                <tr>
+                  <td>Prompt</td>
+                  <td>Different system prompts, language policies, or role instructions.</td>
+                  <td>Final response factuality, tone, relevance, and compliance.</td>
+                </tr>
+                <tr>
+                  <td>Tool set</td>
+                  <td>Different MCP tools or APIs exposed to the agent.</td>
+                  <td>Tool selection accuracy, tool call success, and unwanted tool usage.</td>
+                </tr>
+                <tr>
+                  <td>Runtime configuration</td>
+                  <td>Timeouts, memory, concurrency, retry strategy, and guardrail settings.</td>
+                  <td>Reliability, speed, cost, failure rate, and user experience.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="cicd">
+          <h2>QA And CI/CD Gates</h2>
+          <p>After experimentation finds a promising configuration, the system moves into QA and testing. The example uses GitHub Actions, but the architecture is tool-agnostic. A pipeline deploys an ephemeral agent in the test environment, runs evaluation on a dataset, checks whether the score passes a threshold, cleans up the test agent, and only then deploys the persistent production agent.</p>
+          <p>This is where agent quality becomes operational, not subjective. A prompt change, model change, tool description change, or code change should not reach production just because it looks better in one manual run. It should pass the expected thresholds on a representative dataset.</p>
+          <ol class="flow" aria-label="CI/CD quality gate">
+            <li><span class="step-number">1</span><strong>Push Code</strong><span>A repository change triggers the pipeline.</span></li>
+            <li><span class="step-number">2</span><strong>Deploy Test Agent</strong><span>Create an ephemeral runtime in the test environment.</span></li>
+            <li><span class="step-number">3</span><strong>Run Evals</strong><span>Execute dataset cases with factuality, toxicity, trajectory, cost, and latency checks.</span></li>
+            <li><span class="step-number">4</span><strong>Check Threshold</strong><span>Block promotion when scores fall below the required bar.</span></li>
+            <li><span class="step-number">5</span><strong>Clean Up</strong><span>Delete ephemeral resources to manage cost and inventory.</span></li>
+            <li><span class="step-number">6</span><strong>Deploy Prod</strong><span>Promote only passing versions into persistent production runtime.</span></li>
+          </ol>
+        </section>
+
+        <section class="section" id="production">
+          <h2>Production Operations</h2>
+          <p>Production operations close the loop. The demo includes simulated production users and online evaluation such as toxicity checks. The agent receives both regular prompts and harmful prompts, traces flow into the observability layer, and evaluators score incoming production behavior. Teams can inspect flagged traces and decide whether to add them to datasets, update prompts, change tools, or adjust guardrails.</p>
+          <p>The key cultural point is that production monitoring is not only for uptime. It is also for product quality. A live agent needs quality alerts, trace review, evaluator drift checks, user-feedback review, and a queue for turning real failures into future regression tests.</p>
+          <div class="callout green">
+            <p><strong>Production rule:</strong> every serious production incident should produce at least one reusable eval case or runbook update.</p>
+          </div>
+        </section>
+
+        <section class="section" id="annotation">
+          <h2>Annotation Queues And Human Review</h2>
+          <p>Manual annotation is described as tedious but necessary. Teams often want to skip it, but without human labels it is difficult to trust automated evaluators or understand new failure categories. Annotation queues let humans review sampled traces, label errors, add comments, and feed better examples into datasets.</p>
+          <p>For a BA-facing platform, this is especially important. Business users can become reviewers of agent behavior without writing code. They can classify whether an answer is correct, whether a tool was appropriate, whether the output violated policy, or whether the agent missed domain context.</p>
+        </section>
+
+        <section class="section" id="platform-translation">
+          <h2>Translation For Your Agentic AI Platform</h2>
+          <p>This video maps directly to the platform you are building. It gives a practical operating model for Master Agents, Sub-Agents, Skills, Tools, and MCP. The main lesson is that the platform should not only let BA users compose agents. It must also let them define eval datasets, review traces, approve promotion gates, and feed production failures back into workflows.</p>
+          <p>A good BA experience would let a non-engineer define the business flow, expected outputs, allowed tools, failure labels, golden examples, edge cases, and production review workflow. Engineering then provides the runtime, observability, tool integration, permissions, and deployment pipeline.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>AgentOps concept</th>
+                  <th>Your platform object</th>
+                  <th>BA-side artifact</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Golden dataset</td>
+                  <td>Workflow test suite</td>
+                  <td>Happy paths, edge cases, and unacceptable outputs.</td>
+                </tr>
+                <tr>
+                  <td>Trace</td>
+                  <td>Agent execution record</td>
+                  <td>Readable timeline of intent, decisions, tool calls, and final output.</td>
+                </tr>
+                <tr>
+                  <td>Evaluator</td>
+                  <td>Quality policy</td>
+                  <td>Correctness, policy compliance, citation, tone, completion, and risk checks.</td>
+                </tr>
+                <tr>
+                  <td>CI/CD threshold</td>
+                  <td>Promotion gate</td>
+                  <td>Minimum score required before a workflow moves to production.</td>
+                </tr>
+                <tr>
+                  <td>Annotation queue</td>
+                  <td>Human review queue</td>
+                  <td>Business reviewer labels and comments that improve the next version.</td>
+                </tr>
+                <tr>
+                  <td>Production monitoring</td>
+                  <td>Operational dashboard</td>
+                  <td>Quality, latency, cost, error rate, tool failures, and user feedback.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="templates">
+          <h2>Reusable Templates</h2>
+          <p>These templates translate the session into artifacts for your agentic platform design.</p>
+          <div class="template-grid">
+            <div class="template-card">
+              <h3>AgentOps Workflow Spec</h3>
+              <pre><code># AgentOps Workflow Spec
+
+Workflow:
+Owner:
+Business outcome:
+
+Agent composition:
+- Master Agent:
+- Sub-Agents:
+- Skills:
+- Tools/MCP:
+
+Environments:
+- DEV:
+- TST:
+- PRD:
+
+Data:
+- Allowed production data:
+- Synthetic data:
+- Redacted data:
+
+Observability:
+- Required trace fields:
+- Cost metrics:
+- Latency metrics:
+- Tool-call metrics:
+
+Promotion gate:
+- Required evals:
+- Minimum scores:
+- Human approval:
+- Rollback trigger:
+</code></pre>
+            </div>
+            <div class="template-card">
+              <h3>Golden Dataset Item</h3>
+              <pre><code># Golden Dataset Item
+
+ID:
+Workflow stage:
+User role:
+
+Input:
+- User message:
+- Context:
+- Files:
+- Tool state:
+
+Expected behavior:
+- Correct answer:
+- Required tool calls:
+- Forbidden tool calls:
+- Required citations:
+
+Scoring:
+- Correctness:
+- Completeness:
+- Safety:
+- Tool usage:
+- Cost/latency:
+
+Failure labels:
+- Hallucination
+- Wrong tool
+- Missing context
+- Policy violation
+- Too slow
+</code></pre>
+            </div>
+            <div class="template-card">
+              <h3>CI/CD Eval Gate</h3>
+              <pre><code># CI/CD Eval Gate
+
+Trigger:
+- Code change
+- Prompt change
+- Tool description change
+- Model change
+
+Test environment:
+- Runtime:
+- Model:
+- Tool permissions:
+
+Dataset:
+- Name:
+- Version:
+- Size:
+
+Evaluators:
+- Final response:
+- Trajectory:
+- Toxicity:
+- Citation:
+- Domain-specific:
+
+Thresholds:
+- Must pass:
+- Warning:
+- Block deployment:
+
+Actions:
+- Deploy ephemeral agent
+- Run evaluation
+- Save report
+- Delete ephemeral agent
+- Promote only if passed
+</code></pre>
+            </div>
+            <div class="template-card">
+              <h3>Production Feedback Intake</h3>
+              <pre><code># Production Feedback Intake
+
+Trace ID:
+User:
+Workflow:
+Date:
+
+Signal:
+- Explicit feedback:
+- Implicit behavior:
+- Error:
+- Cost spike:
+- Latency spike:
+- Human reviewer flag:
+
+Root cause:
+- Prompt
+- Tool
+- Memory
+- Data
+- Model
+- Permissions
+- UX
+
+Action:
+- Add dataset item:
+- Update prompt:
+- Update tool schema:
+- Add guardrail:
+- Create runbook item:
+- Escalate:
+
+Verification:
+- Eval added:
+- Regression tested:
+- Production monitored:
+</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="timeline">
+          <h2>Structured Timeline</h2>
+          <p>This timeline follows the main conceptual sections of the 82-minute session.</p>
+          <div class="timeline">
+            <div class="time-item">
+              <time>00:00</time>
+              <div>
+                <h3>Session setup</h3>
+                <p>Marc and Aris introduce the workshop on continuous evaluation, monitoring, and operations of agents with AgentCore and Langfuse.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>03:30</time>
+              <div>
+                <h3>From mono-agents to micro-agents</h3>
+                <p>The talk compares agent system evolution to software's move from monoliths to smaller components owned by focused teams.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>10:00</time>
+              <div>
+                <h3>Example Langfuse developer copilot</h3>
+                <p>The demo scenario is an agent that helps developers answer questions about Langfuse using a documentation MCP server.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>15:00</time>
+              <div>
+                <h3>AgentCore primitives</h3>
+                <p>Aris explains runtime, memory, gateway, identity, browser, code interpreter, and observability as modular production building blocks.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>20:00</time>
+              <div>
+                <h3>Langfuse tooling layer</h3>
+                <p>Marc explains tracing, prompt management, monitoring, datasets, experiments, manual annotation, and evaluation methods.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>30:00</time>
+              <div>
+                <h3>OpenTelemetry integration</h3>
+                <p>The demo shows environment variables and code changes that route AgentCore traces into Langfuse through OTEL.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>35:00</time>
+              <div>
+                <h3>Evaluation methods</h3>
+                <p>The session covers user feedback, implicit feedback, manual annotation, model-based evals, rule-based checks, final response evals, and trajectory evals.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>45:00</time>
+              <div>
+                <h3>Offline-online flywheel</h3>
+                <p>Production traces feed datasets; datasets power experiments; passing variants are deployed and monitored again.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>50:00</time>
+              <div>
+                <h3>Multi-environment operations</h3>
+                <p>Aris recommends separated dev, test, and production environments and cloud-native experimentation.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>53:35</time>
+              <div>
+                <h3>Experimentation and HPO</h3>
+                <p>The timestamped section explains deploying fleets of ephemeral agents with different hyperparameters, evaluating them, and tearing them down.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>65:00</time>
+              <div>
+                <h3>CI/CD QA gate</h3>
+                <p>A GitHub Actions pipeline deploys a test agent, runs evals, checks thresholds, cleans up, and promotes only passing versions.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>75:00</time>
+              <div>
+                <h3>Production operations</h3>
+                <p>The demo simulates users, online toxicity evaluation, trace inspection, and annotation queues for continuous improvement.</p>
+              </div>
+            </div>
+            <div class="time-item">
+              <time>80:00</time>
+              <div>
+                <h3>Wrap-up</h3>
+                <p>The conclusion emphasizes the conceptual flywheel as tool-independent, with AgentCore and Langfuse offered as a practical reference stack.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="my-read">
+          <h2>My Read</h2>
+          <p>This is one of the more directly useful videos for your agentic AI platform. It gives you the missing operational half of Master Agent, Sub-Agent, Skill, and Tool/MCP design. Building the agent graph is only half the product. The other half is proving that the graph still works after prompts, tools, models, datasets, user behavior, and business rules change.</p>
+          <p>The strongest idea to borrow is the promotion model: every agent workflow should move from experiment to test to production through explicit datasets, eval scores, trace review, and human approval when needed. For BA users, the platform should hide the infrastructure complexity but expose the quality artifacts: test cases, failure labels, review queues, and promotion gates.</p>
+        </section>
+
+        <section class="section" id="sources">
+          <h2>Sources And Confidence</h2>
+          <p>This page is based primarily on the extracted YouTube captions, then cross-checked with official Langfuse and AWS documentation plus the public example repository. The YouTube transcript uses auto-caption phrasing in a few places, so product names were normalized to their official spellings where possible.</p>
+          <ul class="source-list">
+            <li><a href="https://www.youtube.com/watch?v=api-Z4TfDvM">Continuous Evaluation, Monitoring, and Operations of AI Agents with AWS Bedrock AgentCore &amp; Langfuse</a> - source YouTube video.</li>
+            <li><a href="https://www.youtube.com/@langfuse">Langfuse YouTube channel</a> - source channel.</li>
+            <li><a href="https://github.com/aristsakpinis93/agentcore-langfuse-continous-eval-loop">Example repository: agentcore-langfuse-continous-eval-loop</a> - reference implementation for experimentation, CI/CD, and production monitoring.</li>
+            <li><a href="https://langfuse.com/integrations/frameworks/amazon-agentcore">Langfuse integration guide for Amazon Bedrock AgentCore</a> - OpenTelemetry tracing setup and integration notes.</li>
+            <li><a href="https://langfuse.com/changelog/2025-11-04-amazon-bedrock-agentcore-integration">Langfuse AgentCore integration changelog</a> - integration announcement and capabilities.</li>
+            <li><a href="https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-agentcore-observability-with-langfuse/">AWS blog: Amazon Bedrock AgentCore Observability with Langfuse</a> - implementation guide and architecture overview.</li>
+            <li><a href="https://docs.aws.amazon.com/bedrock-agentcore/">Amazon Bedrock AgentCore documentation</a> - official service documentation and component overview.</li>
+            <li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html">AgentCore Evaluations documentation</a> - official evaluation feature documentation.</li>
+            <li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability.html">AgentCore Observability documentation</a> - official observability feature documentation.</li>
+          </ul>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Table of contents">
+        <div class="toc">
+          <h2>Read By Topic</h2>
+          <nav>
+            <a href="#executive-summary">Executive Summary</a>
+            <a href="#core-thesis">Core Thesis</a>
+            <a href="#from-devops">DevOps To AgentOps</a>
+            <a href="#agentcore">AgentCore</a>
+            <a href="#langfuse">Langfuse</a>
+            <a href="#otel">OpenTelemetry</a>
+            <a href="#evaluation-taxonomy">Eval Taxonomy</a>
+            <a href="#flywheel">Flywheel</a>
+            <a href="#environments">Environments</a>
+            <a href="#hpo">HPO</a>
+            <a href="#cicd">CI/CD Gates</a>
+            <a href="#production">Production</a>
+            <a href="#annotation">Annotation</a>
+            <a href="#platform-translation">Platform Translation</a>
+            <a href="#templates">Templates</a>
+            <a href="#timeline">Timeline</a>
+            <a href="#my-read">My Read</a>
+            <a href="#sources">Sources</a>
+          </nav>
+        </div>
+        <div class="note-card">
+          <h2>Best Use</h2>
+          <p>Use this page as the operating model for agent quality: traces, datasets, HPO, CI/CD gates, online monitoring, and production feedback.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer>
+    Summary generated from the public YouTube transcript and supporting public documentation. Built as a standalone resource page for the local video notes library.
+  </footer>
+</body>
+</html>

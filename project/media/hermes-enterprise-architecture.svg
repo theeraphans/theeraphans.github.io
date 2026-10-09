@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1360" viewBox="0 0 1600 1360" role="img" aria-labelledby="hermes-image-title hermes-image-desc">
+<title id="hermes-image-title">Hermes Enterprise system architecture</title>
+<desc id="hermes-image-desc">Agent specifications move from the Next.js portal to the FastAPI factory lifecycle and published team configuration. Chat requests pass through backend authentication and ownership checks to Hermes runtime teams. The backend retrieves document knowledge through Cognee; the runtime uses configured Honcho memory. Events return through FastAPI SSE to the portal. This is local development, with enterprise hardening ongoing.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10" fill="none" stroke="#1d5b48" stroke-width="2"/></marker></defs>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#12211d}.kicker{font-size:18px;font-weight:700;letter-spacing:2px;fill:#1d5b48}.title{font-size:44px;font-weight:700}.lane{font-size:28px;font-weight:700}.label{font-size:18px;fill:#1d5b48}.heading{font-size:28px;font-weight:700}.body{font-size:23px;fill:#52605a}.note{font-size:21px;fill:#52605a}.edge{fill:none;stroke:#1d5b48;stroke-width:2.5;marker-end:url(#arrow)}</style>
+<rect width="1600" height="1360" fill="#edf3ef"/>
+<rect x="24" y="24" width="1552" height="1312" rx="20" fill="#fbfaf6" stroke="#ccd7cf"/>
+
+<text x="60" y="76" class="kicker">HERMES ENTERPRISE / LOCAL DEVELOPMENT</text>
+<text x="60" y="134" class="title">Design agents. Run governed conversations.</text>
+<text x="60" y="176" class="note">Component responsibilities and request flows · high-level implementation view</text>
+<text x="60" y="230" class="lane">01  CONFIGURE &amp; PUBLISH</text>
+<rect x="60" y="265" width="360" height="205" rx="12" fill="#ffffff" stroke="#ccd7cf" stroke-width="2"/>
+<text x="84" y="299" class="label">NEXT.JS / USER INTERFACE</text>
+<text x="84" y="342" class="heading">Agent Factory UI</text>
+<text x="84" y="383" class="body">Define agent specifications</text>
+<text x="84" y="413" class="body">Review validation results</text>
+<text x="84" y="443" class="body">Review sandbox runs</text>
+<rect x="620" y="265" width="360" height="205" rx="12" fill="#e9f3ec" stroke="#1d5b48" stroke-width="2"/>
+<text x="644" y="299" class="label">FASTAPI / APPLICATION LAYER</text>
+<text x="644" y="342" class="heading">Factory lifecycle</text>
+<text x="644" y="383" class="body">Store and validate versions</text>
+<text x="644" y="413" class="body">Passing sandbox → publish</text>
+<text x="644" y="443" class="body">Version history + rollback</text>
+<rect x="1180" y="265" width="360" height="205" rx="12" fill="#ffffff" stroke="#ccd7cf" stroke-width="2"/>
+<text x="1204" y="299" class="label">WORKSPACE CONFIGURATION</text>
+<text x="1204" y="342" class="heading">Published team profiles</text>
+<text x="1204" y="383" class="body">Select published agents</text>
+<text x="1204" y="413" class="body">Resolve profiles and policy</text>
+<text x="1204" y="443" class="body">Pin the team configuration</text>
+<path d="M420 365 L620 365" class="edge"/>
+<text x="460" y="345" class="label">Specification</text>
+<path d="M980 365 L1180 365" class="edge"/>
+<text x="1008" y="345" class="label">Published version</text>
+<text x="60" y="510" class="note">Sandbox runs use Hermes. Publishing makes a version available; execution starts separately.</text>
+<path d="M1360 470 L1360 620" class="edge"/>
+<text x="1380" y="553" class="label">Selected profiles</text>
+<text x="60" y="585" class="lane">02  EXECUTE A CHAT REQUEST</text>
+<rect x="60" y="620" width="360" height="205" rx="12" fill="#ffffff" stroke="#ccd7cf" stroke-width="2"/>
+<text x="84" y="654" class="label">BROWSER BOUNDARY</text>
+<text x="84" y="697" class="heading">Next.js portal</text>
+<text x="84" y="738" class="body">Send user message</text>
+<text x="84" y="768" class="body">Show streamed answers</text>
+<text x="84" y="798" class="body">Review tool approvals</text>
+<rect x="620" y="620" width="360" height="205" rx="12" fill="#e9f3ec" stroke="#1d5b48" stroke-width="2"/>
+<text x="644" y="654" class="label">API / OWNERSHIP BOUNDARY</text>
+<text x="644" y="697" class="heading">FastAPI backend</text>
+<text x="644" y="738" class="body">Verify identity + ownership</text>
+<text x="644" y="768" class="body">Add relevant knowledge</text>
+<text x="644" y="798" class="body">Forward context and policy</text>
+<rect x="1180" y="620" width="360" height="205" rx="12" fill="#ffffff" stroke="#ccd7cf" stroke-width="2"/>
+<text x="1204" y="654" class="label">EXECUTION BOUNDARY</text>
+<text x="1204" y="697" class="heading">Hermes runtime teams</text>
+<text x="1204" y="738" class="body">Main agent + delegation</text>
+<text x="1204" y="768" class="body">Policy-constrained tools</text>
+<text x="1204" y="798" class="body">Configured memory provider</text>
+<path d="M420 720 L620 720" class="edge"/>
+<text x="460" y="700" class="label">Signed request</text>
+<path d="M980 720 L1180 720" class="edge"/>
+<text x="1010" y="700" class="label">Context + policy</text>
+<path d="M800 825 L800 900" class="edge" marker-start="url(#arrow)"/>
+<text x="820" y="865" class="label">Retrieve documents</text>
+<path d="M1360 825 L1360 900" class="edge" marker-start="url(#arrow)"/>
+<text x="1380" y="865" class="label">Read / maintain</text>
+<rect x="620" y="900" width="360" height="160" rx="12" fill="#ffffff" stroke="#1d5b48" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="644" y="934" class="label">BACKEND ↔ KNOWLEDGE</text>
+<text x="644" y="977" class="heading">Document knowledge</text>
+<text x="644" y="1018" class="body">Cognee integration</text>
+<text x="644" y="1048" class="body">User-owned document context</text>
+<rect x="1180" y="900" width="360" height="160" rx="12" fill="#ffffff" stroke="#1d5b48" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="1204" y="934" class="label">RUNTIME ↔ MEMORY</text>
+<text x="1204" y="977" class="heading">Honcho memory</text>
+<text x="1204" y="1018" class="body">Configured memory integration</text>
+<text x="1204" y="1048" class="body">Context across conversations</text>
+<text x="60" y="928" class="heading">Separate context services</text>
+<text x="60" y="970" class="note">Used when configured.</text>
+<text x="60" y="1004" class="note">Knowledge and memory are</text>
+<text x="60" y="1036" class="note">not a mandatory serial chain.</text>
+<rect x="60" y="1104" width="1480" height="84" rx="12" fill="#e9f3ec"/>
+<text x="84" y="1155" class="kicker">RESPONSE</text>
+<text x="245" y="1155" class="body">Hermes events → FastAPI SSE relay + activity storage → Next.js portal</text>
+<text x="60" y="1240" class="note">Local implementation: enterprise SSO, broader RBAC, multi-user validation and production hardening ongoing.</text>
+<text x="60" y="1280" class="note">Service credentials remain behind backend/runtime boundaries. Public enterprise repository and demo unreleased.</text>
+</svg>

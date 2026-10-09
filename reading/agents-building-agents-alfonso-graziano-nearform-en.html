@@ -1,0 +1,995 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Agents Building Agents - Alfonso Graziano, Nearform - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172027;
+      --muted: #607078;
+      --paper: #fffefa;
+      --wash: #f1f4f6;
+      --line: #d5dce0;
+      --teal: #14746f;
+      --blue: #2e5f86;
+      --coral: #c85245;
+      --gold: #a87925;
+      --violet: #665b8b;
+      --charcoal: #21313a;
+      --shadow: 0 24px 62px rgb(23 32 39 / 12%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgb(20 116 111 / 8%) 0 25%, transparent 25% 50%, rgb(46 95 134 / 7%) 50% 75%, transparent 75%),
+        var(--wash);
+      background-size: 38px 38px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--coral), var(--gold));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 82%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 760;
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 820px;
+      margin-top: 24px;
+      color: #2e3940;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.16rem, 2.1vw, 1.55rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e7edf0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 84%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: rgb(255 255 255 / 88%);
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .stat {
+      padding: 14px;
+      color: var(--ink);
+      background: #fff;
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--coral);
+      font-size: 1.65rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 238px minmax(0, 1fr);
+      gap: 40px;
+      align-items: start;
+      margin-top: 38px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 6px;
+      padding: 16px;
+      background: rgb(255 255 255 / 78%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .toc span {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 750;
+      text-decoration: none;
+      border-top: 1px solid rgb(213 220 224 / 76%);
+    }
+
+    .content {
+      display: grid;
+      gap: 28px;
+      min-width: 0;
+    }
+
+    .section {
+      min-width: 0;
+      padding: 34px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; padding-top: 0; }
+
+    .label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      max-width: 880px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 4.2vw, 3.45rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      max-width: 900px;
+      margin-top: 14px;
+      color: #2e3940;
+      font-size: 1.08rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      margin-bottom: 12px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .flow-step {
+      position: relative;
+      min-width: 0;
+      padding: 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 30px rgb(23 32 39 / 6%);
+    }
+
+    .flow-step::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -10px;
+      width: 10px;
+      height: 2px;
+      background: var(--line);
+    }
+
+    .flow-step:last-child::after { display: none; }
+
+    .flow-step b {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--coral);
+      font-size: 0.8rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .ladder {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+      counter-reset: step;
+    }
+
+    .ladder-step {
+      display: grid;
+      grid-template-columns: 56px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      counter-increment: step;
+    }
+
+    .ladder-step::before {
+      content: counter(step, decimal-leading-zero);
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      color: #fff;
+      background: var(--blue);
+      border-radius: 50%;
+      font-weight: 950;
+    }
+
+    .ladder-step p {
+      margin-top: 5px;
+      color: var(--muted);
+    }
+
+    .table-wrap {
+      min-width: 0;
+      margin-top: 24px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: #fff;
+      background: var(--blue);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    td {
+      color: #344047;
+      font-size: 0.95rem;
+    }
+
+    .quote {
+      margin-top: 24px;
+      padding: 22px;
+      color: #fff;
+      background: var(--violet);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.25rem, 2.5vw, 1.9rem);
+      line-height: 1.35;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 14px 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 46px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .toc { position: static; }
+
+      .grid,
+      .two,
+      .tldr,
+      .flow {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .page { padding-inline: 16px; }
+
+      .hero {
+        padding-top: 36px;
+        gap: 28px;
+      }
+
+      h1 {
+        max-width: 10ch;
+        font-size: clamp(2.7rem, 14vw, 4.35rem);
+      }
+
+      .grid,
+      .two,
+      .tldr,
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-step::after {
+        top: auto;
+        right: auto;
+        left: 24px;
+        bottom: -10px;
+        width: 2px;
+        height: 10px;
+      }
+
+      .ladder-step {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./">YouTube Extractor</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#autoagent">AutoAgent Loop</a>
+      <a class="action-link" href="#harness">Harness</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=aHhB3sjGjkI">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Agent Engineering</span>
+        <h1>Agents Can Improve Agents When the Harness Is Strong</h1>
+        <p class="subtitle">
+          A practical summary of Alfonso Graziano's talk on using coding agents, spec-driven development, golden datasets,
+          live traces, and human review to make AI agents more reliable and secure over time.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> Agents Building Agents - Alfonso Graziano, Nearform</span>
+          <span><strong>Creator:</strong> AI Engineer</span>
+          <span><strong>Transcript:</strong> 4,742 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/aHhB3sjGjkI/hqdefault.jpg" alt="Video thumbnail for Agents Building Agents">
+        <figcaption>
+          Source video from AI Engineer featuring Alfonso Graziano of Nearform on agent optimization workflows.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="quick-summary-title">
+      <div>
+        <h2 id="quick-summary-title">The Short Version</h2>
+        <p>
+          The talk argues that AI agents should be improved like software systems, not tuned by guesswork.
+          Build a golden dataset, define scorers, run evals, let a coding agent propose changes, measure the result,
+          roll back regressions, and convert production failures into future tests.
+        </p>
+        <ul class="tldr">
+          <li>Agents fail because of missing tools, weak prompts, poor retrieval, and messy live data.</li>
+          <li>A coding agent can optimize another agent when evals, traces, and constraints are explicit.</li>
+          <li>The real unlock is harness engineering: specs, quality gates, context, observability, and governance.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Talk facts">
+        <div class="stat"><strong>18% -> 83%</strong><span>toy agent eval lift</span></div>
+        <div class="stat"><strong>67% -> 86%</strong><span>real agent eval lift</span></div>
+        <div class="stat"><strong>114</strong><span>live traces example</span></div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Table of contents">
+        <span>Read</span>
+        <a href="#problem">Why agents fail</a>
+        <a href="#evals">Golden datasets</a>
+        <a href="#autoagent">AutoAgent loop</a>
+        <a href="#live-data">Live data loop</a>
+        <a href="#failure-reports">Failure reports</a>
+        <a href="#harness">Harness engineering</a>
+        <a href="#platform">Platform takeaways</a>
+      </nav>
+
+      <article class="content">
+        <section class="section" id="problem">
+          <span class="label">Problem</span>
+          <h2>Everyone wants agents, but agents create a new reliability problem</h2>
+          <p class="lead">
+            Alfonso starts with the obvious market demand: agents for workflow automation, search, and business use cases.
+            But agents are non-deterministic, can hallucinate, can be slow, can be expensive, and can behave differently on live user data than they do in controlled tests.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Failure</span>
+              <h3>Missing tools</h3>
+              <p>If an agent is expected to fetch a page, update a record, or search a system, the tool must exist and be described clearly.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Failure</span>
+              <h3>Weak system prompt</h3>
+              <p>The system prompt carries domain instructions, boundaries, and expected behavior. Small gaps can create large eval failures.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Failure</span>
+              <h3>Poor context retrieval</h3>
+              <p>The agent may know it needs information, but not where to look or which secure retrieval tool to call.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Failure</span>
+              <h3>Non-determinism</h3>
+              <p>Traditional unit-test thinking is not enough because outputs, tool choices, and reasoning paths can vary.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Failure</span>
+              <h3>Live data messiness</h3>
+              <p>Real users produce wider, noisier, and less predictable cases than the team initially includes in evals.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Failure</span>
+              <h3>Blind production</h3>
+              <p>Without traces, feedback, and observability, the team cannot tell why an agent failed or how to fix it.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="evals">
+          <span class="label">Evals</span>
+          <h2>A golden dataset is the test suite for a non-deterministic system</h2>
+          <p class="lead">
+            The talk defines a golden dataset as a file or set of files created with subject matter experts.
+            Each case records the input and the expected behavior. The expected output can be a final answer,
+            a number, a tool call, a tool call with specific parameters, or a chain of tool calls.
+          </p>
+
+          <div class="flow" aria-label="Golden dataset workflow">
+            <div class="flow-step"><b>Input</b><span>Define what the agent receives from a user, system, or workflow.</span></div>
+            <div class="flow-step"><b>Expected</b><span>Specify answer, tool call, parameter, or behavior with SME help.</span></div>
+            <div class="flow-step"><b>Scorer</b><span>Create one or more scoring functions for pass rate and quality.</span></div>
+            <div class="flow-step"><b>Baseline</b><span>Run the evals once to see current accuracy and failure classes.</span></div>
+            <div class="flow-step"><b>Improve</b><span>Change prompt, tools, retrieval, or code based on evidence.</span></div>
+            <div class="flow-step"><b>Regressions</b><span>Track changes over time so fixes do not break old behavior.</span></div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Eval object</th>
+                  <th>What it means</th>
+                  <th>Why it matters</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Golden dataset</td>
+                  <td>Curated examples of inputs and expected outputs or behaviors.</td>
+                  <td>Gives the agent team a shared definition of correctness.</td>
+                </tr>
+                <tr>
+                  <td>Scorer</td>
+                  <td>Logic that judges whether an output, action, or tool chain passed.</td>
+                  <td>Turns subjective behavior into measurable improvement.</td>
+                </tr>
+                <tr>
+                  <td>Baseline report</td>
+                  <td>A snapshot of current pass rate, failures, and working cases.</td>
+                  <td>Gives the coding agent enough context to decide what to fix first.</td>
+                </tr>
+                <tr>
+                  <td>Regression suite</td>
+                  <td>Past failures that must not return after future changes.</td>
+                  <td>Lets the system improve without quietly losing previous capabilities.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="autoagent">
+          <span class="label">AutoAgent</span>
+          <h2>The core pattern is an optimization loop around a target agent</h2>
+          <p class="lead">
+            Alfonso describes AutoAgent: a coding agent that changes another agent, runs evals, reads reports and traces,
+            proposes hypotheses, and keeps or rolls back changes based on measured results. In the demo-style example,
+            a naive agent improves from 18% to 83% pass rate in about 10 iterations.
+          </p>
+
+          <div class="ladder" aria-label="AutoAgent loop">
+            <article class="ladder-step">
+              <div>
+                <h3>Create an optimization job</h3>
+                <p>Use a markdown file to describe objective, target repository, metric, constraints, relevant files, and what the coding agent must not change.</p>
+              </div>
+            </article>
+            <article class="ladder-step">
+              <div>
+                <h3>Run the baseline</h3>
+                <p>Run evals once, generate a baseline report, and identify what currently works and what fails.</p>
+              </div>
+            </article>
+            <article class="ladder-step">
+              <div>
+                <h3>Generate a hypothesis</h3>
+                <p>The coding agent tackles one class of failures at a time: missing tool, prompt gap, retrieval problem, or tool logic bug.</p>
+              </div>
+            </article>
+            <article class="ladder-step">
+              <div>
+                <h3>Change the agent</h3>
+                <p>The system updates prompts, tool descriptions, tool logic, or agent code to test the hypothesis.</p>
+              </div>
+            </article>
+            <article class="ladder-step">
+              <div>
+                <h3>Run evals and write reports</h3>
+                <p>Each iteration produces a report, updates shared memory, and records whether the branch improved, regressed, or stayed flat.</p>
+              </div>
+            </article>
+            <article class="ladder-step">
+              <div>
+                <h3>Keep, rollback, or steer</h3>
+                <p>If metrics improve, continue from the branch. If they regress, roll back. If the idea is promising, a human can guide the next iteration.</p>
+              </div>
+            </article>
+          </div>
+
+          <p class="quote">
+            The important point is not that an agent edits code. The important point is that it edits code inside a measurable loop.
+          </p>
+        </section>
+
+        <section class="section" id="live-data">
+          <span class="label">Live Data</span>
+          <h2>Production feedback becomes the raw material for the next eval suite</h2>
+          <p class="lead">
+            The second failure mode is bad performance on live data. The talk proposes collecting traces, user feedback,
+            and subject matter expert annotations, then clustering failure modes and converting validated failures into future golden dataset cases.
+          </p>
+
+          <div class="flow" aria-label="Live data improvement loop">
+            <div class="flow-step"><b>Use</b><span>Real users, beta testers, or SMEs interact with the agent.</span></div>
+            <div class="flow-step"><b>Trace</b><span>Capture interaction, tools, latency, tokens, inputs, outputs, and behavior.</span></div>
+            <div class="flow-step"><b>Feedback</b><span>Collect thumbs up/down, comments, or SME trace annotations.</span></div>
+            <div class="flow-step"><b>Cluster</b><span>Group negative traces into repeated failure modes.</span></div>
+            <div class="flow-step"><b>Validate</b><span>Review clusters with SMEs and decide what is real, intended, or false positive.</span></div>
+            <div class="flow-step"><b>Fix</b><span>Implement changes, test against traces, and add new regression cases.</span></div>
+          </div>
+
+          <div class="grid two">
+            <article class="card">
+              <span class="pill">User Feedback</span>
+              <h3>Thumbs plus notes are enough to start</h3>
+              <p>The example uses a simple "was this helpful" signal plus a comment that describes what went wrong or what was expected.</p>
+            </article>
+            <article class="card">
+              <span class="pill">SME Feedback</span>
+              <h3>Experts annotate traces when users do not</h3>
+              <p>Subject matter experts can review the input, output, tool usage, and behavior, then provide a richer correction.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="failure-reports">
+          <span class="label">Failure Reports</span>
+          <h2>The report is the bridge between messy traces and actionable engineering work</h2>
+          <p class="lead">
+            After enough traces are collected, a coding-agent skill analyzes the JSON traces, clusters failure modes,
+            runs root cause analysis against the code and traces, and generates a markdown report. The report can include positives,
+            negatives, negative rate, trace IDs, root causes, and proposed fixes.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Report section</th>
+                  <th>Purpose</th>
+                  <th>Decision it supports</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Executive summary</td>
+                  <td>Shows overall feedback, quality direction, and major risks.</td>
+                  <td>Whether the issue pattern deserves immediate attention.</td>
+                </tr>
+                <tr>
+                  <td>Failure clusters</td>
+                  <td>Groups related problems instead of treating every trace as unique.</td>
+                  <td>Which recurring failure modes to fix first.</td>
+                </tr>
+                <tr>
+                  <td>Trace links</td>
+                  <td>Connects the cluster back to concrete examples and trace IDs.</td>
+                  <td>Whether SMEs and engineers trust the diagnosis.</td>
+                </tr>
+                <tr>
+                  <td>Root cause analysis</td>
+                  <td>Explains whether the issue comes from prompt, tool, retrieval, formatting, or code logic.</td>
+                  <td>Which part of the agent system should change.</td>
+                </tr>
+                <tr>
+                  <td>Fix proposal</td>
+                  <td>Suggests implementation direction and expected behavior.</td>
+                  <td>Whether to fix now, fix later, discard, or turn into a spec.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="quote">
+            The talk's operational rhythm is strong: generate a report about once per sprint, or whenever you have enough meaningful feedback volume.
+          </p>
+        </section>
+
+        <section class="section" id="harness">
+          <span class="label">Harness Engineering</span>
+          <h2>Agents building agents only works when the surrounding environment is engineered</h2>
+          <p class="lead">
+            Alfonso names the discipline "Harness Engineering": build the environment around a coding agent so it can work reliably.
+            The harness gives the coding agent constraints, tasks, feedback loops, governance, tests, evals, context, and observability.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Spec</span>
+              <h3>Every failure mode becomes a spec</h3>
+              <p>Expected behavior is written down before implementation, so the coding agent has a clear target.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Quality</span>
+              <h3>Quality gates are mandatory</h3>
+              <p>Linting, unit tests, evals, LLM code review, and regression traces keep the loop grounded.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Context</span>
+              <h3>Context engineering matters</h3>
+              <p>The coding agent needs the right repository files, reports, traces, constraints, and product goals.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Observability</span>
+              <h3>Production cannot be blind</h3>
+              <p>Teams need traces, tool calls, token cost, latency, outputs, and user feedback to understand failures.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Governance</span>
+              <h3>Humans define the boundaries</h3>
+              <p>The coding agent should not modify golden datasets or scorers just to make evals pass.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Change Log</span>
+              <h3>Every hypothesis is preserved</h3>
+              <p>Branches, reports, memory files, and metrics create a history of what was tried and why.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your agentic AI platform</h2>
+          <p class="lead">
+            This video is very relevant to your Master Agent, Sub-Agent, Skill, Tool MCP, SOP, and Flow Markdown challenge.
+            The key lesson: do not make BA users "prompt engineers." Give them structured artifacts that become specs, evals, traces, and improvement loops.
+          </p>
+
+          <ul class="checklist">
+            <li><strong>Agent Card:</strong> define purpose, scope, allowed tools, forbidden actions, inputs, outputs, memory permissions, escalation rules, and eval metric.</li>
+            <li><strong>Skill Card:</strong> separate cognitive skills from actionable skills. Cognitive skills transform understanding. Actionable skills must declare required tools, input schema, output schema, preconditions, side effects, and audit fields.</li>
+            <li><strong>Tool MCP Contract:</strong> every tool should expose permission level, schema, deterministic behavior, failure modes, retries, logging, and data sensitivity.</li>
+            <li><strong>Flow Markdown:</strong> let BA users describe business steps, decision points, required evidence, responsible agent, tools, memory checkpoints, and human approval gates.</li>
+            <li><strong>Golden Dataset Builder:</strong> every flow should generate test cases from SME examples: input, expected answer, expected tool call, expected handoff, and unacceptable behavior.</li>
+            <li><strong>Scorer Library:</strong> provide reusable scorers for exact answer, semantic answer, tool-called, tool-parameter, no-unsafe-action, citation-present, policy-compliant, and human-escalated.</li>
+            <li><strong>Trace Review Workspace:</strong> give SMEs a screen to annotate real runs, cluster failures, mark false positives, and promote validated failures into regression tests.</li>
+            <li><strong>Optimization Job:</strong> convert a BA-approved failure cluster into a markdown job that a coding agent can run against a target repository with constraints.</li>
+            <li><strong>Human Governance:</strong> forbid coding agents from weakening evals, deleting traces, changing scorers to cheat, or expanding tool permissions without review.</li>
+            <li><strong>Release Gate:</strong> require eval improvement, regression stability, trace evidence, and approval before shipping a new agent version.</li>
+          </ul>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>BA artifact</th>
+                  <th>Generated engineering artifact</th>
+                  <th>Why it matters</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Business flow</td>
+                  <td>Flow Markdown plus agent handoff graph</td>
+                  <td>Turns business process into an executable, reviewable workflow.</td>
+                </tr>
+                <tr>
+                  <td>SOP rule</td>
+                  <td>Agent instruction plus eval case</td>
+                  <td>Every rule can be tested, not just described.</td>
+                </tr>
+                <tr>
+                  <td>Required action</td>
+                  <td>Actionable Skill with MCP tool contract</td>
+                  <td>Tool use becomes typed, permissioned, and auditable.</td>
+                </tr>
+                <tr>
+                  <td>Expected judgment</td>
+                  <td>Cognitive Skill plus scorer</td>
+                  <td>Subjective reasoning gets a measurable review loop.</td>
+                </tr>
+                <tr>
+                  <td>Production issue</td>
+                  <td>Failure cluster, fix spec, and regression case</td>
+                  <td>Live user feedback improves the platform instead of disappearing in support notes.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="quote">
+            Strong opinion: your platform should make "build agent" and "improve agent" the same workflow. The BA defines behavior; the harness turns that behavior into specs, evals, traces, and governed optimization.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for <strong>Agents Building Agents - Alfonso Graziano, Nearform</strong>. Source: AI Engineer. Video ID: aHhB3sjGjkI.
+  </footer>
+</body>
+</html>

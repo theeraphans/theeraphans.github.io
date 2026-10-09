@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Released a suite of decoder-only models up to 175B parameters with weights, code, and a detailed training log to broaden access to large-model research.">
+  <meta name="resource-file" content="2026-09-08-opt-open-pretrained-transformer-language-models-en.html">
+  <title>OPT · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2205.01068">Read paper</a><a class="action-link" href="./">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Scaling, Data, and Open Models · Paper 14 of 37</p>
+        <h1>OPT: Open Pre-trained Transformer Language Models</h1>
+        <p class="subtitle">Released a suite of decoder-only models up to 175B parameters with weights, code, and a detailed training log to broaden access to large-model research.</p>
+        <div class="meta"><span><strong>Susan Zhang, Stephen Roller, Naman Goyal, Mikel Artetxe, Moya Chen, Shuohui Chen, Christopher Dewan, Mona Diab, Xian Li, Xi Victoria Lin, Todor Mihaylov, Myle Ott, Sam Shleifer, Kurt Shuster, Daniel Simig, Punit Singh Koura, Anjali Sridhar, Tianlu Wang, Luke Zettlemoyer</strong></span><span>2022</span><span>Intermediate</span><span>11 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>OPT</h2><p>Meta AI</p><p><strong>Prerequisites:</strong> GPT-3 architecture, distributed training, checkpoints, and model evaluation.</p><a href="https://arxiv.org/abs/2205.01068">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Intermediate</strong></div><div class="paper-fact"><span>Place in path</span><strong>14 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Only a few organizations could study 100B-scale models, and closed APIs hid weights, intermediate checkpoints, and training failures. This constrained reproducibility and safety research.</p>
+<p>OPT aimed to offer a GPT-3-class model family with a public release strategy and documentation of the operational process.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Train decoder-only Transformers closely aligned with known GPT-style choices, release sizes from 125M to 175B, and document infrastructure incidents and interventions.</p>
+<p>A family of sizes enables researchers to test methods without always using the largest checkpoint, while the 175B model supports scale-specific investigation.</p><div class="equation">Research access = weights + code + logs + smaller replicas, subject to license and hardware.</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Build a filtered corpus from public datasets, train with distributed data/model parallelism, save checkpoints, and evaluate zero- and few-shot behavior alongside safety characteristics.</p>
+<p>Publish model weights under a research-oriented license, inference code, logbooks, and notes about restarts, instability, and carbon accounting.</p><figure class="concept-flow" aria-label="OPT research artifact">
+    <div class="flow-step"><span>Weights</span><strong>Model family</strong><p>Release sizes from 125M to 175B.</p></div>
+<div class="flow-step"><span>Code</span><strong>Run and inspect</strong><p>Provide inference and tooling.</p></div>
+<div class="flow-step"><span>Logs</span><strong>Show the process</strong><p>Document failures and recovery.</p></div>
+<div class="flow-step"><span>Eval</span><strong>Measure broadly</strong><p>Include capability and harms.</p></div>
+<div class="flow-step"><span>License</span><strong>Define access</strong><p>State allowed research use.</p></div>
+    <figcaption>A checkpoint becomes more useful when code, logs, evaluation, and smaller variants travel with it.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>The model uses learned absolute positions and a decoder-only architecture. Training at this scale required handling hardware failures, loss spikes, optimizer-state restoration, and manual decisions that polished model cards often omit.</p>
+<p>Operational logs are part of reproducibility because two runs with the same high-level hyperparameters may diverge after failures and interventions.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>OPT-175B reported capabilities broadly comparable to GPT-3 on many tasks while showing gaps on others. The paper evaluated toxicity, bias, and robustness rather than reporting capability alone.</p>
+<p>Comparison is complicated by different data, prompts, and training tokens. The primary achievement is a research artifact, not a universal performance lead.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>OPT helped normalize releasing large checkpoints and training narratives from major labs. It enabled external work on efficiency, interpretability, safety, and serving.</p>
+<p>The release also clarified layers of openness: weights may be available while the exact corpus, training compute, or commercial rights remain constrained.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Preserve run logs, checkpoint lineage, environment versions, and incident decisions. Reproducibility is a system property, not just a configuration file.</p>
+<p>Choose the smallest checkpoint that answers the research question. Loading a 175B model introduces distributed inference complexity that can obscure algorithmic experiments.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>Access to weights does not make training reproducible without the exact data and budget. The research license and release controls differ from unrestricted open-source software.</p>
+<p>The model predates compute-optimal token allocation and modern post-training, so raw comparisons with newer smaller models can mislead.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>OPT follows GPT-3 at similar parameter scale but prioritizes research access. BLOOM adds a multinational governance process and stronger multilingual emphasis. LLaMA later shows smaller, longer-trained models can be more practical.</p><div class="article-nav"><a href="2026-09-08-palm-scaling-language-modeling-pathways-en.html">← PaLM</a><a href="2026-09-08-bloom-open-access-multilingual-language-model-en.html">BLOOM →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>Open weights enable research that APIs cannot.</li><li>Training logs expose failures and human interventions.</li><li>Model families support experiments across budgets.</li><li>Openness has multiple layers and licenses.</li><li>Benchmark comparisons require prompt and data context.</li><li>Operational transparency is a research contribution.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2205.01068">OPT: Open Pre-trained Transformer Language Models</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>OPT’s contribution is access and operational transparency as much as benchmark quality. Open weights are valuable but do not eliminate data and compute barriers.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

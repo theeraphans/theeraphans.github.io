@@ -1,0 +1,1022 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Multi-Agent Systems, Concepts and Patterns - Agent Factory Podcast - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172026;
+      --muted: #5d6870;
+      --quiet: #7d8790;
+      --paper: #fffdf7;
+      --canvas: #f3f6f0;
+      --line: #d8ded7;
+      --charcoal: #24323a;
+      --teal: #166d68;
+      --blue: #315f86;
+      --coral: #bd503f;
+      --gold: #9f721d;
+      --violet: #665987;
+      --mint: #e1f0eb;
+      --sky: #e7eef6;
+      --sand: #f6edd7;
+      --rose: #f5e5df;
+      --shadow: 0 24px 62px rgb(23 32 38 / 11%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(22 109 104 / 7%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(49 95 134 / 6%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 46px 46px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--coral), var(--gold), var(--violet));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 84%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.85rem, 6.7vw, 5.8rem);
+      font-weight: 760;
+      line-height: 0.96;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.14rem, 2.05vw, 1.48rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #e6ece7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 86%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: #f8fbf8;
+      background: rgb(255 255 255 / 9%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-height: 86px;
+      padding: 14px;
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: rgb(255 255 255 / 72%);
+      font-size: 0.84rem;
+      font-weight: 760;
+      text-transform: uppercase;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      gap: 42px;
+      align-items: start;
+      margin-top: 36px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 22px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .sidebar-block {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+    }
+
+    .sidebar-block h2,
+    .toc h2 {
+      margin-bottom: 12px;
+      color: var(--quiet);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .glance {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .glance strong {
+      color: var(--ink);
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .toc {
+      padding-left: 18px;
+      border-left: 4px solid var(--gold);
+    }
+
+    .toc a {
+      display: block;
+      padding: 7px 0;
+      color: var(--ink);
+      font-size: 0.94rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .content {
+      min-width: 0;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 32 38 / 8%);
+    }
+
+    .section {
+      padding: 34px 42px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; }
+
+    .label {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .section h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 3.3vw, 3.1rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .section h3 {
+      margin-top: 20px;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      margin-top: 16px;
+      color: #313d44;
+      font-size: 1.08rem;
+    }
+
+    .section p + p { margin-top: 14px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card.mint { background: var(--mint); }
+    .card.sky { background: var(--sky); }
+    .card.sand { background: var(--sand); }
+    .card.rose { background: var(--rose); }
+
+    .card h3 {
+      margin-top: 8px;
+      font-size: 1.02rem;
+    }
+
+    .card p {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.62;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pill.blue { background: var(--blue); }
+    .pill.coral { background: var(--coral); }
+    .pill.gold { background: var(--gold); }
+    .pill.violet { background: var(--violet); }
+
+    .note {
+      margin-top: 22px;
+      padding: 18px 20px;
+      background: #f8f3e6;
+      border-left: 5px solid var(--gold);
+      border-radius: 8px;
+      color: #3b3424;
+    }
+
+    .compare {
+      width: 100%;
+      margin-top: 22px;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .compare th,
+    .compare td {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .compare th {
+      color: #fff;
+      background: var(--charcoal);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .compare td {
+      background: #fff;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(118px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+      align-items: stretch;
+    }
+
+    .flow-step {
+      position: relative;
+      min-height: 142px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .flow-step:nth-child(2) { border-top-color: var(--blue); }
+    .flow-step:nth-child(3) { border-top-color: var(--coral); }
+    .flow-step:nth-child(4) { border-top-color: var(--gold); }
+    .flow-step:nth-child(5) { border-top-color: var(--violet); }
+
+    .flow-step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .pattern-board {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .pattern {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .pattern h3 {
+      margin-top: 10px;
+      font-size: 1.08rem;
+    }
+
+    .mini-map {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .node {
+      min-height: 48px;
+      display: grid;
+      place-items: center;
+      padding: 8px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 850;
+      line-height: 1.25;
+      text-align: center;
+    }
+
+    .node.teal { background: var(--teal); }
+    .node.blue { background: var(--blue); }
+    .node.coral { background: var(--coral); }
+    .node.gold { background: var(--gold); }
+    .node.violet { background: var(--violet); }
+
+    .pattern p {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding-left: 18px;
+      border-left: 4px solid var(--teal);
+      color: #303b42;
+    }
+
+    .checklist li:nth-child(2n) { border-left-color: var(--blue); }
+    .checklist li:nth-child(3n) { border-left-color: var(--coral); }
+
+    .checklist strong { color: var(--ink); }
+
+    .quote-strip {
+      margin-top: 24px;
+      padding: 24px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      border-radius: 8px;
+    }
+
+    .quote-strip p {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.28rem, 2.8vw, 2.15rem);
+      line-height: 1.28;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .grid,
+      .two,
+      .pattern-board {
+        grid-template-columns: 1fr;
+      }
+
+      .flow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .page {
+        padding-inline: 16px;
+      }
+
+      .hero {
+        gap: 28px;
+        padding-top: 38px;
+      }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .tldr,
+      .sidebar,
+      .flow,
+      .mini-map {
+        grid-template-columns: 1fr;
+      }
+
+      .compare {
+        table-layout: fixed;
+      }
+
+      .compare th,
+      .compare td {
+        padding: 11px 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./">YouTube Extractor</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#patterns">Patterns</a>
+      <a class="action-link" href="#observability">Observability</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=TGNScswE0kU">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Agent Factory Podcast</span>
+        <h1>Multi-Agent Systems Without the Hype</h1>
+        <p class="subtitle">
+          A practical summary of Google Cloud Tech's discussion on when a single agent is enough,
+          when a multi-agent team is worth the coordination cost, and how context, patterns,
+          handoffs, and traces make production agent systems understandable.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> Multi-agent systems, concepts and patterns</span>
+          <span><strong>Source:</strong> Google Cloud Tech</span>
+          <span><strong>Transcript:</strong> 3,668 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/TGNScswE0kU/hqdefault.jpg" alt="Video thumbnail for Multi-agent systems, concepts and patterns">
+        <figcaption>
+          The episode connects Software 3.0, context engineering, A2A, MCP, Gemini CLI, and core multi-agent architecture patterns.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          The episode argues that multi-agent systems are not automatically better. They become useful when the task needs distinct skills,
+          controlled context, built-in review, or parallel work that a single agent cannot handle cleanly. The real work is choosing an
+          architecture pattern, defining what each agent is allowed to know and do, and tracing every delegation so cloud-hosted systems
+          stay debuggable.
+        </p>
+        <ul class="tldr">
+          <li>Use a single agent for one clear job; use a team when the task naturally splits into different professions.</li>
+          <li>Context engineering is the runtime discipline: isolate, persist, and compress the information each agent receives.</li>
+          <li>Observability is not optional. Log the task, decomposition, delegation reason, tool calls, spans, and final outcome.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>23m</strong><span>runtime</span></div>
+        <div class="stat"><strong>557</strong><span>caption rows</span></div>
+        <div class="stat"><strong>5</strong><span>core patterns</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Best for</span><strong>Agent platform design</strong></li>
+            <li><span>Main lens</span><strong>Patterns and tradeoffs</strong></li>
+            <li><span>Key risk</span><strong>Invisible delegation</strong></li>
+            <li><span>Platform object</span><strong>Traceable workflow</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#industry">Industry Signals</a>
+          <a href="#context">Context Engineering</a>
+          <a href="#decision">Single vs Team</a>
+          <a href="#patterns">Pattern Catalog</a>
+          <a href="#example">Router Example</a>
+          <a href="#observability">Observability</a>
+          <a href="#platform">Platform Takeaways</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="industry">
+          <span class="label">Industry Signals</span>
+          <h2>The episode frames multi-agent systems as part of Software 3.0</h2>
+          <p class="lead">
+            The opening discussion places multi-agent architecture inside a bigger shift: developers are moving from writing every instruction
+            explicitly toward defining goals, supplying context, and letting models plan the steps. In that world, prompts matter, but the
+            surrounding runtime architecture matters even more.
+          </p>
+          <div class="grid">
+            <article class="card mint">
+              <span class="pill">Software 3.0</span>
+              <h3>Natural language becomes part of the programming surface</h3>
+              <p>The hosts describe the model as a new kind of operating environment where goals, context, and tool access shape behavior.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Gemini CLI</span>
+              <h3>Specialized agents move into developer workflows</h3>
+              <p>CLI agents can inspect codebases, run local tools, use MCP servers, fix bugs, and automate non-coding tasks.</p>
+            </article>
+            <article class="card rose">
+              <span class="pill coral">A2A</span>
+              <h3>Agent-to-agent communication is becoming a standard layer</h3>
+              <p>Google donating A2A to the Linux Foundation is framed as a move toward interoperable agents across languages and frameworks.</p>
+            </article>
+          </div>
+          <p class="note">
+            The important platform signal is that MCP and A2A solve different seams: MCP helps agents use tools and services;
+            A2A helps agents communicate with other agents. A production platform should treat both as first-class contracts.
+          </p>
+        </section>
+
+        <section class="section" id="context">
+          <span class="label">Context Engineering</span>
+          <h2>The bottleneck is not only intelligence; it is what fits in working memory</h2>
+          <p class="lead">
+            The hosts use a useful analogy: the LLM is like the CPU, and the context window is like RAM. It is limited, temporary, and expensive
+            to fill with irrelevant data. Multi-agent systems help because each sub-agent can receive a narrower, cleaner context.
+          </p>
+          <div class="flow" aria-label="Context engineering strategies">
+            <div class="flow-step">
+              <strong>User input</strong>
+              <span>The starting goal or question, often too broad for one prompt to solve reliably.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Files and tools</strong>
+              <span>Documents, code, search results, MCP outputs, and database responses compete for space.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Isolate</strong>
+              <span>Give each sub-agent only the data and schema it needs for its role.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Persist</strong>
+              <span>Retrieve relevant memory by recency and relevance instead of replaying everything.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Compress</strong>
+              <span>Summarize, extract facts, and pass compact state to downstream steps.</span>
+            </div>
+          </div>
+          <p class="note">
+            This is a strong argument for making "context policy" a visible part of every agent definition. A Sub-Agent should not only have
+            a persona prompt; it should declare what memory, documents, tools, schemas, and prior outputs it is allowed to receive.
+          </p>
+        </section>
+
+        <section class="section" id="decision">
+          <span class="label">Decision Rule</span>
+          <h2>Use one agent for one profession; use a team for multiple professions</h2>
+          <p class="lead">
+            The simplest agent architecture uses one model for reasoning, planning, and action. That is often the right starting point.
+            The episode's rule of thumb is simple: when the task needs multiple distinct skills, stop adding more responsibility to the same
+            agent and create a team.
+          </p>
+          <table class="compare">
+            <thead>
+              <tr>
+                <th>Architecture</th>
+                <th>Use it when</th>
+                <th>Watch out for</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Single agent</strong></td>
+                <td>The work has one main skill, one domain, and a small tool surface.</td>
+                <td>Performance drops as tools, domains, and responsibilities pile up.</td>
+              </tr>
+              <tr>
+                <td><strong>Multi-agent team</strong></td>
+                <td>The work needs specialists, quality control, parallel research, or role separation.</td>
+                <td>Coordination, handoffs, missing context, and debugging become the new complexity.</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="quote-strip">
+            <p>Multi-agent design is not about adding more agents. It is about reducing overload by giving each agent a clearer job.</p>
+          </div>
+        </section>
+
+        <section class="section" id="patterns">
+          <span class="label">Pattern Catalog</span>
+          <h2>The talk organizes multi-agent systems into control, flow, and collaboration patterns</h2>
+          <p class="lead">
+            Each pattern trades control, speed, flexibility, and complexity differently. The best production systems often combine several
+            of these rather than choosing one pattern everywhere.
+          </p>
+
+          <div class="pattern-board">
+            <article class="pattern">
+              <span class="pill">Router Supervisor</span>
+              <h3>A coordinator delegates one specialist at a time</h3>
+              <div class="mini-map" aria-label="Router supervisor diagram">
+                <div class="node teal">Supervisor</div>
+                <div class="node blue">Researcher</div>
+                <div class="node coral">Writer</div>
+              </div>
+              <p>Best when decisions depend on intermediate results. The supervisor can ask one agent, inspect the output, then route to the next agent dynamically.</p>
+            </article>
+
+            <article class="pattern">
+              <span class="pill blue">Parallel Supervisor</span>
+              <h3>A coordinator fans out independent subtasks</h3>
+              <div class="mini-map" aria-label="Parallel supervisor diagram">
+                <div class="node teal">Supervisor</div>
+                <div class="node blue">Data</div>
+                <div class="node gold">News</div>
+                <div class="node coral">Social</div>
+                <div class="node violet">Synthesis</div>
+                <div class="node">Report</div>
+              </div>
+              <p>Best for market research, evidence gathering, or review work where several agents can run at the same time and then merge results.</p>
+            </article>
+
+            <article class="pattern">
+              <span class="pill coral">Sequential Flow</span>
+              <h3>Agents pass work down a known assembly line</h3>
+              <div class="mini-map" aria-label="Sequential flow diagram">
+                <div class="node teal">Analyze</div>
+                <div class="node blue">Build</div>
+                <div class="node gold">Report</div>
+              </div>
+              <p>Best when the business process is already known. It feels closer to traditional programming because the order is predefined.</p>
+            </article>
+
+            <article class="pattern">
+              <span class="pill gold">Circular Flow</span>
+              <h3>Builder and checker iterate until the gate passes</h3>
+              <div class="mini-map" aria-label="Circular flow diagram">
+                <div class="node teal">Coder</div>
+                <div class="node coral">Tester</div>
+                <div class="node violet">Fix Loop</div>
+              </div>
+              <p>Best for quality loops such as code and test, draft and review, SQL and validation, or plan and critique.</p>
+            </article>
+
+            <article class="pattern">
+              <span class="pill violet">Swarm</span>
+              <h3>Agents collaborate without one clear boss</h3>
+              <div class="mini-map" aria-label="Swarm diagram">
+                <div class="node teal">Agent A</div>
+                <div class="node blue">Agent B</div>
+                <div class="node coral">Agent C</div>
+                <div class="node gold">Agent D</div>
+                <div class="node violet">Shared State</div>
+                <div class="node">Goal</div>
+              </div>
+              <p>Best when flexibility matters, but it needs strong guardrails. Without careful design, the system can become a noisy group chat.</p>
+            </article>
+
+            <article class="pattern">
+              <span class="pill">Hybrid</span>
+              <h3>Most real systems mix these patterns</h3>
+              <div class="mini-map" aria-label="Hybrid pattern diagram">
+                <div class="node teal">Plan</div>
+                <div class="node blue">Parallel</div>
+                <div class="node coral">Validate</div>
+                <div class="node gold">Loop</div>
+                <div class="node violet">Report</div>
+                <div class="node">Trace</div>
+              </div>
+              <p>Best for production platforms where a Master Agent may route, run parallel research, enforce deterministic gates, and loop on failures.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="example">
+          <span class="label">Concrete Example</span>
+          <h2>The demo uses a data engineering team with business, SQL, and BI specialists</h2>
+          <p class="lead">
+            The hosts demonstrate a router supervisor pattern for answering business questions from BigQuery data. The orchestrator routes the task
+            to a business analyst, then to a data engineer, then to a BI engineer. If the user dislikes the chart type, the system can route directly
+            back to the BI engineer without re-running the full chain.
+          </p>
+          <div class="flow" aria-label="Data engineering router supervisor flow">
+            <div class="flow-step">
+              <strong>User question</strong>
+              <span>"Show me our lead conversion trends."</span>
+            </div>
+            <div class="flow-step">
+              <strong>Business analyst</strong>
+              <span>Interprets the question and proposes analysis options.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Data engineer</strong>
+              <span>Builds the SQL query and retrieves the BigQuery data.</span>
+            </div>
+            <div class="flow-step">
+              <strong>BI engineer</strong>
+              <span>Turns the data into a chart or dashboard artifact.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Targeted revision</strong>
+              <span>Routes chart-only changes back to the BI role.</span>
+            </div>
+          </div>
+          <p class="note">
+            This is the core UX idea for a BA-facing platform: the BA should describe the business question, while the system turns that question
+            into role-specific handoffs, tool use, and revision paths.
+          </p>
+        </section>
+
+        <section class="section" id="observability">
+          <span class="label">Observability</span>
+          <h2>Cloud-hosted agents need traces for every delegation and tool call</h2>
+          <p class="lead">
+            The community question at the end asks how to debug a supervisor system after it leaves a local environment. The answer is observability:
+            log and trace every decision point so developers can see what task arrived, how it was decomposed, who received each subtask, why that
+            worker was chosen, and which tools were called.
+          </p>
+          <div class="grid two">
+            <article class="card mint">
+              <span class="pill">Trace</span>
+              <h3>The end-to-end request</h3>
+              <p>A trace represents the whole user request or agent transaction, from input to final response.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill blue">Span</span>
+              <h3>A nested unit of work</h3>
+              <p>Spans represent subtasks inside the trace: planning, delegation, tool execution, validation, or synthesis.</p>
+            </article>
+          </div>
+          <ul class="checklist">
+            <li><strong>Log the incoming task.</strong> Capture the original user goal, context snapshot, and constraints.</li>
+            <li><strong>Log the decomposition.</strong> Store how the supervisor split the task into subtasks.</li>
+            <li><strong>Log the routing reason.</strong> Make the supervisor output why it selected a specific worker.</li>
+            <li><strong>Log tool calls and tool outputs.</strong> MCP/tool events should be visible as spans, not hidden in a transcript blob.</li>
+            <li><strong>Use standard telemetry where possible.</strong> The episode mentions Cloud Monitoring, OpenTelemetry, Cloud Trace Explorer, and ADK integrations.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for a BA-buildable agentic AI platform</h2>
+          <p class="lead">
+            This episode is useful because it translates directly into platform primitives. Your system should help BAs assemble agent teams without
+            forcing them to think like prompt engineers, while still producing the contracts engineers need for safety, debugging, and scale.
+          </p>
+          <ul class="checklist">
+            <li><strong>Start with a pattern picker.</strong> Let a BA choose router, parallel, sequential, circular, or hybrid by describing the business flow.</li>
+            <li><strong>Separate persona from context policy.</strong> An agent definition needs role, goal, tools, memory access, input schema, output schema, and escalation rules.</li>
+            <li><strong>Make handoffs typed.</strong> Every Sub-Agent should receive a structured handoff instead of a vague paragraph.</li>
+            <li><strong>Compile Flow Markdown into runtime objects.</strong> A BA-authored flow should become steps, agents, tools, routing conditions, validation gates, and trace labels.</li>
+            <li><strong>Use creator-verifier loops for risky work.</strong> Circular flow should be a first-class platform pattern, not an improvised prompt.</li>
+            <li><strong>Model context as a budget.</strong> The UI should show what data is isolated, persisted, compressed, or excluded for each agent.</li>
+            <li><strong>Expose traces in business language.</strong> BAs need to see "why this agent was chosen" and "what evidence it used" without reading raw logs.</li>
+            <li><strong>Treat MCP and A2A as different contracts.</strong> MCP is for tool access; A2A is for agent communication. Both need authentication, scopes, schemas, and observability.</li>
+            <li><strong>Keep single-agent mode available.</strong> Not every flow deserves a team. The platform should recommend the simplest architecture that can handle the job.</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for
+    <strong>Multi-agent systems, concepts &amp; patterns | The Agent Factory Podcast</strong>.
+    Source: Google Cloud Tech. Video ID: TGNScswE0kU.
+  </footer>
+</body>
+</html>

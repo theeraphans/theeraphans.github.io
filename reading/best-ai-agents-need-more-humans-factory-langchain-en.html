@@ -1,0 +1,1303 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>The Best AI Agents Need More Humans Than You Think - LangChain Factory Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5b6870;
+      --quiet: #77838a;
+      --paper: #fffef9;
+      --canvas: #f5f7f1;
+      --line: #d8dfd8;
+      --teal: #16756d;
+      --blue: #2d6685;
+      --green: #557d54;
+      --gold: #a97725;
+      --coral: #bd503f;
+      --plum: #665987;
+      --charcoal: #223039;
+      --mint: #e3f0ec;
+      --sky: #e7eef6;
+      --leaf: #e9f1df;
+      --sand: #f7edd8;
+      --rose: #f5e4df;
+      --lavender: #ece8f2;
+      --shadow: 0 24px 68px rgb(23 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(22 117 109 / 6%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(45 102 133 / 5%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--green), var(--teal), var(--blue), var(--gold), var(--coral), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure, blockquote { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td, code { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 86%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 0.98fr) minmax(320px, 1.02fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.45rem, 5.6vw, 5rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img,
+    .figure-card img {
+      width: 100%;
+      object-fit: contain;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption,
+    .figure-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+      gap: 24px;
+      margin: 28px 0;
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 7%);
+    }
+
+    .quick-summary h2,
+    .section h2,
+    .sidebar h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-weight: 760;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+    }
+
+    .quick-summary p,
+    .section p,
+    .section li {
+      color: #334047;
+      font-size: 1.01rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .summary-list li::marker { color: var(--coral); }
+
+    .stats-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-width: 0;
+      min-height: 84px;
+      padding: 14px;
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.4rem;
+      line-height: 1.05;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .content {
+      display: grid;
+      gap: 22px;
+      min-width: 0;
+    }
+
+    .section {
+      padding: 34px 0;
+      background: transparent;
+      border-top: 1px solid var(--line);
+    }
+
+    .section h2 {
+      margin-bottom: 14px;
+      font-size: clamp(1.85rem, 3.2vw, 2.65rem);
+    }
+
+    .section h3 {
+      margin-top: 24px;
+      margin-bottom: 8px;
+      color: var(--charcoal);
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .section p + p { margin-top: 12px; }
+    .section ul, .section ol { display: grid; gap: 9px; margin-top: 12px; padding-left: 20px; }
+    .section li::marker { color: var(--teal); }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .toc,
+    .source-box {
+      padding: 18px;
+      background: rgb(255 254 249 / 94%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 14px 36px rgb(23 33 38 / 6%);
+    }
+
+    .toc h2,
+    .source-box h2 {
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+    }
+
+    .toc nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .toc a {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 780;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .source-box p,
+    .source-box li {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .callout {
+      padding: 18px;
+      background: var(--mint);
+      border: 1px solid rgb(22 117 109 / 18%);
+      border-left: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .callout.rose {
+      background: var(--rose);
+      border-color: rgb(189 80 63 / 18%);
+      border-left-color: var(--coral);
+    }
+
+    .callout.gold {
+      background: var(--sand);
+      border-color: rgb(169 119 37 / 22%);
+      border-left-color: var(--gold);
+    }
+
+    .quote-box {
+      margin: 18px 0 2px;
+      padding: 18px 20px;
+      color: #2a383f;
+      background: var(--sky);
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.12rem;
+      line-height: 1.58;
+    }
+
+    .tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0 10px;
+      color: var(--charcoal);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 820;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .flow li,
+    .role-card,
+    .metric-card,
+    .template-card,
+    .evidence-item {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .flow li {
+      position: relative;
+      min-height: 142px;
+      padding: 14px;
+    }
+
+    .flow li:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 48%;
+      right: -9px;
+      z-index: 1;
+      width: 14px;
+      height: 14px;
+      border-top: 2px solid var(--teal);
+      border-right: 2px solid var(--teal);
+      transform: rotate(45deg);
+      background: var(--paper);
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      margin-bottom: 10px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 50%;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .flow strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+      line-height: 1.25;
+    }
+
+    .flow span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.45;
+    }
+
+    .role-grid,
+    .metric-grid,
+    .template-grid,
+    .evidence-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .role-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .template-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .evidence-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .role-card,
+    .metric-card,
+    .template-card,
+    .evidence-item {
+      padding: 16px;
+    }
+
+    .role-card h3,
+    .metric-card h3,
+    .template-card h3,
+    .evidence-item h3 {
+      margin: 0 0 8px;
+      color: var(--ink);
+      font-size: 1rem;
+    }
+
+    .role-card p,
+    .metric-card p,
+    .template-card p,
+    .evidence-item p {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .mission-map {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .mission-lane {
+      min-width: 0;
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .mission-lane h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .mission-lane p {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .mission-lane.orchestrator { border-top: 5px solid var(--blue); }
+    .mission-lane.worker { border-top: 5px solid var(--green); }
+    .mission-lane.validator { border-top: 5px solid var(--coral); }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.94rem;
+    }
+
+    th {
+      color: var(--charcoal);
+      background: var(--leaf);
+      font-weight: 900;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+    td { color: #334047; }
+
+    .code-block {
+      overflow-x: auto;
+      margin-top: 16px;
+      padding: 18px;
+      color: #edf6f6;
+      background: #16242b;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      line-height: 1.62;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+      padding-left: 20px;
+    }
+
+    footer {
+      margin-top: 28px;
+      color: var(--quiet);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 1040px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        order: -1;
+      }
+
+      .flow {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .flow li:nth-child(3)::after {
+        display: none;
+      }
+
+      .role-grid,
+      .metric-grid,
+      .mission-map {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .action-link {
+        flex: 1 1 auto;
+      }
+
+      .page {
+        padding: 0 16px 54px;
+      }
+
+      .hero {
+        gap: 24px;
+        padding: 32px 0 30px;
+      }
+
+      .quick-summary,
+      .section {
+        padding: 20px 0;
+      }
+
+      .quick-summary {
+        padding: 20px;
+      }
+
+      .stats-panel,
+      .flow,
+      .role-grid,
+      .metric-grid,
+      .template-grid,
+      .evidence-grid,
+      .mission-map {
+        grid-template-columns: 1fr;
+      }
+
+      .flow li::after {
+        display: none;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">Video Notes Studio</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="./index.html">Library</a>
+      <a class="action-link" href="#templates">Templates</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=HbUznYhKFOc">Watch source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="kicker">LangChain x Factory deep summary</p>
+        <h1 id="page-title">The Best AI Agents Need More Humans Than You Think</h1>
+        <p class="subtitle">
+          Eno Reyes of Factory argues that production AI agents are not just better chatbots. They are workflow systems:
+          signal pipelines, product judgment, model-independent harnesses, deterministic feedback, validators, and humans
+          who keep tightening the loop.
+        </p>
+        <div class="meta">
+          <span><strong>Source:</strong> LangChain</span>
+          <span><strong>Guest:</strong> Eno Reyes, Factory</span>
+          <span><strong>Length:</strong> 77 minutes</span>
+          <span><strong>Transcript:</strong> 15.9k words</span>
+        </div>
+      </div>
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/HbUznYhKFOc/hqdefault.jpg" alt="YouTube thumbnail for The best AI agents need more humans than you think">
+        <figcaption>
+          This page is a structured summary derived from the English transcript and source metadata for the YouTube episode.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" id="takeaways">
+      <div>
+        <h2>Executive Summary</h2>
+        <p>
+          The conversation's strongest point is that autonomy only becomes useful when it is wrapped in a system that can
+          absorb business signals, translate them into verifiable work, route the right model, and keep humans in the parts
+          where taste, prioritization, risk, and accountability still matter.
+        </p>
+        <ul class="summary-list">
+          <li>A "software factory" is best understood as a signal-to-deployed-code operating loop, not a fully hands-off robot team.</li>
+          <li>Humans remain central because they decide which changes are worth making, refine product opinions, and design the deterministic feedback that lets agents continue.</li>
+          <li>The durable advantage is the harness: workflow opinions, tools, validation, memory structures, routing, observability, and evals that work across models.</li>
+          <li>Long-running agent work needs structured outcomes and validators. Without explicit verification, agents can appear busy while drifting away from the real target.</li>
+          <li>For enterprise platforms, model routing and cache-aware cost control are platform primitives, not afterthoughts.</li>
+        </ul>
+      </div>
+      <aside class="stats-panel" aria-label="Summary stats">
+        <div class="stat"><strong>6</strong><span>core loops</span></div>
+        <div class="stat"><strong>3</strong><span>human roles</span></div>
+        <div class="stat"><strong>4</strong><span>memory types</span></div>
+        <div class="stat"><strong>3-6 mo</strong><span>benchmark shelf life</span></div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <article class="content">
+        <section class="section" id="thesis">
+          <h2>1. The Central Thesis</h2>
+          <p>
+            The episode pushes back against the fantasy that the best agents remove people from the process. Factory's
+            view is more practical: agents can perform large amounts of software work, but the most valuable systems still
+            need humans to define the work, judge whether it should happen, shape the operating rules, and improve the
+            harness after every failure.
+          </p>
+          <p>
+            The important shift is not "humans stop coding." It is "humans move higher in the loop." People become product
+            stewards, architecture stewards, process engineers, context curators, and validation designers. The agent does
+            more execution, but the human becomes more responsible for the system of execution.
+          </p>
+          <blockquote class="quote-box">
+            My read: the video is not anti-agent. It is anti-magic. The real product is the loop around the model.
+          </blockquote>
+          <div class="tag-grid" aria-label="Core concepts">
+            <span class="tag">human-in-the-loop</span>
+            <span class="tag">software factory</span>
+            <span class="tag">agent harness</span>
+            <span class="tag">verification</span>
+            <span class="tag">model routing</span>
+            <span class="tag">eval culture</span>
+          </div>
+        </section>
+
+        <section class="section" id="factory">
+          <h2>2. Software Factory: Signal to Deployed Code</h2>
+          <p>
+            Factory describes its long-term product vision as a "software factory" that runs continuously and produces
+            desired software. The less sci-fi version is more useful: create a structured path from business signals to
+            shipped changes. Signals come from customers, Slack, support threads, GitHub issues, bug reports, telemetry,
+            error systems, internal conversations, and public feedback.
+          </p>
+          <p>
+            The hard part is not collecting signals. The hard part is deciding which signals matter, translating them into
+            a product opinion, and creating work objects that agents can execute without losing intent.
+          </p>
+          <ol class="flow" aria-label="Software factory signal loop">
+            <li>
+              <span class="step-number">1</span>
+              <strong>Signals</strong>
+              <span>Customer Slack, issues, bugs, telemetry, sales calls, support, docs gaps.</span>
+            </li>
+            <li>
+              <span class="step-number">2</span>
+              <strong>Priorities</strong>
+              <span>Humans and agents consolidate patterns into product-level guidance.</span>
+            </li>
+            <li>
+              <span class="step-number">3</span>
+              <strong>Specs</strong>
+              <span>Desired outcomes become scoped plans, tasks, constraints, and acceptance criteria.</span>
+            </li>
+            <li>
+              <span class="step-number">4</span>
+              <strong>Agents</strong>
+              <span>Workers use tools, code context, skills, and tests to implement changes.</span>
+            </li>
+            <li>
+              <span class="step-number">5</span>
+              <strong>Validation</strong>
+              <span>Tests, review, security, browser checks, metrics, and policy gates verify outcomes.</span>
+            </li>
+            <li>
+              <span class="step-number">6</span>
+              <strong>Learning</strong>
+              <span>Failures update rules, docs, workflows, skills, model routing, and future specs.</span>
+            </li>
+          </ol>
+          <div class="callout">
+            <p>
+              Platform implication: do not start by asking BA users to "make an agent." Start by asking them to capture
+              signal, business intent, decision rules, acceptance criteria, and exceptions. The platform can then compile
+              that into agent instructions, tools, and validation plans.
+            </p>
+          </div>
+        </section>
+
+        <section class="section" id="humans">
+          <h2>3. Why More Humans Are Needed</h2>
+          <p>
+            The video argues that as agents become more capable, the bottleneck moves from typing code to knowing what
+            should be built and how the system should behave. Humans still matter because product taste, architectural
+            judgment, organization policy, and risk appetite are not automatically available to the model.
+          </p>
+          <div class="role-grid">
+            <div class="role-card">
+              <h3>Product Steward</h3>
+              <p>
+                Owns customer pain, priority, user experience, scope, and what should not be changed. This is a more
+                technical version of product work because the person must reason about agent-executable specs.
+              </p>
+            </div>
+            <div class="role-card">
+              <h3>Architecture Steward</h3>
+              <p>
+                Defines constraints, service boundaries, ownership rules, performance goals, and codebase standards so
+                the agent does not solve locally while damaging the system.
+              </p>
+            </div>
+            <div class="role-card">
+              <h3>Loop Engineer</h3>
+              <p>
+                Improves lint rules, type rules, tests, evals, traces, prompts, tools, and policies after each agent
+                mistake. This role turns failures into better future execution.
+              </p>
+            </div>
+          </div>
+          <p>
+            Factory gives an example of a human engineer spending significant time building static checks, lint rules, and
+            type checks so agents cannot repeat complex mistakes. That is the pattern: instead of fixing every mistake by
+            hand, humans create feedback systems that make entire classes of mistakes harder.
+          </p>
+        </section>
+
+        <section class="section" id="harness">
+          <h2>4. Harness Is the Product Layer</h2>
+          <p>
+            A model-independent harness is one of the strongest themes. In the transcript, the guest argues that the
+            harness captures workflows, tool use, validation patterns, and model-specific handling in a way that can be
+            reused across frontier models, open models, and cheaper specialized models.
+          </p>
+          <p>
+            This matters because enterprises pay real inference costs. A consumer product might subsidize expensive usage,
+            but a company deploying agents across thousands of employees needs quality, cost, routing, visibility, and
+            governance. The harness becomes the control plane.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Layer</th>
+                  <th>What It Does</th>
+                  <th>Why It Matters</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Prompt and persona</td>
+                  <td>Defines role, scope, tone, operating rules, and decision boundaries.</td>
+                  <td>Prevents "generic helper" behavior when the agent needs domain-specific judgment.</td>
+                </tr>
+                <tr>
+                  <td>Tools and MCP</td>
+                  <td>Expose systems of action: repos, browsers, tickets, docs, databases, APIs, and internal services.</td>
+                  <td>Turns the agent from advisor into operator, while keeping permissions explicit.</td>
+                </tr>
+                <tr>
+                  <td>Skills</td>
+                  <td>Package reusable procedures, examples, checklists, templates, and tool usage recipes.</td>
+                  <td>Lets non-engineers compose repeatable capabilities without rewriting prompts every time.</td>
+                </tr>
+                <tr>
+                  <td>Validation</td>
+                  <td>Runs deterministic checks, tests, policy gates, rubrics, and human approvals.</td>
+                  <td>Creates trust by forcing the agent to prove outcomes instead of only narrating progress.</td>
+                </tr>
+                <tr>
+                  <td>Routing</td>
+                  <td>Chooses models based on task type, context state, cache, budget, and quality target.</td>
+                  <td>Controls enterprise cost without asking every user to understand the model landscape.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout rose">
+            <p>
+              A useful design principle for your platform: keep persona prompts small and stable, put changing procedures
+              into skills, put external actions behind tools, and put acceptance criteria into validators.
+            </p>
+          </div>
+        </section>
+
+        <section class="section" id="signals">
+          <h2>5. Signals, Product Opinion, and the 2,000-Line Rule</h2>
+          <p>
+            The conversation describes a product-level prioritization document that is short enough to fit into context.
+            It starts with agent-written material, but humans consolidate and refine it. This is important because agents
+            can gather scattered information, but humans must decide which patterns represent product truth.
+          </p>
+          <p>
+            For an enterprise agentic platform, this suggests a design pattern: separate raw evidence from curated policy.
+            Raw evidence can be long, messy, and constantly updated. The curated policy should be compact, opinionated,
+            versioned, and easy for agents to load.
+          </p>
+          <div class="evidence-grid">
+            <div class="evidence-item">
+              <h3>Raw Signal Store</h3>
+              <p>Slack threads, tickets, CRM notes, bug reports, calls, user feedback, analytics, and logs.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Curated Product Memory</h3>
+              <p>Priorities, target users, anti-goals, standards, examples, escalation rules, and release policy.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Work Object</h3>
+              <p>One specific desired outcome with scope, constraints, dependencies, owner, and validation plan.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Feedback Update</h3>
+              <p>When work fails or surprises users, update the curated policy and skill library.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="workflows">
+          <h2>6. Workflows Beat Prompt Tricks</h2>
+          <p>
+            The guest repeatedly frames application-layer value as encoding workflow opinions deeper and deeper. This is
+            a mature view: the advantage is not one perfect mega-prompt, but an evolving system of steps, tools, checks,
+            examples, and learned operating rules.
+          </p>
+          <p>
+            The video also notes that model differences now feel less like tiny comma-sensitive prompt quirks and more
+            like workflow/tool preference differences. One model may prefer a patch-style edit tool. Another may perform
+            better with a different tool schema, tool description, or context shape. The harness should observe those
+            differences and adapt.
+          </p>
+          <h3>Pattern to copy</h3>
+          <ul>
+            <li>Define the workflow as steps and artifacts, not just a paragraph of instructions.</li>
+            <li>Attach required tools to the workflow, not to the agent identity only.</li>
+            <li>Version skills independently so BA users can improve a process without editing the master agent.</li>
+            <li>Record examples of good and bad runs so the harness can learn from operational reality.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="memory">
+          <h2>7. Memory, Auto Wiki, and Knowledge Structures</h2>
+          <p>
+            The discussion separates several things that are often called "memory." Some memory is learned behavior from
+            training or fine-tuning. Some is durable system-of-record context, such as files, wikis, knowledge graphs, and
+            style guides. Some is user preference. Some is a reusable procedure, which is better named a skill.
+          </p>
+          <p>
+            Factory's Auto Wiki is framed as especially useful for humans. It can explain a codebase, show history or
+            "lore," and help new hires understand how a system works. The surprising point is that wikis may help people
+            more than agents, because agents are already good at searching code, while humans need compressed narratives
+            and canonical structure.
+          </p>
+          <div class="metric-grid">
+            <div class="metric-card">
+              <h3>System Memory</h3>
+              <p>Architecture docs, canonical workflows, business rules, service ownership, and domain models.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Preference Memory</h3>
+              <p>Style, tone, review preferences, product taste, and company-specific definitions of quality.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Skill Memory</h3>
+              <p>Reusable how-to procedures with examples, tool requirements, failure modes, and validation rules.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Run Memory</h3>
+              <p>Traces, corrections, failed validations, routing choices, and lessons from completed tasks.</p>
+            </div>
+          </div>
+          <p>
+            For your BA-facing platform, this suggests avoiding the vague label "memory" in the UI. Use concrete names:
+            Business Rules, SOP, Skill, Product Policy, Persona, Tool Permission, Run History, and Validation Evidence.
+          </p>
+        </section>
+
+        <section class="section" id="missions">
+          <h2>8. Missions: Long-Running Agents Need Validators</h2>
+          <p>
+            "Missions" are Factory's approach for larger, verifiable work. The system decomposes a big objective into
+            structured work, defines skills, runs workers with fresh context, validates their outputs, and then consolidates
+            progress across milestones.
+          </p>
+          <div class="mission-map" aria-label="Mission architecture">
+            <div class="mission-lane orchestrator">
+              <h3>Orchestrator</h3>
+              <p>Turns the goal into structured outcomes, hypotheses, task units, skills, dependencies, and validation plans.</p>
+            </div>
+            <div class="mission-lane worker">
+              <h3>Workers</h3>
+              <p>Start with fresh context, receive a task and skill set, perform the work, and avoid cross-run contamination.</p>
+            </div>
+            <div class="mission-lane validator">
+              <h3>Validators</h3>
+              <p>Check deterministic evidence, write tests, use browser actions, apply rubrics, and decide whether work is complete.</p>
+            </div>
+          </div>
+          <p>
+            The best line of thinking here is that an agent should not be allowed to finish just because it says it is
+            done. It should finish when each important validation has passed or when a clear human escalation is triggered.
+          </p>
+          <h3>Agent readiness means deterministic feedback</h3>
+          <ul>
+            <li>Unit, integration, end-to-end, fuzzy, and coverage tests.</li>
+            <li>Reproducible dev environments and flakiness detection.</li>
+            <li>Logging, metrics, naming, AST, ownership, and file-structure checks.</li>
+            <li>Browser or computer-control checks for flows that cannot be tested only through code.</li>
+            <li>Human approval for product risk, legal risk, security risk, or ambiguous user experience judgment.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="routing">
+          <h2>9. Tokenomics and Model Routing</h2>
+          <p>
+            The episode treats tokenomics as one of the biggest enterprise issues. Long missions can be expensive, but the
+            bigger waste may come from broad enablement: thousands of people using expensive frontier models for work that
+            a cheaper or open model could handle.
+          </p>
+          <p>
+            Factory's answer is auto model routing. The admin chooses a quality/cost tradeoff, and the harness learns which
+            model to use for which task distribution. The guest says this can produce large savings, and argues that model
+            names should often be hidden from users because visible names create bias toward frontier models.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Routing Decision</th>
+                  <th>What the Harness Must Know</th>
+                  <th>Good Behavior</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Start cheap or strong</td>
+                  <td>Task type, risk, complexity, historical success, expected cost.</td>
+                  <td>Use cheaper models for routine work, stronger models for ambiguous or high-risk work.</td>
+                </tr>
+                <tr>
+                  <td>Upgrade mid-run</td>
+                  <td>Progress state, failures, distance to completion, cache state, validation results.</td>
+                  <td>Upgrade early when the agent is clearly stuck, not after burning tokens.</td>
+                </tr>
+                <tr>
+                  <td>Finish before switching</td>
+                  <td>Whether the agent is near completion and whether switching would break useful context.</td>
+                  <td>Finish cheaply when close to done; avoid needless compaction or cache loss.</td>
+                </tr>
+                <tr>
+                  <td>Parallelize</td>
+                  <td>Cost tolerance, uncertainty, need for diversity, synthesis quality.</td>
+                  <td>Use parallel agents selectively because gains can be unclear and cost can jump quickly.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout gold">
+            <p>
+              Key design call: model routing belongs inside the agent harness, not only in a generic LLM gateway. The
+              gateway sees requests. The harness sees task progress, validation state, tool history, cache state, and budget.
+            </p>
+          </div>
+        </section>
+
+        <section class="section" id="evals">
+          <h2>10. Evals Are a Living Product System</h2>
+          <p>
+            Factory describes an eval-driven culture with many small regression suites, not only large public benchmarks.
+            Some evals check prompt caching. Some check compaction. Some check model routing. Some are larger benchmarks
+            for code migration or code review.
+          </p>
+          <p>
+            The most practical insight is that benchmarks expire. The guest gives a rough shelf life of three to six
+            months before a benchmark becomes less useful as a product-improvement signal and more useful as a regression
+            test. Public benchmarks can also shape products in unhealthy ways if every vendor optimizes around the same
+            narrow tasks.
+          </p>
+          <div class="metric-grid">
+            <div class="metric-card">
+              <h3>Regression Evals</h3>
+              <p>Small, fast suites that protect prompt caching, compaction, routing, and tool behavior.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Workflow Evals</h3>
+              <p>Longer tasks that test whether the agent can complete multi-step work with tools and validators.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Rubric Evals</h3>
+              <p>Graded quality checks when binary pass/fail does not capture usefulness.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Benchmark Evals</h3>
+              <p>Industry or internal benchmarks, useful but perishable. Harbor is mentioned as a strong format.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <h2>11. What This Means for Your Agentic AI Platform</h2>
+          <p>
+            For the BA-side platform you have been describing, the video supports a component model where business users
+            create structured operating objects, not raw prompts. The platform should compile those objects into agent
+            behavior, tool permissions, validation plans, and execution flows.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>BA Artifact</th>
+                  <th>Platform Compilation</th>
+                  <th>Runtime Output</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Business Flow Markdown</td>
+                  <td>Steps, decision points, required evidence, exception paths, and approvals.</td>
+                  <td>Orchestrator plan plus worker tasks and validation checkpoints.</td>
+                </tr>
+                <tr>
+                  <td>Persona Prompt</td>
+                  <td>Role, boundaries, tone, escalation rules, and forbidden actions.</td>
+                  <td>Stable agent identity that does not carry too much procedure.</td>
+                </tr>
+                <tr>
+                  <td>Cognitive Skill</td>
+                  <td>Reasoning recipe, examples, classification rules, rubrics, and output format.</td>
+                  <td>Reusable thinking pattern for analysis, planning, triage, or explanation.</td>
+                </tr>
+                <tr>
+                  <td>Actionable Skill</td>
+                  <td>Tool requirements, permissions, preconditions, side effects, rollback, and verification.</td>
+                  <td>Safe operator capability through MCP tools or internal APIs.</td>
+                </tr>
+                <tr>
+                  <td>Validation Policy</td>
+                  <td>Tests, deterministic checks, evidence requirements, LLM-as-judge rubrics, human gates.</td>
+                  <td>Completion criteria that agents must satisfy before the task is accepted.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>Recommended framework</h3>
+          <ul>
+            <li><strong>Master Agent:</strong> owns goal intake, planning, routing, delegation, memory selection, and escalation.</li>
+            <li><strong>Sub-Agent:</strong> owns a bounded task type with its own persona, skills, tools, and validators.</li>
+            <li><strong>Skill:</strong> reusable procedure. Cognitive skills reason. Actionable skills operate tools.</li>
+            <li><strong>Tool/MCP:</strong> external capability with permission, schema, audit log, and failure handling.</li>
+            <li><strong>Flow Markdown:</strong> business-readable source of truth that compiles into agent runtime instructions.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <h2>12. Flow Markdown and Skill Templates</h2>
+          <p>
+            Below is a compact template set inspired by the video. It keeps business language at the top and moves
+            technical execution details into structured sections that a platform can parse.
+          </p>
+          <div class="template-grid">
+            <div class="template-card">
+              <h3>Master Agent Spec</h3>
+              <p>Use for the agent that receives a business request and turns it into routed work.</p>
+            </div>
+            <div class="template-card">
+              <h3>Skill Spec</h3>
+              <p>Use for reusable thinking or action procedures, including required tools and validators.</p>
+            </div>
+          </div>
+          <pre class="code-block"><code># Flow: &lt;Business Flow Name&gt;
+
+## Business Goal
+- Outcome:
+- User / customer:
+- Success metric:
+- Non-goals:
+
+## Intake Signals
+- Source systems:
+- Required fields:
+- Evidence examples:
+- Duplicate / noise rules:
+
+## Decision Rules
+- Priority rules:
+- Risk rules:
+- Exception paths:
+- Human approval required when:
+
+## Agent Plan
+- Master agent:
+- Sub-agents:
+- Cognitive skills:
+- Actionable skills:
+- Required MCP tools:
+
+## Validation
+- Deterministic checks:
+- Rubric checks:
+- Evidence to attach:
+- Rollback / recovery:
+- Done means:
+
+## Learning Loop
+- What should update the SOP:
+- What should update a skill:
+- What should trigger a new eval:
+- Owner for review:</code></pre>
+          <pre class="code-block"><code># Skill: &lt;Skill Name&gt;
+
+type: cognitive | actionable
+owner:
+version:
+
+## Purpose
+What this skill helps the agent do.
+
+## When To Use
+- Trigger:
+- Inputs required:
+- Preconditions:
+
+## Procedure
+1. Read:
+2. Decide:
+3. Act:
+4. Verify:
+
+## Tools
+- tool:
+  permission:
+  side_effect:
+  failure_handling:
+
+## Output Contract
+- Format:
+- Required evidence:
+- Escalation:
+
+## Validators
+- deterministic:
+- rubric:
+- human_gate:</code></pre>
+        </section>
+
+        <section class="section" id="sources">
+          <h2>13. Sources and Confidence</h2>
+          <p>
+            This summary is based on the available English transcript and source metadata. I paraphrased the episode rather
+            than reproducing long transcript excerpts.
+          </p>
+          <ul class="source-list">
+            <li><a href="https://www.youtube.com/watch?v=HbUznYhKFOc">The best AI agents need more humans than you think</a> - LangChain on YouTube.</li>
+            <li>Video metadata fetched July 18, 2026. Transcript length: 2,327 rows, about 15,931 words.</li>
+          </ul>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="toc">
+          <h2>Read Map</h2>
+          <nav>
+            <a href="#takeaways">Executive summary</a>
+            <a href="#thesis">Central thesis</a>
+            <a href="#factory">Software factory</a>
+            <a href="#humans">Human roles</a>
+            <a href="#harness">Harness layer</a>
+            <a href="#signals">Signals</a>
+            <a href="#workflows">Workflows</a>
+            <a href="#memory">Memory</a>
+            <a href="#missions">Missions</a>
+            <a href="#routing">Model routing</a>
+            <a href="#evals">Evals</a>
+            <a href="#platform">Platform takeaways</a>
+            <a href="#templates">Templates</a>
+          </nav>
+        </div>
+        <div class="source-box">
+          <h2>Best Use</h2>
+          <p>
+            Use this as a design reference for SOP-driven multi-agent platforms: Master Agent, Sub-Agent, Skill, Tool,
+            MCP, Flow Markdown, validators, and cost controls.
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      Generated as a blog-style study note for the local Video Notes Studio resource library.
+    </footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Showed that few-shot examples containing intermediate reasoning steps can elicit large language models to solve multi-step arithmetic, commonsense, and symbolic tasks more accurately.">
+  <meta name="resource-file" content="2026-09-08-chain-of-thought-prompting-reasoning-en.html">
+  <title>Chain-of-Thought Prompting · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2201.11903">Read paper</a><a class="action-link" href="./">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Retrieval, Reasoning, and Agents · Paper 34 of 37</p>
+        <h1>Chain-of-Thought Prompting Elicits Reasoning in Large Language Models</h1>
+        <p class="subtitle">Showed that few-shot examples containing intermediate reasoning steps can elicit large language models to solve multi-step arithmetic, commonsense, and symbolic tasks more accurately.</p>
+        <div class="meta"><span><strong>Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Brian Ichter, Fei Xia, Ed Chi, Quoc Le, Denny Zhou</strong></span><span>2022</span><span>Intermediate</span><span>12 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>Chain-of-Thought Prompting</h2><p>Google Research</p><p><strong>Prerequisites:</strong> Few-shot prompting, autoregressive decoding, and reasoning benchmarks.</p><a href="https://arxiv.org/abs/2201.11903">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Intermediate</strong></div><div class="paper-fact"><span>Place in path</span><strong>34 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Standard prompting asks a model to map a complex question directly to an answer. Multi-step tasks require intermediate variables and decomposition, but the output objective offers little room to compute them.</p>
+<p>Earlier rationale methods often required training data or model changes. The paper tests a prompt-only method.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Include worked examples whose outputs contain natural-language reasoning before the final answer. A sufficiently large language model imitates the pattern and generates intermediate steps for a new problem.</p>
+<p>Those generated tokens act as a scratchpad, distributing computation across the sequence instead of demanding an immediate answer.</p><div class="equation">Prompt: question → rationale → answer; test: new question → generated rationale → answer.</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Choose representative demonstrations, write concise valid rationales, and format final answers consistently. Append a new question and sample or greedily decode the rationale and answer.</p>
+<p>Score the final answer while separately inspecting reasoning errors. Multiple sampled chains can later be aggregated through self-consistency, though that is subsequent work.</p><figure class="concept-flow" aria-label="Chain-of-thought inference">
+    <div class="flow-step"><span>Demo</span><strong>Show worked examples</strong><p>Include rationale and answer.</p></div>
+<div class="flow-step"><span>Question</span><strong>Present new task</strong><p>Match the demonstrated format.</p></div>
+<div class="flow-step"><span>Step 1</span><strong>Generate subresult</strong><p>Externalize an intermediate value.</p></div>
+<div class="flow-step"><span>Step n</span><strong>Continue reasoning</strong><p>Condition on prior steps.</p></div>
+<div class="flow-step"><span>Answer</span><strong>Produce result</strong><p>Extract and verify the final output.</p></div>
+    <figcaption>Each generated rationale step becomes context for the next, extending computation before the final answer.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>The model’s recurrent computation occurs through autoregressive tokens: each generated step becomes context for the next. This increases inference tokens and exposes intermediate text to prompt and decoding choices.</p>
+<p>The paper observed strong scale dependence. Small models often produced incoherent chains or failed to benefit, while very large models showed large gains.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>On GSM8K, MultiArith, and other reasoning tasks, chain-of-thought examples substantially improved large-model accuracy; PaLM 540B with the method reached a new result on GSM8K at the time.</p>
+<p>The evaluated tasks often have short, checkable answers. Gains and scale thresholds vary by model, prompt, and dataset.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>Chain of thought changed prompting from answer formatting into inference-time computation and led to self-consistency, scratchpads, verifier-guided search, tool use, and reasoning-model training.</p>
+<p>It also encouraged evaluation of process traces, though later work showed explanations can be plausible without faithfully reflecting why the model answered.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Use concise demonstrations that match the task and validate final outputs with deterministic tools where possible. Treat generated rationales as untrusted working state.</p>
+<p>Measure accuracy against extra tokens, latency, and exposure risk. Hidden or summarized reasoning may be preferable when traces contain sensitive data or misleading explanations.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>Chains can confidently contain invalid steps, rationalize an answer after the fact, or copy superficial prompt patterns. More tokens can compound error.</p>
+<p>The method does not prove symbolic reasoning or faithful interpretability. Prompt selection and benchmark contamination can inflate results.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>Tree of Thoughts adds branching and search over intermediate states. ReAct interleaves reasoning with external actions. Test-Time Scaling formalizes how additional inference compute should be allocated.</p><div class="article-nav"><a href="2026-09-08-retrieval-augmented-generation-rag-en.html">← Retrieval-Augmented Generation</a><a href="2026-09-08-tree-of-thoughts-deliberate-problem-solving-en.html">Tree of Thoughts →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>Intermediate tokens can serve as an inference scratchpad.</li><li>Few-shot rationales teach a reasoning format without weight updates.</li><li>Benefits were strongly scale-dependent in the paper.</li><li>Final answers and reasoning validity need separate checks.</li><li>Generated explanations are not guaranteed faithful.</li><li>Extra reasoning trades latency and tokens for potential quality.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2201.11903">Chain-of-Thought Prompting Elicits Reasoning in Large Language Models</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>A chain of thought is generated text that can improve computation. It is not guaranteed to be a faithful explanation of the model’s internal causal process.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

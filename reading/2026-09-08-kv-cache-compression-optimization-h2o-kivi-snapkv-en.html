@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Synthesizes three complementary KV-cache levers: evict low-value tokens with H2O, quantize keys and values with KIVI, and select prompt positions with SnapKV.">
+  <meta name="resource-file" content="2026-09-08-kv-cache-compression-optimization-h2o-kivi-snapkv-en.html">
+  <title>KV Cache Compression and Optimization · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2306.14048">Read paper</a><a class="action-link" href="./">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Efficient Attention and Inference · Paper 32 of 37</p>
+        <h1>H$_2$O: Heavy-Hitter Oracle for Efficient Generative Inference of Large Language Models</h1>
+        <p class="subtitle">Synthesizes three complementary KV-cache levers: evict low-value tokens with H2O, quantize keys and values with KIVI, and select prompt positions with SnapKV.</p>
+        <div class="meta"><span><strong>Zhenyu Zhang, Ying Sheng, Tianyi Zhou, Tianlong Chen, Lianmin Zheng, Ruisi Cai, Zhao Song, Yuandong Tian, Christopher Ré, Clark Barrett, Zhangyang Wang, Beidi Chen</strong></span><span>2023</span><span>Advanced</span><span>17 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>KV Cache Compression and Optimization</h2><p>Multi-paper systems synthesis</p><p><strong>Prerequisites:</strong> KV caching, attention heads, quantization, long-context evaluation, and serving workloads.</p><a href="https://arxiv.org/abs/2306.14048">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research synthesis</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Advanced</strong></div><div class="paper-fact"><span>Place in path</span><strong>32 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Autoregressive attention stores keys and values for every retained token in every layer. Memory grows linearly with context, batch size, layers, KV heads, and precision, often limiting concurrency before model weights do.</p>
+<p>Optimization can alter architecture, allocation, precision, token retention, or storage tier. This guide focuses on three papers that compress the existing cache.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>H2O treats a small set of attention heavy hitters as important and combines them with recent tokens. KIVI uses asymmetric 2-bit quantization, exploiting different outlier patterns in keys and values. SnapKV observes attention near the prompt boundary to select positions likely to matter during generation.</p>
+<p>The methods are complementary in principle, but their errors can compound. The correct design depends on whether the workload needs exact retrieval, broad summarization, long generation, or high concurrency.</p><div class="equation">KV bytes ≈ 2 × layers × retained tokens × KV heads × head dimension × bytes/value.</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>H2O scores historical tokens by accumulated attention and evicts low-value entries while preserving recency. KIVI quantizes keys per channel and values per token, retaining a small full-precision residual window. SnapKV pools attention votes across heads and keeps selected prompt clusters.</p>
+<p>All methods require kernels and cache metadata that match their representation. Quality evaluation must target position, domain, and generation length.</p><figure class="concept-flow" aria-label="KV optimization decision tree">
+    <div class="flow-step"><span>Heads</span><strong>Share K/V</strong><p>Use MQA or GQA.</p></div>
+<div class="flow-step"><span>Blocks</span><strong>Allocate tightly</strong><p>Use PagedAttention.</p></div>
+<div class="flow-step"><span>Bits</span><strong>Quantize values</strong><p>Use a method such as KIVI.</p></div>
+<div class="flow-step"><span>Tokens</span><strong>Retain selectively</strong><p>Use H2O or SnapKV.</p></div>
+<div class="flow-step"><span>Tier</span><strong>Offload or recompute</strong><p>Trade bandwidth for capacity.</p></div>
+    <figcaption>Identify the multiplier first; architecture, allocation, precision, and retention solve different bottlenecks.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>The cache equation shows independent multipliers. GQA reduces KV heads; low-bit methods reduce bytes per value; eviction/selection reduces retained tokens; paging reduces allocation waste; offload changes memory tier.</p>
+<p>Attention importance is layer- and head-dependent. Quantization outliers differ between keys and values. A method that preserves perplexity may still fail exact needle retrieval.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>H2O reported strong generation quality with a small heavy-hitter cache. KIVI reported near-lossless quality with a 2.6-times peak-memory reduction and higher throughput in tested systems. SnapKV reported large prompt-cache reductions with limited benchmark loss.</p>
+<p>The papers use different models, tasks, baselines, and budgets; headline ratios should not be compared as one leaderboard.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>KV optimization became essential as context windows and concurrent serving grew. It expanded inference configuration beyond weight quantization into dynamic state management.</p>
+<p>The field now combines architectural sharing, quantization, eviction, prefix caching, paging, and tiered storage.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Start from the cache equation and profile prefill, decode, and transfer separately. Pick a method only after identifying which multiplier or memory tier causes the bottleneck.</p>
+<p>Build adversarial long-context evals: exact retrieval at every position, repeated entities, code dependencies, tool history, and long generation. Log which tokens are evicted or quantized.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>Eviction and selection can permanently discard evidence. Quantization can perturb attention scores, and custom kernels may erase theoretical gains. Combining lossy methods can fail nonlinearly.</p>
+<p>No method guarantees universal long-context quality. Cache policy may need per-request risk levels, with exact retention for regulated or high-value tasks.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>MQA/GQA change KV-head count before runtime. PagedAttention manages physical blocks without semantic compression. FlashAttention reduces temporary attention IO rather than persistent cache bytes.</p><div class="article-nav"><a href="2026-09-08-pagedattention-vllm-memory-management-en.html">← PagedAttention and vLLM</a><a href="2026-09-08-retrieval-augmented-generation-rag-en.html">Retrieval-Augmented Generation →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>KV memory has several independent multipliers.</li><li>H2O retains heavy hitters plus recent tokens.</li><li>KIVI quantizes keys and values asymmetrically.</li><li>SnapKV selects prompt positions from attention observations.</li><li>Memory savings and semantic loss must be measured together.</li><li>High-risk tasks may require an exact-cache path.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2306.14048">H$_2$O: Heavy-Hitter Oracle for Efficient Generative Inference of Large Language Models</a> — Primary paper for this guide.</li><li><a href="https://arxiv.org/abs/2402.02750">KIVI: A Tuning-Free Asymmetric 2bit Quantization for KV Cache</a> — Companion primary paper included in the synthesis.</li><li><a href="https://arxiv.org/abs/2404.14469">SnapKV: LLM Knows What You are Looking for Before Generation</a> — Companion primary paper included in the synthesis.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>This is not one canonical paper. Each method saves a different dimension and accepts different quality, kernel, and workload risks.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

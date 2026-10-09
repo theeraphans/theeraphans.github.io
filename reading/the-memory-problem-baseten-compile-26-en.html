@@ -1,0 +1,960 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>The Memory Problem, Baseten | Compile 26 - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #657178;
+      --paper: #ffffff;
+      --wash: #f5f7f2;
+      --soft: #e9eee8;
+      --line: #d6ddd3;
+      --teal: #17756d;
+      --coral: #c44f43;
+      --navy: #264f70;
+      --gold: #b98424;
+      --violet: #6c5b89;
+      --shadow: 0 24px 62px rgb(35 48 54 / 12%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(23 117 109 / 9%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(38 79 112 / 7%) 1px, transparent 1px),
+        var(--wash);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.7;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--coral), var(--navy), var(--gold));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+    h1, h2, h3, p, li, a, th, td, span { overflow-wrap: anywhere; }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 78%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 54px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 760;
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 830px;
+      margin-top: 24px;
+      color: #2e393e;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.16rem, 2.1vw, 1.55rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 28px;
+      margin-top: 34px;
+      padding: 28px;
+      color: #fff;
+      background: #183f3b;
+      border-radius: 8px;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .quick-summary p {
+      color: rgb(255 255 255 / 84%);
+      font-size: 1.06rem;
+    }
+
+    .tldr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .tldr li {
+      padding: 13px;
+      color: rgb(255 255 255 / 88%);
+      background: rgb(255 255 255 / 10%);
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 8px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .stat {
+      padding: 14px;
+      color: var(--ink);
+      background: #fff;
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--coral);
+      font-size: 1.65rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 238px minmax(0, 1fr);
+      gap: 40px;
+      align-items: start;
+      margin-top: 38px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 6px;
+      padding: 16px;
+      background: rgb(255 255 255 / 76%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .toc span {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 0;
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 750;
+      text-decoration: none;
+      border-top: 1px solid rgb(214 221 211 / 76%);
+    }
+
+    .content {
+      display: grid;
+      gap: 28px;
+      min-width: 0;
+    }
+
+    .section {
+      min-width: 0;
+      padding: 34px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section:first-child { border-top: 0; padding-top: 0; }
+
+    .label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      max-width: 870px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 4.2vw, 3.45rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .lead {
+      max-width: 900px;
+      margin-top: 14px;
+      color: #2e393e;
+      font-size: 1.08rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      margin-bottom: 12px;
+      padding: 0 9px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .diagram {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .memory-ladder {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .memory-block {
+      min-width: 0;
+      padding: 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 14px 30px rgb(35 48 54 / 7%);
+    }
+
+    .memory-block strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+    }
+
+    .memory-block span {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .memory-block.lossless { border-top: 6px solid var(--navy); }
+    .memory-block.missing { border-top: 6px solid var(--coral); }
+    .memory-block.compressed { border-top: 6px solid var(--teal); }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: 150px repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .matrix-cell {
+      min-height: 118px;
+      padding: 15px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .matrix-cell.axis {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: auto;
+      color: #fff;
+      background: var(--navy);
+      font-size: 0.84rem;
+      font-weight: 900;
+      letter-spacing: 0.07em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .matrix-cell strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ink);
+    }
+
+    .matrix-cell p {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .flow-step {
+      position: relative;
+      min-width: 0;
+      padding: 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .flow-step::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -10px;
+      width: 10px;
+      height: 2px;
+      background: var(--line);
+    }
+
+    .flow-step:last-child::after { display: none; }
+
+    .flow-step b {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--coral);
+      font-size: 0.8rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .table-wrap {
+      min-width: 0;
+      margin-top: 24px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: #fff;
+      background: var(--navy);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    td {
+      color: #344047;
+      font-size: 0.95rem;
+    }
+
+    .quote {
+      margin-top: 24px;
+      padding: 22px;
+      color: #fff;
+      background: var(--violet);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.25rem, 2.5vw, 1.9rem);
+      line-height: 1.35;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 14px 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 46px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .toc { position: static; }
+
+      .grid,
+      .two,
+      .tldr,
+      .memory-ladder,
+      .flow {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .matrix {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .matrix-cell.axis:first-child {
+        display: none;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .page { padding-inline: 16px; }
+
+      .hero {
+        padding-top: 36px;
+        gap: 28px;
+      }
+
+      h1 {
+        max-width: 10ch;
+        font-size: clamp(2.7rem, 14vw, 4.35rem);
+      }
+
+      .grid,
+      .two,
+      .tldr,
+      .memory-ladder,
+      .matrix,
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-step::after {
+        top: auto;
+        right: auto;
+        left: 24px;
+        bottom: -10px;
+        width: 2px;
+        height: 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./">YouTube Extractor</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#compression-map">Compression Map</a>
+      <a class="action-link" href="#platform">Platform Takeaways</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=I8YnwUV2C9w">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">Model Memory</span>
+        <h1>The Memory Problem Is a Context Compression Problem</h1>
+        <p class="subtitle">
+          A readable summary of Cursor's Compile 26 talk with Baseten researchers. The talk is not about product memory like notes or databases.
+          It is about how long-horizon agents might keep useful context inside the model's KV cache without paying the full cost of every token forever.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> The Memory Problem, Baseten | Compile 26</span>
+          <span><strong>Creator:</strong> Cursor</span>
+          <span><strong>Transcript:</strong> 2,164 words</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/I8YnwUV2C9w/hqdefault.jpg" alt="Video thumbnail for The Memory Problem, Baseten Compile 26">
+        <figcaption>
+          Source video from Cursor's Compile 26 series, focused on Baseten research into memory and KV-cache compaction.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="quick-summary-title">
+      <div>
+        <h2 id="quick-summary-title">The Short Version</h2>
+        <p>
+          The speakers frame agent memory as the problem of retrieving the right context at inference time.
+          Full KV cache is accurate but grows linearly with context length. RAG, fine-tuning, and natural-language summaries are compact,
+          but they lose detail. Their research explores an intermediate layer: learned KV-cache compaction that can be reused in a loop.
+        </p>
+        <ul class="tldr">
+          <li>Long-horizon agents need compressed memory, repeated memory use, and a path from experience to durable knowledge.</li>
+          <li>The method learns queries that attend over the full KV cache and output a smaller compressed KV cache.</li>
+          <li>The deeper idea: compressed KV cache can behave like generated weights, not just stored text.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>13m</strong><span>technical research talk</span></div>
+        <div class="stat"><strong>326</strong><span>caption segments</span></div>
+        <div class="stat"><strong>32x</strong><span>iterative compaction mentioned</span></div>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Table of contents">
+        <span>Read</span>
+        <a href="#problem">The problem</a>
+        <a href="#memory-layer">Memory layers</a>
+        <a href="#compression-map">Compression map</a>
+        <a href="#method">Their method</a>
+        <a href="#loop">Compaction loop</a>
+        <a href="#meaning">Why it matters</a>
+        <a href="#platform">Platform takeaways</a>
+      </nav>
+
+      <article class="content">
+        <section class="section" id="problem">
+          <span class="label">Problem</span>
+          <h2>The hard part is not storing everything; it is keeping the right information usable</h2>
+          <p class="lead">
+            The talk starts with the ambition of near-lossless retrieval of relevant context during inference.
+            For long-running agents, every extra observation, tool result, decision, and conversation turn creates memory pressure.
+            If the agent keeps the full KV cache, memory and compute scale badly. If it over-compresses, the agent forgets details.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Bottleneck</span>
+              <h3>Full KV cache is faithful but expensive</h3>
+              <p>The full cache preserves token-level context, but it grows linearly and becomes a bottleneck for long-horizon agent work.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Tradeoff</span>
+              <h3>Summaries and RAG are compact but lossy</h3>
+              <p>Fine-tuning, retrieval systems, and markdown-style summaries can help, but they do not preserve every useful internal representation.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Gap</span>
+              <h3>The missing layer is between raw cache and durable knowledge</h3>
+              <p>The speakers argue that a middle memory layer is needed for agents that keep working across long tasks.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="memory-layer">
+          <span class="label">Memory Layer</span>
+          <h2>They describe three ingredients for reliable long-horizon agents</h2>
+          <p class="lead">
+            This is the most useful framing for product builders. The talk separates memory into three jobs:
+            compress the working state, use that memory repeatedly in the loop, and eventually turn important experiences into durable knowledge.
+          </p>
+
+          <div class="diagram" aria-label="Memory layer ladder">
+            <div class="memory-ladder">
+              <div class="memory-block lossless">
+                <strong>1. Compressed Working Memory</strong>
+                <span>Keep enough of the KV-cache information to continue a task without carrying the full context forever.</span>
+              </div>
+              <div class="memory-block missing">
+                <strong>2. Memory in the Loop</strong>
+                <span>Reuse the compacted state across many steps, because long-horizon agents repeatedly plan, act, observe, and continue.</span>
+              </div>
+              <div class="memory-block compressed">
+                <strong>3. Durable Knowledge</strong>
+                <span>Find a mechanism that projects useful experience back into weights, preferences, or stable reusable state.</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="quote">
+            For agent systems, memory should be treated as an active runtime component, not as a passive transcript archive.
+          </p>
+        </section>
+
+        <section class="section" id="compression-map">
+          <span class="label">Compression Map</span>
+          <h2>The talk places memory methods on a 2x2 map: selection versus synthesis, per-context versus amortized</h2>
+          <p class="lead">
+            The speakers classify memory-compression approaches by what they keep and when they pay the cost.
+            Selection keeps a subset of the original cache. Synthesis creates a learned representation.
+            Per-context methods spend work at inference time, while amortized methods pay training cost up front and reuse the learned compressor later.
+          </p>
+
+          <div class="matrix" aria-label="KV cache compression map">
+            <div class="matrix-cell axis">Method</div>
+            <div class="matrix-cell axis">Selection</div>
+            <div class="matrix-cell axis">Synthesis</div>
+            <div class="matrix-cell axis">Per Context</div>
+            <div class="matrix-cell">
+              <strong>Score and keep / evict</strong>
+              <p>Look at the current KV cache, choose useful parts, and discard lower-value pieces for future calls.</p>
+            </div>
+            <div class="matrix-cell">
+              <strong>Create a representation now</strong>
+              <p>Optimize a compact representation for this context, such as learned cache-like state produced at context time.</p>
+            </div>
+            <div class="matrix-cell axis">Amortized</div>
+            <div class="matrix-cell">
+              <strong>Learn what to select</strong>
+              <p>Pay training cost ahead of time so inference can use a learned policy for sparse or selective attention.</p>
+            </div>
+            <div class="matrix-cell">
+              <strong>Learn how to compress</strong>
+              <p>This is where the Baseten method sits: train a function that maps full KV cache into compressed KV cache.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="method">
+          <span class="label">Method</span>
+          <h2>Their proposed compressor learns to ask questions of the KV cache</h2>
+          <p class="lead">
+            The method is inspired by amortized optimization. Instead of running an expensive optimizer for every new input,
+            train a general function that learns to produce the compressed representation. In this talk, that function receives a variable-length KV cache and outputs a smaller KV cache.
+          </p>
+
+          <div class="flow" aria-label="Compressor method flow">
+            <div class="flow-step"><b>Input</b><span>Start with the full keys and values from the model's context.</span></div>
+            <div class="flow-step"><b>Queries</b><span>Learn a small set of queries that can attend over all tokens.</span></div>
+            <div class="flow-step"><b>Cross-Attend</b><span>Use attention scores to mix information from the original cache.</span></div>
+            <div class="flow-step"><b>Project</b><span>Produce a compact KV representation with an output projection.</span></div>
+            <div class="flow-step"><b>Train</b><span>Minimize divergence between full-context outputs and compressed-context outputs.</span></div>
+          </div>
+
+          <div class="grid two">
+            <article class="card">
+              <span class="pill">Training Signal</span>
+              <h3>Match the full-cache model</h3>
+              <p>The loss compares the model using full KV cache with the model using compressed KV cache, so the compressed version learns to preserve behavior.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Product Intuition</span>
+              <h3>It is a learned context distiller</h3>
+              <p>For platform thinking, imagine a memory service that distills working state while preserving enough behavior to continue the task.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="loop">
+          <span class="label">Loop</span>
+          <h2>Single-pass compaction is not enough; the memory must survive repeated use</h2>
+          <p class="lead">
+            The researchers want this to support very long or effectively infinite context. A naive loop compresses a block,
+            generates more content, compresses again, and repeats. They report that a compressor trained only for one pass starts to collapse after a few iterations.
+          </p>
+
+          <div class="flow" aria-label="Iterative compaction loop">
+            <div class="flow-step"><b>Block A</b><span>Original KV cache block is compacted into a smaller block.</span></div>
+            <div class="flow-step"><b>Generate</b><span>The model continues from the compressed state.</span></div>
+            <div class="flow-step"><b>Block B</b><span>New cache is produced from the continuation.</span></div>
+            <div class="flow-step"><b>Compact</b><span>The system compresses again instead of letting context grow without bound.</span></div>
+            <div class="flow-step"><b>Repeat</b><span>The goal is stable behavior across many compaction cycles.</span></div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Issue</th>
+                  <th>What they observed</th>
+                  <th>Fix direction</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Naive iteration</td>
+                  <td>A compressor trained for a single pass can work briefly, then degrade after repeated compaction.</td>
+                  <td>Train for the downstream continuation, not only the immediate next cache.</td>
+                </tr>
+                <tr>
+                  <td>Stability</td>
+                  <td>They mention improved stability across 16 or even 32 compaction iterations.</td>
+                  <td>Evaluate memory across many loops, because short tests can hide long-horizon failure.</td>
+                </tr>
+                <tr>
+                  <td>Long context</td>
+                  <td>The practical goal is to keep extending the working context without paying full KV-cache cost every time.</td>
+                  <td>Use a compaction policy that is trained and measured as part of the agent runtime.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="meaning">
+          <span class="label">Meaning</span>
+          <h2>The bold idea: a compacted KV cache behaves like a small generated network</h2>
+          <p class="lead">
+            Near the end, the speaker compares a compacted KV cache to an MLP. A query interacts with keys, applies a softmax-like nonlinearity,
+            then combines values. In that view, compaction is not merely shrinking text; it is producing a functional object from context.
+          </p>
+
+          <div class="grid">
+            <article class="card">
+              <span class="pill">Representation</span>
+              <h3>Context becomes a computation</h3>
+              <p>The compressed cache can be understood as a structure that transforms future queries, similar to how weights transform activations.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Learning</span>
+              <h3>In-context learning is sample efficient</h3>
+              <p>The model can learn from something said once in context, while gradient descent usually needs many examples.</p>
+            </article>
+            <article class="card">
+              <span class="pill">Future Work</span>
+              <h3>Compaction plus gradient descent</h3>
+              <p>The researchers are interested in combining direct compaction with gradient descent into the same memory-like block.</p>
+            </article>
+          </div>
+
+          <p class="quote">
+            My read: this is research-level infrastructure, but it points toward agent memory that is more than a vector store or a summary file.
+          </p>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your agentic AI platform</h2>
+          <p class="lead">
+            For a BA-facing multi-agent builder, this talk should not become a confusing KV-cache configuration screen.
+            It should become a clean memory framework that hides the low-level machinery while helping BA users choose the right kind of memory for each workflow.
+          </p>
+
+          <ul class="checklist">
+            <li>Separate <strong>business memory</strong> from <strong>model runtime memory</strong>. BA users should design facts, policies, SOPs, evidence, and audit trails; engineers can decide whether the runtime uses RAG, summaries, cache compaction, or fine-tuning.</li>
+            <li>Create memory types in your SOP: working memory, episodic memory, semantic knowledge, procedural SOP, user preference, tool result cache, and audit memory.</li>
+            <li>For each Master Agent and Sub-Agent, define memory permissions: what it can read, what it can write, what must be summarized, what must be retained losslessly, and what requires human approval.</li>
+            <li>For Skills, distinguish cognitive skills that transform understanding from actionable skills that call tools. Actionable skills should always declare required tools, input schema, output schema, guardrails, and audit fields.</li>
+            <li>For Flow Markdown, add explicit memory checkpoints: capture, retrieve, compact, verify, escalate, and persist. This makes memory part of the workflow instead of hidden prompt magic.</li>
+            <li>Evaluate long workflows with memory degradation tests. Run the same business process across many steps and check whether the agent still remembers constraints, facts, tool outputs, and prior decisions.</li>
+            <li>Keep the BA UI simple: let users choose memory intent such as "remember exact evidence", "summarize interaction", "retrieve policy clause", or "persist approved decision" rather than exposing model internals.</li>
+            <li>For regulated workflows, never let compressed memory replace the audit log. Compression can support reasoning, but the source records and decisions must remain inspectable.</li>
+          </ul>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>BA-facing concept</th>
+                  <th>Runtime interpretation</th>
+                  <th>Governance rule</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Remember exact source</td>
+                  <td>Store original document, evidence, or transcript with retrieval metadata.</td>
+                  <td>Must be cited, immutable, and auditable.</td>
+                </tr>
+                <tr>
+                  <td>Summarize working context</td>
+                  <td>Use structured summary, state object, or model-level compaction to keep the task moving.</td>
+                  <td>Must keep links back to source records.</td>
+                </tr>
+                <tr>
+                  <td>Learn from completed case</td>
+                  <td>Promote patterns into SOP, examples, evaluation sets, or future fine-tuning candidates.</td>
+                  <td>Requires approval and versioning.</td>
+                </tr>
+                <tr>
+                  <td>Use tool result later</td>
+                  <td>Persist typed output from MCP/API tools with timestamp, actor, and confidence.</td>
+                  <td>Must respect permissions and data retention policy.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="quote">
+            Strong opinion: the best BA experience is not "configure memory algorithms"; it is "declare what must be remembered, why, for how long, and who may use it."
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Summary page generated from public YouTube captions for <strong>The Memory Problem, Baseten | Compile 26</strong>. Source: Cursor. Video ID: I8YnwUV2C9w.
+  </footer>
+</body>
+</html>

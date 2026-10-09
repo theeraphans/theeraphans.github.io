@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>Greg Brockman: Build for Better Models, Not Around Their Limits</title>
+    <meta name="description" content="An evidence-aware guide to Greg Brockman's advice on proactive agents, durable AI products, domain expertise, automation, productivity measurement, entrepreneurship, and human control." />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .visual { margin: 1.7rem 0 2rem; }
+      .visual img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 4px; }
+      .visual figcaption { margin-top: .65rem; color: var(--muted); font-size: .88rem; line-height: 1.55; text-align: center; }
+      .visual figcaption strong { color: var(--ink); }
+      .callout { margin: 1.5rem 0; padding: 1rem !important; border-left: 3px solid var(--green) !important; background: var(--surface) !important; }
+      .callout.warning { border-left-color: #8a6417 !important; }
+      .callout p:last-child { margin-bottom: 0; }
+      .principles, .ladder, .metric-grid { display: grid; gap: 1px; margin: 1.5rem 0; background: var(--line); border: 1px solid var(--line); }
+      .principles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .ladder { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .metric-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .principles > div, .ladder > div, .metric-grid > div { padding: 1rem; background: var(--paper); }
+      .principles h3, .ladder h3 { margin: 0 0 .45rem; font-size: 1rem; }
+      .principles p, .ladder p, .metric-grid small { display: block; margin: 0; color: var(--muted); font-size: .87rem; line-height: 1.5; }
+      .metric-grid span, .metric-grid strong { display: block; }
+      .metric-grid span { color: var(--muted); font-size: .73rem; text-transform: uppercase; }
+      .metric-grid strong { margin: .35rem 0; font-size: 1.2rem; font-weight: 600; }
+      .comparison { width: 100%; min-width: 0 !important; margin: 1.5rem 0; table-layout: fixed; border-collapse: collapse; }
+      .comparison th, .comparison td { padding: .78rem .55rem; text-align: left; vertical-align: top; overflow-wrap: anywhere; border-bottom: 1px solid var(--line); }
+      .comparison th { font-weight: 600; }
+      .chapter-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 1.25rem 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
+      .chapter-list li { border-bottom: 1px solid var(--line); }
+      .chapter-list a { display: flex; gap: .7rem; min-height: 100%; padding: .8rem .45rem; color: var(--ink); text-decoration: none; }
+      .chapter-list time { flex: 0 0 3.25rem; color: var(--green); font-variant-numeric: tabular-nums; }
+      @media (max-width: 750px) {
+        .principles, .ladder, .metric-grid, .chapter-list { grid-template-columns: 1fr; }
+        .comparison { font-size: .84rem; }
+        .comparison thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+        .comparison, .comparison tbody, .comparison tr, .comparison td { display: block; width: 100%; }
+        .comparison tr { padding: .55rem 0; border-bottom: 1px solid var(--line); }
+        .comparison td { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: .6rem; padding: .32rem .2rem; border: 0; }
+        .comparison td::before { color: var(--muted); font-weight: 600; }
+        .comparison td:nth-child(1)::before { content: "Layer"; }
+        .comparison td:nth-child(2)::before { content: "Question"; }
+        .comparison td:nth-child(3)::before { content: "Evidence"; }
+        .comparison td:nth-child(4)::before { content: "Risk"; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Reading room</a>
+      <div class="top-actions"><a class="action-link" href="https://www.youtube.com/watch?v=qy8Gr27yLMk">Watch video</a></div>
+    </nav>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">AI product strategy · Agentic work</p>
+          <h1>Build for Better Models, Not Around Their Limits</h1>
+          <p class="subtitle">Greg Brockman's practical message is more demanding than “start using AI.” Find work that becomes more valuable as models improve, add the context and feedback loops that generic intelligence lacks, and automate only after you understand the process well enough to remain accountable.</p>
+          <div class="meta"><span>30:14 video</span><span>Auto-generated English captions</span><span>Published September 30, 2026</span><span>Summary run: October 4, 2026 · 07:43 ICT</span></div>
+        </div>
+        <figure class="hero-card">
+          <img src="2026-10-04-greg-brockman-ai-entrepreneurship-hero.jpg" alt="Marina Mogilko interviewing OpenAI co-founder Greg Brockman" />
+          <figcaption>The conversation moves from personal agent use to a larger thesis: cheaper execution raises the value of judgment, customer understanding, domain access, and ambition.</figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="eyebrow">Executive summary</p>
+            <h2>The opportunity is not more software; it is more solved problems</h2>
+            <p>Greg Brockman argues that AI has crossed from answering questions to performing meaningful work. He says he no longer writes software directly: he directs an AI, reviews what it produces, and supplies feedback. The important change is not the disappearance of engineering. It is that implementation effort is collapsing, so people can attempt solutions that were previously too small, specialised, or expensive to justify.</p>
+            <p>That creates a trap. A product whose value is “we added prompts around a weak model” may disappear when the next model internalises the workaround. A durable product instead compounds with better intelligence: it understands a real workflow, has trusted access to the right context, serves several stakeholders, learns from outcomes, and owns the difficult last mile between a model output and a result the customer values.</p>
+            <ul>
+              <li><strong>Start before you feel ready.</strong> Capability discovery is empirical. Ask the system to do slightly more than it did yesterday and inspect what happens.</li>
+              <li><strong>Design for the capability curve.</strong> Build workflows that improve when models become smarter, not scaffolding that exists only because today's model is weak.</li>
+              <li><strong>Domain expertise becomes product leverage.</strong> Generic intelligence still needs local vocabulary, permissions, relationships, edge cases, and outcome definitions.</li>
+              <li><strong>Automate after repetition.</strong> Perform a workflow manually several times, understand its invariants and failure modes, then automate it.</li>
+              <li><strong>Keep human accountability.</strong> AI can propose and execute more, but people still set goals, define boundaries, review consequential actions, and own customer outcomes.</li>
+            </ul>
+            <div class="callout warning"><p><strong>Evidence boundary.</strong> This article distinguishes Brockman's opinions and examples from claims independently supported by OpenAI's published material. The interview is strategic guidance, not a controlled productivity study, product specification, or investment forecast.</p></div>
+          </section>
+
+          <section id="capability-gap">
+            <p class="eyebrow">The application gap</p>
+            <h2>A general interface still creates a discovery problem</h2>
+            <p>Brockman describes a paradox: ChatGPT can do an enormous range of work, yet a blank chat box makes that range hard to perceive. Users often need several successful use cases before AI becomes habitual. The system may be capable of researching, building a presentation, analysing a spreadsheet, drafting a reply, or creating an application, but the user must first imagine the request.</p>
+            <p>His preferred direction is an agent that reduces this “white page” burden. Instead of waiting for a perfectly formed prompt, it notices unresolved work, gathers relevant context, proposes a useful next step, and asks for approval where judgment is required. That turns the interface from a command line for intelligence into an ongoing collaboration.</p>
+            <div class="callout"><p><strong>Product lesson.</strong> Capability discovery should be part of the product. Show users what the system can do using their real work, but do not cross the line from helpful suggestion to unapproved action.</p></div>
+          </section>
+
+          <section id="directing">
+            <p class="eyebrow">New craft</p>
+            <h2>Directing AI replaces some typing, not engineering judgment</h2>
+            <figure class="visual"><img src="2026-10-04-greg-brockman-directing-ai.jpg" alt="Greg Brockman explaining how he directs AI to write software" loading="lazy" /><figcaption>Brockman says he now directs AI to produce software and supplies feedback. The scarce skill shifts toward task decomposition, constraints, verification, and deciding what should exist.</figcaption></figure>
+            <p>The phrase “I don't write software anymore” is easy to overread. In the same breath, Brockman describes guidance and repeated feedback. The work moves up a level:</p>
+            <div class="principles">
+              <div><h3>Intent</h3><p>Define the problem, user, desired outcome, and what “good” means.</p></div>
+              <div><h3>Context</h3><p>Provide data, examples, constraints, tools, and access to the relevant environment.</p></div>
+              <div><h3>Verification</h3><p>Inspect behaviour, tests, evidence, security, and failure modes rather than accepting fluent output.</p></div>
+              <div><h3>Iteration</h3><p>Turn observed mistakes and preferences into better instructions, evals, interfaces, and system design.</p></div>
+            </div>
+            <p>For an AI engineer, this is not permission to stop understanding systems. It raises the cost of weak judgment: an agent can create more code and more actions than a person can manually inspect, so executable specifications, tests, observability, and bounded permissions become more important.</p>
+          </section>
+
+          <section id="demo">
+            <p class="eyebrow">Podcast Studio demo</p>
+            <h2>The valuable asset is the learning loop, not the generated page</h2>
+            <figure class="visual"><img src="2026-10-04-greg-brockman-podcast-studio-demo.jpg" alt="AI-built Podcast Studio application showing research, questions, episode targets, and feedback tabs" loading="lazy" /><figcaption>The interviewer demonstrates a custom preparation app that researches a guest, proposes topics and questions, and reflects the show's editorial goals. Brockman's response is to extend it across the whole production lifecycle.</figcaption></figure>
+            <p>Marina Mogilko shows an AI-built application that prepares interviews using the guest, episode length, past episodes, editorial style, and a target such as YouTube views. It produces research, questions, title and thumbnail directions. Brockman immediately asks whether the same context can continue into post-production: ingest the interview, cut the episode, prepare the assets, and learn from the published result.</p>
+            <p>That suggestion exposes the difference between an AI demo and an AI product. A demo generates an artefact. A product closes a loop:</p>
+            <ol>
+              <li>Capture the creator's goal and editorial constraints.</li>
+              <li>Research the guest and retrieve comparable episodes.</li>
+              <li>Propose a plan, questions, and hypotheses for review.</li>
+              <li>Observe the actual interview and production decisions.</li>
+              <li>Generate and edit the final package under human direction.</li>
+              <li>Measure retention, corrections, audience response, and production effort.</li>
+              <li>Use those outcomes to improve the next episode.</li>
+            </ol>
+            <p>The moat is therefore not the page generator. It is the accumulated editorial context, workflow integration, feedback data, and trust that let the system improve without silently changing the creator's voice.</p>
+          </section>
+
+          <section id="durability">
+            <p class="eyebrow">Product durability</p>
+            <h2>Avoid businesses built on temporary model gaps</h2>
+            <p>Brockman separates two kinds of work. Some products scale as models improve. Others compensate for a current weakness with elaborate prompting or hand-built machinery. The second category may be useful today, but its differentiation can evaporate when a model upgrade makes the workaround native.</p>
+            <table class="comparison">
+              <thead><tr><th>Layer</th><th>Question</th><th>Durable evidence</th><th>Risk</th></tr></thead>
+              <tbody>
+                <tr><td>Problem</td><td>Does the customer have an expensive, frequent, meaningful outcome to achieve?</td><td>Observed workflow, willingness to pay, baseline cost.</td><td>A clever demo without demand.</td></tr>
+                <tr><td>Domain</td><td>Do you understand language, exceptions, incentives, and stakeholder conflict?</td><td>Expert review, edge-case corpus, outcome definitions.</td><td>Generic behaviour in a regulated or nuanced workflow.</td></tr>
+                <tr><td>Context</td><td>Can the system access the right data safely and at the right moment?</td><td>Trusted integrations, provenance, permissions, freshness.</td><td>A model that is smart but blind to the organisation.</td></tr>
+                <tr><td>Workflow</td><td>Can insight become a completed, reversible action?</td><td>State, approvals, retries, audit trail, human takeover.</td><td>A recommendation that creates more manual work.</td></tr>
+                <tr><td>Learning</td><td>Does the product improve from real outcomes?</td><td>Evals, overrides, customer feedback, longitudinal metrics.</td><td>Optimising for plausible output rather than value.</td></tr>
+                <tr><td>Relationship</td><td>Do users trust the product with ongoing responsibility?</td><td>Reliability, transparency, recourse, accumulated preference.</td><td>Switching remains effortless when models commoditise.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="domain">
+            <p class="eyebrow">Entrepreneurship</p>
+            <h2>Implementation gets cheaper; domain discovery gets more valuable</h2>
+            <p>The interview predicts a “renaissance of entrepreneurship.” When a small team can call on software, research, design, and operational assistance, many narrow opportunities become economically viable. Brockman gives the example of an antique-watch shop whose owner assumes AI has nothing to offer. A conversational build can create a site and turn the history of each watch into rich product storytelling.</p>
+            <p>But cheaper implementation does not answer which business to build. The entrepreneur still has to identify a real problem, understand the customer, discover the right interaction, earn access to data, and build relationships. In education, for example, a product must reconcile the needs of students, teachers, parents, administrators, and purchasers. Better code generation does not eliminate that stakeholder design.</p>
+            <div class="callout"><p><strong>The durable moat is often outside the model.</strong> It can be distribution, proprietary workflow data, trusted integrations, regulatory competence, service delivery, or a distinctive understanding of the customer. Those assets become more productive with stronger models rather than being replaced by them.</p></div>
+          </section>
+
+          <section id="agent-depth">
+            <p class="eyebrow">Agent depth</p>
+            <h2>“Morning briefing” describes a ladder, not one feature</h2>
+            <p>Brockman defends the familiar morning-briefing example by showing how much depth hides behind the label. The same product name can represent radically different levels of useful work:</p>
+            <div class="ladder">
+              <div><h3>1. Digest</h3><p>Repeat notifications and summarise obvious updates. Convenient, but easy to ignore.</p></div>
+              <div><h3>2. Prioritise</h3><p>Identify unresolved messages, rank them by consequence, and explain what needs attention.</p></div>
+              <div><h3>3. Research</h3><p>Read documents and history, investigate open questions, and compress the evidence needed for a decision.</p></div>
+              <div><h3>4. Prepare action</h3><p>Coordinate with people and systems, assemble the transaction, and stop at the approval boundary.</p></div>
+            </div>
+            <p>This is a useful evaluation model for agents. Do not ask only whether the system produced a briefing. Ask how much uncertainty it removed, whether the sources are traceable, what action it prepared, which permissions it used, and whether the user can understand and reverse the result.</p>
+          </section>
+
+          <section id="productivity">
+            <p class="eyebrow">Measurement</p>
+            <h2>Tokens are an adoption signal, not business value</h2>
+            <p>Brockman says OpenAI looks at token usage alongside proxies such as lines of code, commits, and pull requests. He explicitly acknowledges that these are imperfect. OpenAI's current admin analytics similarly separates usage and spend from outcomes such as merged commits and AI-contributed lines. That separation matters: more tokens can mean deeper useful work, wasted loops, or both.</p>
+            <div class="metric-grid">
+              <div><span>Adoption</span><strong>Usage and reach</strong><small>Active users, workflows attempted, repeat use, connected teams, and token or credit consumption.</small></div>
+              <div><span>Production</span><strong>Accepted output</strong><small>Merged changes, completed cases, cycle time, rework, defects, incidents, and human overrides.</small></div>
+              <div><span>Outcome</span><strong>Value delivered</strong><small>Revenue, cost, capacity, customer result, quality, risk, scientific validity, or time returned.</small></div>
+            </div>
+            <p>The right optimisation is not “max tokens.” It is sufficient compute on a valuable, well-specified problem, with verification appropriate to the stakes. Brockman's scientific example—OpenAI's coordinated multi-agent work on Navier–Stokes—shows an extreme version: roughly 10,000 concurrent agents and enormous token use were directed at a tightly defined mathematical target, followed by formal verification. The scale is meaningful because the problem and verification standard are meaningful.</p>
+          </section>
+
+          <section id="starting">
+            <p class="eyebrow">Practical starting point</p>
+            <h2>Do it manually, repeat it, then automate it</h2>
+            <p>When asked where a beginner should start, Brockman recommends a small pain point rather than an ambitious autonomous system. Copy an email into the model. Ask for help. Review the answer. On the next attempt, connect the inbox. Once the process has been performed three to five times, its stable pattern becomes visible enough to automate responsibly.</p>
+            <ol>
+              <li><strong>Pick one recurring friction.</strong> It should have a clear owner, input, output, and definition of success.</li>
+              <li><strong>Run it interactively.</strong> Supply the context manually and observe which facts, tools, and decisions are actually needed.</li>
+              <li><strong>Record corrections.</strong> Capture where the model misunderstands, what evidence the reviewer checks, and which actions feel risky.</li>
+              <li><strong>Define the contract.</strong> Specify allowed inputs, output schema, permissions, approval thresholds, failure path, and metrics.</li>
+              <li><strong>Automate the repeatable portion.</strong> Keep uncertain and consequential transitions visible to a person.</li>
+              <li><strong>Evaluate outcomes.</strong> Compare against the manual baseline and expand only when quality and control remain acceptable.</li>
+            </ol>
+            <p>This advice is stronger than “just start.” It says understanding precedes autonomy. Repetition generates the process knowledge needed to build a reliable agent.</p>
+          </section>
+
+          <section id="control">
+            <p class="eyebrow">Human control</p>
+            <h2>Proactivity expands the control surface</h2>
+            <p>The interview promotes OpenAI dots as an always-on agent with a cloud computer, persistent context, connected applications, recurring work, and optional local-computer access. OpenAI's current help documentation confirms those capabilities and also makes the boundaries concrete: plans and regional availability vary; connected apps are permissioned; enterprise access is initially off; and actions can require approvals.</p>
+            <p>Those are not administrative details. A proactive agent can accumulate context, cross application boundaries, continue between conversations, and act when the user is absent. The safety model therefore needs more than a friendly persona:</p>
+            <ul>
+              <li>Explicit goals, scope, time horizon, and stop conditions.</li>
+              <li>Least-privilege access to each app, folder, workspace, and computer.</li>
+              <li>Separate read, draft, propose, and execute permissions.</li>
+              <li>Action-time confirmation for irreversible, external, financial, or sensitive steps.</li>
+              <li>Observable task history, evidence, tool calls, errors, and state changes.</li>
+              <li>Easy pause, takeover, rollback, revocation, and deletion paths.</li>
+            </ul>
+            <p>Brockman's closing principle is the right one: goals should come from people, and humans should remain in control. The practical work is translating that statement into enforceable product mechanics.</p>
+          </section>
+
+          <section id="claims">
+            <p class="eyebrow">Claim check</p>
+            <h2>What is supported, and what remains interview testimony</h2>
+            <table class="comparison">
+              <thead><tr><th>Layer</th><th>Claim</th><th>Evidence status</th><th>Caution</th></tr></thead>
+              <tbody>
+                <tr><td>ChatGPT reach</td><td>1.2 billion weekly active users.</td><td>Interview claim. OpenAI publicly confirms more than 1 billion weekly users, not the exact 1.2 billion figure in the sources reviewed.</td><td>Rapidly changing operational metric.</td></tr>
+                <tr><td>Health use</td><td>About 300 million people use ChatGPT weekly for health queries.</td><td>Interview claim; no matching first-party methodology was located in this review.</td><td>Category definition and counting method are unknown.</td></tr>
+                <tr><td>Dots</td><td>Always-on agent with GPT-6 Astra, cloud computer, connected apps, memory, and recurring work.</td><td>Confirmed in current OpenAI Help Center documentation.</td><td>Availability, plan, region, permissions, and launch limitations apply.</td></tr>
+                <tr><td>Navier–Stokes</td><td>On the order of 10,000 agents worked on the result.</td><td>Confirmed by OpenAI's publication, which also reports 2.7 million messages and about 130 billion output tokens for that effort.</td><td>OpenAI-authored result; scientific validation should include the paper and formal proof.</td></tr>
+                <tr><td>Productivity</td><td>OpenAI relates usage to code outcomes.</td><td>Confirmed directionally by OpenAI's admin analytics documentation.</td><td>Correlation and proxy metrics are not causal proof of ROI.</td></tr>
+                <tr><td>Entrepreneurship</td><td>A major renaissance will accelerate over the next one to two years.</td><td>Brockman's forecast.</td><td>Useful thesis, not a measurable fact.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="take">
+            <p class="eyebrow">My take</p>
+            <h2>The best idea is to build something that welcomes the next model</h2>
+            <p>The interview's strongest advice is architectural: a durable AI product should become better when the model improves. If a stronger model threatens the company, the company probably owns too little of the problem. If a stronger model makes its data, workflow, relationships, and feedback loops more valuable, it has a healthier foundation.</p>
+            <p>I would add one qualification to the ambition message. Higher ambition should mean a more meaningful outcome, not immediate maximum autonomy. The Podcast Studio becomes ambitious when it learns across the full production loop; it does not need permission to publish an episode without review. The morning agent becomes valuable when it removes uncertainty and prepares decisions; it does not need unrestricted authority over email, purchasing, and external relationships.</p>
+            <p>For builders, the near-term advantage is therefore not prompting harder. It is choosing a narrow problem, understanding it deeply, giving the model the right context and tools, designing the human boundary, and measuring whether the result improves real work.</p>
+          </section>
+
+          <section id="map">
+            <p class="eyebrow">Video map</p>
+            <h2>Where the main ideas appear</h2>
+            <ul class="chapter-list">
+              <li><a href="https://www.youtube.com/watch?v=qy8Gr27yLMk&t=59s"><time>00:59</time><span>Proactive assistants</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=qy8Gr27yLMk&t=136s"><time>02:16</time><span>Directing AI to write software</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=qy8Gr27yLMk&t=255s"><time>04:15</time><span>Podcast Studio demo</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=qy8Gr27yLMk&t=430s"><time>07:10</time><span>Small-business leverage</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=qy8Gr27yLMk&t=601s"><time>10:01</time><span>What makes an app worth paying for</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=qy8Gr27yLMk&t=830s"><time>13:50</time><span>Building beyond model limitations</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=qy8Gr27yLMk&t=948s"><time>15:48</time><span>Domain expertise</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=qy8Gr27yLMk&t=1058s"><time>17:38</time><span>The depth of briefing agents</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=qy8Gr27yLMk&t=1188s"><time>19:48</time><span>Productivity measurement</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=qy8Gr27yLMk&t=1431s"><time>23:51</time><span>Start small and automate after repetition</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=qy8Gr27yLMk&t=1529s"><time>25:29</time><span>Human control and guardrails</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=qy8Gr27yLMk&t=1578s"><time>26:18</time><span>A one-hour starting point</span></a></li>
+            </ul>
+          </section>
+
+          <section id="sources">
+            <p class="eyebrow">Sources</p>
+            <h2>Primary interview and first-party checks</h2>
+            <ol>
+              <li><a href="https://www.youtube.com/watch?v=qy8Gr27yLMk">Silicon Valley Girl — OpenAI Co-Founder: Start Building With AI Before You Feel Ready</a>. Primary interview and auto-generated transcript.</li>
+              <li><a href="https://help.openai.com/en/articles/20001530-getting-started-with-your-dot">OpenAI Help Center — Getting started with your dot</a>. Current capabilities, availability, cloud and local computer access, connected apps, and scheduled work.</li>
+              <li><a href="https://help.openai.com/en/articles/20001529-dots-privacy-security-and-safety-faqs">OpenAI Help Center — Dots privacy, security, and safety FAQs</a>. Permissions, proactive research, custom rules, and action boundaries.</li>
+              <li><a href="https://openai.com/index/how-to-connect-ai-usage-to-business-value/">OpenAI — How to connect AI usage to business value</a>. Separation of usage, spend, task insights, and engineering outcome metrics.</li>
+              <li><a href="https://openai.com/index/navier-stokes-solution/">OpenAI — On the Navier–Stokes Millennium Prize Problem</a>. Agent scale, token use, process, formalisation, and OpenAI's stated result.</li>
+              <li><a href="https://openai.com/index/expanding-access-to-ai-with-chatgpt-ads/">OpenAI — A milestone in expanding access to AI</a>. First-party confirmation of more than one billion weekly active ChatGPT users.</li>
+            </ol>
+            <p class="source-note">Source review completed October 4, 2026. OpenAI product details and usage figures can change rapidly. Examples and forecasts attributed to Greg Brockman remain his interview statements unless independently identified above.</p>
+          </section>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <p>On this page</p>
+          <nav>
+            <a href="#summary">Executive summary</a><a href="#capability-gap">Application gap</a><a href="#directing">Directing AI</a><a href="#demo">Podcast Studio</a><a href="#durability">Product durability</a><a href="#domain">Domain advantage</a><a href="#agent-depth">Agent depth</a><a href="#productivity">Measurement</a><a href="#starting">Starting point</a><a href="#control">Human control</a><a href="#claims">Claim check</a><a href="#take">My take</a><a href="#map">Video map</a><a href="#sources">Sources</a>
+          </nav>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>

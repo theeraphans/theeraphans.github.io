@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Reduced autoregressive decoding bandwidth by sharing one key head and one value head across all query heads.">
+  <meta name="resource-file" content="2026-09-08-multi-query-attention-fast-transformer-decoding-en.html">
+  <title>Multi-Query Attention · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/1911.02150">Read paper</a><a class="action-link" href="./">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Transformer Foundations · Paper 7 of 37</p>
+        <h1>Fast Transformer Decoding: One Write-Head is All You Need</h1>
+        <p class="subtitle">Reduced autoregressive decoding bandwidth by sharing one key head and one value head across all query heads.</p>
+        <div class="meta"><span><strong>Noam Shazeer</strong></span><span>2019</span><span>Advanced</span><span>11 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>Multi-Query Attention</h2><p>Google Research</p><p><strong>Prerequisites:</strong> Multi-head attention, KV caching, memory bandwidth, and autoregressive decoding.</p><a href="https://arxiv.org/abs/1911.02150">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Advanced</strong></div><div class="paper-fact"><span>Place in path</span><strong>7 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>During autoregressive decoding, the model generates one token at a time and rereads cached keys and values for all previous tokens. Arithmetic per step is small relative to memory movement, so decoding becomes bandwidth-bound.</p>
+<p>Ordinary multi-head attention stores separate K and V tensors for every head. The paper asks whether queries need multiple views while keys and values can be shared.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Keep many learned query projections but replace per-head key and value projections with a single shared pair. Every query head attends to the same cached keys and values through its own query representation.</p>
+<p>The KV cache shrinks roughly with the number of key/value heads, reducing bytes read per generated token and allowing larger batches or faster decoding.</p><div class="equation">Q: H heads; K,V: 1 shared head; KV cache/token ∝ 2dₖ instead of 2Hdₖ</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Project the current hidden state into multiple query heads. Project each source token once into one key and one value head. Broadcast the shared K and V across query-head attention computations.</p>
+<p>At decode time, append only one key/value vector pair per layer and token. Query heads still produce diverse score patterns because their projections differ.</p><figure class="concept-flow" aria-label="MHA versus MQA cache shape">
+    <div class="flow-step"><span>Hidden</span><strong>Current token state</strong><p>One vector enters the layer.</p></div>
+<div class="flow-step"><span>Queries</span><strong>Project H query heads</strong><p>Retain diverse search directions.</p></div>
+<div class="flow-step"><span>Keys</span><strong>Project one key head</strong><p>Cache one shared key vector.</p></div>
+<div class="flow-step"><span>Values</span><strong>Project one value head</strong><p>Cache one shared value vector.</p></div>
+<div class="flow-step"><span>Output</span><strong>Combine H results</strong><p>Concatenate query-head outputs.</p></div>
+    <figcaption>Many query heads read a single shared K/V stream, reducing cached memory per token.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>MQA retains the output shape of multi-head attention and changes only K/V head count. The reduction targets memory bandwidth and cache capacity; training FLOPs do not fall in direct proportion because query and output projections remain.</p>
+<p>Checkpoint architecture must agree on KV-head count. Converting an already trained MHA model to MQA is not a simple runtime flag because weight shapes and learned specialization differ.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>The paper reported comparable quality to multi-head baselines on translation tasks with much faster incremental decoding. The central system claim is that reduced memory traffic improves latency in the tested serving setup.</p>
+<p>Quality parity is task- and scale-dependent. Later work found that full sharing can cost quality for some large models, motivating grouped-query attention.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>MQA made KV-head count an explicit architecture and serving parameter. It became important as long contexts and high-concurrency inference caused KV cache to dominate accelerator memory.</p>
+<p>The design connects model architecture directly to production economics: fewer cached bytes can increase batch size, throughput, and context capacity.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Calculate cache bytes from layers, sequence length, batch, KV heads, head width, dtype, and both K and V. Do not estimate from parameter count alone.</p>
+<p>Ensure kernels understand broadcasted KV heads and tensor-parallel sharding. A theoretically smaller cache may fail to improve latency if the kernel introduces expansion or inefficient memory access.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>One shared K/V representation can become an information bottleneck and reduce quality. MQA does not reduce cache growth with sequence length and does not address prefill attention’s quadratic work.</p>
+<p>Latency gains depend on decode being bandwidth-bound. Small batches, short contexts, or kernel overhead can change the result.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>GQA interpolates between MHA and MQA by using several KV groups. PagedAttention later manages the resulting cache blocks across many requests, while KV compression changes precision or token retention.</p><div class="article-nav"><a href="2026-09-08-alibi-attention-linear-biases-long-context-en.html">← ALiBi</a><a href="2026-09-08-grouped-query-attention-gqa-en.html">Grouped-Query Attention →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>MQA preserves multiple query heads but shares keys and values.</li><li>The primary target is decode-time memory bandwidth.</li><li>KV cache capacity is an architectural concern.</li><li>Cache savings can increase serving batch size.</li><li>Quality may fall when one KV representation is too restrictive.</li><li>Kernel support determines realized speed.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/1911.02150">Fast Transformer Decoding: One Write-Head is All You Need</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>MQA changes cache shape and memory traffic, not the number of query heads. Its main benefit appears during incremental serving rather than full-sequence training.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

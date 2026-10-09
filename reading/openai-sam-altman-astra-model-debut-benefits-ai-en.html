@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>OpenAI&#39;s Sam Altman on Astra Model Debut, Benefits of AI</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #171712;
+      --muted: #44443d;
+      --quiet: #5e5d55;
+      --line: #d9d8cf;
+      --line-strong: #8f8d82;
+      --canvas: #fffefa;
+      --paper: #fffefa;
+      --accent: #171712;
+      --teal: #12673f;
+      --gold: #65551c;
+      --violet: #5b5566;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--canvas);
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.68;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 0;
+    }
+
+    a { color: var(--teal); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+
+    img { display: block; max-width: 100%; }
+
+    h1, h2, h3, p, figure { margin: 0; }
+
+    p, li { line-height: 1.75; }
+
+    .site-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      width: 100%;
+      max-width: none;
+      min-height: 54px;
+      margin: 0;
+      padding-top: max(0.65rem, env(safe-area-inset-top));
+      padding-right: max(1rem, env(safe-area-inset-right), calc((100vw - 1120px) / 2 + 28px));
+      padding-bottom: 0.65rem;
+      padding-left: max(1rem, env(safe-area-inset-left), calc((100vw - 1120px) / 2 + 28px));
+      color: var(--paper);
+      background: var(--ink);
+      border-bottom: 0;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      color: var(--paper);
+      font-size: 0.88rem;
+      font-weight: 850;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+    }
+
+    .source-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0;
+      color: var(--paper);
+      background: transparent;
+      border-radius: 0;
+      font-size: 0.86rem;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 28px 72px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 760px) minmax(220px, 300px);
+      gap: clamp(28px, 5vw, 60px);
+      align-items: start;
+      padding: 64px 0 38px;
+      border-top: 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      margin-bottom: 18px;
+      color: var(--accent);
+      font-size: 0.88rem;
+      font-weight: 900;
+      letter-spacing: 0.01em;
+    }
+
+    h1 {
+      max-width: 780px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.7rem, 6.6vw, 5.1rem);
+      font-weight: 700;
+      line-height: 0.96;
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+
+    .dek {
+      max-width: 760px;
+      margin-top: 24px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.15rem, 2.2vw, 1.48rem);
+      line-height: 1.62;
+      color: #313941;
+      text-wrap: pretty;
+    }
+
+    .byline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 26px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .byline strong { color: var(--ink); }
+
+    .hero-media {
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .hero-media img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      border-radius: 0;
+    }
+
+    .hero-media figcaption {
+      color: var(--quiet);
+      font-size: 0.84rem;
+    }
+
+    .article-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 760px) 260px;
+      gap: clamp(34px, 6vw, 76px);
+      align-items: start;
+      padding-top: 42px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 24px;
+      display: grid;
+      gap: 26px;
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .sidebar-block {
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .sidebar-block h2,
+    .toc h2 {
+      margin-bottom: 12px;
+      font-size: 0.84rem;
+      font-weight: 900;
+      letter-spacing: 0.01em;
+      color: var(--quiet);
+    }
+
+    .glance {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .glance strong {
+      color: var(--ink);
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .toc {
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .toc a {
+      display: block;
+      padding: 7px 0;
+      color: var(--ink);
+      font-size: 0.94rem;
+      font-weight: 720;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--accent); }
+
+    .content {
+      min-width: 0;
+      background: var(--paper);
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .article-section {
+      padding: 42px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .article-section:first-child { border-top: 0; }
+
+    .section-label {
+      display: none;
+      margin-bottom: 10px;
+      color: var(--accent);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .article-section h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.9rem, 4vw, 2.8rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+
+    .section-intro {
+      max-width: 660px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .takeaways {
+      counter-reset: takeaway;
+      display: grid;
+      gap: 16px;
+      padding: 0;
+      margin: 24px 0 0;
+      list-style: none;
+    }
+
+    .takeaways li {
+      counter-increment: takeaway;
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+      padding: 18px 0;
+      border-left: 1px solid var(--line);
+    }
+
+    .takeaways li::before {
+      content: counter(takeaway, decimal-leading-zero);
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      color: var(--paper);
+      background: var(--teal);
+      border-radius: 50%;
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+
+    .map-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .map-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      background: #f7faf8;
+      border: 1px solid var(--line);
+      border-radius: 0;
+    }
+
+    .map-row span { min-width: 0; font-weight: 780; }
+
+    .map-row em {
+      color: var(--accent);
+      font-size: 0.82rem;
+      font-style: normal;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 0;
+      padding: 0;
+      margin: 26px 0 0;
+      list-style: none;
+      border-left: 1px solid var(--line);
+    }
+
+    .timeline li {
+      position: relative;
+      padding: 0 0 26px 28px;
+    }
+
+    .timeline li::before {
+      content: "";
+      position: absolute;
+      top: 5px;
+      left: -7px;
+      width: 12px;
+      height: 12px;
+      background: var(--paper);
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+    }
+
+    .timeline time {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      margin-bottom: 8px;
+      color: var(--teal);
+      background: #e7f0ee;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .timeline strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 1.08rem;
+    }
+
+    .timeline p { color: var(--muted); }
+
+    .concepts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .concept {
+      padding: 18px;
+      background: #f8f7fb;
+      border: 1px solid #ded9e8;
+      border-radius: 0;
+    }
+
+    .concept h3 {
+      margin-bottom: 8px;
+      color: var(--violet);
+      font-size: 1rem;
+    }
+
+    .concept p { color: var(--muted); font-size: 0.95rem; }
+
+    .action-list {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+    }
+
+    .action-list li {
+      padding: 14px 16px;
+      background: #fbf8ef;
+      border: 1px solid #eadfca;
+      border-radius: 0;
+    }
+
+    .transcript-details {
+      margin-top: 22px;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      overflow: hidden;
+    }
+
+    .transcript-details summary {
+      padding: 16px 18px;
+      background: #f7faf8;
+      cursor: pointer;
+      font-weight: 850;
+    }
+
+    .transcript {
+      display: grid;
+      gap: 0;
+      max-height: 620px;
+      overflow: auto;
+      background: var(--paper);
+    }
+
+    .transcript p {
+      display: grid;
+      grid-template-columns: 68px minmax(0, 1fr);
+      gap: 12px;
+      padding: 10px 16px;
+      border-top: 1px solid var(--line);
+      font-size: 0.94rem;
+    }
+
+    .transcript time {
+      color: var(--teal);
+      font-weight: 900;
+    }
+
+    .footer-note {
+      max-width: 1120px;
+      margin: 28px auto 0;
+      padding: 0 28px;
+      color: var(--quiet);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 920px) {
+      .hero,
+      .article-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar,
+      .content {
+        grid-column: auto;
+        grid-row: auto;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      h1 { max-width: 100%; }
+    }
+
+    @media (max-width: 640px) {
+      .site-bar,
+      .page,
+      .footer-note {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .site-bar {
+        align-items: flex-start;
+        flex-direction: column;
+        padding-left: max(16px, env(safe-area-inset-left));
+        padding-right: max(16px, env(safe-area-inset-right));
+      }
+
+      .hero { padding-top: 34px; gap: 26px; }
+
+      .article-section { padding: 26px 18px; }
+
+      .takeaways li,
+      .map-row,
+      .transcript p {
+        grid-template-columns: 1fr;
+      }
+
+      .takeaways li::before {
+        width: 38px;
+        height: 38px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <div class="site-bar">
+    <a class="brand" href="./">Video Notes Journal</a>
+    <a class="source-link" href="https://www.youtube.com/watch?v=YxjL1wLLnHE">Watch source</a>
+  </div>
+
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Video Summary</p>
+        <h1>OpenAI&#39;s Sam Altman on Astra Model Debut, Benefits of AI</h1>
+        <p class="dek">In this Bloomberg Television interview, Sam Altman frames OpenAI&#39;s Astra model as a step toward AI systems that can do real work, not merely answer questions. He argues the immediate shift is practical: people can bring harder ideas to the model and ask it to help build software, simulations, financial models, presentations, and creative artifacts. The interview also spends significant time on risk: cyber capability, staged access, guardrails, chain-of-thought monitoring, sandboxing, and alignment. Altman&#39;s broader message is that the AI industry has over-indexed on danger narratives and under-explained how AI can increase ordinary people&#39;s autonomy, creativity, and entrepreneurship. For builders, the most useful reading is that powerful agents need both abundant capability and explicit governance: access tiers, monitoring, cost efficiency, and long-term mission discipline.</p>
+        <div class="byline">
+          <span>By <strong>Bloomberg Television</strong></span>
+          <span>12:32 runtime</span>
+          <span>Sep 4, 2026</span>
+        </div>
+      </div>
+      <figure class="hero-media">
+        <img src="https://i.ytimg.com/vi/YxjL1wLLnHE/hqdefault.jpg" alt="">
+        <figcaption>Source video thumbnail. Notes generated from public captions.</figcaption>
+      </figure>
+    </header>
+
+    <div class="article-grid">
+      <aside class="sidebar">
+        <section class="sidebar-block" aria-labelledby="glance-title">
+          <h2 id="glance-title">At a Glance</h2>
+          <ul class="glance">
+            <li><span>Words</span><strong>2,410</strong></li>
+            <li><span>Sections</span><strong>12</strong></li>
+            <li><span>Concepts</span><strong>8</strong></li>
+            <li><span>Transcript rows</span><strong>201</strong></li>
+          </ul>
+        </section>
+        <nav class="toc" aria-labelledby="toc-title">
+          <h2 id="toc-title">Read</h2>
+          <a href="#takeaways">Key takeaways</a>
+          <a href="#visual-map">Visual map</a>
+          <a href="#timeline">Timeline</a>
+          <a href="#concepts">Concepts</a>
+          <a href="#transcript">Transcript</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="article-section" id="takeaways">
+          <span class="section-label">Core Ideas</span>
+          <h2>Key Takeaways</h2>
+          <p class="section-intro">The main points from the video, condensed into a reading flow.</p>
+          <ol class="takeaways"><li>Altman positions Astra as a model that feels qualitatively different because it can help people turn rough ideas into working outputs across software, science, finance, presentations, simulations, and creative projects.</li><li>The everyday unlock is interactive work: instead of asking for a small answer, users can ask the model to help complete a complex multi-step task and iterate with it until the artifact works.</li><li>OpenAI delayed release, according to the interview, because the model&#39;s capability made safety, security, and alignment work more important before broad access.</li><li>Cyber capability is treated as both a risk and a defense tool: access starts with trusted partners and expands through programs with different verification and trust levels.</li><li>The interview emphasizes defense in depth: monitoring is useful, but it must sit beside sandboxing, alignment, access controls, and other safety layers.</li><li>Altman says chain-of-thought monitoring matters enough that OpenAI has made design choices to preserve monitorability even when those choices may reduce maximum capability.</li><li>On public trust, he argues the industry has done a poor job explaining benefits and should talk about empowerment, creativity, entrepreneurship, and human autonomy without hiding serious risks.</li><li>On pricing and company strategy, the goal is abundant low-cost intelligence, continued price reductions, strong price-performance across model tiers, and mission-first decisions on a multi-decade timeframe.</li></ol>
+        </section>
+
+        <section class="article-section" id="visual-map">
+          <span class="section-label">Connections</span>
+          <h2>Visual Map</h2>
+          <p class="section-intro">A compact relationship view of the concepts repeated across the talk.</p>
+          <div class="map-list"><div class="map-row"><span>Astra capability</span><em>enables</em><span>Interactive task building</span></div><div class="map-row"><span>Interactive task building</span><em>builds through successful work</em><span>User trust</span></div><div class="map-row"><span>Astra capability</span><em>raises</em><span>Cyber-critical risk</span></div><div class="map-row"><span>Cyber-critical risk</span><em>requires</em><span>Trusted access tiers</span></div><div class="map-row"><span>Trusted access tiers</span><em>gates</em><span>Broader rollout</span></div><div class="map-row"><span>Defense in depth</span><em>includes</em><span>Chain-of-thought monitoring</span></div><div class="map-row"><span>Defense in depth</span><em>also includes</em><span>Sandboxing and alignment</span></div><div class="map-row"><span>Public AI benefits</span><em>should emphasize</em><span>Creativity and entrepreneurship</span></div><div class="map-row"><span>Abundant intelligence</span><em>depends on</em><span>Lower task cost</span></div><div class="map-row"><span>Mission-first company</span><em>commits to</em><span>Multi-decade decisions</span></div></div>
+        </section>
+
+        <section class="article-section" id="timeline">
+          <span class="section-label">Reading Path</span>
+          <h2>Timeline</h2>
+          <p class="section-intro">Use these timestamps to jump back to the moments that explain each idea.</p>
+          <ol class="timeline"><li><time>0:00</time><strong>Astra as a shift from answers to work</strong><p>The interview opens by framing Astra as an early step toward AGI-like usefulness: models that help create value, do work, discover science, improve health, start companies, and create products. Altman says using the model subjectively feels different from prior generations.</p></li><li><time>0:57</time><strong>The everyday user unlock</strong><p>Altman says the biggest difference is that a non-specialist can bring an idea and work interactively with AI to build a complex piece of software. He gives examples including computer games, DIY electronics, science simulations, financial models, presentations, and interactive code.</p></li><li><time>1:46</time><strong>Trust grows as users try harder tasks</strong><p>The hoped-for behavior change is that people begin with surprise, build trust through successful attempts, and then give the model harder and more creative work. The value is not one fixed use case; it is a widening range of executable ideas.</p></li><li><time>2:06</time><strong>Guardrails before broad release</strong><p>The interviewer asks why the early release has specific guardrails. Altman says higher capability increases both usefulness and possible harm, so OpenAI spent extra time on safety, security, and alignment before release.</p></li><li><time>3:06</time><strong>Cyber access as both restriction and defense</strong><p>OpenAI plans different cyber access tiers, beginning with trusted access partners and expanding if the rollout behaves well. Altman argues society will need models like Astra to defend against a coming wave of AI-enabled cyber threats from many actors.</p></li><li><time>4:04</time><strong>Cyber critical capability and safeguards</strong><p>The interviewer references zero-day exploit capability without human intervention. Altman clarifies that Astra hit a cyber-critical threshold under OpenAI&#39;s preparedness framework, requiring new safeguards before release.</p></li><li><time>5:20</time><strong>Monitoring, chain of thought, sandboxing, and alignment</strong><p>Asked whether OpenAI can see what the model plans before acting, Altman points to monitorability as one part of defense in depth. He names sandboxing, alignment, and chain-of-thought monitoring as components, while stressing that monitoring alone is not enough.</p></li><li><time>6:21</time><strong>Clear red lines versus societal disagreement</strong><p>On detecting and shutting down dangerous behavior, Altman says the hard part is that society will disagree about many acceptable AI uses. He says there are clear red lines, but many boundary cases will require ongoing social negotiation.</p></li><li><time>7:12</time><strong>AI as a public platform with autonomy</strong><p>Altman uses electricity as an analogy: society sets rules against harm, but broad access remains important. He argues AI is an important platform that belongs to everyone, and user autonomy is central to OpenAI&#39;s mission.</p></li><li><time>7:49</time><strong>The industry messaging problem</strong><p>Altman agrees the AI industry, including OpenAI, has done a poor job explaining benefits to ordinary people. He says companies should discuss risks clearly without using doom narratives to justify concentrated power.</p></li><li><time>8:56</time><strong>Benefits should mean more agency, not less</strong><p>He argues that even major scientific outcomes, such as disease cures, are not enough if users end up with less autonomy. The goal should be a boom in creativity, entrepreneurship, useful products, and people helping one another.</p></li><li><time>9:58</time><strong>Low-cost abundant intelligence and mission-first capital</strong><p>Altman says OpenAI wants highly capable, low-cost, abundant intelligence and praises Astra&#39;s token efficiency. He also says that if OpenAI goes public someday, it should remain mission-first and make decisions on a multi-decade timeframe.</p></li></ol>
+        </section>
+
+        <section class="article-section" id="concepts">
+          <span class="section-label">Vocabulary</span>
+          <h2>Concepts</h2>
+          <div class="concepts"><article class="concept"><h3>Work-Capable Model</h3><p>A model that helps produce finished artifacts and multi-step outcomes rather than only answering isolated questions.</p></article><article class="concept"><h3>Interactive Task Building</h3><p>A user brings an idea, works with the model, reviews outputs, asks for changes, and moves toward a working product, simulation, model, or document.</p></article><article class="concept"><h3>Cyber-Critical Capability</h3><p>A risk threshold where a model can meaningfully affect cyber offense or defense, requiring stricter safeguards and access controls before release.</p></article><article class="concept"><h3>Trusted Access Partners</h3><p>A staged rollout pattern where high-risk capabilities first go to verified partners before broader availability.</p></article><article class="concept"><h3>Defense in Depth</h3><p>A layered safety model combining monitoring, sandboxing, alignment, policy boundaries, access tiers, and post-release observation.</p></article><article class="concept"><h3>Chain-of-Thought Monitoring</h3><p>Internal monitoring of model reasoning signals as one way to detect risky planning, while recognizing that it is not a complete safety system by itself.</p></article><article class="concept"><h3>Autonomy Framing</h3><p>The claim that AI should give ordinary people more power, creativity, and entrepreneurial capacity rather than making them dependent on centralized systems.</p></article><article class="concept"><h3>Abundant Intelligence</h3><p>A pricing and infrastructure goal: make strong intelligence inexpensive enough that people can use it freely for substantial work.</p></article></div>
+        </section>
+
+        <section class="article-section">
+          <span class="section-label">Next Notes</span>
+          <h2>What to Remember</h2>
+          <ul class="action-list"><li>For an agentic AI platform, treat capability and access as separate design layers: a model may be powerful, but tool access should be tiered by risk and user trust.</li><li>Design agents around work completion, not chat novelty: the product should help users move from idea to artifact with checkpoints, revisions, and evidence.</li><li>Put cyber, data, and business-critical actions behind explicit approval paths, sandboxed execution, logs, and simulation/eval gates before release.</li><li>Use monitoring as one signal, not the whole safety story; pair it with constrained tools, least-privilege access, human review, and incident response paths.</li><li>Explain benefits in user language: more autonomy, more creativity, lower task cost, and new ways to build useful things, not only abstract AGI language.</li><li>Source note: this page follows the YouTube title and public captions. The captions contain a few likely auto-caption artifacts such as Astra/Aster spelling variance, so model-name wording should be read as source-derived rather than independently verified.</li></ul>
+        </section>
+
+        <section class="article-section" id="transcript">
+          <span class="section-label">Reference</span>
+          <h2>Full Transcript</h2>
+          <p class="section-intro">The transcript is collapsed by default so the page keeps its blog shape.</p>
+          <details class="transcript-details">
+            <summary>Read the complete transcript</summary>
+            <div class="transcript"><p><time>0:00</time> <span>The way that OpenAI is framing Astra is basically an early step toward AGI, but</span></p><p><time>0:06</time> <span>I thought we could start a conversation just with basically what&#39;s fundamentally</span></p><p><time>0:10</time> <span>different with Astra relative to prior generations of model.</span></p><p><time>0:15</time> <span>It feels, first of all, thank you for having me.</span></p><p><time>0:17</time> <span>It feels like a new step in this process towards models that can really help us</span></p><p><time>0:23</time> <span>create value, do work, uh, discover new science, help us create help, start new</span></p><p><time>0:29</time> <span>companies or create new products. Using it subjectively feels to me very</span></p><p><time>0:33</time> <span>different than any model before. What&#39;s the kind of principal use case</span></p><p><time>0:38</time> <span>that&#39;s different this time around? You know, I think we can get into the</span></p><p><time>0:42</time> <span>generations of model that we&#39;re very coding focused.</span></p><p><time>0:44</time> <span>I know a lot of the development was very cybersecurity focused, but taking it</span></p><p><time>0:48</time> <span>away from the software engineer, what is the everyday person unlocking AI that</span></p><p><time>0:53</time> <span>they weren&#39;t able to do previously? One thing that I think people will</span></p><p><time>0:57</time> <span>immediately notice is if you have an idea and you want to work interactively</span></p><p><time>1:02</time> <span>with an AI to get, uh, you know, a complex piece of a whole piece of</span></p><p><time>1:06</time> <span>software built. This is the first model to me where I</span></p><p><time>1:09</time> <span>could sort of tell someone, like, just give it a try.</span></p><p><time>1:11</time> <span>There&#39;s. There&#39;s a good chance it&#39;ll work.</span></p><p><time>1:13</time> <span>And, you know, I&#39;ve watched people make computer games.</span></p><p><time>1:17</time> <span>I watch people do sort of like home sort of DIY electrical engineering projects.</span></p><p><time>1:24</time> <span>Uh, I&#39;ve watched people do very complex simulations for some piece of science</span></p><p><time>1:28</time> <span>they&#39;re working on. Uh, certainly a lot of the work where</span></p><p><time>1:31</time> <span>you would sort of normally sit down and have to, you know, build a financial</span></p><p><time>1:34</time> <span>model here and then a PowerPoint presentation around it and then figure</span></p><p><time>1:38</time> <span>out how to, like, make a little interactive piece of code to sort of try</span></p><p><time>1:42</time> <span>different simulations. That stuff is it&#39;s all so doable now.</span></p><p><time>1:46</time> <span>Um, what I hope will happen is people I think people will be surprised at the</span></p><p><time>1:51</time> <span>beginning, but then as they build up more trust in the model and more like,</span></p><p><time>1:54</time> <span>wow, I can really do this. Just start throwing harder and harder</span></p><p><time>1:58</time> <span>tasks and more creative ideas at it. And uh, they will find out what the</span></p><p><time>2:02</time> <span>model can really do for them. So the specifics of how Astra&#39;s being</span></p><p><time>2:06</time> <span>released. I think it&#39;s important so that a version</span></p><p><time>2:09</time> <span>of it with specific guardrails. Um, what was the thinking behind that</span></p><p><time>2:14</time> <span>and what are those specific guardrails, uh, in this early release of it?</span></p><p><time>2:18</time> <span>Yeah. So the the challenge of our industry is</span></p><p><time>2:22</time> <span>that we have these models that are getting incredibly capable and</span></p><p><time>2:26</time> <span>incredibly useful and that people want to use to everything from, you know,</span></p><p><time>2:31</time> <span>make their lives a little easier to starting new companies.</span></p><p><time>2:34</time> <span>And then, on the other hand, as these models get more capable, um, the risks</span></p><p><time>2:38</time> <span>that we have to mitigate, uh, also become more serious.</span></p><p><time>2:41</time> <span>The models could do more damage if we don&#39;t, um, if we don&#39;t do a good job at</span></p><p><time>2:44</time> <span>that. And so we have spent, uh, you know,</span></p><p><time>2:47</time> <span>obviously this model took us a little longer to release than we were hoping.</span></p><p><time>2:50</time> <span>I think it&#39;ll be worth the wait, but we really wanted to spend the time on the</span></p><p><time>2:53</time> <span>safety and security alignment of this model.</span></p><p><time>2:56</time> <span>Yes. Um, and I think as people understand the</span></p><p><time>2:59</time> <span>power and impact and capabilities, they will be, they will be happy that we did.</span></p><p><time>3:03</time> <span>Um, we will, uh, we&#39;ll have different tiers of cyber access for this model,</span></p><p><time>3:09</time> <span>for cyber in particular. Today we&#39;re rolling it out, uh, to</span></p><p><time>3:12</time> <span>Trusted Access Partners. And then in the coming days, assuming</span></p><p><time>3:15</time> <span>everything goes well, we&#39;ll roll it out more broadly.</span></p><p><time>3:18</time> <span>Um, you couldn&#39;t say.</span></p><p><time>3:20</time> <span>Well, you know, if this model is, you know, has a cyber problem, why let</span></p><p><time>3:24</time> <span>anyone use it for cyber? And I think it&#39;s very important to note,</span></p><p><time>3:28</time> <span>to note that the world is very close to a complete change in the landscape of</span></p><p><time>3:33</time> <span>cyber attacks, and the only way that we see for society to collectively defend</span></p><p><time>3:38</time> <span>itself against this coming wave of models, um, from around the world and</span></p><p><time>3:42</time> <span>from other companies, is to use tools like Astra to rapidly defend against</span></p><p><time>3:47</time> <span>these new kind of cyber threats. Um, so we will have multiple programs,</span></p><p><time>3:53</time> <span>uh, for people with sort of different levels of verification and trust.</span></p><p><time>3:56</time> <span>But we do think it&#39;s quite important that the world use these models to, uh,</span></p><p><time>4:01</time> <span>collectively defend ourselves. What happened prior to release is</span></p><p><time>4:04</time> <span>important, right? You determined that Astra can find and</span></p><p><time>4:08</time> <span>develop zero day exploits without any human intervention, essentially.</span></p><p><time>4:12</time> <span>And so you paused some of the work to strengthen the safeguards.</span></p><p><time>4:18</time> <span>What specifically was it that you saw that made you hit pause the behavior, I</span></p><p><time>4:23</time> <span>suppose, of the model. So it&#39;s worth pointing out that, um, the</span></p><p><time>4:27</time> <span>model that we&#39;re launching today is GPT six.</span></p><p><time>4:29</time> <span>Astra has been done training for a while.</span></p><p><time>4:31</time> <span>Um, the model that we recently talked about pausing, uh, as a future model.</span></p><p><time>4:35</time> <span>Um, but with Astra, we we did hit cyber critical.</span></p><p><time>4:39</time> <span>And there that required, under our preparedness framework, a new set of</span></p><p><time>4:43</time> <span>safeguards just to be able to release Astra, um, because of those cyber</span></p><p><time>4:46</time> <span>capabilities you talked about. I got a lot of questions for you, Sam,</span></p><p><time>4:51</time> <span>about Astra and chain of thought. Um, I don&#39;t know if that comes as a</span></p><p><time>4:55</time> <span>surprise to you or not, but as Astra becomes more autonomous for future</span></p><p><time>4:59</time> <span>generations of the model, become more autonomous, can open.</span></p><p><time>5:03</time> <span>I sort of say with confidence that you see and understand what the model is</span></p><p><time>5:08</time> <span>planning before it acts. In other words, you have visibility into</span></p><p><time>5:12</time> <span>the reasoning that basically uses of the model can&#39;t see open.</span></p><p><time>5:16</time> <span>I can for obvious reasons. Could you go into that a little bit?</span></p><p><time>5:20</time> <span>Yeah. So we have talked for a long time about</span></p><p><time>5:22</time> <span>the importance of monitor ability of models.</span></p><p><time>5:25</time> <span>We&#39;ve also said that we believe in defense in depth and this is only one</span></p><p><time>5:28</time> <span>part of it. There is sandboxing.</span></p><p><time>5:31</time> <span>Uh, maybe most importantly there is alignment.</span></p><p><time>5:33</time> <span>There are a number of things that come together to be able to make the safety</span></p><p><time>5:37</time> <span>guarantees that we want to be able to make with a model.</span></p><p><time>5:39</time> <span>But monitor ability is an important thing.</span></p><p><time>5:41</time> <span>And we&#39;ve been talking, I think, for well over a year now about the</span></p><p><time>5:45</time> <span>importance of chain of thought monitoring and how we have made various</span></p><p><time>5:50</time> <span>decisions there that help us preserve chain of thought vulnerability.</span></p><p><time>5:54</time> <span>Um, even if it means we don&#39;t maximize the capabilities we could otherwise get.</span></p><p><time>5:58</time> <span>And we think that is important. Um, it&#39;s an important component.</span></p><p><time>6:01</time> <span>We also, uh, we want to be clear. We don&#39;t think it&#39;s the only component</span></p><p><time>6:04</time> <span>that matters. We live on Bloomberg Television and on</span></p><p><time>6:08</time> <span>Bloomberg Radio, and we&#39;re speaking to Sam Altman, the CEO of OpenAI.</span></p><p><time>6:12</time> <span>Um, you know, there&#39;s a lot of bad PR in the world around AI at the moment, every</span></p><p><time>6:17</time> <span>day citizen sort of worry about the impact.</span></p><p><time>6:20</time> <span>One way I kind of wanted to put that to you.</span></p><p><time>6:21</time> <span>Is it whether you can say sort of unequivocally there, if Astra or any</span></p><p><time>6:25</time> <span>future generation of all behaved in a way that was dangerous, that you would</span></p><p><time>6:29</time> <span>be able to detect it and then shut it down.</span></p><p><time>6:35</time> <span>The obvious hard part of that, uh, question is that people have different</span></p><p><time>6:38</time> <span>opinions about what model should be able to do and shouldn&#39;t be able to do.</span></p><p><time>6:41</time> <span>Yes, we think there are some things that very clearly model should not be able to</span></p><p><time>6:44</time> <span>do. Uh, there are some clear red lines, and</span></p><p><time>6:48</time> <span>we talk a lot about being able to detect those.</span></p><p><time>6:50</time> <span>But people also have strong opinions about things within the broad bounds of</span></p><p><time>6:55</time> <span>what is possible about how they use AI and or how they want to be able to use</span></p><p><time>6:59</time> <span>AI. And this is going to be a difficult</span></p><p><time>7:01</time> <span>question for society, because there is not going to be agreement on, you know,</span></p><p><time>7:07</time> <span>what is and isn&#39;t acceptable use of I. I think it&#39;s very important in the same</span></p><p><time>7:12</time> <span>way that, you know, people do things electricity that I may not always like,</span></p><p><time>7:17</time> <span>but I think everybody has a right to electricity that we say, you know, there</span></p><p><time>7:20</time> <span>going to be some rules for society. You can&#39;t go like electrocute somebody</span></p><p><time>7:23</time> <span>else on the street. But this is an important platform that</span></p><p><time>7:26</time> <span>belongs to all of us and that we need to be able to, to use.</span></p><p><time>7:29</time> <span>So there will be, uh, ongoing conversation, negotiation in society.</span></p><p><time>7:34</time> <span>There will, of course, be some things that we agree on that people just should</span></p><p><time>7:36</time> <span>not do with. I.</span></p><p><time>7:38</time> <span>But there&#39;s a lot of edges that we&#39;re now going to have to feel our way</span></p><p><time>7:41</time> <span>through. And giving people autonomy and freedom</span></p><p><time>7:44</time> <span>to use AI is important to our mission. Sam at the G20 this week, um, Treasury</span></p><p><time>7:49</time> <span>Secretary Scott Besson said that the eye industry had done a terrible job of</span></p><p><time>7:53</time> <span>explaining how AI benefits ordinary Americans.</span></p><p><time>7:57</time> <span>What&#39;s your view of that and whether you would, on reflection, consider OpenAI to</span></p><p><time>8:03</time> <span>be in that bucket? Uh, I think the industry has done a</span></p><p><time>8:07</time> <span>terrible job of this on the whole, um, I think we have done</span></p><p><time>8:13</time> <span>a bad job ourselves, uh, you know, maybe better than some others.</span></p><p><time>8:16</time> <span>Worse than some others. Um, it is difficult, of course, to</span></p><p><time>8:20</time> <span>explain, but this is, uh, we eat the world, in my opinion, should want us to</span></p><p><time>8:24</time> <span>worry a lot about this technology. The world should want us to think about</span></p><p><time>8:28</time> <span>all the ways that could go wrong. To talk about what we see coming, but</span></p><p><time>8:31</time> <span>not to sort of, like, stir up doom or concentrate power for ourselves.</span></p><p><time>8:35</time> <span>Just because in the history of technology, the way you solve the hard</span></p><p><time>8:38</time> <span>problems is to look at them, talk clearly about them, have scientists</span></p><p><time>8:43</time> <span>debate them, uh, work really hard to prevent and mitigate them.</span></p><p><time>8:47</time> <span>And that has been our intention. But clearly, sometimes it ends up</span></p><p><time>8:51</time> <span>scaring people. Now, there&#39;s another thing that I think</span></p><p><time>8:54</time> <span>has gone really bad. Besides talking about the ways this has</span></p><p><time>8:57</time> <span>got could go wrong, which is, um, I don&#39;t think we&#39;ve done a great job as an</span></p><p><time>9:01</time> <span>industry of really talking about how to empower people with</span></p><p><time>9:06</time> <span>this technology. Um, right.</span></p><p><time>9:07</time> <span>You know, you hear some people talk about, well, we&#39;re going to give you a</span></p><p><time>9:11</time> <span>cure for cancer. And that&#39;s so great.</span></p><p><time>9:12</time> <span>So we&#39;re going to, you know, take these risks and you&#39;re going to have to have</span></p><p><time>9:15</time> <span>less power and autonomy. We want people to have more power and</span></p><p><time>9:17</time> <span>autonomy. You know, I don&#39;t think a cure for</span></p><p><time>9:19</time> <span>cancer is enough. I mean, wonderful thing to have,</span></p><p><time>9:21</time> <span>obviously, but we should set our sights higher.</span></p><p><time>9:24</time> <span>We want these tool tools to enable a boom in creativity and entrepreneurship,</span></p><p><time>9:29</time> <span>in people figuring out new ways to be useful to each other, and wonderful</span></p><p><time>9:33</time> <span>products and services to enable each other with.</span></p><p><time>9:36</time> <span>And I think that has been lost in the messaging.</span></p><p><time>9:39</time> <span>And I also think there&#39;s some companies that, um, have a different opinion</span></p><p><time>9:44</time> <span>there. But, but it&#39;s very, very important to us</span></p><p><time>9:47</time> <span>that this technology is something where people get more power and more autonomy,</span></p><p><time>9:51</time> <span>not less. And I think people rightly get afraid</span></p><p><time>9:54</time> <span>when they feel like I leaders might not quite want that for them.</span></p><p><time>9:58</time> <span>So that&#39;s in part where I wanted to ask you about pricing on Astra, but also</span></p><p><time>10:02</time> <span>just generally. Right.</span></p><p><time>10:03</time> <span>I think the direction of travel has been that you&#39;ve cut prices.</span></p><p><time>10:08</time> <span>There is competition, of course, with the other Frontier labs.</span></p><p><time>10:10</time> <span>Um, anthropic. But you know, how much is that the</span></p><p><time>10:13</time> <span>balance of access to the technology. You need to move quickly in releasing</span></p><p><time>10:18</time> <span>the technology and also still trying to sort of find fair market value of how</span></p><p><time>10:23</time> <span>you price the technology we want to create incredibly capable,</span></p><p><time>10:28</time> <span>incredibly low cost, incredibly abundant intelligence.</span></p><p><time>10:31</time> <span>And I think Aster is a great step forward there.</span></p><p><time>10:34</time> <span>The token efficiency of Aster is so impressive to me.</span></p><p><time>10:37</time> <span>Um, the amount of work you can get done with a relatively small amount of</span></p><p><time>10:41</time> <span>tokens, and the kind of the price per dollar of a task that you might like, I</span></p><p><time>10:45</time> <span>think is just remarkable. Um, only a few weeks ago, we cut the</span></p><p><time>10:48</time> <span>price of Luna, our small model, by 80%. Um, uh, and our goal is to have the best</span></p><p><time>10:54</time> <span>price performance at every level of intelligence all the way along the</span></p><p><time>10:57</time> <span>curve. Um, we will continue to keep dropping</span></p><p><time>11:00</time> <span>prices dramatically. Um, I&#39;m confident in the shape of the</span></p><p><time>11:02</time> <span>technology and the work we&#39;re doing to enable that to happen.</span></p><p><time>11:05</time> <span>And, um, you know, of course, like, we&#39;ll make some money along the way, but</span></p><p><time>11:10</time> <span>I think the opportunity in front of us is so huge, we will be able to continue</span></p><p><time>11:15</time> <span>to bring prices down and still have huge revenue.</span></p><p><time>11:20</time> <span>Let&#39;s end our conversation here. Sam with</span></p><p><time>11:24</time> <span>Aster is a big step towards I actually doing work autonomously, right?</span></p><p><time>11:28</time> <span>I&#39;ve come to sort of see the emphasis on that.</span></p><p><time>11:32</time> <span>If you staying ahead in the race that you&#39;ve just outlined requires OpenAI to</span></p><p><time>11:37</time> <span>just keep investing more heavily, maybe than expected, to keep pushing out the</span></p><p><time>11:43</time> <span>boundaries of what the model is capable of doing, the cadence of release.</span></p><p><time>11:48</time> <span>Where do you do you sit right now on your considerations of doing that as a</span></p><p><time>11:51</time> <span>private company versus doing that as a public company, where the sort of</span></p><p><time>11:55</time> <span>financial incentive and fiduciary duty of being a public company isn&#39;t</span></p><p><time>11:59</time> <span>necessarily the same as being committed to developing the technology, getting</span></p><p><time>12:04</time> <span>the technology released out into the world.</span></p><p><time>12:08</time> <span>Um, if we do go public someday, which I assume we will.</span></p><p><time>12:11</time> <span>I plan to spend a lot of time reminding people who might want to buy or might</span></p><p><time>12:15</time> <span>not want to buy our our stock that we are mission first and that we&#39;re also</span></p><p><time>12:19</time> <span>extremely long term oriented. So we are going to make decisions for,</span></p><p><time>12:23</time> <span>um, what we think is best for society as a whole with this technology.</span></p><p><time>12:26</time> <span>And we&#39;re going to make decisions on a multi-decade timeframe.</span></p><p><time>12:29</time> <span>Um, and we think we&#39;ll do really great as a company.</span></p><p><time>12:32</time> <span>Uh, but we&#39;re gonna put those things first.</span></p></div>
+          </details>
+        </section>
+      </article>
+    </div>
+  </main>
+  <p class="footer-note">Generated from a YouTube transcript by Video Notes Studio.</p>
+</body>
+</html>

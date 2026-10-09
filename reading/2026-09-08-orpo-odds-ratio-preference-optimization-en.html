@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Combined supervised instruction tuning and preference separation in one reference-free objective using an odds-ratio penalty.">
+  <meta name="resource-file" content="2026-09-08-orpo-odds-ratio-preference-optimization-en.html">
+  <title>ORPO · AI Research Paper Library</title>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+  <style>
+    .paper-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1.2rem 0; border:1px solid var(--line-strong); }
+    .paper-fact { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .paper-fact:last-child { border-right:0; }
+    .paper-fact span, .flow-step span { display:block; margin-bottom:.3rem; color:var(--green); font-size:.76rem; font-weight:600; text-transform:uppercase; }
+    .paper-fact strong, .flow-step strong { display:block; font-weight:500; }
+    .concept-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); margin:1.3rem 0; border:1px solid var(--line-strong); }
+    .flow-step { min-width:0; padding:.9rem; border-right:1px solid var(--line); }
+    .flow-step:last-of-type { border-right:0; }
+    .flow-step p { margin:.45rem 0 0 !important; font-size:.9rem; }
+    .concept-flow figcaption { grid-column:1/-1; padding:.75rem .9rem; border-top:1px solid var(--line); color:var(--muted); font-size:.85rem; }
+    .equation { margin:1rem 0; padding:1rem; overflow-wrap:anywhere; color:var(--ink); background:var(--surface); border-left:3px solid var(--green); font-family:SFMono-Regular,Menlo,monospace; }
+    .article-nav { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .article-nav a:last-child { text-align:right; }
+    .source-links { display:grid; gap:.7rem; padding-left:1.2rem; }
+    @media(max-width:760px){.concept-flow{grid-template-columns:1fr}.flow-step{border-right:0;border-bottom:1px solid var(--line)}.flow-step:last-of-type{border-bottom:0}.paper-facts{grid-template-columns:1fr}.paper-fact{border-right:0;border-bottom:1px solid var(--line)}.paper-fact:last-child{border-bottom:0}}
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation"><a class="brand" href="2026-09-08-ai-engineer-research-papers.html">AI paper library</a><div class="top-actions"><a class="action-link" href="https://arxiv.org/abs/2403.07691">Read paper</a><a class="action-link" href="./">Reading room</a></div></nav>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Instruction and Preference Alignment · Paper 21 of 37</p>
+        <h1>ORPO: Monolithic Preference Optimization without Reference Model</h1>
+        <p class="subtitle">Combined supervised instruction tuning and preference separation in one reference-free objective using an odds-ratio penalty.</p>
+        <div class="meta"><span><strong>Jiwoo Hong, Noah Lee, James Thorne</strong></span><span>2024</span><span>Advanced</span><span>11 min read</span></div>
+      </div>
+      <aside class="hero-card paper-identity"><p class="section-label">At a glance</p><h2>ORPO</h2><p>KAIST</p><p><strong>Prerequisites:</strong> SFT, sequence likelihood, preference pairs, odds, and DPO.</p><a href="https://arxiv.org/abs/2403.07691">Open primary source</a></aside>
+    </header>
+    <div class="layout">
+      <article class="content">
+        <div class="paper-facts"><div class="paper-fact"><span>Research type</span><strong>Research paper</strong></div><div class="paper-fact"><span>Difficulty</span><strong>Advanced</strong></div><div class="paper-fact"><span>Place in path</span><strong>21 / 37</strong></div></div>
+        <section id="problem"><p class="section-label">The problem</p><h2>What was missing before this work</h2><p>Many alignment pipelines first run SFT and then optimize preferences with a frozen reference model. This creates stages, extra model memory, and hyperparameter interactions.</p>
+<p>ORPO asks whether the chosen response can provide the supervised target while an additional term directly separates it from a rejected response in the same update.</p></section>
+<section id="core-idea"><p class="section-label">Core idea</p><h2>The paper in one idea</h2><p>Maximize the likelihood of the preferred response as in instruction tuning, then penalize the odds of the rejected response relative to the preferred response. No separate reference checkpoint participates in the loss.</p>
+<p>The supervised term keeps the model learning the desired answer, while the odds-ratio term introduces contrast.</p><div class="equation">L_ORPO = L_SFT(chosen) + λ × preference odds-ratio loss(chosen, rejected)</div></section>
+<section id="mechanism"><p class="section-label">Mechanism</p><h2>How the method works</h2><p>Prepare prompt, chosen, and rejected triples. Run the policy on both responses. Compute standard negative log likelihood for the chosen sequence and a relative odds penalty between response probabilities.</p>
+<p>Weight the preference term by λ, update one model, and evaluate both task quality and preference win rate.</p><figure class="concept-flow" aria-label="ORPO single-stage update">
+    <div class="flow-step"><span>01</span><strong>Preference pair</strong><p>Load chosen and rejected answers.</p></div>
+<div class="flow-step"><span>02</span><strong>Chosen likelihood</strong><p>Compute the SFT objective.</p></div>
+<div class="flow-step"><span>03</span><strong>Response odds</strong><p>Score chosen versus rejected.</p></div>
+<div class="flow-step"><span>04</span><strong>Combine</strong><p>Weight the odds-ratio penalty.</p></div>
+<div class="flow-step"><span>05</span><strong>Update once</strong><p>Train one policy without reference.</p></div>
+    <figcaption>One model receives both imitation pressure toward the chosen answer and contrastive pressure away from the rejected answer.</figcaption>
+  </figure></section>
+<section id="technical"><p class="section-label">Technical deep dive</p><h2>The machinery that matters</h2><p>Odds transform probability through p/(1−p), making the contrast sensitive to confidence. Implementations usually work in log space for numerical stability and aggregate token probabilities into a sequence score.</p>
+<p>Without a reference model, the SFT loss becomes the principal anchor. λ and response-length normalization determine how strongly rejection separation shapes the model.</p></section>
+<section id="evidence"><p class="section-label">Evidence</p><h2>What the experiments established</h2><p>The paper reported competitive or stronger results than several SFT and preference baselines across model sizes and dialogue evaluations while using a simpler monolithic pipeline.</p>
+<p>Model-judged comparisons and selected instruction datasets limit generalization. Independent replications should match preprocessing and length treatment.</p></section>
+<section id="impact"><p class="section-label">Why it mattered</p><h2>How it changed the field</h2><p>ORPO became part of the growing family of reference-free preference objectives and showed that alignment pipelines can be simplified further than DPO.</p>
+<p>It is useful when memory or operational complexity makes a frozen reference model expensive, but simplicity alone does not select the right preference data.</p></section>
+<section id="engineering"><p class="section-label">Engineering use</p><h2>What an AI engineer should do with it</h2><p>Log chosen likelihood, preference margin, length, KL against the original base model, and held-out capability. A reference-free objective can still drift substantially.</p>
+<p>Run controlled comparisons with SFT and DPO under identical data and token budgets. Objective names matter less than stable gains on representative evals.</p></section>
+<section id="limits"><p class="section-label">Limits and later corrections</p><h2>Where the result stops</h2><p>The odds-ratio formulation introduces its own tuning sensitivity and assumptions. Reference-free does not mean unconstrained behavior is safe.</p>
+<p>Evidence is newer and narrower than long-established supervised training. Preference noise, evaluator bias, and offline coverage remain unchanged.</p></section>
+        <section id="connections"><p class="section-label">Connections</p><h2>Where this paper sits in the learning path</h2><p>ORPO starts from DPO’s direct preference framing but removes the reference and merges SFT. GRPO instead samples groups online and normalizes scalar rewards.</p><div class="article-nav"><a href="2026-09-08-direct-preference-optimization-dpo-en.html">← DPO</a><a href="2026-09-08-grpo-group-relative-policy-optimization-en.html">GRPO →</a></div></section>
+        <section id="takeaways"><p class="section-label">Takeaways</p><h2>What to remember</h2><ul class="summary-list"><li>ORPO performs instruction and preference tuning in one stage.</li><li>The chosen answer supplies the supervised anchor.</li><li>No frozen reference model is required.</li><li>An odds-ratio term separates chosen and rejected responses.</li><li>Reference-free training still needs drift monitoring.</li><li>Dataset and evaluation quality dominate objective branding.</li></ul></section>
+        <section id="sources"><p class="section-label">Sources and method</p><h2>Primary material</h2><ul class="source-links"><li><a href="https://arxiv.org/abs/2403.07691">ORPO: Monolithic Preference Optimization without Reference Model</a> — Primary paper for this guide.</li></ul><p>This guide paraphrases the cited primary research. Reported results belong to the paper and should be interpreted within its datasets, model sizes, hardware, and evaluation protocol.</p>
+<p>The engineering discussion describes later practice and editorial interpretation separately from the original experimental claims.</p></section>
+      </article>
+      <aside class="sidebar" aria-label="Article contents"><nav class="toc" aria-labelledby="toc-title"><h2 id="toc-title">On this page</h2><ul><li><a href="#problem">The problem</a></li><li><a href="#core-idea">Core idea</a></li><li><a href="#mechanism">Mechanism</a></li><li><a href="#technical">Technical deep dive</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#impact">Why it mattered</a></li><li><a href="#engineering">Engineering use</a></li><li><a href="#limits">Limits</a></li><li><a href="#connections">Connections</a></li><li><a href="#takeaways">Takeaways</a></li><li><a href="#sources">Sources</a></li></ul></nav><div class="note-card"><h2>Reading lens</h2><p>ORPO’s operational value is a one-stage reference-free pipeline. Inspect whether simplicity changes memory, tuning sensitivity, or output length on your dataset.</p></div></aside>
+    </div>
+  </main>
+  <footer class="footer-note">Editorial study guide based on the cited primary research. Paper claims and later interpretation are kept distinct.</footer>
+</body>
+</html>

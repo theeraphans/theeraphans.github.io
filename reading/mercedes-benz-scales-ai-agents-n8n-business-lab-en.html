@@ -1,0 +1,1033 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>How Mercedes-Benz Scales AI Agents with n8n - Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5b6870;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f5f7f1;
+      --line: #d8dfd8;
+      --teal: #1b756d;
+      --blue: #2c6381;
+      --green: #557d54;
+      --gold: #a97725;
+      --coral: #bd503f;
+      --plum: #665987;
+      --mint: #e3f0ec;
+      --sky: #e6eef6;
+      --sand: #f7edd8;
+      --rose: #f5e5df;
+      --lavender: #ece8f2;
+      --shadow: 0 24px 68px rgb(23 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(27 117 109 / 6%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(44 99 129 / 5%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--green), var(--gold), var(--coral), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td, code { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 86%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.45rem, 5.7vw, 5.05rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 860px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: #e8ede7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+      gap: 24px;
+      margin: 28px 0;
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 7%);
+    }
+
+    .quick-summary h2,
+    .section h2,
+    .sidebar h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-weight: 760;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+    }
+
+    .quick-summary p,
+    .section p,
+    .section li {
+      color: #334047;
+      font-size: 1.01rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-height: 96px;
+      padding: 16px;
+      background: var(--mint);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat:nth-child(2) { background: var(--sky); }
+    .stat:nth-child(3) { background: var(--sand); }
+    .stat strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.38rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 760;
+    }
+
+    .article-layout {
+      display: grid;
+      grid-template-columns: 290px minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 16px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .sidebar-block,
+    .toc {
+      padding: 20px;
+      background: rgb(255 255 255 / 88%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .sidebar h2 {
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+    }
+
+    .glance {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .glance li {
+      display: grid;
+      gap: 3px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .glance li:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .glance span {
+      color: var(--quiet);
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .glance strong {
+      color: var(--ink);
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .toc {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+
+    .toc a {
+      padding: 8px 0;
+      color: var(--muted);
+      border-top: 1px solid rgb(217 223 216 / 78%);
+      font-size: 0.92rem;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .content {
+      display: grid;
+      gap: 22px;
+    }
+
+    .section {
+      padding: 30px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .label {
+      display: inline-flex;
+      margin-bottom: 12px;
+      color: var(--coral);
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .section h2 {
+      margin-bottom: 14px;
+      font-size: clamp(1.7rem, 3vw, 2.45rem);
+    }
+
+    .section h3 {
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+      line-height: 1.25;
+    }
+
+    .lead {
+      color: #26333a !important;
+      font-size: clamp(1.06rem, 1.5vw, 1.2rem) !important;
+    }
+
+    .section p + p,
+    .section p + .grid,
+    .section p + .flow,
+    .section p + .matrix,
+    .section p + .checklist,
+    .section .grid + p {
+      margin-top: 16px;
+    }
+
+    .quote-box {
+      margin-top: 18px;
+      padding: 18px;
+      color: #243139;
+      background: var(--sand);
+      border-left: 5px solid var(--gold);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.16rem;
+      line-height: 1.55;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .mint { background: var(--mint); }
+    .sky { background: var(--sky); }
+    .sand { background: var(--sand); }
+    .rose { background: var(--rose); }
+    .lavender { background: var(--lavender); }
+
+    .pill {
+      display: inline-flex;
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 12px;
+      padding: 5px 9px;
+      color: #fff;
+      background: var(--blue);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pill.teal { background: var(--teal); }
+    .pill.green { background: var(--green); }
+    .pill.gold { background: var(--gold); }
+    .pill.coral { background: var(--coral); }
+    .pill.plum { background: var(--plum); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .flow-step {
+      min-height: 156px;
+      padding: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .flow-step span {
+      display: block;
+      color: var(--quiet);
+      font-size: 0.73rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .flow-step strong {
+      display: block;
+      margin-top: 8px;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+
+    .flow-step p,
+    .card p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.58;
+    }
+
+    .matrix {
+      width: 100%;
+      margin-top: 18px;
+      border-collapse: collapse;
+      table-layout: fixed;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .matrix th,
+    .matrix td {
+      padding: 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+    }
+
+    .matrix th {
+      color: var(--ink);
+      background: var(--mint);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .matrix td {
+      color: #334047;
+      background: #fff;
+      font-size: 0.94rem;
+    }
+
+    .matrix tr:last-child td { border-bottom: 0; }
+    .matrix th:last-child,
+    .matrix td:last-child { border-right: 0; }
+
+    .checklist {
+      display: grid;
+      gap: 11px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .mini-spec {
+      margin-top: 18px;
+      padding: 18px;
+      overflow-x: auto;
+      color: #eef7f3;
+      background: #183039;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      line-height: 1.6;
+      white-space: pre;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+      padding-left: 20px;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .quick-summary,
+      .article-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .flow,
+      .three {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .page {
+        padding-inline: 18px;
+      }
+
+      .hero {
+        gap: 26px;
+        padding-top: 36px;
+      }
+
+      h1 { font-size: clamp(2.2rem, 12vw, 3.15rem); }
+
+      .quick-summary,
+      .section {
+        padding: 22px;
+      }
+
+      .sidebar,
+      .two,
+      .three,
+      .flow,
+      .stats,
+      .toc {
+        grid-template-columns: 1fr;
+      }
+
+      .matrix {
+        table-layout: fixed;
+      }
+
+      .matrix th,
+      .matrix td {
+        padding: 10px;
+      }
+
+      .mini-spec { white-space: pre-wrap; }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./">YouTube Extractor</a>
+    <nav class="top-actions" aria-label="Page actions">
+      <a class="action-link" href="#thesis">Thesis</a>
+      <a class="action-link" href="#ecosystem">Ecosystem</a>
+      <a class="action-link" href="#n8n">n8n</a>
+      <a class="action-link" href="#architecture">Architecture</a>
+      <a class="action-link" href="#platform">Platform</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=auj9ajsiI9s">Watch Source</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <span class="kicker">n8n Business Lab - Enterprise Agent Platform</span>
+        <h1>How Mercedes-Benz Scales AI Agents with n8n</h1>
+        <p class="subtitle">
+          A structured summary of Mercedes-Benz's AI ecosystem talk: how an enterprise platform exposes governed models,
+          agent registries, low-code orchestration, internal LLM gateways, isolated n8n instances, and company-wide adoption paths.
+        </p>
+        <div class="meta">
+          <span><strong>Video:</strong> How Mercedes-Benz Scales AI Agents with n8n</span>
+          <span><strong>Channel:</strong> n8n</span>
+          <span><strong>Transcript:</strong> English captions, 165 rows</span>
+        </div>
+      </div>
+
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/auj9ajsiI9s/hqdefault.jpg" alt="Video thumbnail for Mercedes-Benz scaling AI agents with n8n">
+        <figcaption>
+          The talk is less about one demo and more about enterprise scaling: model governance, agent discovery, low-code makers,
+          secure self-hosting, internal integrations, and rollout through training and hackathons.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" aria-labelledby="short-version-title">
+      <div>
+        <h2 id="short-version-title">The Short Version</h2>
+        <p>
+          Mercedes-Benz is building an AI ecosystem that makes models, agents, services, and automation tooling available from one
+          governed enterprise layer. n8n is positioned as the low-code/no-code layer for business process automation and agent
+          orchestration, especially where teams need to connect internal systems, LLMs, and workflows without writing full custom software.
+        </p>
+        <ul class="summary-list">
+          <li><strong>Model Garden:</strong> governed access to many AI models through an intake process aligned with compliance and enterprise security.</li>
+          <li><strong>Agent Garden:</strong> one place to discover, manage, interconnect, and subscribe to agents across a multi-cloud strategy.</li>
+          <li><strong>n8n platform:</strong> self-hosted workflow automation, custom Mercedes-Benz nodes, internal LLM gateway integration, and per-use-case isolation.</li>
+        </ul>
+      </div>
+      <aside class="stats" aria-label="Video facts">
+        <div class="stat"><strong>18m</strong><span>runtime</span></div>
+        <div class="stat"><strong>2.9k</strong><span>caption words</span></div>
+        <div class="stat"><strong>40+</strong><span>models mentioned</span></div>
+      </aside>
+    </section>
+
+    <div class="article-layout">
+      <aside class="sidebar" aria-label="Article navigation">
+        <div class="sidebar-block">
+          <h2>At a Glance</h2>
+          <ul class="glance">
+            <li><span>Main lens</span><strong>Enterprise AI ecosystem</strong></li>
+            <li><span>Core pattern</span><strong>Governed platform plus maker layer</strong></li>
+            <li><span>Key technology</span><strong>Self-hosted n8n on Kubernetes</strong></li>
+            <li><span>Platform lesson</span><strong>Separate takers, shapers, and builders</strong></li>
+          </ul>
+        </div>
+        <nav class="toc" aria-label="Table of contents">
+          <h2>Read</h2>
+          <a href="#thesis">Core Thesis</a>
+          <a href="#ecosystem">Mercedes-Benz AI Ecosystem</a>
+          <a href="#layers">Takers, Shapers, Builders</a>
+          <a href="#n8n">Why n8n</a>
+          <a href="#architecture">Deployment Architecture</a>
+          <a href="#orchestration">Agent Orchestration</a>
+          <a href="#rollout">Rollout and Hackathon</a>
+          <a href="#platform">Platform Takeaways</a>
+          <a href="#templates">Flow Markdown</a>
+          <a href="#sources">Sources</a>
+        </nav>
+      </aside>
+
+      <article class="content">
+        <section class="section" id="thesis">
+          <span class="label">Core Thesis</span>
+          <h2>Mercedes-Benz is treating AI agents as enterprise infrastructure, not isolated experiments.</h2>
+          <p class="lead">
+            The speakers describe an AI ecosystem run from an IT center of competence that supports Mercedes-Benz use cases across
+            vehicles, enterprise processes, production, shop-floor management, after-sales, and software engineering. The goal is
+            to expose models, agents, services, and automation tooling in one governed place.
+          </p>
+          <p>
+            The important shift is scale. The company is not only letting individual teams try AI tools. It is building a platform
+            where models pass intake, agents can be registered and discovered, business users can build workflows, and more technical
+            teams can still create tailored solutions. n8n enters as a low-code/no-code automation layer inside that broader platform.
+          </p>
+          <div class="quote-box">
+            The pattern is useful for any large company: create a central AI ecosystem, then let different user groups consume, shape, or build on top of it with the right level of control.
+          </div>
+        </section>
+
+        <section class="section" id="ecosystem">
+          <span class="label">AI Ecosystem</span>
+          <h2>The platform combines a model garden, an agent garden, playgrounds, and reusable AI services.</h2>
+          <p class="lead">
+            The Mercedes-Benz AI ecosystem is described as the enterprise layer for AI practitioners worldwide. It provides access
+            to governed models, exposes agents, connects to multi-cloud strategy, and offers playgrounds for software developers
+            and business users to try approved capabilities.
+          </p>
+          <p>
+            The model garden already exposes more than 40 models. The speakers describe a model intake process where demanded
+            models can be integrated into internal lifecycle and made available to customers. A process that historically took
+            months is described as being automated down to minutes for suitable models.
+          </p>
+          <div class="flow" aria-label="Mercedes-Benz AI ecosystem layers">
+            <div class="flow-step">
+              <span>Models</span>
+              <strong>Model Garden</strong>
+              <p>Governed model access, model intake, subscriptions, and compliance-oriented exposure.</p>
+            </div>
+            <div class="flow-step">
+              <span>Agents</span>
+              <strong>Agent Garden</strong>
+              <p>Registry-style discovery, management, security review, interoperability, and subscription.</p>
+            </div>
+            <div class="flow-step">
+              <span>Build</span>
+              <strong>Playgrounds</strong>
+              <p>Predefined environments where developers and teams can experiment with approved models.</p>
+            </div>
+            <div class="flow-step">
+              <span>Reuse</span>
+              <strong>AI Services</strong>
+              <p>Reusable capabilities so teams do not rebuild the same services repeatedly.</p>
+            </div>
+            <div class="flow-step">
+              <span>Cloud</span>
+              <strong>Multi-cloud</strong>
+              <p>Agents and workflows connect to data assets where they already live.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="layers">
+          <span class="label">Adoption Layers</span>
+          <h2>The ecosystem separates takers, shapers, and builders.</h2>
+          <p class="lead">
+            The talk describes three user groups. Takers are broad employees who receive productivity tools such as Copilot and
+            learn that AI is part of daily work. Shapers are low-code/no-code users who can automate processes and create agents.
+            Builders are software-engineering teams creating tailored solutions.
+          </p>
+          <p>
+            This distinction matters because one platform cannot assume every user is a developer. Mercedes-Benz wants white-collar
+            workers to experience productivity gains, business colleagues to automate repeated processes, and builders to connect
+            those capabilities into enterprise software delivery and compliance checks.
+          </p>
+          <table class="matrix" aria-label="Takers shapers builders adoption model">
+            <thead>
+              <tr>
+                <th>Group</th>
+                <th>What they do</th>
+                <th>Platform support needed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Takers</td>
+                <td>Use AI in daily work to improve personal productivity.</td>
+                <td>Approved tools, training, clear guidance, and safe defaults.</td>
+              </tr>
+              <tr>
+                <td>Shapers</td>
+                <td>Build low-code/no-code workflows and personal or departmental agents.</td>
+                <td>n8n, governed models, connectors, templates, and quality checks.</td>
+              </tr>
+              <tr>
+                <td>Builders</td>
+                <td>Create tailor-made software and enterprise-grade AI applications.</td>
+                <td>Engineering lifecycle, APIs, observability, security gates, and reusable AI services.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="n8n">
+          <span class="label">Why n8n</span>
+          <h2>n8n is chosen for workflow automation, self-hosting, integrations, and extensibility.</h2>
+          <p class="lead">
+            The system architect explains that Mercedes-Benz evaluated several vendors and chose n8n for the workflow automation
+            editor, reduced lock-in, extensive integrations, self-hosting, and the ability to extend the product with internal
+            Mercedes-Benz nodes.
+          </p>
+          <p>
+            The internal context is crucial. Mercedes-Benz has internal systems such as identity and access management, plus an
+            internal LLM gateway that controls access to language models. n8n can connect to that gateway and can be extended so
+            enterprise workflows use internal systems through safer, packaged nodes instead of ad hoc integrations.
+          </p>
+          <div class="grid three">
+            <article class="card mint">
+              <span class="pill teal">Self-host</span>
+              <h3>Less lock-in</h3>
+              <p>n8n runs internally rather than being tied to one external workflow hyperscaler.</p>
+            </article>
+            <article class="card sky">
+              <span class="pill">Integrate</span>
+              <h3>Hundreds of connectors</h3>
+              <p>Many n8n integrations are relevant for enterprise automation and agent workflows.</p>
+            </article>
+            <article class="card sand">
+              <span class="pill gold">Extend</span>
+              <h3>Custom nodes</h3>
+              <p>Mercedes-Benz can wrap internal services, IAM, and LLM access into reusable workflow building blocks.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="architecture">
+          <span class="label">Deployment Architecture</span>
+          <h2>The enterprise setup isolates n8n instances per use case on Kubernetes.</h2>
+          <p class="lead">
+            Mercedes-Benz runs n8n as an internal platform on a large Kubernetes cluster operated by a central team. The talk
+            describes separate n8n instances per use case. This keeps data separation and resilience at the platform level.
+          </p>
+          <p>
+            The example given is simple and important: HR data should not be mixed with car data. Separate instances help prevent
+            unwanted data combination and reduce blast radius. If one workflow or system breaks badly, it should not break the
+            entire Mercedes-Benz n8n setup. At the time of the talk, the setup was described as running more than 30 instances.
+          </p>
+          <table class="matrix" aria-label="Mercedes-Benz n8n platform architecture">
+            <thead>
+              <tr>
+                <th>Architecture choice</th>
+                <th>Reason</th>
+                <th>Platform lesson</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Internal Kubernetes platform</td>
+                <td>Central team can operate, scale, and standardize the service.</td>
+                <td>Agent platforms need an operations substrate, not only a UI.</td>
+              </tr>
+              <tr>
+                <td>One n8n instance per use case</td>
+                <td>Separates sensitive data, teams, and failure domains.</td>
+                <td>Tenant isolation should be an explicit design primitive.</td>
+              </tr>
+              <tr>
+                <td>Internal LLM gateway</td>
+                <td>Controls model access and abstracts provider/model details.</td>
+                <td>Business workflows should call models through governed gateways.</td>
+              </tr>
+              <tr>
+                <td>Custom internal nodes</td>
+                <td>Wraps internal systems into safe reusable automation blocks.</td>
+                <td>MCP/tools should encode enterprise policy and integration semantics.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section" id="orchestration">
+          <span class="label">Agent Orchestration</span>
+          <h2>n8n fills a gap for orchestrating agents across departments and business processes.</h2>
+          <p class="lead">
+            Mercedes-Benz sees a gap around orchestration: multiple agents may already exist in an agent garden, but a business
+            process often needs a higher-level orchestrator that combines them into a single workflow. The talk gives a mock example
+            of an orchestrator connecting pre-sales, sales, and after-sales agents.
+          </p>
+          <p>
+            This maps cleanly to agentic architecture. The agent garden gives discoverability and governance. n8n gives business
+            users and platform teams a way to compose workflows. A2A and MCP-style interoperability can let agents and tools connect
+            across business chains, while security and management stay centralized.
+          </p>
+          <div class="flow" aria-label="Agent orchestration flow">
+            <div class="flow-step">
+              <span>Find</span>
+              <strong>Discover agent</strong>
+              <p>Agent garden exposes existing agents, owners, purpose, and subscription model.</p>
+            </div>
+            <div class="flow-step">
+              <span>Connect</span>
+              <strong>Compose workflow</strong>
+              <p>n8n connects agents, internal systems, LLM gateway, and trigger events.</p>
+            </div>
+            <div class="flow-step">
+              <span>Guard</span>
+              <strong>Apply checks</strong>
+              <p>Compliance, model access, data boundaries, and quality gates wrap the workflow.</p>
+            </div>
+            <div class="flow-step">
+              <span>Run</span>
+              <strong>Automate process</strong>
+              <p>Workflows handle repeated business processes or orchestrate multi-step agent work.</p>
+            </div>
+            <div class="flow-step">
+              <span>Share</span>
+              <strong>Publish agent</strong>
+              <p>Useful automations can be exposed so other employees can discover or reuse them.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="rollout">
+          <span class="label">Rollout</span>
+          <h2>The rollout combines enterprise licensing, MVP, support, workshops, and hackathon adoption.</h2>
+          <p class="lead">
+            The n8n enterprise contract was signed in January, followed by ramp-up and an extended MVP phase. The team communicated
+            the rollout, provided first-level support, and ran workshops so employees could learn the tool hands-on.
+          </p>
+          <p>
+            A major adoption moment was an internal Mercedes-Benz hackathon announced to roughly 90,000 white-collar workers.
+            Teams across China, India, the US, and Germany tested n8n over several days. Hundreds of use-case ideas were planned
+            and executed, and the team received positive early feedback.
+          </p>
+          <div class="grid two">
+            <article class="card rose">
+              <span class="pill coral">MVP and support</span>
+              <h3>Make the platform usable</h3>
+              <p>Enterprise rollout needs training, support, workshops, communication, and hands-on environments.</p>
+            </article>
+            <article class="card lavender">
+              <span class="pill plum">Hackathon</span>
+              <h3>Turn adoption into evidence</h3>
+              <p>Hackathons reveal real business processes, integration gaps, use-case demand, and internal champions.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <span class="label">Platform Takeaways</span>
+          <h2>What this means for your agentic AI platform.</h2>
+          <p class="lead">
+            The talk is a strong enterprise reference because it separates the platform layers: model governance, agent discovery,
+            low-code workflow composition, internal tool wrappers, multi-cloud access, training, and adoption programs. That is
+            exactly the kind of structure needed if BA-side users will assemble multi-agent systems safely.
+          </p>
+          <ul class="checklist">
+            <li><strong>Create a model garden:</strong> approved models, provider routing, intake process, compliance metadata, and subscription model.</li>
+            <li><strong>Create an agent garden:</strong> registry, owner, purpose, input/output contracts, allowed tools, security status, and reuse path.</li>
+            <li><strong>Make n8n-style orchestration a shaper layer:</strong> business users can connect events, agents, tools, and approvals without full custom code.</li>
+            <li><strong>Wrap internal systems as nodes/tools:</strong> IAM, CRM, ticketing, product data, knowledge bases, and LLM gateway access should be packaged, not improvised.</li>
+            <li><strong>Isolate by use case or tenant:</strong> sensitive domains need separate runtime boundaries and blast-radius control.</li>
+            <li><strong>Use hackathons as discovery:</strong> capture workflows, templates, missing connectors, training needs, and candidate reusable agents.</li>
+            <li><strong>Publish useful workflows back to the garden:</strong> successful automations should become discoverable platform assets.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="templates">
+          <span class="label">Flow Markdown</span>
+          <h2>A reusable enterprise agent-garden template inspired by the talk.</h2>
+          <p class="lead">
+            This template turns the Mercedes-Benz pattern into a practical artifact for your platform: one catalog item that business
+            users, platform admins, and engineers can all understand.
+          </p>
+          <pre class="mini-spec"><code>---
+asset_type: agent_orchestration_flow
+name: sales_lifecycle_orchestrator
+owner_team: ai_ecosystem_platform
+audience_layer: shaper
+runtime:
+  workflow_engine: n8n
+  isolation_model: one_instance_per_use_case
+  llm_access: internal_llm_gateway
+  deployment: internal_kubernetes
+business_goal:
+  description: Coordinate pre-sales, sales, and after-sales agents for one customer lifecycle event.
+trigger_events:
+  - lead.created
+  - opportunity.updated
+  - delivery_issue.opened
+agent_garden_dependencies:
+  - agent_id: pre_sales_agent
+    contract: qualify_lead_and_prepare_context
+  - agent_id: sales_agent
+    contract: recommend_next_commercial_action
+  - agent_id: after_sales_agent
+    contract: summarize_service_history_and_risk
+tool_nodes:
+  - crm_lookup_node
+  - ticket_lookup_node
+  - customer_profile_node
+  - internal_llm_gateway_node
+governance:
+  model_garden_allowed_models:
+    - approved_general_reasoning_model
+    - approved_summarization_model
+  data_boundary:
+    separate_hr_data: true
+    separate_vehicle_data: true
+  approval_required_if:
+    - customer_risk_tier_high
+    - pricing_or_contract_change
+    - regulated_market
+quality_checks:
+  - validate_agent_contracts
+  - check_tool_permissions
+  - record_sources_used
+  - log_workflow_execution
+publish_back_to_garden:
+  enabled: true
+  required_metadata:
+    - owner
+    - description
+    - input_schema
+    - output_schema
+    - permissions
+    - support_contact
+---</code></pre>
+        </section>
+
+        <section class="section" id="sources">
+          <span class="label">Sources</span>
+          <h2>Source and reliability notes.</h2>
+          <p class="lead">
+            This page summarizes the public YouTube captions for the n8n Business Lab talk. The captions contain some automatic
+            transcription noise around terms like n8n, agent garden, and model names; this summary normalizes the obvious terms
+            where the surrounding context is clear.
+          </p>
+          <ul class="source-list">
+            <li><a href="https://www.youtube.com/watch?v=auj9ajsiI9s">Original YouTube video</a> from n8n.</li>
+            <li>Video title: How Mercedes-Benz Scales AI Agents with n8n - n8n Business Lab (April 2026).</li>
+            <li>Caption extraction: English captions, 165 rows, approximately 2,965 words.</li>
+            <li>Generated for enterprise agent-platform research: model garden, agent garden, workflow orchestration, governance, and rollout strategy.</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

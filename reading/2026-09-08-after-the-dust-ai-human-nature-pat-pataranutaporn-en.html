@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="An English editorial summary of Pat Pataranutaporn's essay on GPT-6, AI as infrastructure, imagination, cognitive offloading, artificial intimacy, and who humans become around AI.">
+  <title>After the Dust: How AI May Change Human Nature</title>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+  <style>
+    .hero-card img { aspect-ratio: 1 / 1; object-fit: cover; }
+    .source-note { margin-top: 1rem; padding-left: 1rem; border-left: 3px solid var(--green); }
+    .thesis { margin: 1.2rem 0; padding: 1rem; background: var(--surface); border-left: 3px solid var(--ink); }
+    .thesis strong { display: block; margin-bottom: .35rem; font-weight: 600; }
+    .observation-grid, .tradeoff-grid, .risk-grid { display: grid; margin: 1.2rem 0; border: 1px solid var(--line-strong); }
+    .observation-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .tradeoff-grid, .risk-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .observation, .tradeoff, .risk { min-width: 0; padding: 1rem; border-right: 1px solid var(--line); }
+    .observation:last-child, .tradeoff:nth-child(even), .risk:nth-child(even) { border-right: 0; }
+    .tradeoff:nth-child(n+3), .risk:nth-child(n+3) { border-top: 1px solid var(--line); }
+    .observation span, .tradeoff span, .risk span { display: block; margin-bottom: .35rem; color: var(--green); font-size: .76rem; font-weight: 600; text-transform: uppercase; }
+    .observation strong, .tradeoff strong, .risk strong { display: block; font-weight: 500; }
+    .observation p, .tradeoff p, .risk p { margin: .55rem 0 0 !important; font-size: .94rem; }
+    .interaction { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: stretch; margin: 1.2rem 0; border: 1px solid var(--line-strong); }
+    .interaction-node { min-width: 0; padding: 1rem; }
+    .interaction-node span { display: block; margin-bottom: .35rem; color: var(--green); font-size: .76rem; font-weight: 600; text-transform: uppercase; }
+    .interaction-node strong { font-weight: 500; }
+    .interaction-arrow { display: grid; place-items: center; padding: .6rem; border-left: 1px solid var(--line); border-right: 1px solid var(--line); color: var(--green); font-weight: 600; }
+    .detail-list { margin-top: 1rem; border-top: 1px solid var(--line-strong); }
+    .detail { display: grid; grid-template-columns: minmax(9rem, .85fr) minmax(0, 2.15fr); gap: 1.2rem; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+    .detail-label span { display: block; margin-bottom: .25rem; color: var(--green); font-size: .78rem; font-weight: 600; }
+    .detail-label strong { font-weight: 500; }
+    .detail-body p { margin: 0 !important; }
+    .detail-body p + p { margin-top: .7rem !important; }
+    .source-links { display: grid; gap: .7rem; padding-left: 1.2rem; }
+    @media (max-width: 760px) {
+      .observation-grid { grid-template-columns: 1fr; }
+      .observation { border-right: 0; border-bottom: 1px solid var(--line); }
+      .observation:last-child { border-bottom: 0; }
+      .interaction { grid-template-columns: 1fr; }
+      .interaction-arrow { border: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    }
+    @media (max-width: 640px) {
+      .tradeoff-grid, .risk-grid { grid-template-columns: 1fr; }
+      .tradeoff, .risk { border-right: 0; border-bottom: 1px solid var(--line); }
+      .tradeoff:last-child, .risk:last-child { border-bottom: 0; }
+      .tradeoff:nth-child(n+2), .risk:nth-child(n+2) { border-top: 0; }
+      .detail { grid-template-columns: 1fr; gap: .4rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Article navigation">
+    <a class="brand" href="./">Reading room</a>
+    <div class="top-actions">
+      <a class="action-link" href="https://www.facebook.com/story.php?story_fbid=28406868552242604&id=100000385144307">Read source</a>
+      <a class="action-link" href="/">Add a source</a>
+    </div>
+  </nav>
+
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Human-AI interaction · Cognition · Society · AI infrastructure</p>
+        <h1>After the Dust: How AI May Change Human Nature</h1>
+        <p class="subtitle">Pat Pataranutaporn argues that the decisive question after a more capable model arrives is not only what AI can become. It is what repeated interaction with AI trains humans to become.</p>
+        <div class="meta">
+          <span><strong>Pat Pataranutaporn</strong></span>
+          <span>Facebook essay</span>
+          <span>Thai original</span>
+          <span>Summary run September 8, 2026 · 12:35 ICT</span>
+        </div>
+        <p class="source-note">This is an English editorial summary of the complete public post. Quantitative claims and research references are attributed to the author; this page does not treat a social-media citation list as independent verification.</p>
+      </div>
+      <figure class="hero-card">
+        <a href="https://www.facebook.com/story.php?story_fbid=28406868552242604&id=100000385144307" aria-label="Read Pat Pataranutaporn's original Facebook post">
+          <img src="2026-09-08-ai-human-nature-pat-pataranutaporn-source.jpg" alt="Thai title card asking how AI will change human nature after the dust settles">
+        </a>
+        <figcaption>The post asks how human nature changes when powerful AI becomes part of everyday life.</figcaption>
+      </figure>
+    </header>
+
+    <div class="layout">
+      <article class="content">
+        <section id="summary">
+          <p class="section-label">Executive summary</p>
+          <h2>Model intelligence does not automatically become human value</h2>
+          <p>The essay begins in the confusion that follows a major technological shock. Fear, excitement, surprise, and uncertainty arrive together. Pataranutaporn invokes Marie Curie's idea that understanding reduces fear, then proposes a discipline for moments when the future is obscured: question the assumptions in our heads, investigate the system, and choose a conscious response instead of drifting with the dominant narrative.</p>
+          <p>A year earlier, amid claims that GPT-5 might signal artificial general intelligence, he warned that society should worry not only about superintelligence but also “super stupidity”: AI becomes more capable while its users fail to develop judgment, wisdom, or better ways of thinking. Powerful intelligence can then accelerate poor decisions or amplify destructive goals.</p>
+          <p>GPT-6 provides the essay's new occasion. The author notes impressive progress in research, coding, computer use, and several benchmarks, while emphasizing that capability remains uneven. A nearly saturated mathematics benchmark can coexist with roughly 3% performance on a harder new set. Benchmark gains are real signals, but contamination, optimization for the test, uncertainty ranges, and independent evaluation determine what they actually mean.</p>
+          <div class="observation-grid" role="figure" aria-label="The essay's three central observations">
+            <div class="observation"><span>Observation 01</span><strong>Capability is multiplied by the user.</strong><p>Knowledge, judgment, environment, and imagination determine whether intelligence produces meaningful work or more efficient trivia.</p></div>
+            <div class="observation"><span>Observation 02</span><strong>AI is infrastructure, not an alien.</strong><p>Ask what social destination the infrastructure serves, who benefits, and what is surrendered in return.</p></div>
+            <div class="observation"><span>Observation 03</span><strong>Study who humans become.</strong><p>Repeated low-friction interaction can alter patience, depth, relationships, self-conception, and tolerance for uncertainty.</p></div>
+          </div>
+          <div class="thesis"><strong>The essay's core claim</strong><p>The outcome is not contained in the model alone. It emerges from the interaction between how AI is designed and incentivized, and how humans choose to use it.</p></div>
+        </section>
+
+        <section id="benchmarks">
+          <p class="section-label">Reading the capability claims</p>
+          <h2>High benchmark scores are the beginning of interpretation</h2>
+          <p>The post reports an Epoch Capabilities Index score of 169 for GPT-6 Astra, above a previous record of 163 but still inside Epoch's stated uncertainty range for the broader reasoning-model trend. It also contrasts a reported 98% on FrontierMath Tier 4 with only 2 solved problems out of 68 on the harder FrontierMath Erdős benchmark under a standard run.</p>
+          <p>The contrast is the point. “Nearly solved” describes one measurement surface, not general correctness. Once a benchmark saturates, a harder benchmark reveals new boundaries. A responsible interpretation should ask:</p>
+          <ol class="summary-list">
+            <li>Was the benchmark visible during model development or vulnerable to data contamination?</li>
+            <li>How much test-time compute, tool access, scaffolding, and retry budget were allowed?</li>
+            <li>Does the task measure a capability that transfers to consequential real-world work?</li>
+            <li>Has an independent group reproduced the score under the same protocol?</li>
+            <li>What failure distribution is hidden behind the aggregate number?</li>
+          </ol>
+          <p>Improved computer use may matter more immediately than a headline intelligence label because it changes how AI participates in workflows. But even there, the useful unit is an end-to-end outcome under realistic permissions, errors, and supervision, not a demo selected for visual impact.</p>
+        </section>
+
+        <section id="observation-one">
+          <p class="section-label">Observation one</p>
+          <h2>Human imagination is a capability bottleneck</h2>
+          <p>An AGI-level or Nobel-level system does not automatically create valuable outcomes. If it is assigned routine or pointless work, a tenfold improvement may change little. The essay compares this to placing a PhD graduate in a day of trivial paperwork: abundant intelligence has been attached to an impoverished problem.</p>
+          <p>The larger challenge is therefore not only making AI smarter, but creating people and environments able to use greater intelligence well. Users need difficult questions, enough knowledge to see possibilities, taste to judge outputs, and imagination to conceive work that did not previously exist.</p>
+          <p>Recommendation systems complicate this. Platforms optimized for engagement repeatedly expose people to similar formats and incentives. When a new model appears, creators converge on the same demonstrations. The essay uses a wave of near-identical AI-generated 3D-house demos as an example. If human attention and ideas are homogenized, powerful AI may scale the sameness rather than expand possibility.</p>
+          <div class="detail-list">
+            <div class="detail"><div class="detail-label"><span>Weak use</span><strong>Automate the obvious</strong></div><div class="detail-body"><p>Use a frontier model to produce more routine content, imitate popular demos, or accelerate work whose value was never questioned.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Stronger use</span><strong>Expand the problem space</strong></div><div class="detail-body"><p>Combine domain knowledge, unusual questions, diverse experience, and model capability to explore solutions that were previously too expensive or technically inaccessible.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Human investment</span><strong>Develop questions, knowledge, and taste</strong></div><div class="detail-body"><p>AI literacy should include problem selection and judgment, not merely operational proficiency with prompts and tools.</p></div></div>
+          </div>
+        </section>
+
+        <section id="observation-two">
+          <p class="section-label">Observation two</p>
+          <h2>Treat AI as infrastructure with a destination</h2>
+          <p>Drawing on Arvind Narayanan and Sayash Kapoor's “AI as Normal Technology,” the author rejects the image of AI as an alien species arriving to conquer humanity. “Normal” does not mean unimportant. It means embedded in institutions, incentives, labor, law, and daily life, like electricity, roads, or the internet.</p>
+          <p>A road is not valuable merely because more road exists. It is valuable because it connects people, creates access, and enables destinations. The analogous questions for AI are not only how capable the system is, but what the infrastructure is for: more time, higher income, better learning, improved health, deeper creativity, or capabilities that previously could not exist.</p>
+          <p>This frame also makes distribution visible. Infrastructure has owners, access rules, maintenance costs, externalities, and unequal benefits. Asking what AI enables must be paired with asking who can use it, whose data trains or powers it, who bears failure, and who controls its optimization objective.</p>
+        </section>
+
+        <section id="tradeoffs">
+          <p class="section-label">Technology's exchange</p>
+          <h2>Every gain may quietly train a loss</h2>
+          <div class="tradeoff-grid">
+            <div class="tradeoff"><span>Coding</span><strong>Speed gained; project intimacy may decline.</strong><p>Delegating implementation can improve throughput while reducing close contact with details where accidental patterns and new ideas once emerged.</p></div>
+            <div class="tradeoff"><span>Information</span><strong>Instant access gained; patience may weaken.</strong><p>When waiting disappears, people may become less tolerant of slow inquiry and optimize decisions toward immediate reward.</p></div>
+            <div class="tradeoff"><span>Conversation</span><strong>Low-friction support gained; human friction may feel worse.</strong><p>An agreeable system that listens continuously can establish expectations real relationships cannot and should not always satisfy.</p></div>
+            <div class="tradeoff"><span>Cognition</span><strong>Output gained; internal capability may atrophy.</strong><p>AI can either replace a mental process or provide structure that helps the user perform that process more deliberately.</p></div>
+          </div>
+          <p>The author's concern is temporal asymmetry: short-term gains are visible immediately, while long-term losses in skill, patience, or relationship quality emerge slowly. Product metrics naturally favor the visible side of the exchange unless researchers and designers deliberately measure what changes over months and years.</p>
+        </section>
+
+        <section id="observation-three">
+          <p class="section-label">Observation three</p>
+          <h2>The largest question is who we become</h2>
+          <p>Influenced by Sherry Turkle's work on artificial intimacy, Pataranutaporn shifts the object of study from the machine to the person in relationship with it. Does daily AI use make someone wiser or merely faster? More capable of sustained thought or dependent on immediate completion? More generous toward other people or more accustomed to personalized agreement? Better able to live with uncertainty or less tolerant of it?</p>
+          <p>The question “Does AI consume our humanity?” is too coarse. Asking whether food makes people gain weight is similarly incomplete without specifying the food, amount, person, behavior, and surrounding environment. There is no single AI and no single human response.</p>
+          <div class="interaction" role="figure" aria-label="Human-AI interaction shapes long-term outcomes">
+            <div class="interaction-node"><span>AI design</span><strong>Goals, incentives, interface, memory, personality, and optimization target</strong></div>
+            <div class="interaction-arrow" aria-hidden="true">×</div>
+            <div class="interaction-node"><span>Human use</span><strong>Purpose, frequency, expertise, vulnerability, agency, and social environment</strong></div>
+            <div class="interaction-arrow" aria-hidden="true">→</div>
+            <div class="interaction-node"><span>Who we become</span><strong>Changed skill, judgment, patience, dependence, relationships, and possibility</strong></div>
+          </div>
+          <p>The practical distinction is between substitution and augmentation. A substitutive system thinks, remembers, decides, and relates on the person's behalf. An augmentative system helps the person inspect assumptions, practice difficult skills, consider alternatives, and retain ownership of consequential choices. Most products combine both; the design task is to decide where each mode is appropriate.</p>
+        </section>
+
+        <section id="research">
+          <p class="section-label">Research agenda</p>
+          <h2>Why Human-AI Interaction must be studied as a system</h2>
+          <p>The post connects this argument to the MIT Cyborg Psychology research group. Its projects study not only model behavior but psychological and social effects that emerge through repeated interaction.</p>
+          <div class="detail-list">
+            <div class="detail"><div class="detail-label"><span>Mental health</span><strong>Measure heterogeneous effects</strong></div><div class="detail-body"><p>Chatbot use may affect people differently depending on motivation, vulnerability, usage pattern, and the role the system plays. Population averages can hide groups helped or harmed.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Risk simulation</span><strong>Study trajectories before tragedy</strong></div><div class="detail-body"><p>The group models interaction patterns associated with addiction, depression, psychosis, eating disorders, homicide, and suicide so risks can be examined systematically rather than only after real-world harm.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Companionship</span><strong>Design psychologically safer endings</strong></div><div class="detail-body"><p>When users experience an AI as a partner, abrupt product removal or personality change can feel like loss. Safety includes transitions, boundaries, dependence, and discontinuation.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Transparency</span><strong>Improve calibration to changing behavior</strong></div><div class="detail-body"><p>Neural Transparency work explores interfaces that surface internal activations so users can better anticipate model behavior and notice drift across a conversation.</p></div></div>
+            <div class="detail"><div class="detail-label"><span>Future selves</span><strong>Expand perceived possibility</strong></div><div class="detail-body"><p>AI-generated digital twins can help disadvantaged young people imagine future paths and strengthen continuity with their future selves, potentially widening choices rather than narrowing them.</p></div></div>
+          </div>
+        </section>
+
+        <section id="practice">
+          <p class="section-label">Practical reflection</p>
+          <h2>A better review than “Are we using the newest model?”</h2>
+          <ol class="summary-list">
+            <li><strong>Name the human outcome.</strong> Define what should improve in a person's capability, autonomy, well-being, or opportunity.</li>
+            <li><strong>Identify substitution.</strong> List the thinking, practice, waiting, social interaction, or responsibility the AI removes.</li>
+            <li><strong>Inspect the exchange over time.</strong> Measure immediate efficiency separately from retention, dependence, judgment, and behavior months later.</li>
+            <li><strong>Protect productive friction.</strong> Do not eliminate every difficult step when effort is how a skill, relationship, or decision becomes meaningful.</li>
+            <li><strong>Diversify inputs.</strong> Counter recommendation-driven sameness with domain experts, primary sources, different communities, and original observation.</li>
+            <li><strong>Evaluate the interaction.</strong> A model benchmark cannot reveal whether a product encourages agency, sycophancy, compulsive use, or wise decisions.</li>
+            <li><strong>Make incentives visible.</strong> Ask what behavior the product rewards and whether engagement, completion, or revenue conflicts with the stated human goal.</li>
+            <li><strong>Keep consequential judgment human.</strong> Use AI to expose possibilities and assumptions while preserving accountability for values and irreversible decisions.</li>
+          </ol>
+        </section>
+
+        <section id="assessment">
+          <p class="section-label">Critical assessment</p>
+          <h2>A strong frame, with empirical questions still open</h2>
+          <div class="risk-grid">
+            <div class="risk"><span>Strong</span><strong>Capability and value are different variables.</strong><p>More intelligence cannot choose a socially valuable objective by itself. Context, institutions, and human judgment determine how capability is deployed.</p></div>
+            <div class="risk"><span>Strong</span><strong>Interaction is the right unit of analysis.</strong><p>Effects depend on model design, interface, user characteristics, purpose, and duration. “AI is good or bad” discards the causal structure.</p></div>
+            <div class="risk"><span>Needs measurement</span><strong>Long-term losses are plausible, not uniform.</strong><p>Reduced patience, skill, or tolerance for human friction may vary greatly. Longitudinal studies must distinguish correlation, selection, and product-specific effects.</p></div>
+            <div class="risk"><span>Benchmark caution</span><strong>New tests do not automatically solve evaluation.</strong><p>Harder benchmarks extend the frontier, but ecological validity, tool budgets, reproducibility, and real-world consequence remain separate questions.</p></div>
+            <div class="risk"><span>Design tension</span><strong>Augmentation can quietly become substitution.</strong><p>A product may claim to empower users while optimizing for fewer user actions, faster completion, and greater dependence. The operational metrics must match the human promise.</p></div>
+            <div class="risk"><span>Distribution</span><strong>“Who we become” is also political and economic.</strong><p>Individuals do not choose AI use in a vacuum. Employers, schools, platforms, access, and market power shape which forms of interaction become unavoidable.</p></div>
+          </div>
+          <div class="thesis"><strong>My conclusion</strong><p>The essay offers a better response to rapid model releases than either panic or benchmark celebration. Ask what valuable destination the new capability serves, what human capacity it strengthens or replaces, and what repeated use will normalize. Those questions remain useful even when today's model names and scores are obsolete.</p></div>
+        </section>
+
+        <section id="takeaways">
+          <p class="section-label">Takeaways</p>
+          <h2>Ten ideas worth keeping</h2>
+          <ol class="summary-list">
+            <li>Understanding is a better response to technological shock than passive fear.</li>
+            <li>Superintelligence can amplify poor judgment as easily as good judgment.</li>
+            <li>Benchmark saturation reveals the limits of the benchmark, not the end of intelligence.</li>
+            <li>Human knowledge, taste, questions, and imagination determine the value extracted from AI.</li>
+            <li>Recommendation-driven sameness can turn powerful models into engines of homogenization.</li>
+            <li>AI should be judged as infrastructure by the destinations and distributions it enables.</li>
+            <li>Immediate efficiency can conceal slower losses in skill, patience, and relationship tolerance.</li>
+            <li>There is no single effect of AI; outcomes emerge from a particular design interacting with a particular person.</li>
+            <li>Human-AI evaluation must measure people and relationships over time, not only model accuracy.</li>
+            <li>The enduring question is not only what AI becomes, but what habits of mind society builds around it.</li>
+          </ol>
+        </section>
+
+        <section id="source">
+          <p class="section-label">Source and method</p>
+          <h2>What this article is based on</h2>
+          <ul class="source-links">
+            <li><a href="https://www.facebook.com/story.php?story_fbid=28406868552242604&id=100000385144307">Original public Facebook essay</a> by Pat Pataranutaporn.</li>
+            <li><a href="https://www.media.mit.edu/groups/cyborg-psychology/overview/">Cyborg Psychology research group</a> at MIT Media Lab.</li>
+            <li><a href="https://arxiv.org/abs/2503.17473">Longitudinal randomized study of AI chatbot use and psychosocial effects</a>, cited by the author.</li>
+          </ul>
+          <p>The complete Thai post and its nineteen-item reference list were read from the public Facebook page. This article translates and restructures the author's argument rather than reproducing it line by line. The source's model, benchmark, publication, and population figures are preserved as attributed claims; readers should consult the linked research and original references for verification.</p>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Article contents">
+        <nav class="toc" aria-labelledby="toc-title">
+          <h2 id="toc-title">On this page</h2>
+          <ul>
+            <li><a href="#summary">Executive summary</a></li>
+            <li><a href="#benchmarks">Reading benchmarks</a></li>
+            <li><a href="#observation-one">Imagination bottleneck</a></li>
+            <li><a href="#observation-two">AI as infrastructure</a></li>
+            <li><a href="#tradeoffs">Technology's exchange</a></li>
+            <li><a href="#observation-three">Who we become</a></li>
+            <li><a href="#research">Research agenda</a></li>
+            <li><a href="#practice">Practical reflection</a></li>
+            <li><a href="#assessment">Critical assessment</a></li>
+            <li><a href="#takeaways">Takeaways</a></li>
+            <li><a href="#source">Source</a></li>
+          </ul>
+        </nav>
+        <div class="note-card">
+          <h2>Source scope</h2>
+          <p>One complete Thai-language Facebook essay with nineteen cited references. Summary prepared September 8, 2026 at 12:35 ICT.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer-note">Editorial English summary for study. The Thai Facebook post remains the authoritative source.</footer>
+</body>
+</html>

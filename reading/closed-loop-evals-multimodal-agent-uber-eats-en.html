@@ -1,0 +1,1205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Closed-Loop Evals for a Multimodal Agent at Scale - Uber Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #5d6a70;
+      --quiet: #7a858b;
+      --paper: #fffef9;
+      --canvas: #f5f7f1;
+      --line: #d8dfd8;
+      --teal: #16756d;
+      --blue: #2c6381;
+      --green: #557d54;
+      --gold: #a97725;
+      --coral: #bd503f;
+      --plum: #665987;
+      --charcoal: #223039;
+      --mint: #e3f0ec;
+      --sky: #e6eef6;
+      --leaf: #e9f1df;
+      --sand: #f7edd8;
+      --rose: #f5e5df;
+      --shadow: 0 24px 68px rgb(23 33 38 / 10%);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(22 117 109 / 6%) 1px, transparent 1px),
+        linear-gradient(180deg, rgb(44 99 129 / 5%) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 44px 44px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      display: block;
+      height: 8px;
+      background: linear-gradient(90deg, var(--green), var(--teal), var(--blue), var(--gold), var(--coral), var(--plum));
+    }
+
+    h1, h2, h3, p, ul, ol, figure, blockquote, pre { margin: 0; }
+    h1, h2, h3, p, li, a, span, th, td, code { overflow-wrap: anywhere; }
+    a { color: var(--blue); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    img { display: block; max-width: 100%; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: rgb(255 255 255 / 86%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 820;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .action-link.primary {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 76px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.96fr);
+      gap: 42px;
+      align-items: end;
+      padding: 52px 0 44px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      width: max-content;
+      max-width: 100%;
+      margin-bottom: 18px;
+      color: var(--coral);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 13ch;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(2.45rem, 5.7vw, 5.15rem);
+      font-weight: 760;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      margin-top: 24px;
+      color: #303a41;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: clamp(1.13rem, 2vw, 1.45rem);
+      line-height: 1.62;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .meta strong { color: var(--ink); }
+
+    .hero-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-card img {
+      width: 100%;
+      object-fit: contain;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card figcaption {
+      color: var(--quiet);
+      font-size: 0.86rem;
+    }
+
+    .quick-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+      gap: 24px;
+      margin: 28px 0;
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px rgb(23 33 38 / 7%);
+    }
+
+    .quick-summary h2,
+    .section h2,
+    .sidebar h2 {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-weight: 760;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .quick-summary h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+    }
+
+    .quick-summary p,
+    .section p,
+    .section li {
+      color: #334047;
+      font-size: 1.01rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-left: 20px;
+    }
+
+    .summary-list li::marker { color: var(--coral); }
+
+    .stats-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      align-self: start;
+    }
+
+    .stat {
+      min-width: 0;
+      min-height: 84px;
+      padding: 14px;
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.35rem;
+      line-height: 1.05;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 286px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .content {
+      display: grid;
+      gap: 22px;
+      min-width: 0;
+    }
+
+    .section {
+      padding: 34px 0;
+      background: transparent;
+      border-top: 1px solid var(--line);
+    }
+
+    .section h2 {
+      margin-bottom: 14px;
+      font-size: clamp(1.85rem, 3.2vw, 2.65rem);
+    }
+
+    .section h3 {
+      margin-top: 24px;
+      margin-bottom: 8px;
+      color: var(--charcoal);
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .section p + p { margin-top: 12px; }
+    .section ul, .section ol { display: grid; gap: 9px; margin-top: 12px; padding-left: 20px; }
+    .section li::marker { color: var(--teal); }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .toc,
+    .source-box {
+      padding: 18px;
+      background: rgb(255 254 249 / 94%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 14px 36px rgb(23 33 38 / 6%);
+    }
+
+    .toc h2,
+    .source-box h2 {
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+    }
+
+    .toc nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .toc a {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 780;
+      text-decoration: none;
+    }
+
+    .toc a:hover { color: var(--coral); }
+
+    .source-box p,
+    .source-box li {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .callout {
+      margin-top: 18px;
+      padding: 18px;
+      background: var(--mint);
+      border: 1px solid rgb(22 117 109 / 18%);
+      border-left: 5px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .callout.rose {
+      background: var(--rose);
+      border-color: rgb(189 80 63 / 18%);
+      border-left-color: var(--coral);
+    }
+
+    .callout.gold {
+      background: var(--sand);
+      border-color: rgb(169 119 37 / 22%);
+      border-left-color: var(--gold);
+    }
+
+    .quote-box {
+      margin: 18px 0 2px;
+      padding: 18px 20px;
+      color: #2a383f;
+      background: var(--sky);
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 1.12rem;
+      line-height: 1.58;
+    }
+
+    .tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0 10px;
+      color: var(--charcoal);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 820;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .flow li,
+    .role-card,
+    .metric-card,
+    .template-card,
+    .evidence-item {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .flow li {
+      position: relative;
+      min-height: 150px;
+      padding: 14px;
+    }
+
+    .flow li:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 48%;
+      right: -9px;
+      z-index: 1;
+      width: 14px;
+      height: 14px;
+      border-top: 2px solid var(--teal);
+      border-right: 2px solid var(--teal);
+      transform: rotate(45deg);
+      background: var(--paper);
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      margin-bottom: 10px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 50%;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .flow strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+      line-height: 1.25;
+    }
+
+    .flow span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.45;
+    }
+
+    .role-grid,
+    .metric-grid,
+    .template-grid,
+    .evidence-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .role-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .template-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .evidence-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .role-card,
+    .metric-card,
+    .template-card,
+    .evidence-item {
+      padding: 16px;
+    }
+
+    .role-card h3,
+    .metric-card h3,
+    .template-card h3,
+    .evidence-item h3 {
+      margin: 0 0 8px;
+      color: var(--ink);
+      font-size: 1rem;
+    }
+
+    .role-card p,
+    .metric-card p,
+    .template-card p,
+    .evidence-item p {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      min-width: 780px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.94rem;
+    }
+
+    th {
+      color: var(--charcoal);
+      background: var(--leaf);
+      font-weight: 880;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    pre {
+      overflow-x: auto;
+      margin-top: 16px;
+      padding: 18px;
+      color: #102027;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.87rem;
+      line-height: 1.62;
+    }
+
+    .verdict {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+      padding: 20px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .verdict p { color: rgb(255 255 255 / 88%); }
+
+    .footer-note {
+      padding: 34px 0 0;
+      color: var(--quiet);
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 940px) {
+      .hero,
+      .quick-summary,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar { position: static; }
+      h1 { max-width: 14ch; }
+      .flow { grid-template-columns: 1fr; }
+      .flow li:not(:last-child)::after { display: none; }
+      .role-grid,
+      .metric-grid,
+      .evidence-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .action-link {
+        flex: 1 1 auto;
+      }
+
+      .page {
+        padding: 0 18px 56px;
+      }
+
+      .hero {
+        padding: 36px 0 34px;
+      }
+
+      .quick-summary {
+        padding: 20px;
+      }
+
+      .stats-panel,
+      .role-grid,
+      .metric-grid,
+      .template-grid,
+      .evidence-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="article-theme.css?v=20261003-10">
+    <script src="article-theme.js?v=20261003-5" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">Video Notes Library</a>
+    <div class="top-actions">
+      <a class="action-link" href="./index.html">All summaries</a>
+      <a class="action-link primary" href="https://www.youtube.com/watch?v=31GUkCBD-Uc">Watch source</a>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="kicker">AI Engineer production evals summary</p>
+        <h1 id="page-title">Closed-Loop Evals For Multimodal Agents</h1>
+        <p class="subtitle">A detailed reading guide to Soumya Gupta and Jai Chopra's Uber talk on building eval loops for a food-photo enhancement agent at marketplace scale: routing, QA, human labels, auto-tuning, diagnoser agents, pass@K, and production feedback.</p>
+        <div class="meta">
+          <span><strong>Source:</strong> AI Engineer</span>
+          <span><strong>Speakers:</strong> Soumya Gupta and Jai Chopra, Uber</span>
+          <span><strong>Length:</strong> about 21 minutes</span>
+          <span><strong>Transcript:</strong> 605 caption rows, about 3,775 words</span>
+        </div>
+      </div>
+      <figure class="hero-card">
+        <img src="https://i.ytimg.com/vi/31GUkCBD-Uc/hqdefault.jpg" alt="YouTube thumbnail for Building Closed-Loop Evals for a Multimodal Agent at Scale">
+        <figcaption>Source video thumbnail. This page summarizes the public captions and organizes the talk into a production eval architecture guide.</figcaption>
+      </figure>
+    </section>
+
+    <section class="quick-summary" id="executive-summary">
+      <div>
+        <h2>Executive Summary</h2>
+        <p>The talk is a concrete production case study from Uber Eats: improve low-quality merchant food photos without making them look fake, generic, or unfaithful to the actual dish. The technical lesson is that a multimodal generation pipeline only becomes shippable when every stage has its own evals and every eval feeds a closed learning loop.</p>
+        <ul class="summary-list">
+          <li><strong>The agent system:</strong> understand the image, route it to skip or enhance, generate an image-specific edit prompt, run image editing, use QA feedback for retry loops, then run a final publish-ready QA gate.</li>
+          <li><strong>The eval philosophy:</strong> every component needs its own metric. Router evals look like classifier evals. Editor evals use pairwise comparison and pass@K. Final QA uses redundant policy and quality checks.</li>
+          <li><strong>The closed loop:</strong> sample production data, label it with objective guidelines, compare against agent outputs, diagnose which agent failed, auto-tune config, benchmark against golden data, then ship or rollback.</li>
+          <li><strong>The platform lesson:</strong> logging and flat trace structure are not an afterthought. Without observability, there is nothing to optimize, no drift detection, and no safe self-improving loop.</li>
+        </ul>
+      </div>
+      <div class="stats-panel" aria-label="Summary stats">
+        <div class="stat"><strong>5 stages</strong><span>Agent pipeline</span></div>
+        <div class="stat"><strong>3 loops</strong><span>Model dogfood prod</span></div>
+        <div class="stat"><strong>pass@K</strong><span>Editor metric</span></div>
+        <div class="stat"><strong>recall</strong><span>Router guardrail</span></div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <article class="content">
+        <section class="section" id="business-context">
+          <h2>Business Context</h2>
+          <p>Uber Eats has a massive, global marketplace. The speakers describe a delivery marketplace operating across thousands of cities and adding millions of items every month. In that environment, visual content is not decoration. The photo is often the first signal a consumer gets about a merchant, and it can affect whether someone scrolls past, clicks, adds to cart, or completes an order.</p>
+          <p>The operational problem is that many smaller merchants do not have the time, know-how, or budget for professional food photography. But simply replacing their photos with obviously synthetic or heavily standardized AI images would damage trust. The agent must improve quality while preserving authenticity, merchant brand, dish faithfulness, and marketplace diversity.</p>
+          <div class="callout">
+            <p><strong>Core tension:</strong> consumers want better photos, but they distrust images that look AI-generated or misrepresent the food. The system has to enhance, not invent.</p>
+          </div>
+        </section>
+
+        <section class="section" id="goals">
+          <h2>System Goals</h2>
+          <p>The goals create the shape of the eval architecture. This is not a generic image-generation agent. It has marketplace, trust, policy, safety, cost, and scale constraints.</p>
+          <div class="evidence-grid">
+            <div class="evidence-item">
+              <h3>Preserve authenticity</h3>
+              <p>The output should look like a real merchant photo, not a generated stock image.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Improve selectively</h3>
+              <p>Only enhance when there is real quality lift. Good images should often be skipped.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Optimize globally</h3>
+              <p>The system should improve the marketplace without cannibalizing merchants or collapsing diversity.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Ship safely</h3>
+              <p>Bad outputs should be blocked before publishing to menu pages.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Learn continuously</h3>
+              <p>Production drift must feed back into diagnosis, tuning, and benchmark loops.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Control cost</h3>
+              <p>Do not send already-good images through expensive generation paths.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="architecture">
+          <h2>Agent Architecture</h2>
+          <p>The talk presents a simplified but representative production pipeline. It is a useful template for any multimodal agent that must decide whether to act, generate output, evaluate output, retry, and publish only when safe.</p>
+          <ol class="flow" aria-label="Agent pipeline">
+            <li><span class="step-number">1</span><strong>Understand</strong><span>Use image, text description, dish metadata, and multimodal reasoning to produce structured output.</span></li>
+            <li><span class="step-number">2</span><strong>Route</strong><span>Decide whether to enhance the image or skip and keep the original.</span></li>
+            <li><span class="step-number">3</span><strong>Edit</strong><span>Generate an image-specific prompt and run the image editing agent.</span></li>
+            <li><span class="step-number">4</span><strong>QA Loop</strong><span>Evaluate plating, faithfulness, colors, naturalness, and other dimensions; retry up to K times.</span></li>
+            <li><span class="step-number">5</span><strong>Publish Gate</strong><span>Run final holistic policy and quality checks before publishing to the menu.</span></li>
+          </ol>
+          <p>The final but essential layer is logging. The speakers emphasize that all agent stages are logged in a flat, readable JSON-like structure. This lets non-technical and technical stakeholders diagnose individual cases and aggregate metrics.</p>
+        </section>
+
+        <section class="section" id="logging">
+          <h2>Start With Logging</h2>
+          <p>One of the strongest lessons is that logging comes before optimization. If a team does not log each stage, decision, input, output, score, and failure reason, it cannot build a reliable learning loop. You cannot tune what you cannot inspect.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Trace field</th>
+                  <th>Why it matters</th>
+                  <th>Who uses it</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Input metadata</td>
+                  <td>Dish name, merchant context, geo, image quality, and source modality affect expected behavior.</td>
+                  <td>Product, data science, policy, engineering.</td>
+                </tr>
+                <tr>
+                  <td>Router decision</td>
+                  <td>Explains why an image was skipped or enhanced.</td>
+                  <td>ML engineers and operations reviewers.</td>
+                </tr>
+                <tr>
+                  <td>Agent configs</td>
+                  <td>Allows diagnosis of which prompt, rubric, model, or version produced a result.</td>
+                  <td>Agent platform team.</td>
+                </tr>
+                <tr>
+                  <td>QA feedback</td>
+                  <td>Feeds retry loops and auto-tuning.</td>
+                  <td>Prompt optimization and eval teams.</td>
+                </tr>
+                <tr>
+                  <td>Publish status</td>
+                  <td>Shows whether output reached production or was rejected.</td>
+                  <td>Risk, support, and product teams.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="quote-box">Logging is not just observability. In closed-loop agents, logging is training material for future correction.</div>
+        </section>
+
+        <section class="section" id="router">
+          <h2>Router Agent</h2>
+          <p>The router is the first major decision point. It receives multimodal inputs such as the image, text description, and metadata. It asks the LLM or vision model to describe what it sees, creates structured output, grades against a rubric, and decides whether the image should be enhanced or skipped.</p>
+          <p>Because the router makes a binary or multi-branch decision, its eval resembles a classifier eval. For a simple enhance/skip decision, a confusion matrix is enough. For a more complex router that sends images to different models, latency tiers, or policy branches, the matrix becomes n by n.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Router outcome</th>
+                  <th>Business meaning</th>
+                  <th>Risk</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>True positive</td>
+                  <td>Bad image is correctly sent for enhancement.</td>
+                  <td>Desired behavior.</td>
+                </tr>
+                <tr>
+                  <td>True negative</td>
+                  <td>Good image is correctly skipped.</td>
+                  <td>Desired behavior and cost saving.</td>
+                </tr>
+                <tr>
+                  <td>False positive</td>
+                  <td>Good image is unnecessarily enhanced.</td>
+                  <td>Compute waste and risk of degrading a good photo.</td>
+                </tr>
+                <tr>
+                  <td>False negative</td>
+                  <td>Bad image is approved or skipped incorrectly.</td>
+                  <td>Quality issue or hallucination risk downstream.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout gold">
+            <p><strong>Guardrail metric:</strong> for the routing use case, the talk names recall as the critical guardrail because they do not want bad images slipping through the system.</p>
+          </div>
+        </section>
+
+        <section class="section" id="human-labels">
+          <h2>Human Labels And The Golden Dataset</h2>
+          <p>The first version of the model is aligned to human labels. The team collects a representative dataset across geography, dish type, image quality type, and other marketplace cuts. Human labelers use objective guidelines to reduce subjective bias and noise.</p>
+          <p>The agent output is compared against this golden dataset. If the agent meets guardrail metrics, the team can ship. If not, they tune and repeat. This is classic eval-driven development, but applied to multimodal marketplace outputs where mistakes can affect trust, merchant quality, and cost.</p>
+          <div class="evidence-grid">
+            <div class="evidence-item">
+              <h3>Representative cuts</h3>
+              <p>Geography, dish type, quality level, and long-tail marketplace examples.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Objective labels</h3>
+              <p>Guidelines reduce ambiguity in what counts as good, bad, faithful, complete, or risky.</p>
+            </div>
+            <div class="evidence-item">
+              <h3>Golden benchmark</h3>
+              <p>The system must pass the benchmark before new config or model versions ship.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="routing-failures">
+          <h2>Routing Failure Modes</h2>
+          <p>The examples are practical. A high-quality cheeseburger photo can be mistakenly routed for enhancement, wasting compute and risking quality regression. A chicken-wing image can be approved even though the dish name says eight pieces while the image shows six. If such an image is enhanced, the model might hallucinate extra wings to match the description.</p>
+          <p>The second case reveals why multimodal evals are harder than text evals. The system must compare image content, dish metadata, and expected faithfulness. The right decision is not always "make it prettier." Sometimes the safest output is to reject, skip, or ask for better source material.</p>
+        </section>
+
+        <section class="section" id="closed-loop">
+          <h2>The Closed-Loop Learning System</h2>
+          <p>Static offline evaluation is not enough because production traffic drifts. New geographies, dish categories, merchant behavior, model behavior, and image quality distributions create new failure modes. Uber's design samples production data at a regular cadence, labels it, compares it to agent output, and triggers diagnosis when there is a mismatch.</p>
+          <ol class="flow" aria-label="Closed-loop workflow">
+            <li><span class="step-number">1</span><strong>Sample</strong><span>Collect production examples at a regular cadence.</span></li>
+            <li><span class="step-number">2</span><strong>Label</strong><span>Human labelers apply the same objective guidelines.</span></li>
+            <li><span class="step-number">3</span><strong>Compare</strong><span>Find mismatches between labeler output and agent output.</span></li>
+            <li><span class="step-number">4</span><strong>Diagnose</strong><span>A diagnoser agent localizes which component needs optimization.</span></li>
+            <li><span class="step-number">5</span><strong>Tune</strong><span>Auto-tune config, benchmark against golden data, and ship if guardrails pass.</span></li>
+          </ol>
+          <p>The speakers describe this as config-driven and able to run without a human directly editing every prompt. Human labels still provide the source of truth, but the diagnoser and optimizer can automate the tuning path.</p>
+        </section>
+
+        <section class="section" id="diagnoser">
+          <h2>Diagnoser And Prompt Optimizer</h2>
+          <p>The diagnoser is a higher-level abstraction that receives feedback from multiple loops and decides which agent or agents need to change. This is important because in a multi-stage system, a bad final output might come from routing, prompt generation, image editing, QA scoring, post-processing, or a policy gate.</p>
+          <p>The talk describes a prompt optimizer with two sub-agents: a reflect agent and a synthesize agent. The reflect agent examines matches and mismatches, removes noise, and identifies systemic issues. The synthesize agent updates the target agent config from that feedback, then the new version is benchmarked. If it passes, it is registered in the agent store for future production runs.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Component</th>
+                  <th>Input</th>
+                  <th>Output</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Diagnoser</td>
+                  <td>Feedback from labels, QA, dogfooding, production metrics, and failures.</td>
+                  <td>Which agent or config should be optimized.</td>
+                </tr>
+                <tr>
+                  <td>Reflect agent</td>
+                  <td>Matches, mismatches, noisy labels, and failure patterns.</td>
+                  <td>Clean diagnosis and systemic issue summary.</td>
+                </tr>
+                <tr>
+                  <td>Synthesize agent</td>
+                  <td>Diagnosis plus current agent config.</td>
+                  <td>Updated config or prompt proposal.</td>
+                </tr>
+                <tr>
+                  <td>Benchmark gate</td>
+                  <td>Candidate config plus golden dataset.</td>
+                  <td>Ship, reject, or iterate.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="editing-loop">
+          <h2>Image Editing Loop</h2>
+          <p>The enhancement step is not a single prompt. First, the system generates an image-specific prompt using the image description and directives from the routing agent. Then it edits the image. Then a QA gate evaluates multiple dimensions such as plating, faithfulness, colors, and realism. If QA fails, the feedback returns to prompt generation and the system tries again.</p>
+          <p>This creates two possible outcomes. The edited image passes QA within K iterations and is eligible for publishing, or the system takes a coverage hit and does not enhance that image. That coverage hit is intentional: it is better to leave an image unchanged than publish a misleading or low-quality generated edit.</p>
+          <div class="callout">
+            <p><strong>Production principle:</strong> a good generation pipeline needs the courage to not generate. Skip and reject are product features, not failures.</p>
+          </div>
+        </section>
+
+        <section class="section" id="pass-at-k">
+          <h2>Pass@K And Pairwise Comparison</h2>
+          <p>The enhancement loop is measured with pass@K: the pass rate by the Kth iteration. In a well-designed feedback loop, pass rate should improve as the editor receives QA feedback. But pass@K must be grounded in good quality definitions, or the loop can reward meaningless changes.</p>
+          <p>The talk says Uber uses pairwise comparison for these evals: compare the input image and output image and judge whether the output is actually better. "Better" is defined through alignment with product, design, policy, and legal stakeholders. Quality includes faithfulness, completeness, naturalness, realism, and other proprietary dimensions.</p>
+          <div class="metric-grid">
+            <div class="metric-card">
+              <h3>Faithfulness</h3>
+              <p>The output must not add food, ingredients, portions, or dish details that were not present.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Completeness</h3>
+              <p>The edit should not remove important components, sauces, portions, or visual context.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Naturalness</h3>
+              <p>The image should look like plausible food photography, not synthetic gloss.</p>
+            </div>
+            <div class="metric-card">
+              <h3>Realism</h3>
+              <p>Physics, object coherence, plating, and spatial relationships should make sense.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="editor-failures">
+          <h2>Editor Failure Modes</h2>
+          <p>The examples reveal why image editing evals need to be multi-dimensional. One output adds shrimp that were not in the original photo, violating faithfulness. Another removes sauce from sushi, violating completeness. Another overcorrects after QA feedback and falls back to a generic bowl, which the speakers frame as reward hacking or a meaningless change.</p>
+          <p>Another failure shows the output plate covering the sauce, a physics and object-coherence problem. The team treats some of these frontier-model artifacts as issues to coordinate with model teams, because base model limitations can leak into applied production systems.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Failure</th>
+                  <th>What went wrong</th>
+                  <th>Eval needed</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Ingredient addition</td>
+                  <td>The output adds food not present in the original.</td>
+                  <td>Faithfulness and dish-content comparison.</td>
+                </tr>
+                <tr>
+                  <td>Ingredient removal</td>
+                  <td>The output removes sauce or components that should remain.</td>
+                  <td>Completeness and source-object preservation.</td>
+                </tr>
+                <tr>
+                  <td>Over-conservative edit</td>
+                  <td>The model changes pixels without meaningful quality lift.</td>
+                  <td>Pairwise improvement and reward-hacking detection.</td>
+                </tr>
+                <tr>
+                  <td>Object incoherence</td>
+                  <td>Plating or physics becomes implausible.</td>
+                  <td>Realism, object coherence, and physical plausibility.</td>
+                </tr>
+                <tr>
+                  <td>Uncertain count</td>
+                  <td>The system cannot verify whether visual pieces match metadata.</td>
+                  <td>Unsure or reject path, not forced acceptance.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="publish-ready">
+          <h2>Publish-Ready QA</h2>
+          <p>After the editing loop, Uber runs a final post-processing and publish-ready QA gate. This checks policy and holistic quality before anything goes live. The speakers describe this as a Swiss cheese model: multiple imperfect layers reduce the probability that a bad output reaches production.</p>
+          <p>This redundancy is deliberate. Some issues should have been caught upstream, but the final gate is allowed to catch them again. In high-volume agentic systems, duplicated safety checks are not waste when the downside of publishing a bad output is high.</p>
+        </section>
+
+        <section class="section" id="feedback-loops">
+          <h2>Three Feedback Loops</h2>
+          <p>The talk summarizes more than one loop. The model loop aligns with human-labeled data and handles drift. The dogfooding loop captures internal feedback from people testing the system before broad rollout. The production loop uses marketplace metrics such as conversion, add-to-cart, order completion, and segment-specific performance.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Loop</th>
+                  <th>Feedback source</th>
+                  <th>Optimization target</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Model loop</td>
+                  <td>Human-labeled production samples and golden datasets.</td>
+                  <td>Agent config, routing rules, prompt generation, QA rubrics.</td>
+                </tr>
+                <tr>
+                  <td>Dogfooding loop</td>
+                  <td>Internal thumbs up/down, free-form comments, merchant or design feedback.</td>
+                  <td>Known bad examples, qualitative issues, product fit.</td>
+                </tr>
+                <tr>
+                  <td>Production loop</td>
+                  <td>Marketplace metrics sliced by geo, device, dish type, and other segments.</td>
+                  <td>Business outcomes and segment-specific tuning.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="platform">
+          <h2>What This Means For Your Agentic AI Platform</h2>
+          <p>This talk is extremely relevant to your platform because it shows how to move from "agent does a task" to "agent system improves safely." The important product object is not just an agent. It is an agent plus router, eval rubric, trace schema, golden dataset, diagnoser, optimizer, rollback, and production metric feedback.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Uber pattern</th>
+                  <th>Your platform object</th>
+                  <th>BA-friendly meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Image understanding and routing</td>
+                  <td>Master Agent routing policy</td>
+                  <td>Decide whether to act, skip, ask, or escalate.</td>
+                </tr>
+                <tr>
+                  <td>Image editing agent</td>
+                  <td>Actionable Sub-Agent</td>
+                  <td>Perform a bounded transformation with tool access.</td>
+                </tr>
+                <tr>
+                  <td>QA agent</td>
+                  <td>Verifier Sub-Agent</td>
+                  <td>Evaluate whether output meets rubric and can proceed.</td>
+                </tr>
+                <tr>
+                  <td>Publish-ready gate</td>
+                  <td>Release approval policy</td>
+                  <td>Final policy, risk, and quality gate before external action.</td>
+                </tr>
+                <tr>
+                  <td>Diagnoser</td>
+                  <td>Meta-Agent for improvement</td>
+                  <td>Analyze feedback and localize the component that needs tuning.</td>
+                </tr>
+                <tr>
+                  <td>Prompt optimizer</td>
+                  <td>Skill/config optimizer</td>
+                  <td>Update instructions or configs, then benchmark before rollout.</td>
+                </tr>
+                <tr>
+                  <td>Flat JSON log</td>
+                  <td>Trace contract</td>
+                  <td>Everyone can inspect the case, including non-technical stakeholders.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" id="templates">
+          <h2>Reusable Templates</h2>
+          <p>These templates convert the Uber case into platform artifacts for multi-agent workflows.</p>
+          <div class="template-grid">
+            <div class="template-card">
+              <h3>Closed-Loop Eval Spec</h3>
+              <pre><code># Eval Loop: &lt;agent system name&gt;
+
+Business goal:
+- &lt;what improves for users or operations&gt;
+
+Pipeline stages:
+- Router:
+- Action agent:
+- QA agent:
+- Final gate:
+- Logger:
+
+Golden dataset:
+- Source:
+- Sampling cuts:
+- Human labeling guideline:
+- Guardrail metric:
+
+Router eval:
+- Classes:
+- Confusion matrix:
+- Precision:
+- Recall:
+- Cost tradeoff:
+
+Action eval:
+- Pairwise comparison:
+- pass@K:
+- Failure categories:
+- Unsure/reject path:
+
+Closed-loop tuning:
+- Production sampling cadence:
+- Diagnoser inputs:
+- Config update owner:
+- Benchmark threshold:
+- Rollback trigger:
+
+Production metrics:
+- Business metric:
+- Segment cuts:
+- Alert thresholds:</code></pre>
+            </div>
+            <div class="template-card">
+              <h3>Trace Schema</h3>
+              <pre><code>{
+  "case_id": "...",
+  "input": {
+    "source": "...",
+    "metadata": {},
+    "content_refs": []
+  },
+  "router": {
+    "version": "...",
+    "decision": "skip|enhance|escalate",
+    "scores": {},
+    "rationale": "..."
+  },
+  "action_agent": {
+    "version": "...",
+    "prompt": "...",
+    "output_ref": "...",
+    "iterations": []
+  },
+  "qa": {
+    "version": "...",
+    "pass": false,
+    "dimensions": {
+      "faithfulness": "...",
+      "completeness": "...",
+      "realism": "..."
+    },
+    "feedback": "..."
+  },
+  "publish_gate": {
+    "status": "approved|rejected|unsure",
+    "policy_flags": []
+  },
+  "feedback": {
+    "human_label": "...",
+    "production_metrics": {},
+    "diagnoser_result": "..."
+  }
+}</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="my-read">
+          <h2>My Read</h2>
+          <p>This is one of the best examples in your library for how production evals should work. It does not treat evals as a leaderboard number. It treats evals as control surfaces for a multi-agent system. Every stage has its own failure modes, metrics, and learning loop.</p>
+          <p>The most important lesson for your platform is the diagnoser abstraction. As soon as a workflow has multiple agents, feedback must be routed to the right component. Otherwise teams will keep tuning the visible prompt while the real problem sits in routing, QA, data labels, policy, or production drift.</p>
+          <p>I would directly borrow four things: flat readable traces, human-labeled golden datasets, component-level evals, and a config-driven auto-tuning loop that must pass benchmarks before deployment. That is the difference between "agent demo" and "agent system that can stay alive in production."</p>
+          <div class="verdict">
+            <h3>Bottom line</h3>
+            <p>Closed-loop evals are not just a testing strategy. They are the operating model for multimodal agents at scale: observe everything, label drift, diagnose precisely, tune safely, benchmark before release, and use production outcomes to keep improving.</p>
+          </div>
+        </section>
+
+        <section class="section" id="sources">
+          <h2>Sources And Confidence</h2>
+          <p>This page is based primarily on the extracted public captions from the AI Engineer talk, with additional source links for the video and marketplace image context.</p>
+          <ul>
+            <li><a href="https://www.youtube.com/watch?v=31GUkCBD-Uc">Building Closed-Loop Evals for a Multimodal Agent at Scale - Soumya Gupta and Jai Chopra, Uber</a> - AI Engineer on YouTube.</li>
+            <li><a href="https://www.youtube.com/@aiDotEngineer">AI Engineer YouTube channel</a>.</li>
+            <li><a href="https://help.uber.com/en-GB/merchants-and-restaurants/article/user-submitted-photos-faq?nodeId=f7568585-7bf5-4001-ac7a-55ea88e960fb">Uber Help: User-Submitted Photos FAQ</a>.</li>
+          </ul>
+        </section>
+      </article>
+
+      <aside class="sidebar" aria-label="Page navigation">
+        <section class="toc">
+          <h2>Read Path</h2>
+          <nav>
+            <a href="#executive-summary">Executive Summary</a>
+            <a href="#business-context">Business Context</a>
+            <a href="#goals">System Goals</a>
+            <a href="#architecture">Architecture</a>
+            <a href="#logging">Logging</a>
+            <a href="#router">Router Agent</a>
+            <a href="#human-labels">Human Labels</a>
+            <a href="#routing-failures">Routing Failures</a>
+            <a href="#closed-loop">Closed Loop</a>
+            <a href="#diagnoser">Diagnoser</a>
+            <a href="#editing-loop">Editing Loop</a>
+            <a href="#pass-at-k">Pass@K</a>
+            <a href="#editor-failures">Editor Failures</a>
+            <a href="#publish-ready">Publish QA</a>
+            <a href="#feedback-loops">Feedback Loops</a>
+            <a href="#platform">Platform Implications</a>
+            <a href="#templates">Templates</a>
+            <a href="#my-read">My Read</a>
+            <a href="#sources">Sources</a>
+          </nav>
+        </section>
+        <section class="source-box">
+          <h2>Useful Lens</h2>
+          <p>For every agent stage, ask: what can fail, who labels truth, which metric guards it, what trace proves it, and how does feedback tune it?</p>
+          <div class="tag-grid">
+            <span class="tag">Closed-loop evals</span>
+            <span class="tag">Multimodal agents</span>
+            <span class="tag">Uber Eats</span>
+            <span class="tag">pass@K</span>
+            <span class="tag">Agent diagnostics</span>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <p class="footer-note">Generated as a reading-focused resource page for the YouTube extractor and summarizer project.</p>
+  </main>
+</body>
+</html>

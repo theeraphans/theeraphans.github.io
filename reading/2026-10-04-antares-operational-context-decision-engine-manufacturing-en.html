@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>Antares: The hard part is capturing how the business decides</title>
+    <meta name="description" content="A critical guide to Antares, operational context, governance, decision engines, and the path from an AI tool to an AI-native manufacturing operator." />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .diagram { margin: 1.6rem 0 2rem; border: 1px solid var(--line); background: var(--paper); }
+      .diagram-title { margin: 0; padding: .75rem 1rem; border-bottom: 1px solid var(--line); color: var(--muted); font-size: .78rem; font-weight: 600; text-transform: uppercase; }
+      .decision-stack { display: grid; gap: 1px; padding: 1px; background: var(--line); }
+      .decision-row { display: grid; grid-template-columns: 2.2rem 10rem minmax(0, 1fr); gap: 1rem; align-items: start; padding: 1rem; background: var(--paper); }
+      .decision-row span { color: var(--muted); font-size: .75rem; }
+      .decision-row strong { font-size: .92rem; }
+      .decision-row p { margin: 0; color: var(--muted); font-size: .86rem; line-height: 1.5; }
+      .flow { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+      .flow > div { min-height: 10rem; padding: 1rem; border-right: 1px solid var(--line); }
+      .flow > div:last-child { border-right: 0; }
+      .flow span { display: block; margin-bottom: 1rem; color: var(--muted); font-size: .75rem; }
+      .flow h3 { margin: 0 0 .45rem; font-size: .95rem; }
+      .flow p { margin: 0; color: var(--muted); font-size: .82rem; line-height: 1.5; }
+      .ladder { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .ladder > div { padding: 1rem; border-right: 1px solid var(--line); }
+      .ladder > div:last-child { border-right: 0; }
+      .ladder span { color: var(--muted); font-size: .74rem; }
+      .ladder h3 { margin: .75rem 0 .45rem; font-size: 1rem; }
+      .ladder p { margin: 0; color: var(--muted); font-size: .86rem; line-height: 1.5; }
+      .context-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .context-grid > div { padding: 1rem; border-bottom: 1px solid var(--line); }
+      .context-grid > div:nth-child(odd) { border-right: 1px solid var(--line); }
+      .context-grid > div:nth-last-child(-n+2) { border-bottom: 0; }
+      .context-grid h3 { margin: 0 0 .4rem; font-size: .95rem; }
+      .context-grid p { margin: 0; color: var(--muted); font-size: .86rem; line-height: 1.5; }
+      .claim-table { width: 100%; min-width: 0 !important; margin: 1.5rem 0; table-layout: fixed; border-collapse: collapse; }
+      .claim-table th, .claim-table td { padding: .72rem .55rem; text-align: left; vertical-align: top; overflow-wrap: anywhere; border-bottom: 1px solid var(--line); }
+      .claim-table th { font-weight: 600; }
+      .callout { margin: 1.5rem 0; padding: 1rem !important; border-left: 3px solid var(--green) !important; background: var(--surface) !important; }
+      .callout.warning { border-left-color: #8a6417 !important; }
+      .callout p:last-child { margin-bottom: 0; }
+      .chapter-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 1.25rem 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
+      .chapter-list li { border-bottom: 1px solid var(--line); }
+      .chapter-list a { display: flex; gap: .7rem; min-height: 100%; padding: .8rem .45rem; color: var(--ink); text-decoration: none; }
+      .chapter-list time { flex: 0 0 3.4rem; color: var(--green); font-variant-numeric: tabular-nums; }
+      @media (max-width: 750px) {
+        .flow, .ladder, .context-grid, .chapter-list { grid-template-columns: 1fr; }
+        .flow > div, .ladder > div { min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+        .flow > div:last-child, .ladder > div:last-child { border-bottom: 0; }
+        .context-grid > div, .context-grid > div:nth-child(odd), .context-grid > div:nth-last-child(-n+2) { border-right: 0; border-bottom: 1px solid var(--line); }
+        .context-grid > div:last-child { border-bottom: 0; }
+        .decision-row { grid-template-columns: 2rem minmax(0, 1fr); gap: .4rem .7rem; }
+        .decision-row p { grid-column: 2; }
+        .claim-table { font-size: .84rem; }
+        .claim-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+        .claim-table, .claim-table tbody, .claim-table tr, .claim-table td { display: block; width: 100%; }
+        .claim-table tr { padding: .55rem 0; border-bottom: 1px solid var(--line); }
+        .claim-table td { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: .6rem; padding: .32rem .2rem; border: 0; }
+        .claim-table td::before { color: var(--muted); font-weight: 600; }
+        .claim-table td:nth-child(1)::before { content: "Claim"; }
+        .claim-table td:nth-child(2)::before { content: "Status"; }
+        .claim-table td:nth-child(3)::before { content: "Reading"; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Reading room</a>
+      <div class="top-actions"><a class="action-link" href="https://www.youtube.com/watch?v=Qf-IEbeEgw0">Watch video</a></div>
+    </nav>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Enterprise AI · Manufacturing operations</p>
+          <h1>The hard part is capturing how the business decides</h1>
+          <p class="subtitle">Devin Kearns explains why CustomAI Studio is building Antares: a system that models operational context, combines it with business rules, and routes the next decision. The long-term ambition is larger than another AI tool. Antares is meant to become the coordination layer for a distributed, AI-native manufacturer.</p>
+          <div class="meta"><span>19:47 video</span><span>YouTube automatic transcript</span><span>Published October 4, 2026</span><span>Summary run: October 4, 2026 · 23:50 ICT</span></div>
+        </div>
+        <figure class="hero-card">
+          <img src="2026-10-04-antares-operational-context-decision-engine-hero.jpg" alt="Devin Kearns beside graphics contrasting an AI tool with a factory operator" />
+          <figcaption>The video uses one talking-head composition throughout. The diagrams below reconstruct the architecture and operating model from the transcript instead of repeating nearly identical frames.</figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="eyebrow">Executive summary</p>
+            <h2>The product is not the model. It is the operating context around the decision</h2>
+            <p>Kearns starts with a contrarian business thesis. Most applied AI companies sell tools to an existing operator: AI for a law firm, manufacturer, accountant, or hospital. He believes the larger opportunity is to use AI to run the operating company itself. Antares is the bridge between those positions. It begins as software that helps a manufacturer understand and route decisions, but the intended destination is an operating layer that coordinates production across factories, suppliers, warehouses, people, agents, and machines.</p>
+            <p>The key observation is that building an AI workflow is often easier than learning why a business behaves the way it does. The formal process is rarely the whole process. Staff remember which supplier becomes unreliable in a particular season, which spreadsheet is trusted over the ERP, which policy is routinely overridden, and which customer requires an unusual approval path. This tacit context determines whether an apparently reasonable automated action is correct.</p>
+            <p>Antares is presented as three connected systems. A knowledge graph and ontology describe the business and its dependencies. A governance model captures rules, policies, permissions, and exceptions. A decision engine combines current events with that context and governance to choose or recommend the next action. Each decision and outcome then enriches the operating model.</p>
+            <ul>
+              <li>The LLM is only one decision layer. Deterministic rules should handle stable logic; models handle bounded judgment; people retain high-risk and ambiguous decisions.</li>
+              <li>Operational context includes reasons, exceptions, dependencies, trusted sources, informal practices, and human preferences, not only records and process diagrams.</li>
+              <li>A knowledge graph is necessary but not sufficient. The system also needs temporal validity, provenance, confidence, policy, feedback, and measurable outcomes.</li>
+              <li>Manufacturing is attractive because delays and waste often emerge between organizations, where information is fragmented and decisions are slow.</li>
+              <li>The long-term value is decision ownership. If the software allocates work and coordinates the network, the boundary between software vendor and operator becomes thinner.</li>
+              <li>The final vision, a manufacturer with no single factory, is a thesis. The video does not present audited production results that prove the network-scale model.</li>
+            </ul>
+            <div class="callout warning"><p><strong>Evidence boundary.</strong> This article separates the architecture described in the video from external support for the general problem. Claims about more than 60 customers, more than 100 production systems, a $50 million waste case, and a possible 20 percent recovery are statements by the creator. No case study, customer identity, baseline, or measurement method is supplied in the video, so those figures should not be treated as independently verified results.</p></div>
+          </section>
+
+          <section id="tool-operator">
+            <p class="eyebrow">Business thesis</p>
+            <h2>Move from selling the tool to operating the outcome</h2>
+            <p>Kearns divides a company into people, processes, and systems that produce an outcome. AI changes all three. It can assist or replace parts of human work, alter the process itself, and connect systems that previously required manual coordination. Selling a tool improves one part of this structure. Owning the decision layer can reshape the structure.</p>
+            <p>This is why the phrase "vertical AI is dead" needs a careful reading. The proposal is still deeply vertical. Antares must understand manufacturing entities, constraints, economics, quality rules, suppliers, and production sequencing. What Kearns rejects is stopping at vertical SaaS that merely exposes an AI feature. His preferred company uses domain-specific intelligence to take responsibility for an operating result.</p>
+            <div class="diagram">
+              <p class="diagram-title">Three levels of value capture</p>
+              <div class="ladder">
+                <div><span>LEVEL 01</span><h3>AI tool</h3><p>Helps a person complete a task. The customer still coordinates the process and owns every operating decision.</p></div>
+                <div><span>LEVEL 02</span><h3>Decision layer</h3><p>Observes events, applies context and policy, and chooses or recommends what should happen next.</p></div>
+                <div><span>LEVEL 03</span><h3>AI-native operator</h3><p>Accepts demand and coordinates people, suppliers, factories, logistics, and machines to deliver the outcome.</p></div>
+              </div>
+            </div>
+            <p>The transition between these levels is not automatic. A tool can recommend an action without bearing the cost of a wrong one. An operator must manage contracts, safety, quality, cash, liability, and recovery. The business model becomes more valuable only because the responsibility becomes more demanding.</p>
+          </section>
+
+          <section id="decision-stack">
+            <p class="eyebrow">Decision architecture</p>
+            <h2>The LLM is only one decision layer</h2>
+            <p>Kearns argues that many production decisions should not be delegated to a general model. A stable rule is cheaper, faster, easier to audit, and more predictable as code. A model becomes useful when the input is messy and the judgment can be constrained. A person should remain responsible when stakes are high, evidence is incomplete, or an exception has no reliable precedent.</p>
+            <div class="diagram">
+              <p class="diagram-title">The decision stack described in the video</p>
+              <div class="decision-stack">
+                <div class="decision-row"><span>01</span><strong>Deterministic</strong><p>Hard-code repeatable rules, calculations, validation, and policy checks. Use software when the decision boundary is known.</p></div>
+                <div class="decision-row"><span>02</span><strong>Model judgment</strong><p>Use an LLM or specialist model for bounded interpretation, classification, extraction, prioritization, or recommendations under explicit constraints.</p></div>
+                <div class="decision-row"><span>03</span><strong>Human decision</strong><p>Escalate material exceptions, uncertain evidence, legal or safety exposure, and decisions where accountability cannot be delegated.</p></div>
+              </div>
+            </div>
+            <p>The important design move is routing. The system must decide which layer owns the case before it decides the case itself. That routing policy needs thresholds, uncertainty signals, approval boundaries, and a record of why a path was selected. Without those controls, "human in the loop" becomes a vague promise rather than an enforceable operating rule.</p>
+          </section>
+
+          <section id="context">
+            <p class="eyebrow">Operational model</p>
+            <h2>Operational context is the missing model</h2>
+            <p>ERP systems contain transactions. BI systems aggregate metrics. Process documents describe the intended workflow. None of them necessarily explains why an experienced employee made a particular choice. Kearns calls this missing layer operational context: the reasons, exceptions, dependencies, and preferences that connect an event to the action the company actually takes.</p>
+            <div class="diagram">
+              <p class="diagram-title">What the operating model must capture</p>
+              <div class="context-grid">
+                <div><h3>Entities and relationships</h3><p>Customers, orders, materials, machines, suppliers, warehouses, people, and the dependencies between them.</p></div>
+                <div><h3>Decision rationale</h3><p>Why one supplier, route, schedule, approval, or exception was chosen over another.</p></div>
+                <div><h3>Rules and exceptions</h3><p>Formal policy, local workarounds, override conditions, authority limits, and regulatory constraints.</p></div>
+                <div><h3>Source trust</h3><p>Which record is authoritative when the ERP, spreadsheet, email, and operator memory disagree.</p></div>
+                <div><h3>Time and state</h3><p>When a fact became true, how long it remains valid, and which operating state existed when a decision was made.</p></div>
+                <div><h3>Outcome evidence</h3><p>What happened after the action, whether the KPI moved, and whether a person corrected the recommendation.</p></div>
+              </div>
+            </div>
+            <p>The examples in the video make the problem concrete. One mediator may be informally avoided. One attorney may have scheduling preferences that never reached the official system. A supplier may be trusted in one season but not another. An invoice process may depend on a spreadsheet that the organization never declared as a system of record. An AI system that sees only the documented procedure will repeatedly rediscover these exceptions through failure.</p>
+            <p>External manufacturing research supports the general gap. NIST describes the need to contextualize data across design, planning, manufacturing, and inspection, and separately notes that smart-manufacturing systems often lack explicit integration of human knowledge and human-machine interactions. That supports the problem statement. It does not validate Antares as the solution.</p>
+          </section>
+
+          <section id="engine">
+            <p class="eyebrow">Antares architecture</p>
+            <h2>Context plus governance becomes a decision engine</h2>
+            <p>The video describes Antares as a knowledge graph and ontology, but the graph is not the end product. It supplies the structured context required by a governance model. The decision engine then evaluates a new event, identifies the affected entities and dependencies, applies policy, and selects a next action or escalation.</p>
+            <div class="diagram">
+              <p class="diagram-title">The Antares operating loop reconstructed from the transcript</p>
+              <div class="flow">
+                <div><span>01</span><h3>Ingest</h3><p>Read structured records, documents, messages, conversations, and operational events.</p></div>
+                <div><span>02</span><h3>Model</h3><p>Map entities, processes, dependencies, exceptions, trusted sources, and current state.</p></div>
+                <div><span>03</span><h3>Govern</h3><p>Apply policy, permissions, constraints, thresholds, and human approval requirements.</p></div>
+                <div><span>04</span><h3>Decide</h3><p>Choose a deterministic action, bounded model judgment, recommendation, or escalation.</p></div>
+                <div><span>05</span><h3>Learn</h3><p>Record execution, outcome, correction, and new context so the operating model can improve.</p></div>
+              </div>
+            </div>
+            <p>For an incoming email, the useful question is not simply "What does this message say?" It is "Given the sender, order, current capacity, policy, dependencies, history, and permissions, what should happen next?" That is a decision problem with language as one input, not a chat problem.</p>
+            <div class="callout"><p><strong>Platform implication.</strong> Separate the business contract from the model call. Represent the event, decision options, evidence, constraints, allowed actions, confidence, and escalation path as typed data. A model may help interpret evidence, but policy and authorization should remain independently enforceable.</p></div>
+          </section>
+
+          <section id="graph-limits">
+            <p class="eyebrow">Model limits</p>
+            <h2>A knowledge graph is necessary but not sufficient</h2>
+            <p>A graph can connect entities and expose dependencies, but a production decision system needs more than topology. It must know whether a fact is current, where it came from, how reliable it is, who may override it, and what happened after the system acted. Otherwise the graph can preserve stale folklore with the same confidence as a verified policy.</p>
+            <ul>
+              <li><strong>Provenance:</strong> every consequential fact should point to its source, collector, and extraction method.</li>
+              <li><strong>Temporal validity:</strong> preferences, capacity, supplier quality, and policy change. The model must represent when a statement was valid.</li>
+              <li><strong>Confidence and disagreement:</strong> conflicting records should remain visible until resolved, not collapse silently into one answer.</li>
+              <li><strong>Authorization:</strong> knowing the recommended action does not grant authority to execute it.</li>
+              <li><strong>Outcome measurement:</strong> a decision is not improved merely because it was recorded. The system needs a defined success metric and a counterfactual or baseline where possible.</li>
+              <li><strong>Recovery:</strong> production decisions need idempotency, audit logs, rollback, and a person who can stop the system.</li>
+            </ul>
+            <p>Capturing context also does not prove causality. A system may observe that delayed orders correlate with a supplier, a shift, or a transport route without proving which intervention will improve the result. Root-cause recommendations should be tested against historical data, operational constraints, and controlled changes before the system acts at scale.</p>
+          </section>
+
+          <section id="manufacturing">
+            <p class="eyebrow">Why manufacturing</p>
+            <h2>The waste often sits between organizations</h2>
+            <p>Manufacturing creates a dense coordination problem. Brands, research teams, contract manufacturers, raw-material suppliers, warehouses, maintenance crews, and logistics providers all hold fragments of the operating state. A delay may begin as an inventory mismatch, capacity conflict, quality issue, or approval bottleneck, then surface later as missed production or excess material.</p>
+            <p>Kearns argues that much of the waste is not caused by a lack of data. It comes from information reaching the decision too late or without the context needed to act. Antares would map the value chain, combine records with conversations and human judgment, identify where a KPI is being lost, and recommend an intervention.</p>
+            <p>This is plausible, but a manufacturing decision engine must respect the physical system. Lead times, batch sizes, machine capabilities, maintenance windows, quality controls, labor rules, supplier contracts, transportation constraints, and safety requirements cannot be inferred away. A good architecture combines learned interpretation with deterministic planning, constraint solving, and human authority.</p>
+          </section>
+
+          <section id="network">
+            <p class="eyebrow">Expansion path</p>
+            <h2>From one factory to a production network</h2>
+            <p>The proposed progression starts narrowly. Antares becomes the decision engine for one manufacturer. As more decisions and outcomes pass through the system, its operating model becomes richer. It can then coordinate a larger production environment and eventually route work across a network of factories.</p>
+            <p>At network scale, the allocation problem includes capacity, materials, supplier reliability, transport cost, delivery time, quality, and the capabilities of each site. Demand enters the network, and Antares decides where and how the physical world should fulfill it. Kearns describes an organization that may not own one central factory. It coordinates a changing set of factories, humans, agents, robots, suppliers, and logistics partners.</p>
+            <div class="diagram">
+              <p class="diagram-title">The proposed growth path</p>
+              <div class="ladder">
+                <div><span>NOW</span><h3>Map one operation</h3><p>Capture the current value chain, exceptions, policies, and decisions inside a bounded manufacturing environment.</p></div>
+                <div><span>NEXT</span><h3>Coordinate the factory</h3><p>Use the living model to route recurring decisions, find bottlenecks, and improve production outcomes.</p></div>
+                <div><span>VISION</span><h3>Orchestrate the network</h3><p>Allocate demand across independent production capacity and operate as a manufacturer without one fixed factory.</p></div>
+              </div>
+            </div>
+            <div class="callout warning"><p><strong>The no-factory manufacturer is a thesis, not a result.</strong> The video explains the strategic direction but does not show a live network, allocation benchmark, audited savings, safety case, or customer deployment at this scale. Read it as the destination Antares is being designed toward.</p></div>
+          </section>
+
+          <section id="claims">
+            <p class="eyebrow">Claim review</p>
+            <h2>What the video establishes, and what remains open</h2>
+            <table class="claim-table">
+              <thead><tr><th>Claim</th><th>Status</th><th>How to read it</th></tr></thead>
+              <tbody>
+                <tr><td>Operational context is missing from many manufacturing systems</td><td>Supported problem</td><td>NIST work on contextualized manufacturing data and human knowledge supports the general gap.</td></tr>
+                <tr><td>Antares combines a knowledge graph, ontology, governance, and decision engine</td><td>Product description</td><td>This architecture is described by the creator. The video does not provide a technical paper or system evaluation.</td></tr>
+                <tr><td>CustomAI Studio has served more than 60 customers and built more than 100 production systems</td><td>Creator claim</td><td>No customer list, definition of production-ready, or independent confirmation is supplied here.</td></tr>
+                <tr><td>A manufacturer had $50 million in raw-material waste and agents could recover 20 percent</td><td>Creator claim</td><td>The baseline, intervention, time period, and realized outcome are not shown. Treat it as an illustrative sales claim.</td></tr>
+                <tr><td>Decision ownership can turn an AI vendor into an operator</td><td>Business thesis</td><td>The logic is coherent, but execution adds capital, legal, safety, quality, and operational risk.</td></tr>
+                <tr><td>Antares can become a manufacturer with no single factory</td><td>Long-term vision</td><td>The video presents a destination, not evidence that the network-scale system already operates.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="blueprint">
+            <p class="eyebrow">Practical blueprint</p>
+            <h2>How to build toward this idea without pretending the model knows the business</h2>
+            <ol>
+              <li><strong>Choose one decision, not one department.</strong> Define the trigger, options, authority, evidence, success measure, and cost of a wrong action.</li>
+              <li><strong>Map the current decision path.</strong> Interview the people who do the work, observe exceptions, and compare the documented flow with the actual one.</li>
+              <li><strong>Create a source register.</strong> Name the authoritative system for each fact and preserve conflicts, timestamps, and provenance.</li>
+              <li><strong>Separate context from policy.</strong> Context describes the operating state. Policy constrains what may happen. Do not bury permission rules inside a prompt.</li>
+              <li><strong>Use the smallest decision layer that works.</strong> Prefer code for stable rules, a model for bounded interpretation, and a person for high-risk ambiguity.</li>
+              <li><strong>Run in recommendation mode first.</strong> Compare recommendations with human decisions and outcomes before granting execution rights.</li>
+              <li><strong>Measure calibration and business effect.</strong> Track abstention, escalation, override, error severity, cycle time, waste, and downstream outcomes, not only model accuracy.</li>
+              <li><strong>Expand only after recovery works.</strong> Add autonomous action after audit, rollback, access control, incident response, and ownership are tested.</li>
+            </ol>
+            <p>This sequence keeps the architecture honest. It makes the organization prove that it understands the decision before asking a model to automate it.</p>
+          </section>
+
+          <section id="take">
+            <p class="eyebrow">My take</p>
+            <h2>The strongest idea is organizational memory with enforceable policy</h2>
+            <p>The strongest part of the Antares thesis is not the knowledge graph or the agent layer. It is the recognition that reliable automation depends on the reasons behind the work. Most organizations have pieces of those reasons scattered across people, messages, spreadsheets, policy documents, and exceptions. Turning that material into an inspectable operating model would make both people and software better at decisions.</p>
+            <p>The difficult part is governance of the model itself. A living model can become a powerful shared memory, or it can become a confident archive of stale assumptions. The difference is provenance, versioning, ownership, validation, and feedback. Antares will be credible to the extent that it makes uncertainty and disagreement visible rather than hiding them behind a clean recommendation.</p>
+            <p>The business thesis is also sharper than "AI will automate manufacturing." Kearns is arguing that the most valuable software will own allocation and coordination decisions. That can create real leverage, but it also moves the company closer to operational accountability. The strategic upside and the operational burden arrive together.</p>
+          </section>
+
+          <section id="map">
+            <p class="eyebrow">Video map</p>
+            <h2>Where the main ideas appear</h2>
+            <ul class="chapter-list">
+              <li><a href="https://www.youtube.com/watch?v=Qf-IEbeEgw0&t=0s"><time>00:00</time><span>Why CustomAI Studio is building Antares</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Qf-IEbeEgw0&t=122s"><time>02:02</time><span>Building the AI system is not the hardest part</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Qf-IEbeEgw0&t=306s"><time>05:06</time><span>The missing operational context</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Qf-IEbeEgw0&t=592s"><time>09:52</time><span>Knowledge graph, governance, and decision engine</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Qf-IEbeEgw0&t=756s"><time>12:36</time><span>Why manufacturing is the starting point</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Qf-IEbeEgw0&t=1027s"><time>17:07</time><span>From one factory to a network</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Qf-IEbeEgw0&t=1088s"><time>18:08</time><span>The no-single-factory end state</span></a></li>
+            </ul>
+          </section>
+
+          <section id="sources">
+            <p class="eyebrow">Sources</p>
+            <h2>Primary video and supporting research</h2>
+            <ol>
+              <li><a href="https://www.youtube.com/watch?v=Qf-IEbeEgw0">Devin Kearns, CustomAI Studio: Why We're Building Antares</a>. Primary video and automatic transcript.</li>
+              <li><a href="https://www.customaistudio.io/">CustomAI Studio</a>. Company context. No detailed Antares technical evaluation was found on the public site during review.</li>
+              <li><a href="https://www.nist.gov/publications/contextualizing-manufacturing-data-lifecycle-decision-making">NIST: Contextualizing Manufacturing Data for Lifecycle Decision Making</a>. Research on representing context across design, planning, manufacturing, and inspection.</li>
+              <li><a href="https://www.nist.gov/programs-projects/knowledge-extraction-and-application">NIST: Knowledge Extraction and Application</a>. Work on integrating human knowledge, incompatible data sources, and decision planning in manufacturing.</li>
+              <li><a href="https://www.nist.gov/publications/foundations-information-governance-smart-manufacturing">NIST: Foundations for Information Governance in Smart Manufacturing</a>. Governance considerations for manufacturing information.</li>
+              <li><a href="https://www.nist.gov/programs-projects/model-based-enterprise-program">NIST: Model-Based Enterprise Program</a>. Decision support across decentralized manufacturing systems and product-process capability matching.</li>
+            </ol>
+            <p class="source-note">Source review completed October 4, 2026. The YouTube captions repeatedly rendered the product name as "Antarus," "Entarus," and "TARS." This article uses "Antares," the spelling in the official video title and description. Sampled frames at 03:00, 08:00, 13:00, and 17:30 showed the same talking-head composition, so only the source thumbnail is reproduced.</p>
+          </section>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <p>On this page</p>
+          <nav>
+            <a href="#summary">Executive summary</a><a href="#tool-operator">Tool to operator</a><a href="#decision-stack">Decision stack</a><a href="#context">Operational context</a><a href="#engine">Antares architecture</a><a href="#graph-limits">Graph limits</a><a href="#manufacturing">Why manufacturing</a><a href="#network">Factory network</a><a href="#claims">Claim review</a><a href="#blueprint">Practical blueprint</a><a href="#take">My take</a><a href="#map">Video map</a><a href="#sources">Sources</a>
+          </nav>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>
