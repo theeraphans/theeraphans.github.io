@@ -58,6 +58,7 @@ def build():
     for index, project in enumerate(PROJECTS):
         catalog += f'<a id="{project["id"]}" href="{project["slug"]}/"><span class="catalog-number">{index+1:02d} / {escape(project["group"])}</span><h2>{escape(project["title"])}</h2><p>{escape(project["summary"])}</p>{tags(project)}<span class="catalog-read">Read article →</span></a>'
     catalog += '</nav></main><footer><span>© 2026 Theeraphan Sukchok</span><a href="../">Portfolio</a></footer><script src="../js/reading-nav.js?v=20261009-blog"></script></body></html>'
+    catalog = catalog.replace('<a href="../reading/">Reading</a>', '')
     (ROOT / 'project/index.html').write_text(catalog)
 
 if __name__ == '__main__':
