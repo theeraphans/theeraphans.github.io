@@ -1,4 +1,5 @@
 /* Reading-first portfolio edition. The existing stylesheet supplies shared utilities. */
+/* Profile layout keeps the original monospace identity. */
 :root { --max: 820px; --paper: #faf9f6; --cream: #f1f0eb; --ink: #252925; --muted: #656b63; --green: #285b40; --line: #dddfd7; }
 body { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 15px; line-height: 1.85; }
 .site-header { position: relative; color: var(--ink); }
@@ -8,7 +9,7 @@ body { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .site-nav { gap: 18px; flex-wrap: wrap; }
 .site-nav a, .site-nav a:not(.nav-cta) { color: var(--muted); font-size: .68rem; }
 .nav-cta { border-color: var(--line); border-radius: 0; padding: 6px 10px; }
-.hero { width: min(calc(100% - 48px), var(--max)); min-height: 0; padding: 66px 0 48px; margin-inline: auto; grid-template-columns: 1fr 140px; gap: 32px; align-items: start; color: var(--ink); background: transparent; overflow: visible; }
+.hero { width: min(calc(100% - 48px), var(--max)); min-height: 0; padding: 66px 0 48px; margin-inline: auto; grid-template-columns: minmax(0,1fr) 230px; gap: 40px; align-items: start; color: var(--ink); background: transparent; overflow: visible; }
 .hero-copy { max-width: 650px; }
 .hero-network, .motion-toggle, .availability, .portrait-frame::before { display: none; }
 .eyebrow { color: var(--green); font-size: .62rem; letter-spacing: .08em; margin-bottom: 20px; }
@@ -16,7 +17,9 @@ body { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .hero h1 { font-size: clamp(1.8rem,3vw,2.35rem); line-height: 1.25; letter-spacing: -.05em; font-weight: 800; }
 .editorial-subtitle { display: block; margin-top: 12px; font-size: .85rem; color: var(--muted); font-weight: 400; letter-spacing: 0; }
 .hero-name { margin-top: 26px; color: var(--ink); font-size: .88rem; }
-.hero-visual { width: 140px; justify-self: end; }
+.hero-visual { width: 230px; justify-self: end; padding-top:50px; }
+.portrait-caption { text-align:center; font-size:.7rem; color:var(--muted); margin:16px 0 6px; }
+.hero-visual .hero-links { justify-content:center; flex-wrap:wrap; gap:12px; font-size:.68rem; }
 .portrait-frame { border: 0; padding: 0; }
 .portrait-frame img { width: 100%; height: auto; aspect-ratio: 1; border-radius: 50%; object-position: 50% 25%; }
 .hero-actions { margin-top: 26px; gap: 18px; }
@@ -89,10 +92,10 @@ body { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
   .nav-toggle > span:not(.sr-only) { background: var(--ink); }
   .site-nav { background: var(--paper); box-shadow: -12px 0 30px #0001; padding-top: 85px; }
   .site-nav a:not(.nav-cta) { color: var(--ink); }
-  .hero { width: calc(100% - 36px); padding-block: 40px; grid-template-columns: 1fr 76px; gap: 14px; }
-  .hero-visual { width: 76px; }
+  .hero { width: calc(100% - 36px); padding-block: 40px; display:flex; flex-direction:column; gap:24px; }
+  .hero-visual { width: 170px; padding-top:0; align-self:center; }
   .hero h1 { font-size: 1.7rem; }
-  .hero-copy { display: contents; }
+  .hero-copy { display: block; }
   .hero-copy > :not(h1):not(.eyebrow) { grid-column: 1 / -1; }
   .hero .eyebrow { grid-column: 1 / -1; margin-bottom: 0; }
   .hero-visual { grid-column: 2; grid-row: 2; }
