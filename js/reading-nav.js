@@ -1,6 +1,7 @@
 (() => {
   const project = Boolean(document.getElementById('platform'));
-  const items = project
+  const articleSections = Array.from(document.querySelectorAll('[data-toc]')).map(section => [section.id, section.dataset.toc]);
+  const items = articleSections.length ? articleSections : project
     ? [['platform', 'Agentic Platform'], ['digital-transformation', 'Digital Transformation'], ['voc', 'VOC'], ['sales', 'Sales recovery'], ['data', 'Data platform'], ['vision', 'Visual recognition'], ['hermes', 'Hermes']]
     : [['featured-work', 'Selected work'], ['about', 'About'], ['experience', 'Experience'], ['education', 'Education'], ['skills', 'Skills'], ['contact', 'Contact']];
   const nav = document.createElement('nav');
@@ -10,7 +11,7 @@
   label.className = 'reading-toc-label';
   label.textContent = 'ON THIS PAGE';
   nav.append(label);
-  const sections = items.map(([id, title]) => {
+  const sections = items.filter(([id]) => document.getElementById(id)).map(([id, title]) => {
     const link = document.createElement('a');
     link.href = `#${id}`;
     link.textContent = title;
