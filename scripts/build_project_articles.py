@@ -97,8 +97,6 @@ def build():
         (folder / 'architecture.html').write_text(standalone)
     catalog = head('Projects') + '<div class="intro"><p class="eyebrow">THEERAPHAN SUKCHOK / PROJECT NOTES</p><h1>Things I build.</h1><p class="lead">The problem, the work, and the system behind it.</p><p class="muted">Choose a project for its story and a detailed technical walkthrough. Employer work is described without proprietary details.</p></div><nav class="project-catalog" aria-label="Project articles">'
     for index, project in enumerate(PROJECTS):
-        if index == 1:
-            catalog += '<div id="digital-transformation" class="catalog-group"><p class="eyebrow">DIGITAL TRANSFORMATION</p><p>Customer intelligence, sales follow-up, and the data foundation behind them.</p></div>'
         catalog += f'<a id="{project["id"]}" href="{project["slug"]}/"><span class="catalog-number">{index+1:02d}</span><span><small>{escape(project["group"])}</small><h2>{escape(project["title"])}</h2><p>{escape(project["summary"])}</p><span class="catalog-read">Read the case study →</span></span></a>'
     catalog += '</nav></main><footer>© 2026 Theeraphan Sukchok <a href="../">Portfolio</a></footer><script src="../js/reading-nav.js?v=20261009-articles"></script></body></html>'
     (ROOT / 'project/index.html').write_text(catalog)
