@@ -64,7 +64,7 @@ class ProjectRoutes(unittest.TestCase):
 
     def test_local_links_assets_and_fragments_resolve(self):
         root = Path(__file__).resolve().parents[1]
-        files = [root / 'index.html', root / 'project/index.html', *root.glob('project/*/index.html'), *root.glob('project/*/architecture.html')]
+        files = [root / 'index.html', root / 'project/index.html', *root.glob('project/*/index.html'), *root.glob('project/*/architecture.html'), *root.glob('blog/**/index.html')]
         for file in files:
             page = Page(file.read_text())
             for link in page.links + page.assets:

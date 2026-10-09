@@ -18,7 +18,7 @@ def tags(project):
 
 def head(title, depth=0):
     root = '../../' if depth else '../'
-    return f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{escape(title)} | Theeraphan Sukchok</title><meta name="description" content="Project notes by Theeraphan Sukchok: AI systems, business workflows, and the engineering behind them."><link rel="stylesheet" href="{root}css/portfolio.css?v=20261009-research"><link rel="stylesheet" href="{root}css/reading-nav.css"></head><body id="top"><header><a href="{root}" class="brand">TS.</a><nav aria-label="Main"><a href="{root}">About</a><a href="{root}project/">Projects</a><a href="{root}reading/">Reading</a><a href="{root}assets/theeraphan-sukchok-resume.pdf">Résumé ↗</a></nav></header><main id="main">'
+    return f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{escape(title)} | Theeraphan Sukchok</title><meta name="description" content="Project notes by Theeraphan Sukchok: AI systems, business workflows, and the engineering behind them."><link rel="stylesheet" href="{root}css/portfolio.css?v=20261009-research"><link rel="stylesheet" href="{root}css/reading-nav.css"></head><body id="top"><header><a href="{root}" class="brand">TS.</a><nav aria-label="Main"><a href="{root}">About</a><a href="{root}blog/">Blog</a><a href="{root}project/">Projects</a><a href="{root}reading/">Reading</a><a href="{root}assets/theeraphan-sukchok-resume.pdf">Résumé ↗</a></nav></header><main id="main">'
 
 def article_toc(body):
     items = re.findall(r'<section id="([^"]+)" data-toc="([^"]+)">', body)
