@@ -37,6 +37,7 @@ def write_article(slug, title, summary, body, project=None):
     article += desktop + '<div class="article-column"><article><div class="intro article-intro"><a class="back-link" href="../">← All blog posts</a>'
     article += f'<h1>{escape(title)}</h1><p class="lead">{escape(summary)}</p><p class="meta">Theeraphan Sukchok · 9 October 2026 · Engineering research note</p>{related}</div>'
     article += mobile + '<div class="article-body">' + body + '</div></article></div></main><footer><span>© 2026 Theeraphan Sukchok</span><a href="../">All posts</a></footer><script src="../../js/reading-nav.js?v=20261009-research"></script></body></html>'
+    article = article.replace('<a href="../../reading/">Reading</a>', '')
     (folder / 'index.html').write_text(article)
 
 def build():
@@ -57,6 +58,7 @@ def build():
     for slug, parent, title, summary, *_ in TOPICS:
         catalog += f'<a href="{slug}/"><span class="catalog-number">9 October 2026</span><h2>{escape(title)}</h2><p>{escape(summary)}</p><div class="tags"><span>{labels[parent]}</span></div><span class="catalog-read">Read article →</span></a>'
     catalog += f'<a href="{SLUG}/"><span class="catalog-number">9 October 2026</span><h2>{TITLE}</h2><p>A literature-informed starting point for business-agent reliability.</p><div class="tags"><span>Agent systems · Reliability</span></div><span class="catalog-read">Read article →</span></a></nav></main><footer>© 2026 Theeraphan Sukchok</footer></body></html>'
+    catalog = catalog.replace('<a href="../reading/">Reading</a>', '')
     (ROOT / 'blog/index.html').write_text(catalog)
 
 if __name__ == '__main__':
