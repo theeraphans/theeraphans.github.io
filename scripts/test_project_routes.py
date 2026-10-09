@@ -1,4 +1,5 @@
 import unittest
+import re
 from urllib.request import urlopen
 from urllib.error import HTTPError
 from html.parser import HTMLParser
@@ -42,6 +43,25 @@ class Page(HTMLParser):
 
 
 class ProjectRoutes(unittest.TestCase):
+    def test_blog_series_has_twelve_distinct_project_notes(self):
+        from blog_topics import TOPICS
+        root = Path(__file__).resolve().parents[1]
+        catalog = Page((root / 'blog/index.html').read_text())
+        self.assertEqual(len(TOPICS), 12)
+        self.assertEqual(len(set(topic[0] for topic in TOPICS)), 12)
+        for slug, project, title, *_ in TOPICS:
+            self.assertIn(slug + '/', catalog.links)
+            text = (root / 'blog' / slug / 'index.html').read_text()
+            page = Page(text)
+            self.assertTrue(page.left_toc)
+            self.assertTrue(page.mobile_toc)
+            self.assertEqual(len(page.ids), len(set(page.ids)))
+            self.assertIn('references', page.ids)
+            self.assertIn('../../project/' + project + '/', page.links)
+            self.assertNotIn('{{', text)
+            self.assertGreater(len(re.sub('<[^>]+>', ' ', text).split()), 400)
+            self.assertIn(title, urlopen('http://localhost:8765/blog/' + slug + '/').read().decode())
+
     def test_readers_can_open_each_article_from_catalog(self):
         catalog = Page(urlopen('http://localhost:8765/project/').read().decode())
         for slug in ['agentic-platform', 'voc', 'sales-recovery', 'data-platform', 'visual-recognition', 'hermes']:
