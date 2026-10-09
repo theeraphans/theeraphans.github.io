@@ -58,5 +58,7 @@ def diagram(slug, title, nodes, supports=()):
         x, y = positions[i]
         fill, stroke = ('#edf1e9', '#285b40') if i == 1 else ('#ffffff', '#656b63')
         parts.append(f'<g><rect x="{x}" y="{y}" width="320" height="100" rx="6" fill="{fill}" stroke="{stroke}"/><text x="{x+16}" y="{y+28}" font-size="16" font-weight="600" fill="#252925">{escape(name)}</text><text x="{x+16}" y="{y+52}" font-size="11" fill="#285b40">{escape(tech)}</text><text x="{x+16}" y="{y+78}" font-size="11" fill="#656b63">{escape(purpose)}</text></g>')
-    parts.append('<path d="M32 612 H824" stroke="#dddfd7"/><text x="32" y="640" font-size="11" fill="#656b63">Solid: primary flow · Dashed: supporting dependency</text></svg>')
+    legend = 'Solid: primary flow · Dashed: supporting dependency' if supports else 'Solid: primary flow'
+    line_end = 824 if supports else 352
+    parts.append(f'<path d="M32 612 H{line_end}" stroke="#dddfd7"/><text x="32" y="640" font-size="11" fill="#656b63">{legend}</text></svg>')
     return ''.join(parts)
