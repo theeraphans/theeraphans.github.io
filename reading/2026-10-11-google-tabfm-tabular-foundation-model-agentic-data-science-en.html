@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>Your Database Table Is Becoming the Prompt</title>
+    <meta name="description" content="An evidence-aware guide to Google's TabFM, TabFM-Auto, in-context tabular prediction, synthetic causal pretraining, semantic feature engineering, temporal leakage, and a safer agentic data-science architecture." />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .visual { margin: 1.7rem 0 2rem; }
+      .visual img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 4px; }
+      .visual figcaption { margin-top: .65rem; color: var(--muted); font-size: .88rem; line-height: 1.55; text-align: center; }
+      .callout { margin: 1.5rem 0; padding: 1rem !important; border-left: 3px solid var(--green) !important; background: var(--surface) !important; }
+      .callout.warning { border-left-color: #8a6417 !important; }
+      .callout p:last-child { margin-bottom: 0; }
+      .layer-grid, .risk-grid { display: grid; gap: 1px; margin: 1.5rem 0; border: 1px solid var(--line); background: var(--line); }
+      .layer-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .risk-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .layer-grid > div, .risk-grid > div { padding: 1rem; background: var(--paper); }
+      .layer-grid strong { display: block; margin-bottom: .35rem; color: var(--green); font-size: .8rem; }
+      .layer-grid h3, .risk-grid h3 { margin: 0 0 .45rem; font-size: 1rem; }
+      .layer-grid p, .risk-grid p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.55; }
+      .flow { margin: 1.5rem 0; padding: 1rem; border: 1px solid var(--line); }
+      .flow-row { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: .6rem; align-items: stretch; }
+      .flow-node { display: grid; place-items: center; min-height: 5.8rem; padding: .75rem; text-align: center; background: var(--surface); border: 1px solid var(--line); }
+      .flow-node b { display: block; margin-bottom: .25rem; }
+      .flow-node small { color: var(--muted); line-height: 1.4; }
+      .flow-arrow { align-self: center; color: var(--green); font-weight: 700; }
+      .chapter-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 1.25rem 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
+      .chapter-list li { border-bottom: 1px solid var(--line); }
+      .chapter-list a { display: flex; gap: .7rem; min-height: 100%; padding: .8rem .45rem; text-decoration: none !important; }
+      .chapter-list time { flex: 0 0 3.4rem; color: var(--green); font-variant-numeric: tabular-nums; }
+      details.transcript { margin-top: 1.5rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      details.transcript summary { min-height: 48px; padding: .8rem 0; cursor: pointer; font-weight: 500; }
+      details.transcript p { color: var(--muted); font-size: .92rem; }
+      @media (max-width: 850px) {
+        .layer-grid, .risk-grid, .chapter-list, .flow-row { grid-template-columns: 1fr; }
+        .flow-arrow { justify-self: center; transform: rotate(90deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Loki Reading</a>
+      <div class="top-actions"><a class="action-link" href="https://www.youtube.com/watch?v=5YJGDElbCDY">Watch original</a></div>
+    </nav>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Tabular foundation models · Agentic data science</p>
+          <h1>Your Database Table Is Becoming the Prompt</h1>
+          <p class="subtitle">Google's TabFM treats labeled rows as in-context examples and predicts new rows without fitting a task-specific model. The bigger opportunity is not replacing data science. It is rebuilding the workflow around a fast numerical engine, a semantic agent, and a database environment that makes experimentation reversible and leakage visible.</p>
+          <div class="meta"><span>10:57 video</span><span>Auto-generated English transcript</span><span>Published October 11, 2026</span><span>Summary run: October 11, 2026 · 22:35 ICT</span></div>
+        </div>
+        <figure class="hero-card">
+          <img src="2026-10-11-tabfm-dataset-as-prompt.jpg" alt="Video diagram contrasting one language-model prompt with multiple tabular models" />
+          <figcaption>For a new table, TabFM receives labeled context rows and unlabeled query rows in one forward pass. The table behaves like the prompt, but the model still depends on bounded context, careful validation, and honest data.</figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="eyebrow">Executive summary</p>
+            <h2>The real shift is from fitting a model to composing an inference context</h2>
+            <p>The video presents TabFM as a “GPT-3 moment” for business tables. That analogy is useful if read narrowly. A conventional tabular workflow often fits and tunes a fresh model for every dataset. TabFM is a pretrained 400-million-parameter Transformer that instead reads labeled rows as context and predicts targets for query rows without updating its weights. Classification and regression become an in-context inference problem.</p>
+            <p>That does not erase the rest of data science. A production prediction still needs a valid target, a time-correct training view, semantic feature interpretation, calibration, monitoring, and a deployment path. The video's strongest contribution is therefore architectural: pair a frozen tabular foundation model with an LLM agent that understands schema semantics, then give the agent a controlled database workspace where every experiment is isolated and reproducible.</p>
+            <ul>
+              <li><strong>TabFM replaces per-dataset weight training with in-context learning.</strong> Labeled rows are the context; unlabeled rows are the query.</li>
+              <li><strong>Synthetic causal pretraining teaches a learning procedure rather than one business domain.</strong> The model is trained on randomized structural causal models, table shapes, missingness, noise, and class balance.</li>
+              <li><strong>Semantics remain a gap.</strong> Column names, descriptions, units, and auxiliary files contain domain meaning that numerical cell encoding alone cannot recover.</li>
+              <li><strong>TabFM-Auto gives the LLM the right job.</strong> The agent edits cleaning, feature engineering, context selection, and post-processing around frozen TabFM rather than pretending prose generation is the predictor.</li>
+              <li><strong>Temporal correctness matters more than a high validation score.</strong> A leaky cancellation feature can make the wrong pipeline look brilliant.</li>
+              <li><strong>The headline is too broad.</strong> TabFM is a strong default for supported tabular tasks, not evidence that model training, GBDTs, or evaluation are obsolete.</li>
+            </ul>
+            <div class="callout warning"><p><strong>Evidence boundary.</strong> The video's churn experiment, its AUC values, and its custom Neon workflow are a creator demonstration, not results from the TabFM paper. The paper supports the model architecture and benchmark claims; it does not independently verify the video's synthetic SaaS experiment.</p></div>
+          </section>
+
+          <section id="old-workflow">
+            <p class="eyebrow">The old default</p>
+            <h2>Every table used to trigger a new training project</h2>
+            <p>For churn, fraud, demand, or sensor prediction, a familiar workflow starts with cleaning, domain-specific feature engineering, model selection, hyperparameter search, calibration, and deployment. Tree ensembles such as XGBoost, LightGBM, CatBoost, and random forests remain effective because tables mix continuous values, categories, missing entries, and irregular scales.</p>
+            <p>The cost is repetition. A team may rebuild roughly the same machinery for each dataset even when the desired interface is always “learn from these labeled rows and score those rows.” TabFM moves much of that recurring learning algorithm into pretraining. At inference time the dataset provides examples, not gradient updates.</p>
+            <figure class="visual"><img src="2026-10-11-tabfm-dataset-as-prompt.jpg" alt="Diagram showing that a table can act as an in-context prompt" loading="lazy" /><figcaption><strong>From the video around 01:50.</strong> Text foundation models collapsed many task-specific NLP models into one prompted model. TabFM aims for an analogous interface for classification and regression over tables.</figcaption></figure>
+          </section>
+
+          <section id="mechanism">
+            <p class="eyebrow">How TabFM works</p>
+            <h2>Labeled rows become context; query rows are predicted in the same pass</h2>
+            <p>The model receives a table split into a labeled context block and an unlabeled query block. Its architecture first embeds cells, alternates attention across columns and rows, compresses arbitrary feature counts into fixed-width row representations, and then uses a deep in-context predictor. An asymmetric mask allows query rows to attend to labeled context while preventing them from leaking information into one another.</p>
+            <div class="flow" aria-label="TabFM inference flow">
+              <div class="flow-row">
+                <div class="flow-node"><div><b>Labeled rows</b><small>Features plus known target values</small></div></div>
+                <div class="flow-arrow">-&gt;</div>
+                <div class="flow-node"><div><b>Table context</b><small>Cell embeddings with row and column structure</small></div></div>
+                <div class="flow-arrow">-&gt;</div>
+                <div class="flow-node"><div><b>Frozen TabFM</b><small>In-context prediction without weight updates</small></div></div>
+                <div class="flow-arrow">-&gt;</div>
+                <div class="flow-node"><div><b>Query predictions</b><small>Classes, probabilities, or regression values</small></div></div>
+              </div>
+            </div>
+            <p>This is “zero-shot” with respect to task-specific training, not “zero data.” The quality of the context rows still matters. The current public estimators expose bounded context and feature limits; larger datasets are sampled or split rather than consumed whole. Ensembling across sampled contexts can improve stability but adds inference cost.</p>
+          </section>
+
+          <section id="pretraining">
+            <p class="eyebrow">Synthetic pretraining</p>
+            <h2>The model learns from causal generators, not a scraped warehouse of private tables</h2>
+            <p>Unlike language models, a general tabular model cannot rely on one enormous natural corpus of compatible tables. Google trains TabFM entirely on synthetic datasets generated from structural causal models. Each synthetic task samples a directed acyclic graph, randomized functional relationships, numerical and categorical columns, missingness, label noise, and class balance. The model repeatedly sees a labeled context and must predict held-out query targets.</p>
+            <figure class="visual"><img src="2026-10-11-tabfm-synthetic-causal-training.jpg" alt="A sampled causal graph producing a synthetic table for TabFM pretraining" loading="lazy" /><figcaption><strong>From the video around 02:40.</strong> Random structural causal models generate diverse synthetic tables. The objective is to learn how to infer relationships from a new table, not memorize one industry's records.</figcaption></figure>
+            <p>The paper reports pretraining contexts up to 16,384 rows and 100 columns. This diversity is the source of cross-dataset transfer, but it is also a boundary: very large, extremely wide, free-text-heavy, relational, or distribution-shifted problems may sit outside the training regime.</p>
+          </section>
+
+          <section id="semantics">
+            <p class="eyebrow">What numbers cannot say</p>
+            <h2>A column value is not the same thing as a column meaning</h2>
+            <p>A numeric code can mean category three, a missing-value sentinel, a temperature, or dollars. A timestamp can encode seasonality, causality, or a future event that should not exist at prediction time. TabFM can learn statistical structure from cell values, but the base model does not semantically tokenize column names or business descriptions.</p>
+            <p>This is where the LLM belongs. It can read column names, schema comments, units, task descriptions, and auxiliary documentation; propose transformations; write feature code; choose representative context rows; and explain why a candidate pipeline should be tested. The predictor remains TabFM. The language model becomes a pipeline engineer around it.</p>
+            <div class="layer-grid">
+              <div><strong>Numerical engine</strong><h3>TabFM</h3><p>Fast in-context classification or regression from structured examples.</p></div>
+              <div><strong>Semantic engineer</strong><h3>LLM agent</h3><p>Interprets schema meaning and proposes executable transformations.</p></div>
+              <div><strong>System of record</strong><h3>Database</h3><p>Preserves data, time, lineage, experiment state, and scored outputs.</p></div>
+            </div>
+            <figure class="visual"><img src="2026-10-11-tabfm-agent-architecture.jpg" alt="Video explanation of an LLM agent inspecting columns and writing transformation logic around TabFM" loading="lazy" /><figcaption><strong>From the video around 06:20.</strong> The agent handles semantic context and transformation logic while the tabular model remains the inference engine.</figcaption></figure>
+          </section>
+
+          <section id="auto">
+            <p class="eyebrow">TabFM-Auto</p>
+            <h2>The agent improves the pipeline while the model weights stay frozen</h2>
+            <p>The research system described in the TabFM and TabFM-Auto papers runs an LLM coding agent inside a sandboxed evaluator. Starting from vanilla TabFM, the agent iteratively edits a Python pipeline for data cleaning, feature engineering, context sampling, inference settings, and post-processing. Each candidate is scored through cross-validation inside the training split; tracebacks and fold scores become feedback for the next edit.</p>
+            <p>The reported search is substantial rather than instant: up to 96 evaluations or six hours, with the final program selected from top validation candidates and then scored once on held-out test rows. Across TabArena's 51 datasets, the paper reports that TabFM-Auto improves 41, with all five tested agent/model configurations occupying the top five aggregate positions. These are benchmark results under the authors' protocol, not a promise that any autonomous feature agent will improve any enterprise dataset.</p>
+          </section>
+
+          <section id="backend">
+            <p class="eyebrow">Operational architecture</p>
+            <h2>An agent needs a laboratory, not write access to production</h2>
+            <p>The sponsored Neon demonstration contributes a sound systems pattern. Schema comments keep business meaning close to the columns. Each experiment runs against an isolated copy-on-write database branch. The agent may create feature tables, test joins, remove columns, and record a run without mutating production. Failed experiments can be discarded; successful pipelines can be promoted through a separate, governed path.</p>
+            <figure class="visual"><img src="2026-10-11-tabfm-database-sandbox.jpg" alt="Diagram showing an autonomous LLM isolated from production data by a database sandbox" loading="lazy" /><figcaption><strong>From the video around 07:20.</strong> Branching turns the database into an experiment boundary. It protects production state, but it does not by itself prevent leakage, unsafe SQL, excessive compute, or an invalid objective.</figcaption></figure>
+            <div class="risk-grid">
+              <div><h3>Sandbox the mutations</h3><p>Use isolated branches, read-only source snapshots, resource limits, scoped credentials, and promotion gates.</p></div>
+              <div><h3>Record the experiment</h3><p>Version the snapshot time, schema, pipeline code, context sampling, model version, metric, and output lineage.</p></div>
+              <div><h3>Validate the time boundary</h3><p>Build features only from information available when the prediction would actually have been made.</p></div>
+              <div><h3>Separate scoring from action</h3><p>A churn score should not automatically trigger customer contact without policy, calibration, and review.</p></div>
+            </div>
+          </section>
+
+          <section id="leakage">
+            <p class="eyebrow">The dangerous part</p>
+            <h2>A perfect score can be evidence that the experiment is wrong</h2>
+            <p>In the video's synthetic churn example, a retention-offer field is populated only after a customer begins cancellation. It is highly correlated with the label, so an agent inspecting a present-day snapshot can treat it as a powerful feature. But at the historical prediction cutoff the field did not yet exist. Using it leaks the future into training.</p>
+            <figure class="visual"><img src="2026-10-11-tabfm-temporal-leakage.jpg" alt="Terminal output showing an agent choosing a retention feature with temporal leakage" loading="lazy" /><figcaption><strong>From the video around 08:20.</strong> Two of four agent runs reportedly used the leaky feature. The failure is not fixed by a stronger model; it is fixed by a time-correct dataset contract and an evaluation harness that can reject future information.</figcaption></figure>
+            <p>The robust solution is point-in-time correctness. Restore or reconstruct the database as it existed before the prediction window, compute features from that snapshot, and evaluate against outcomes that occur later. The split must reflect the deployment decision, not merely produce convenient train and test rows.</p>
+            <div class="callout warning"><p><strong>Platform rule.</strong> Never let the same agent define the feature set, choose the validation split, and declare success without an independent leakage policy. The harness should encode forbidden post-outcome fields, event-time constraints, and a fail-closed verification step.</p></div>
+          </section>
+
+          <section id="limits">
+            <p class="eyebrow">Reality check</p>
+            <h2>“No training” is an interface claim, not the end of machine learning</h2>
+            <ul>
+              <li><strong>The foundation model was trained.</strong> What disappears is task-specific fitting on your dataset, not the enormous upstream pretraining investment.</li>
+              <li><strong>Context is bounded.</strong> Current public defaults sample a limited number of rows and features; larger tables require a deliberate context strategy.</li>
+              <li><strong>Inference can be expensive.</strong> A 400M-parameter model, multiple context samples, and ensembles may cost more than a small fitted tree for stable high-volume workloads.</li>
+              <li><strong>Benchmarks are not your decision.</strong> TabArena aggregates heterogeneous datasets and metrics. Local baselines, calibration, latency, cost, fairness, and failure impact still decide production value.</li>
+              <li><strong>Weights and service terms differ.</strong> The downloadable pretrained weights are restricted to non-commercial, non-production use. Google's BigQuery TabFM offering is governed separately and permits commercial use under Google Cloud terms.</li>
+              <li><strong>Conventional models remain useful.</strong> For a stable, narrow task with abundant labeled data and tight latency requirements, a fitted GBDT may still be simpler and cheaper.</li>
+            </ul>
+          </section>
+
+          <section id="playbook">
+            <p class="eyebrow">Practical playbook</p>
+            <h2>How to evaluate TabFM without fooling yourself</h2>
+            <ol>
+              <li><strong>Write the decision contract first.</strong> Define the target, prediction time, eligible population, action, error costs, and minimum useful calibration.</li>
+              <li><strong>Build a time-correct evaluation set.</strong> Snapshot features at the decision boundary and reveal outcomes only afterward.</li>
+              <li><strong>Start with strong simple baselines.</strong> Compare against logistic regression, a tuned GBDT, and the current production rule before celebrating a foundation model.</li>
+              <li><strong>Evaluate vanilla TabFM separately.</strong> This measures the value of in-context prediction without conflating it with agent-generated features.</li>
+              <li><strong>Add semantic context as governed inputs.</strong> Store column descriptions, units, ownership, known leakage rules, and permissible transformations beside the schema.</li>
+              <li><strong>Run the agent in an isolated branch.</strong> Limit SQL, compute, files, network, and execution time. Persist code and evidence for every candidate.</li>
+              <li><strong>Keep a held-out test boundary.</strong> The agent may read training-fold feedback but must not inspect the final test rows or outcomes.</li>
+              <li><strong>Promote only a reproducible pipeline.</strong> Schedule the frozen, reviewed artifact rather than rerunning an open-ended search in production.</li>
+              <li><strong>Monitor outcomes and drift.</strong> Track calibration, subgroup errors, missingness, schema changes, context sampling, latency, and cost.</li>
+            </ol>
+          </section>
+
+          <section id="map">
+            <p class="eyebrow">Video map</p>
+            <h2>Where the main ideas appear</h2>
+            <ul class="chapter-list">
+              <li><a href="https://www.youtube.com/watch?v=5YJGDElbCDY&t=0s"><time>00:00</time><span>Why enterprise prediction still runs on tables</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=5YJGDElbCDY&t=113s"><time>01:53</time><span>TabFM and the dataset-as-prompt interface</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=5YJGDElbCDY&t=156s"><time>02:36</time><span>Synthetic causal pretraining</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=5YJGDElbCDY&t=240s"><time>04:00</time><span>Synthetic churn demonstration</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=5YJGDElbCDY&t=292s"><time>04:52</time><span>Semantic limits of raw numerical tables</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=5YJGDElbCDY&t=354s"><time>05:54</time><span>LLM agent and TabFM-Auto</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=5YJGDElbCDY&t=419s"><time>06:59</time><span>Schema comments and database branching</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=5YJGDElbCDY&t=468s"><time>07:48</time><span>Temporal leakage failure</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=5YJGDElbCDY&t=533s"><time>08:53</time><span>Scheduling the reviewed pipeline</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=5YJGDElbCDY&t=590s"><time>09:50</time><span>Three takeaways</span></a></li>
+            </ul>
+          </section>
+
+          <section id="sources">
+            <p class="eyebrow">Sources</p>
+            <h2>Primary recording and research</h2>
+            <ol>
+              <li><a href="https://www.youtube.com/watch?v=5YJGDElbCDY">Prompt Engineering - Google's GPT-3 Moment for Databases &amp; Spreadsheets (TabFM)</a>. Original recording; auto-generated English transcript.</li>
+              <li><a href="https://arxiv.org/abs/2609.37959">Kong et al. - TabFM: A Zero-Shot Foundation Model for Tabular Data</a>. Architecture, synthetic pretraining, TabArena protocol, benchmark results, and limitations.</li>
+              <li><a href="https://arxiv.org/abs/2609.37989">Fu et al. - TabFM-Auto: Self-Evolving Pipelines for Tabular Foundation Models</a>. Agent loop, validation isolation, feature-pipeline search, and reported benchmark results.</li>
+              <li><a href="https://www.research.google/blog/introducing-tabfm-a-zero-shot-foundation-model-for-tabular-data/">Google Research - Introducing TabFM</a>. Research overview and model explanation.</li>
+              <li><a href="https://github.com/google-research/tabfm">google-research/tabfm</a>. Public implementation, estimator interface, practical context defaults, code license, and pretrained-weight restrictions.</li>
+              <li><a href="https://docs.cloud.google.com/bigquery/docs/tabfm-model">Google Cloud - The TabFM model in BigQuery</a>. Managed deployment interface and licensing distinction.</li>
+            </ol>
+            <p class="source-note">Source review completed October 11, 2026. Claims from the creator's custom churn and Neon demonstration are attributed to the video. Research claims are checked against the two papers and official Google sources. All five article images are direct frames from the supplied video.</p>
+            <details class="transcript"><summary>Transcript note</summary><p>The article was prepared from YouTube's auto-generated English caption track. Punctuation and obvious names were normalized against primary sources. The transcript is useful for locating the speaker's claims but is not treated as a verbatim publication.</p></details>
+          </section>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <p>On this page</p>
+          <nav><a href="#summary">Executive summary</a><a href="#old-workflow">Old workflow</a><a href="#mechanism">How TabFM works</a><a href="#pretraining">Synthetic pretraining</a><a href="#semantics">Semantic gap</a><a href="#auto">TabFM-Auto</a><a href="#backend">Operational architecture</a><a href="#leakage">Temporal leakage</a><a href="#limits">Reality check</a><a href="#playbook">Evaluation playbook</a><a href="#map">Video map</a><a href="#sources">Sources</a></nav>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>
