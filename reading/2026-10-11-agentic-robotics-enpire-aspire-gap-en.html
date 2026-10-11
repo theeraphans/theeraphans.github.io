@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>When Robot Learning Becomes a Software Engineering Loop</title>
+    <meta name="description" content="A detailed, evidence-aware guide to agentic robotics through ENPIRE, ASPIRE, and Graph-as-Policy: physical feedback loops, automatic reset and verification, code-as-policy, skill memory, fleet utilization, and bounded variational automation." />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .visual { margin: 1.7rem 0 2rem; }
+      .visual img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 4px; }
+      .visual figcaption { margin-top: .65rem; color: var(--muted); font-size: .88rem; line-height: 1.55; text-align: center; }
+      .callout { margin: 1.5rem 0; padding: 1rem !important; border-left: 3px solid var(--green) !important; background: var(--surface) !important; }
+      .callout.warning { border-left-color: #8a6417 !important; }
+      .callout p:last-child { margin-bottom: 0; }
+      .paper-grid, .boundary-grid { display: grid; gap: 1px; margin: 1.5rem 0; border: 1px solid var(--line); background: var(--line); }
+      .paper-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .boundary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .paper-grid > div, .boundary-grid > div { padding: 1rem; background: var(--paper); }
+      .paper-grid strong { display: block; margin-bottom: .35rem; color: var(--green); font-size: .8rem; }
+      .paper-grid h3, .boundary-grid h3 { margin: 0 0 .45rem; font-size: 1rem; }
+      .paper-grid p, .boundary-grid p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.55; }
+      .loop { margin: 1.5rem 0; padding: 1rem; border: 1px solid var(--line); }
+      .loop-row { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: .6rem; align-items: stretch; }
+      .loop-node { display: grid; place-items: center; min-height: 5.8rem; padding: .75rem; text-align: center; background: var(--surface); border: 1px solid var(--line); }
+      .loop-node b { display: block; margin-bottom: .25rem; }
+      .loop-node small { color: var(--muted); line-height: 1.4; }
+      .loop-arrow { align-self: center; color: var(--green); font-weight: 700; }
+      .chapter-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 1.25rem 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
+      .chapter-list li { border-bottom: 1px solid var(--line); }
+      .chapter-list a { display: flex; gap: .7rem; min-height: 100%; padding: .8rem .45rem; text-decoration: none !important; }
+      .chapter-list time { flex: 0 0 3.4rem; color: var(--green); font-variant-numeric: tabular-nums; }
+      @media (max-width: 850px) {
+        .paper-grid, .boundary-grid, .chapter-list, .loop-row { grid-template-columns: 1fr; }
+        .loop-arrow { justify-self: center; transform: rotate(90deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Loki Reading</a>
+      <div class="top-actions"><a class="action-link" href="https://www.youtube.com/watch?v=Hco-tpjsEuc">Watch original</a></div>
+    </nav>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Agentic robotics · Physical autoresearch</p>
+          <h1>When Robot Learning Becomes a Software Engineering Loop</h1>
+          <p class="subtitle">ENPIRE, ASPIRE, and Graph-as-Policy suggest a pragmatic route to more capable robots: expose perception, planning, control, reset, and verification as inspectable tools; let coding agents improve programs through physical feedback; and preserve validated repairs as reusable skills.</p>
+          <div class="meta"><span>1:34:06 video</span><span>Local Whisper transcript</span><span>Streamed October 9, 2026</span><span>Summary run: October 11, 2026 · 22:35 ICT</span></div>
+        </div>
+        <figure class="hero-card">
+          <img src="2026-10-11-agentic-robotics-fleet.jpg" alt="Multiple robot arms running physical experiments in an agentic robotics lab" />
+          <figcaption>The laboratory becomes an autoresearch environment: agents propose code changes, robots generate physical evidence, automated evaluators score outcomes, and the next experiment is selected from the trace.</figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="eyebrow">Executive summary</p>
+            <h2>The important abstraction is not an LLM driving a motor. It is a closed physical improvement loop.</h2>
+            <p>In this livestream, hu-po argues that a new family of systems changes how robotics research can be automated. Instead of collecting demonstrations and training one opaque end-to-end policy for every behavior, a coding agent composes existing perception, planning, grasping, and control primitives into an explicit robot program. The robot runs the program, the system records multimodal traces, an automatic evaluator decides whether the attempt worked, and the agent edits the program for the next trial.</p>
+            <p>The stream uses three 2026 projects to make the case. <strong>ENPIRE</strong> turns a physical task into an agent-operable research environment with automatic reset, verification, policy improvement, rollout, and evolutionary search. <strong>ASPIRE</strong> converts successful repairs into a continually growing skill library. <strong>Graph-as-Policy</strong> represents robot behavior as a type-checked computation graph assembled from modular skills for bounded but variable workcells.</p>
+            <ul>
+              <li><strong>The environment is the real harness.</strong> An agent cannot improve a robot unless reset, observation, action, reward, logs, and safety are programmatic and reliable.</li>
+              <li><strong>Policy generation becomes code search.</strong> Agents inspect failures, modify modules or control flow, run another physical trial, and keep changes that improve measured success.</li>
+              <li><strong>Verification is part of the task definition.</strong> A self-improving loop needs a trustworthy machine-readable success signal, not a human watching every rollout.</li>
+              <li><strong>Skills are validated repairs with provenance.</strong> ASPIRE retrieves previously successful fixes as in-context guidance for new tasks and embodiments.</li>
+              <li><strong>Graphs recover structure without returning to brittle scripts.</strong> GaP composes reusable skills into explicit control flow, while self-learning focuses changes on failed nodes.</li>
+              <li><strong>Physical scaling has an economics problem.</strong> More agents and robots can shorten time to success, but robots sit idle while agents read logs and write code, and coordination increases token consumption.</li>
+            </ul>
+            <div class="callout warning"><p><strong>Evidence boundary.</strong> The host repeatedly says end-to-end robotics and demonstration learning are “cooked.” The three projects do not establish that. They show strong results for specific manipulation tasks and bounded workcells, and they still use neural perception modules, learned policies, simulation, predefined primitives, and carefully engineered resets and evaluators. The credible conclusion is complementarity, not replacement.</p></div>
+          </section>
+
+          <section id="thesis">
+            <p class="eyebrow">Two paradigms</p>
+            <h2>From one opaque policy to a modular program that can be inspected and changed</h2>
+            <p>The end-to-end ideal maps raw observations directly to low-level actions through a learned policy. Its appeal is compression: one model appears to absorb perception, state estimation, planning, and control. Its weakness is diagnosis. When a grasp fails, the cause may be hidden across latent representations, data coverage, optimization, sensing, and dynamics.</p>
+            <p>Agentic robotics shifts the unit of improvement from weights alone to a broader executable system. A policy may contain a detector, segmenter, grasp selector, motion planner, force controller, retry rule, and learned VLA module. A coding agent can inspect logs and change one part without retraining everything. The result is not automatically simple, but it is addressable: components have names, inputs, outputs, traces, and testable contracts.</p>
+            <figure class="visual"><img src="2026-10-11-agentic-robotics-principles.jpg" alt="Ken Goldberg article excerpt describing modular robot skills and policy generation as a coding problem" loading="lazy" /><figcaption><strong>From the stream around 14:24.</strong> The framing is explicit: compose modular robot skills into interpretable control systems and treat policy generation as a coding problem.</figcaption></figure>
+            <div class="paper-grid">
+              <div><strong>ENPIRE</strong><h3>Improve policies</h3><p>Make physical research repeatable through automatic reset, verification, rollouts, and code-agent evolution.</p></div>
+              <div><strong>ASPIRE</strong><h3>Compound repairs</h3><p>Diagnose traces, validate program fixes, and preserve transferable knowledge in a skill library.</p></div>
+              <div><strong>GaP</strong><h3>Compose workflows</h3><p>Generate type-checked behavior graphs from a bounded catalog of reusable robot skills.</p></div>
+            </div>
+          </section>
+
+          <section id="enpire">
+            <p class="eyebrow">ENPIRE</p>
+            <h2>A coding agent needs a physical CI system</h2>
+            <p>ENPIRE's key contribution is not merely putting a chatbot beside a robot. It defines four modules that make physical experimentation controllable:</p>
+            <ol>
+              <li><strong>Environment.</strong> Expose reset, observation, action, reward, safety, verification, and logging as callable interfaces.</li>
+              <li><strong>Policy Improvement.</strong> Generate or revise policy code from rewards, videos, traces, failure cases, and literature.</li>
+              <li><strong>Rollout.</strong> Run budgeted trials on one or more robots while preserving state, actions, video, and outcomes for audit.</li>
+              <li><strong>Evolution.</strong> Compare branches, transfer useful ideas between agents, keep successful changes, and prune failed hypotheses.</li>
+            </ol>
+            <div class="loop" aria-label="Physical autoresearch loop">
+              <div class="loop-row">
+                <div class="loop-node"><div><b>Reset</b><small>Return the scene to a known randomized initial state</small></div></div>
+                <div class="loop-arrow">-&gt;</div>
+                <div class="loop-node"><div><b>Execute</b><small>Run the current policy on real hardware</small></div></div>
+                <div class="loop-arrow">-&gt;</div>
+                <div class="loop-node"><div><b>Verify</b><small>Score success and capture multimodal evidence</small></div></div>
+                <div class="loop-arrow">-&gt;</div>
+                <div class="loop-node"><div><b>Refine</b><small>Edit code, tools, training recipe, or control logic</small></div></div>
+              </div>
+            </div>
+            <p>This resembles continuous integration, but the test runner is a robot and the test fixture is the physical world. A flaky reset poisons every later measurement. A weak evaluator rewards the wrong behavior. A missing safety boundary turns exploration into hardware risk. Environment engineering therefore dominates model choice.</p>
+          </section>
+
+          <section id="verification">
+            <p class="eyebrow">Automatic reset and evaluation</p>
+            <h2>Self-improvement begins only after success is machine-checkable</h2>
+            <p>For zip-tie insertion, ENPIRE combines detections and segmentation masks from multiple camera views to judge whether the strap passes through the head beyond a threshold. For reset, policies return objects to randomized initial states and verify readiness before the next attempt. Similar interfaces support Push-T, pin insertion, GPU insertion, and zip-tie manipulation.</p>
+            <p>The evaluator is not a reporting accessory. It defines the optimization target. If the success detector can be gamed, the agent will improve the metric rather than the task. If reset produces an easier distribution than deployment, the loop will overfit to the fixture. A production system therefore needs evaluator tests, anti-cheating constraints, representative starting states, and periodic human audits of raw evidence.</p>
+            <div class="boundary-grid">
+              <div><h3>What the agent may change</h3><p>Policy code, tool selection, parameters, data sampling, training recipes, retry logic, and experiment scheduling inside a bounded branch.</p></div>
+              <div><h3>What the harness must protect</h3><p>Safety interlocks, environment code, success criteria, held-out states, hardware limits, audit logs, and production promotion.</p></div>
+            </div>
+          </section>
+
+          <section id="results">
+            <p class="eyebrow">Reported results</p>
+            <h2>Read 99% as recovery capability, not one-shot reliability</h2>
+            <p>ENPIRE reports policies reaching <strong>99% pass@8</strong> across showcased dexterous manipulation tasks. The project page explicitly clarifies that pass@8 is not the best of eight independent samples. During a long-horizon rollout, the policy receives up to eight in-context retries for each subtask, conditioned on previous failures. The metric measures whether the loop can recover.</p>
+            <p>That is operationally meaningful, but different from a 99% pass@1 production guarantee. A system that frequently fails, inspects the failure, and succeeds after several retries may be useful in a flexible lab or low-throughput workcell while remaining unacceptable for a high-speed line. The right metric must include first-attempt success, recovery rate, cycle time, damage risk, reset cost, and the consequence of an unrecoverable failure.</p>
+            <figure class="visual"><img src="2026-10-11-agentic-robotics-fleet.jpg" alt="Robot fleet running parallel physical policy experiments" loading="lazy" /><figcaption><strong>From the stream around 37:58.</strong> Multiple robot arms let coding agents explore policy ideas in parallel. Faster search does not automatically mean better hardware utilization or lower total cost.</figcaption></figure>
+          </section>
+
+          <section id="fleet">
+            <p class="eyebrow">Fleet economics</p>
+            <h2>Robots wait while agents think</h2>
+            <p>ENPIRE introduces Mean Robot Utilization and Mean Token Utilization to make a hidden bottleneck visible. During log reading, code editing, debugging, compilation, model calls, and peer-branch summarization, expensive physical hardware may sit idle. Larger fleets can reach success sooner, but coordination consumes more tokens and the agents may not launch enough independent work to keep every robot busy.</p>
+            <figure class="visual"><img src="2026-10-11-agentic-robotics-utilization.jpg" alt="ENPIRE project page showing multiple physical reset cases for pin insertion" loading="lazy" /><figcaption><strong>From the stream around 58:47.</strong> Repeatable randomized resets make dense experimentation possible. The operational problem then becomes scheduling useful trials while agents analyze previous ones.</figcaption></figure>
+            <p>A mature scheduler should separate robot-bound work from compute-bound work. While one branch analyzes traces, another can run a previously queued policy. Compilation, simulation, and offline evaluation should happen ahead of a robot slot. Physical experiments need budgets, priorities, cancellation, and clear ownership just like scarce accelerator jobs.</p>
+          </section>
+
+          <section id="aspire">
+            <p class="eyebrow">ASPIRE</p>
+            <h2>A repaired failure should become reusable organizational memory</h2>
+            <p>ASPIRE turns one successful debugging episode into a skill that future tasks can retrieve. Its execution engine records observations, primitive inputs and outputs, and visual evidence. An agent localizes the failing primitive, edits the code-as-policy program, re-executes it, and stores the validated repair in a skill library. Evolutionary search explores multiple task sequences and program variants rather than following one linear patch history.</p>
+            <p>The paper reports that two-arm handover improves from 20% to 92% through iterative debugging, and that simulation-discovered skills reduce token cost and improve held-out success when transferred to real robots with different embodiments and APIs. The useful pattern is not a bag of prompts. Each skill is grounded in a failure class, an executable repair, and evidence that the repair worked.</p>
+            <figure class="visual"><img src="2026-10-11-agentic-robotics-aspire.jpg" alt="Robot policy project page showing automatic reset and physical-feedback improvement" loading="lazy" /><figcaption><strong>From the stream around 70:22.</strong> The closed loop exposes randomized resets, policy traces, and verification evidence so a coding agent can improve programs and preserve successful repairs.</figcaption></figure>
+            <p>ASPIRE's own limitations are important: it is not yet a fully autonomous real-world learner; it depends on a frontier model; it is bounded by predefined primitive APIs; the skill library can become stale, redundant, or misleading; and the search loop consumes many model calls and robot rollouts.</p>
+          </section>
+
+          <section id="gap">
+            <p class="eyebrow">Graph-as-Policy</p>
+            <h2>The sweet spot is bounded variation, not an unconstrained household</h2>
+            <p>GaP targets <strong>Variational Automation</strong>: tasks between fixed automation and general-purpose robotics. The workcell, robot, sensors, and operating envelope are known, but object geometry and pose vary. Examples include package sorting, café preparation, and commercial-kitchen assembly. This boundedness allows reusable object models, calibrated sensing, and modular skills while still demanding adaptation on every instance.</p>
+            <p>A multi-agent orchestrator converts a task prompt into a type-checked computation graph drawn from a 51-skill library. Specialist skill agents populate perception, reasoning, and action nodes. The same graph can run in simulation and reality. When execution fails, localized rehearsal modifies the relevant node or connection rather than regenerating the entire policy.</p>
+            <p>The project reports evaluation across eight benchmarks, more than 5,500 trials, and three embodiments. For popcorn scooping, self-learning reportedly raises simulation success from 33% to 94%, with 90% real-world success. It also shows that removing graph structure or static validation can collapse performance. These results support structured composition for bounded tasks; they do not prove a universal robot policy.</p>
+          </section>
+
+          <section id="architecture">
+            <p class="eyebrow">Platform blueprint</p>
+            <h2>Build the control plane around evidence, not around a clever prompt</h2>
+            <ol>
+              <li><strong>Define typed primitives.</strong> Every perception, planning, grasping, control, reset, and verification tool needs explicit inputs, outputs, preconditions, failure modes, timing, and safety limits.</li>
+              <li><strong>Make the physical environment reproducible.</strong> Automate randomized reset, readiness checks, sensor calibration, state snapshots, and emergency stop behavior.</li>
+              <li><strong>Separate policy search from evaluator authority.</strong> The agent may edit a policy branch; it may not silently rewrite the success criterion or safety boundary.</li>
+              <li><strong>Log the full evidence trail.</strong> Preserve code revision, model and prompt version, tool calls, observations, actions, videos, rewards, reset status, and operator intervention.</li>
+              <li><strong>Use held-out physical states.</strong> Debug on one seed set and report on disjoint evaluation seeds to reduce overfitting to the laboratory fixture.</li>
+              <li><strong>Promote repairs into versioned skills.</strong> Include the triggering failure pattern, compatible embodiments, assumptions, tests, provenance, and invalidation conditions.</li>
+              <li><strong>Schedule robot and compute queues independently.</strong> Keep hardware occupied with safe queued experiments while agents analyze previous traces.</li>
+              <li><strong>Measure operations, not just success.</strong> Track pass@1, pass@k, recovery, cycle time, reset reliability, robot utilization, token cost, damage, and human intervention.</li>
+              <li><strong>Require governed promotion.</strong> A discovered policy should pass simulation, held-out physical evaluation, safety review, and staged deployment before production use.</li>
+            </ol>
+          </section>
+
+          <section id="limits">
+            <p class="eyebrow">What the stream overstates</p>
+            <h2>Code is more inspectable than weights, but complexity can still outrun understanding</h2>
+            <p>The host treats generated code as inherently interpretable. A named function and a graph node are easier to inspect than a latent vector, but a large agent-generated control program can still be too complex for meaningful human review. Logs can reveal what executed without proving why the system chose the correct objective, whether its evaluator is valid, or how it will behave outside tested states.</p>
+            <p>The stream also predicts that improved simulation will erase the sim-to-real gap and that end-to-end learned policies will become unnecessary. None of the cited projects demonstrates either claim. ENPIRE and ASPIRE mix classical control, learned perception, policies, simulation, and code search. GaP deliberately narrows its domain to bounded workcells. The stronger and more useful claim is that software structure, agent harnesses, and physical feedback can dramatically accelerate adaptation around these components.</p>
+            <div class="callout"><p><strong>My take.</strong> The emerging architecture is hybrid. Learned modules provide perception and flexible priors; explicit programs provide composition and fault localization; agents provide search and repair; verifiers provide the objective; humans and safety systems define the authority boundary. The competitive advantage is likely to sit in the environment and feedback loop, not in choosing one paradigm as the winner.</p></div>
+          </section>
+
+          <section id="map">
+            <p class="eyebrow">Stream map</p>
+            <h2>Where the main ideas appear</h2>
+            <ul class="chapter-list">
+              <li><a href="https://www.youtube.com/watch?v=Hco-tpjsEuc&t=126s"><time>02:06</time><span>Three projects and the agentic-robotics thesis</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Hco-tpjsEuc&t=280s"><time>04:40</time><span>End-to-end policy dream versus modular programs</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Hco-tpjsEuc&t=663s"><time>11:03</time><span>Debuggability and inspectable robot actions</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Hco-tpjsEuc&t=837s"><time>13:57</time><span>Reset, execute, verify, refine</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Hco-tpjsEuc&t=2130s"><time>35:30</time><span>Policy generation as coding and meta-learning</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Hco-tpjsEuc&t=2290s"><time>38:10</time><span>Agent branches and the ENPIRE improvement curve</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Hco-tpjsEuc&t=2420s"><time>40:20</time><span>Automatic evaluation and reset</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Hco-tpjsEuc&t=3522s"><time>58:42</time><span>Robot utilization and token-scaling limits</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Hco-tpjsEuc&t=4214s"><time>70:14</time><span>ASPIRE, skill discovery, and evolutionary search</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Hco-tpjsEuc&t=4920s"><time>82:00</time><span>Latency, brittleness, and explicit graphs</span></a></li>
+              <li><a href="https://www.youtube.com/watch?v=Hco-tpjsEuc&t=5465s"><time>91:05</time><span>Host's closing argument</span></a></li>
+            </ul>
+          </section>
+
+          <section id="sources">
+            <p class="eyebrow">Sources</p>
+            <h2>Primary recording and research</h2>
+            <ol>
+              <li><a href="https://www.youtube.com/watch?v=Hco-tpjsEuc">hu-po - Agentic Robotics</a>. Original livestream; locally transcribed with Whisper because public YouTube captions were unavailable.</li>
+              <li><a href="https://github.com/hu-po/docs/tree/main/2026.10.09.agentic_robotics">hu-po stream notes</a>. Original link collection and paper provenance.</li>
+              <li><a href="https://research.nvidia.com/labs/gear/enpire/">ENPIRE: Agentic Robot Policy Self-Improvement in the Real World</a>. System modules, tasks, pass@8 clarification, physical fleet scaling, and limitations.</li>
+              <li><a href="https://arxiv.org/abs/2606.19980">Xiao et al. - ENPIRE paper</a>. Technical report for the physical autoresearch framework.</li>
+              <li><a href="https://research.nvidia.com/labs/gear/aspire/">ASPIRE: Agentic /Skills Discovery for Robotics</a>. Closed-loop execution, skill library, evolutionary search, benchmarks, transfer, and limitations.</li>
+              <li><a href="https://graph-robots.github.io/gap/">Graph-as-Policy</a>. Variational Automation, generated computation graphs, open skill library, self-learning, and evaluation results.</li>
+            </ol>
+            <p class="source-note">Source review completed October 11, 2026. The local Whisper transcript contains recognition errors near the end of the livestream, so names, system descriptions, metrics, and limitations were normalized against the official project pages and paper. Four article images are direct frames from the supplied video.</p>
+          </section>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <p>On this page</p>
+          <nav><a href="#summary">Executive summary</a><a href="#thesis">Two paradigms</a><a href="#enpire">ENPIRE</a><a href="#verification">Reset and verification</a><a href="#results">Reported results</a><a href="#fleet">Fleet economics</a><a href="#aspire">ASPIRE</a><a href="#gap">Graph-as-Policy</a><a href="#architecture">Platform blueprint</a><a href="#limits">Evidence boundary</a><a href="#map">Stream map</a><a href="#sources">Sources</a></nav>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>
