@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>The Agent Does Not Need Another Essay. It Needs a Decision.</title>
+    <meta name="description" content="A grounded guide to Microsoft-Decision-1: typed decisions, calibrated probabilities, agent routing and control, benchmark claims, practical limitations, and a production evaluation blueprint." />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .visual { margin: 1.7rem 0 2rem; }
+      .visual img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 4px; background: #fff; }
+      .visual figcaption { margin-top: .65rem; color: var(--muted); font-size: .88rem; line-height: 1.55; text-align: center; }
+      .callout { margin: 1.5rem 0; padding: 1rem !important; border-left: 3px solid #111 !important; background: var(--surface) !important; }
+      .callout.warning { border-left-color: #8a6417 !important; }
+      .callout p:last-child { margin-bottom: 0; }
+      .metric-grid, .primitive-grid, .control-grid { display: grid; gap: 1px; margin: 1.5rem 0; border: 1px solid var(--line); background: var(--line); }
+      .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .primitive-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .control-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metric-grid > div, .primitive-grid > div, .control-grid > div { padding: 1rem; background: var(--paper); }
+      .metric-grid span { display: block; color: var(--muted); font-size: .75rem; text-transform: uppercase; }
+      .metric-grid strong { display: block; margin: .35rem 0; font-size: 1.25rem; font-weight: 600; }
+      .metric-grid small, .primitive-grid p, .control-grid p { display: block; margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.55; }
+      .primitive-grid h3, .control-grid h3 { margin: 0 0 .45rem; font-size: 1rem; }
+      .contract { margin: 1.5rem 0; border: 1px solid var(--line); background: #111; color: #f7f7f4; overflow: hidden; }
+      .contract pre { margin: 0; padding: 1rem; overflow-x: auto; font: .82rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .architecture { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: .55rem; align-items: stretch; margin: 1.5rem 0; padding: 1rem; border: 1px solid var(--line); }
+      .architecture > div:not(.arrow) { display: grid; place-items: center; min-height: 6.5rem; padding: .75rem; text-align: center; background: var(--surface); border: 1px solid var(--line); }
+      .architecture strong, .architecture small { display: block; }
+      .architecture small { margin-top: .25rem; color: var(--muted); line-height: 1.4; }
+      .architecture .arrow { align-self: center; font-weight: 700; }
+      .comparison { width: 100%; margin: 1.5rem 0; border-collapse: collapse; font-size: .9rem; }
+      .comparison th, .comparison td { padding: .8rem .65rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+      .comparison th { font-weight: 600; background: var(--surface); }
+      @media (max-width: 850px) {
+        .metric-grid, .primitive-grid, .control-grid, .architecture { grid-template-columns: 1fr; }
+        .architecture .arrow { justify-self: center; transform: rotate(90deg); }
+        .comparison { min-width: 0 !important; table-layout: fixed; font-size: .76rem; }
+        .comparison th, .comparison td { padding: .65rem .35rem !important; overflow-wrap: anywhere; font-size: .76rem !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Loki Reading</a>
+      <div class="top-actions"><a class="action-link" href="https://commandline.microsoft.com/microsoft-decision-1-model-foundry/">Read original</a></div>
+    </nav>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Decision models · Agent control</p>
+          <h1>The Agent Does Not Need Another Essay. It Needs a Decision.</h1>
+          <p class="subtitle">Microsoft-Decision-1 turns text or JSON state into bounded choices, ordered scores, and yes/no probabilities. The important idea is larger than one model: use language generation for open-ended work, but put a smaller decision layer between reasoning and action.</p>
+          <div class="meta"><span>Microsoft Command Line article</span><span>Published October 9, 2026</span><span>By Achint Srivastava</span><span>Summary run: October 13, 2026 · 09:02 ICT</span></div>
+        </div>
+        <figure class="hero-card">
+          <img src="2026-10-13-microsoft-decision-1-hero.png" alt="Microsoft illustration for Microsoft-Decision-1 showing a fast route from information to a decision" />
+          <figcaption>Microsoft positions Decision-1 as a single-pass scoring model for classification, routing, ranking, grading, and agent control. Image: Microsoft Command Line.</figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="eyebrow">Executive summary</p>
+            <h2>The useful innovation is a narrower contract between AI and software</h2>
+            <p>A general-purpose LLM is excellent when the output should be language. Many production systems do not need language at the point where work branches. A ticket router needs one queue. A policy gate needs allow, block, or escalate. A model router needs one candidate from a known set. Asking a generative model to write prose and then parsing that prose back into a software value adds decoding time, cost, and another failure surface.</p>
+            <p>Microsoft-Decision-1 is built for that narrower boundary. The application sends text or JSON state plus one or more typed questions. The model returns a bounded answer and a probability distribution. Microsoft says the model is post-trained from Qwen3.5-9B for single-pass decision scoring and is available through Microsoft Foundry and OpenRouter.</p>
+            <ul>
+              <li><strong>The output is software-native.</strong> The API returns a boolean probability, a choice from named options, or an ordered score rather than free-form prose.</li>
+              <li><strong>Confidence becomes part of the workflow contract.</strong> The application can act, defer, retry, or request human review according to thresholds defined from local error costs.</li>
+              <li><strong>The model belongs inside the harness.</strong> It can route tasks, inspect proposed tool calls, grade an agent step, or decide whether the workflow should continue.</li>
+              <li><strong>Microsoft's benchmark results are promising but vendor-reported.</strong> The announcement reports top accuracy across 36 benchmarks and large latency gains, but it does not publish enough per-task detail in the article to replace local evaluation.</li>
+              <li><strong>Calibration is workload-specific.</strong> A probability-looking number is not automatically trustworthy on a new domain, distribution, language, or consequence level.</li>
+              <li><strong>A fast classifier is not an authorization system.</strong> High-impact actions still need deterministic policy, scoped tools, payload verification, audit logs, and meaningful human review.</li>
+            </ul>
+            <div class="callout warning"><p><strong>Evidence boundary.</strong> Accuracy, speed, cost, internal-use, robustness, and safety figures below are reported by Microsoft. The documentation exposes the API and operational cautions, but the announcement does not provide the complete benchmark datasets, prompts, hardware, latency distributions, or raw predictions needed for independent reproduction.</p></div>
+          </section>
+
+          <section id="problem">
+            <p class="eyebrow">The interface mismatch</p>
+            <h2>We keep paying a language model to produce text that software immediately throws away</h2>
+            <p>Imagine a support agent that has read a customer message and must select the next team. A conventional LLM call might generate: “This appears to be a billing issue because the customer reports a duplicate charge.” The application then validates JSON, extracts <code>billing</code>, and discards the explanation. Generation did useful semantic work, but the final interface encouraged unnecessary tokens.</p>
+            <p>A decision model answers a different question: given this state and these valid options, what is the probability of each option? That output can flow directly into deterministic code. A low top probability can trigger abstention. A high probability can still pass through policy before any consequential tool executes.</p>
+            <table class="comparison">
+              <thead><tr><th>Need</th><th>Generative LLM</th><th>Decision model</th></tr></thead>
+              <tbody>
+                <tr><td>Customer-facing explanation</td><td>Good fit</td><td>Wrong interface</td></tr>
+                <tr><td>Select one known queue</td><td>Works, with parsing</td><td>Native choice output</td></tr>
+                <tr><td>Rank incidents</td><td>Possible, often verbose</td><td>Ordered score and probabilities</td></tr>
+                <tr><td>Unknown or open-ended task</td><td>Can reason and compose</td><td>Requires predefined questions and options</td></tr>
+                <tr><td>Explain why</td><td>Can generate a rationale</td><td>No written rationale</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="contract">
+            <p class="eyebrow">The API contract</p>
+            <h2>State in, bounded questions in, typed probabilities out</h2>
+            <p>The Foundry endpoint accepts a <code>state</code> value as text or JSON and a <code>questions</code> object. Multiple questions can share the same state, so one ticket could be routed, severity-scored, and checked for repeat contact in a single request. This avoids repeating the full context while keeping related judgments aligned.</p>
+            <div class="primitive-grid">
+              <div><h3><code>noul</code></h3><p>A yes/no probability from 0 to 1. Useful for gates such as “does this action touch production data?”</p></div>
+              <div><h3><code>choice</code></h3><p>One selection plus a probability for every named option. Useful for intent, model, tool, team, or workflow routing.</p></div>
+              <div><h3><code>score</code></h3><p>A probability-weighted position over an ordered scale. Useful for severity, quality, relevance, and queue priority.</p></div>
+            </div>
+            <div class="contract"><pre>{
+  "state": {
+    "message": "Checkout fails for every EU customer",
+    "customer_contact_count": 3
+  },
+  "questions": {
+    "team": {
+      "type": "choice",
+      "instructions": "Which team should handle this incident?",
+      "criteria": {
+        "billing": "Charges, invoices, and refunds",
+        "engineering": "Bugs, errors, and outages",
+        "support": "Account and how-to questions",
+        "cannot_tell": "Evidence is insufficient"
+      }
+    },
+    "severity": {
+      "type": "score",
+      "criteria": ["Cosmetic", "Minor", "Major", "Critical"]
+    }
+  }
+}</pre></div>
+            <p>The explicit <code>cannot_tell</code> option matters. If the model must always choose among business actions, uncertainty is converted into false certainty. Abstention is part of the domain model, not a fallback added after launch.</p>
+          </section>
+
+          <section id="numbers">
+            <p class="eyebrow">What Microsoft reports</p>
+            <h2>The headline numbers are strong enough to test, not strong enough to trust blindly</h2>
+            <div class="metric-grid">
+              <div><span>Generalization set</span><strong>36 benchmarks</strong><small>Nearly 150,000 questions kept blind from training, according to Microsoft.</small></div>
+              <div><span>Latency claim</span><strong>~35× faster</strong><small>P50 versus GPT-6 Sol in Microsoft's measurement.</small></div>
+              <div><span>Runner-up</span><strong>2.5× faster</strong><small>Than H2O-Lightning-4B v1.1 in the same comparison.</small></div>
+              <div><span>List price</span><strong>$0.042 / 1M input</strong><small>Output tokens are listed as free because the response is bounded scoring.</small></div>
+            </div>
+            <p>The evaluation spans routing, ranking, long context, multilingual, out-of-distribution, reasoning, and safety tasks. Microsoft also perturbed requests in eight ways to test whether harmless changes altered the answer. The post reports an average 1.3% decision-flip rate and zero flips when options were paraphrased, reversed, or shuffled.</p>
+            <p>Those are useful tests because option order and wording are common production failure modes. Yet an average can hide the tasks that matter most. A 1.3% flip rate may be acceptable for content tagging and unacceptable for an authorization gate. The relevant metric is not the global average. It is the error distribution under your own paraphrases, languages, state formats, class imbalance, and consequences.</p>
+          </section>
+
+          <section id="internal">
+            <p class="eyebrow">Internal pilots</p>
+            <h2>The clearest wins appear where decisions repeat at high volume</h2>
+            <p>Microsoft describes four internal use cases. Xbox Research used the model to label more than 10,000 open-ended feedback items into researcher-defined themes and reported quality competitive with GPT-6 Sol at more than 14 times the speed and 200 times lower cost. The Copilot team reports competitive quality with GPT5.6 Luna and 100 times the speed for response-quality measurement.</p>
+            <p>On-call engineers tested it for retrieving and routing incident knowledge. Microsoft Discovery used rubric grades inside an adaptive replanning loop and reports that the decision score was 46 times more consistent than an LLM-based score, with faster replanning overall. These examples share a structure: the state may be rich, but the next software action is bounded and repeated many times.</p>
+            <div class="control-grid">
+              <div><h3>High-volume classification</h3><p>Customer feedback, intent, document type, content policy, and data labels where each item maps to a known taxonomy.</p></div>
+              <div><h3>Agent routing</h3><p>Select a model, tool, skill, sub-agent, or human lane from a controlled registry.</p></div>
+              <div><h3>Quality gates</h3><p>Grade an answer or proposed action against a rubric before the workflow continues.</p></div>
+              <div><h3>Prioritization</h3><p>Score incidents, search results, hypotheses, or review queues on a defined ordinal scale.</p></div>
+            </div>
+          </section>
+
+          <section id="architecture">
+            <p class="eyebrow">Where it belongs</p>
+            <h2>A decision model should advise the state machine, not become the state machine</h2>
+            <div class="architecture" aria-label="Production architecture for Microsoft-Decision-1">
+              <div><div><strong>Observed state</strong><small>User request, agent trace, tool proposal, policy facts</small></div></div>
+              <div class="arrow">-&gt;</div>
+              <div><div><strong>Decision layer</strong><small>Typed questions, options, probabilities, model version</small></div></div>
+              <div class="arrow">-&gt;</div>
+              <div><div><strong>Deterministic policy</strong><small>Thresholds, abstention, allowlist, budget, consequence rules</small></div></div>
+              <div class="arrow">-&gt;</div>
+              <div><div><strong>Controlled executor</strong><small>Scoped tool call, verified payload, audit event, human approval</small></div></div>
+            </div>
+            <p>The model may say that an action is probably safe. It should not grant itself permission. The harness owns valid transitions. A tool gateway checks the exact payload, credentials, destination, and user authorization. For customer-facing or irreversible egress, approval must bind to the payload that actually leaves the system.</p>
+            <p>This separation also makes evaluation legible. You can measure decision quality independently from policy quality and tool-execution correctness. When something fails, the trace can show whether the model chose the wrong option, the threshold was wrong, or the executor violated its contract.</p>
+          </section>
+
+          <section id="calibration">
+            <p class="eyebrow">Probability is a product feature</p>
+            <h2>A 0.9 score is useful only when it means something locally</h2>
+            <p>Microsoft emphasizes calibration: among representative cases assigned 90% confidence, roughly nine out of ten should be correct. This enables a three-lane workflow. High-confidence, low-consequence cases may auto-execute. Ambiguous cases go to review. High-risk or out-of-distribution cases fail closed.</p>
+            <p>Calibration can drift when the taxonomy changes, the state format changes, traffic shifts, or the question is reworded. A model can preserve ranking quality while its probabilities become unreliable. Teams therefore need reliability diagrams, expected calibration error, per-class precision and recall, abstention coverage, and cost-weighted decision metrics on a time-based holdout.</p>
+            <div class="callout"><p><strong>Threshold rule.</strong> Never choose <code>0.8</code> because it feels conservative. Derive thresholds from labeled production-like data and the asymmetric cost of false positives, false negatives, deferrals, and human review.</p></div>
+          </section>
+
+          <section id="limits">
+            <p class="eyebrow">Known limits</p>
+            <h2>The narrow interface removes some failure modes and exposes others</h2>
+            <ul>
+              <li><strong>No explanation is returned.</strong> That reduces fluent rationalization but makes debugging, appeals, and regulated decision support harder.</li>
+              <li><strong>Question design still matters.</strong> Ambiguous instructions, overlapping options, forced choices, or loaded wording produce bad decisions in a perfectly valid response shape.</li>
+              <li><strong>Calibration is not universal.</strong> Microsoft says it is strongest on familiar task types. Domain shift can make confidence misleading.</li>
+              <li><strong>Bias remains possible.</strong> The Foundry documentation warns against using model scores as the sole basis for consequential decisions about individuals.</li>
+              <li><strong>Safety classification is imperfect.</strong> Subtle harmful requests may pass and harmless requests may be blocked. A probabilistic screen cannot replace deterministic controls.</li>
+              <li><strong>The service can change behind a stable API.</strong> OpenRouter states that weights are updated continually. Pin, record, and monitor the served version wherever reproducibility matters.</li>
+              <li><strong>Latency is deployment-dependent.</strong> Region, network, concurrency, context length, and provider routing affect end-to-end timing. Benchmark the whole request path, not a vendor P50.</li>
+            </ul>
+          </section>
+
+          <section id="eval">
+            <p class="eyebrow">Adoption playbook</p>
+            <h2>Evaluate the decision contract before replacing the model</h2>
+            <ol>
+              <li><strong>Choose one bounded workflow.</strong> Start with a repeated routing, grading, or validation task whose options already exist in software.</li>
+              <li><strong>Freeze the contract.</strong> Define state fields, question wording, option criteria, abstention behavior, and the action that follows each result.</li>
+              <li><strong>Build a representative labeled set.</strong> Include paraphrases, reordered options, multilingual examples, rare classes, malformed state, prompt injection, and recent production edge cases.</li>
+              <li><strong>Keep the current baseline.</strong> Compare against existing rules, a cheap classifier, and the generative LLM already in use.</li>
+              <li><strong>Measure the full system.</strong> Track accuracy, macro F1, calibration, abstention coverage, P50/P95/P99 latency, cost per decision, and human-review volume.</li>
+              <li><strong>Test perturbation stability.</strong> Shuffle options, rename keys, vary formatting, and paraphrase equivalent instructions. Record whether the operational action changes.</li>
+              <li><strong>Shadow before acting.</strong> Run Decision-1 alongside production without controlling tools. Compare disagreements and investigate the expensive ones.</li>
+              <li><strong>Calibrate thresholds by consequence.</strong> Auto-route a low-risk ticket at a lower bar than a production write, refund, security block, or employment decision.</li>
+              <li><strong>Log the evidence.</strong> Persist model version, state hash, question contract, returned distribution, threshold, final action, reviewer override, and observed outcome.</li>
+              <li><strong>Re-evaluate every contract or model change.</strong> A stable endpoint does not guarantee stable behavior.</li>
+            </ol>
+          </section>
+
+          <section id="take">
+            <p class="eyebrow">My take</p>
+            <h2>Decision models are a missing middle layer, not a replacement for reasoning</h2>
+            <p>The interesting part of Microsoft-Decision-1 is not that a smaller model can classify text cheaply. Software has had classifiers for decades. The advance is packaging semantic classification, ordinal judgment, and calibrated confidence behind one language-aware contract that can operate over rich state without generating an essay.</p>
+            <p>That makes it a natural component in an agent platform. A capable LLM can understand an open-ended objective, build a plan, and create candidate actions. A decision model can repeatedly handle the smaller questions inside that process: which specialist should receive this task, whether evidence satisfies a rubric, whether the result is uncertain, and whether the next step should continue, retry, or escalate.</p>
+            <p>The architecture becomes stronger when each model does less. Generative models reason and communicate. Decision models compress state into bounded uncertainty. Deterministic code owns permissions and side effects. Evals decide whether any of it deserves production traffic.</p>
+          </section>
+
+          <section id="sources">
+            <p class="eyebrow">Sources</p>
+            <h2>Primary material</h2>
+            <ol>
+              <li><a href="https://commandline.microsoft.com/microsoft-decision-1-model-foundry/">Microsoft Command Line - Introducing Microsoft-Decision-1, our model for fast decision-making</a>. Product announcement, benchmark claims, internal pilots, pricing, and intended use cases.</li>
+              <li><a href="https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-microsoft-decision">Microsoft Learn - Deploy and use Microsoft-Decision-1 in Microsoft Foundry</a>. API primitives, deployment types, example payloads, known limitations, and best practices.</li>
+              <li><a href="https://openrouter.ai/microsoft/microsoft-decision-1">OpenRouter - Microsoft-Decision-1</a>. Public model listing, context window, current provider pricing, availability, and service description.</li>
+              <li><a href="https://benchmarkheaven.com/">Benchmark Heaven</a>. Public decision-model evaluation site referenced by Microsoft's announcement.</li>
+              <li><a href="2026-10-03-jev-system-one-decision-models-without-generation-en.html">Loki Reading - Jev and System One Models: Decisions Without Text Generation</a>. Earlier guide to the same typed-decision pattern and its evidence boundaries.</li>
+            </ol>
+            <p class="source-note">Source review completed October 13, 2026. Product-performance figures are attributed to Microsoft unless noted otherwise. The hero illustration is the publisher-provided 1600×800 image from the original article.</p>
+          </section>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <p>On this page</p>
+          <nav><a href="#summary">Executive summary</a><a href="#problem">Interface mismatch</a><a href="#contract">API contract</a><a href="#numbers">Reported numbers</a><a href="#internal">Internal pilots</a><a href="#architecture">Architecture</a><a href="#calibration">Calibration</a><a href="#limits">Known limits</a><a href="#eval">Adoption playbook</a><a href="#take">My take</a><a href="#sources">Sources</a></nav>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>
