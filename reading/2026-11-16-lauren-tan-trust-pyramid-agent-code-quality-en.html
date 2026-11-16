@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>Lauren Tan's Trust Pyramid for Agent-Generated Code</title>
+    <meta name="description" content="A detailed guide to Lauren Tan's trust pyramid for coding agents: codebase quality, static constraints, runtime and formal verification, Dune, no-comments, verification economics, and the foundations behind high agent throughput." />
+    <link rel="stylesheet" href="article-theme.css?v=20261003-10" />
+    <script src="article-theme.js?v=20261003-5" defer></script>
+    <style>
+      .visual { margin: 1.8rem 0 2.1rem; }
+      .visual img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 4px; }
+      .visual figcaption { margin-top: .65rem; color: var(--muted); font-size: .88rem; line-height: 1.55; text-align: center; }
+      .callout { margin: 1.5rem 0; padding: 1rem !important; border-left: 3px solid var(--green) !important; background: var(--surface) !important; }
+      .callout.warning { border-left-color: #8a6417 !important; }
+      .callout p:last-child { margin-bottom: 0; }
+      .layer-grid, .loop-grid, .metric-grid { display: grid; gap: 1px; margin: 1.5rem 0; background: var(--line); border: 1px solid var(--line); }
+      .layer-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+      .loop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metric-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .layer-grid > div, .loop-grid > div, .metric-grid > div { padding: 1rem; background: var(--paper); }
+      .layer-grid h3, .loop-grid h3, .metric-grid h3 { margin: 0 0 .45rem; font-size: 1rem; }
+      .layer-grid p, .loop-grid p, .metric-grid p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.55; }
+      .layer-grid strong { display: block; margin-bottom: .35rem; color: var(--green); font-size: .78rem; }
+      .metric-grid .number { display: block; margin-bottom: .45rem; font: 600 1.7rem/1 var(--sans); }
+      .chapter-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 1.25rem 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
+      .chapter-list li { border-bottom: 1px solid var(--line); }
+      .chapter-list div { display: flex; gap: .7rem; min-height: 100%; padding: .8rem .45rem; }
+      .chapter-list time { flex: 0 0 3.4rem; color: var(--green); font-variant-numeric: tabular-nums; }
+      @media (max-width: 850px) {
+        .layer-grid, .loop-grid, .metric-grid, .chapter-list { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar">
+      <a class="brand" href="./">Reading room</a>
+      <div class="top-actions"><a class="action-link" href="https://www.youtube.com/watch?v=O_zcc6Xl12g">Watch video</a></div>
+    </nav>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Agentic engineering · Software quality</p>
+          <h1>All Code Is Slop Until the Environment Makes It Trustworthy</h1>
+          <p class="subtitle">Lauren Tan's argument is not that agents should write more code. It is that teams must move trust out of prompts and reviews, then encode it in architecture, static constraints, runtime evidence, and formal checks.</p>
+          <div class="meta"><span>17:31 video</span><span>YouTube automatic English transcript</span><span>Published November 14, 2026</span><span>Summary run: November 16, 2026 · 09:54 ICT</span></div>
+        </div>
+        <figure class="hero-card">
+          <img src="images/2026-11-16-lauren-tan-trust-pyramid-agent-code-quality/trust-pyramid.jpg?v=20261116" alt="Lauren Tan's inverted trust pyramid placing the codebase and static analysis above verification, prose, and human review" />
+          <figcaption>The most scalable trust comes from the parts of the system every agent must pass through, not from instructions an agent may interpret or ignore.</figcaption>
+        </figure>
+      </header>
+
+      <div class="layout">
+        <article class="content">
+          <section id="summary">
+            <p class="eyebrow">Executive summary</p>
+            <h2>The real product is the environment that makes good code the default</h2>
+            <p>Lauren Tan, known online as Poteto, opens with a deliberately provocative claim: all code is slop, including ours. The point is not that software quality no longer matters. It is that neither a human author nor an AI author deserves automatic trust. Code earns trust through the environment around it: coherent architecture, narrow APIs, static analysis, tests, runtime verification, and evidence that the change works in the real product.</p>
+            <p>That framing changes the job of an engineer using coding agents. The goal is not to inspect an ever-growing pile of generated diffs. The goal is to make whole categories of bad change difficult or impossible, then give agents a closed loop for proving what remains. Tan's team can pursue unusually high throughput because it invests heavily in those foundations.</p>
+            <ul>
+              <li><strong>The codebase is the largest prompt.</strong> Agents imitate nearby patterns, including shortcuts, architectural leaks, and accumulated technical debt.</li>
+              <li><strong>Static constraints beat reminders.</strong> Types, dependency rules, linters, compilers, tests, and CI are more dependable than prose in an <code>AGENTS.md</code> file.</li>
+              <li><strong>Verification is where most of the work moves.</strong> Agents must operate the product, gather evidence, and show that the user-visible outcome is correct.</li>
+              <li><strong>Repeated correction should become infrastructure.</strong> If the same mistake needs another comment or review note, the team should look for a structural rule that removes the failure class.</li>
+              <li><strong>Automation is the final layer.</strong> An outer-loop agent can safely open or merge work only when the inner engineering loop already produces trustworthy evidence.</li>
+            </ul>
+            <div class="callout warning"><p><strong>Evidence boundary.</strong> The talk reports 11,000 team PRs in October, 227 contributors, roughly a 0.5% revert rate, daily stable releases, and performance improvements. These are Tan's public claims and slide figures, not independently audited measurements. PR volume is evidence of throughput, not proof of product value or universal safety.</p></div>
+          </section>
+
+          <section id="pyramid">
+            <p class="eyebrow">The trust pyramid</p>
+            <h2>Put the most investment in the layers agents cannot bypass</h2>
+            <p>Tan's pyramid is inverted. The widest and most important layer is the codebase itself: API design, architecture, and refactoring. Beneath it sits static analysis: linters, types, compilers, tests, and CI. Runtime and formal verification come next. Prose such as rules, skills, and <code>AGENTS.md</code> appears near the narrow bottom. Human review is last.</p>
+            <p>The ordering is about cost and leverage. A reviewer can catch one bad change. A rule in a prompt may influence one session. A linter blocks every future instance it recognizes. A well-designed type or module boundary can make the invalid state unrepresentable before the agent starts reasoning about it.</p>
+            <div class="layer-grid">
+              <div><strong>1 · Foundation</strong><h3>Codebase</h3><p>APIs, data models, architecture, and paved paths shape every change.</p></div>
+              <div><strong>2</strong><h3>Static analysis</h3><p>Types, lint, tests, compilers, and CI reject known failure classes.</p></div>
+              <div><strong>3</strong><h3>Verification</h3><p>Runtime evidence and formal methods test actual behavior and invariants.</p></div>
+              <div><strong>4</strong><h3>Prose</h3><p>Rules and skills guide judgment but still require interpretation.</p></div>
+              <div><strong>5 · Backstop</strong><h3>Human review</h3><p>People handle novelty and accountability, not every mechanical check.</p></div>
+            </div>
+            <figure class="visual"><img src="images/2026-11-16-lauren-tan-trust-pyramid-agent-code-quality/trust-pyramid.jpg?v=20261116" alt="The Poteto pyramid ranking codebase, static analysis, verification, prose, and human review" loading="lazy" /><figcaption><strong>From the video at 02:05.</strong> Cost and attention should flow toward durable constraints. Human review remains necessary, but it should not be the primary mechanism holding a high-throughput system together.</figcaption></figure>
+          </section>
+
+          <section id="codebase">
+            <p class="eyebrow">Codebase as context</p>
+            <h2>Agents reproduce the system they encounter</h2>
+            <p>A coding agent reads far more repository code than explicit instructions. That makes the repository the strongest piece of context it receives. When a codebase contains one obvious route for adding a feature, the agent is likely to follow it. When it contains four generations of architecture, temporary workarounds, and unexplained exceptions, the agent learns that inconsistency is normal.</p>
+            <p>Tan describes architecture as organic because it grows through repetition. One shortcut is local. Ten copied shortcuts are a pattern. Soon the pattern is treated as precedent, and the next contributor has even less reason to question it. AI increases the speed of that feedback loop in both directions: good structure compounds quickly, but so does debt.</p>
+            <figure class="visual"><img src="images/2026-11-16-lauren-tan-trust-pyramid-agent-code-quality/organic-architecture.jpg?v=20261116" alt="Organic architecture slide showing a layered garden-like building" loading="lazy" /><figcaption><strong>From the video at 04:05.</strong> Architecture is not a static diagram. It is a living set of examples that every new change can strengthen or erode.</figcaption></figure>
+            <p>This is why refactoring becomes part of agent infrastructure rather than optional cleanup. Removing two competing patterns reduces ambiguity for every future task. A cleaner API does more than help a human reader; it narrows the search space for an agent and lowers the probability that it will invent a third route.</p>
+          </section>
+
+          <section id="dune">
+            <p class="eyebrow">Enforceable architecture</p>
+            <h2>Dune turns architectural preferences into repository physics</h2>
+            <p>Tan presents Dune as an application framework built for agent-heavy development. Its visible formula is simple: an app framework, one folder per feature, strict import bans, and no comments in product code. The value does not come from those four choices being universally correct. It comes from turning local decisions into constraints that every contributor experiences consistently.</p>
+            <figure class="visual"><img src="images/2026-11-16-lauren-tan-trust-pyramid-agent-code-quality/dune-architecture.jpg?v=20261116" alt="Dune framework slide showing an app framework, one folder per feature, strict import bans, and no comments" loading="lazy" /><figcaption><strong>From the video at 05:05.</strong> The framework gives agents a small number of legal paths instead of asking every session to reconstruct architectural intent from prose.</figcaption></figure>
+            <p>The talk gives Electron as an example. Renderer code, main-process code, and feature code have defined places and permitted dependency directions. An import ban can stop expensive or privileged main-process behavior from leaking into the UI. The agent receives an immediate, deterministic error at the exact boundary it crossed.</p>
+            <p>Tan also says the team bans <code>useEffect</code> in product code. That is an intentionally strong local policy designed to avoid scattered synchronization logic and hard-to-reason-about state. It should not be copied blindly into every React application. The transferable pattern is to identify a high-cost construct, provide a supported alternative, and make the unsupported path mechanically visible.</p>
+          </section>
+
+          <section id="comments">
+            <p class="eyebrow">Why “no comments” exists here</p>
+            <h2>Prose can become an escape hatch for unresolved design</h2>
+            <p>Tan's most controversial rule is the ban on comments. Her criticism is not that explanatory writing has no value. It is that agents can use comments and Markdown as a place to rationalize an exception: “this is temporary,” “the architecture requires it,” or “do not change this.” The repository then preserves the excuse while the underlying problem remains.</p>
+            <p>In this environment, Grokbot and Dune reportedly removed nearly all comments from the codebase. The slide compares 65,824 comments at the end of July with 1,229 at the time of the talk. Tan treats the remainder as liabilities to inspect rather than documentation to celebrate.</p>
+            <figure class="visual"><img src="images/2026-11-16-lauren-tan-trust-pyramid-agent-code-quality/comments-as-liabilities.jpg?v=20261116" alt="Chart showing a decline from 65,824 comments to 1,229 comments" loading="lazy" /><figcaption><strong>From the video at 08:30.</strong> The numbers are speaker-reported repository counts. The broader idea is to examine whether prose records genuine rationale or merely normalizes debt.</figcaption></figure>
+            <div class="callout warning"><p><strong>Do not generalize the rule without context.</strong> Comments remain valuable for non-obvious invariants, legal requirements, safety constraints, public APIs, and decisions that cannot be encoded directly. Tan's useful challenge is narrower: if a comment repeatedly explains why invalid structure is acceptable, improve the structure.</p></div>
+          </section>
+
+          <section id="verification">
+            <p class="eyebrow">Runtime verification</p>
+            <h2>Completion means evidence from the real product</h2>
+            <p>Once architecture and static checks remove predictable failures, the remaining question is behavioral: did the change actually work for the user? Tan argues that coding agents need their own verification loop. They should launch the application, navigate the relevant workflow, inspect state, collect traces or screenshots, and compare the observed result with the requested outcome.</p>
+            <figure class="visual"><img src="images/2026-11-16-lauren-tan-trust-pyramid-agent-code-quality/runtime-verification.jpg?v=20261116" alt="Slide emphasizing that verification is the most important step" loading="lazy" /><figcaption><strong>From the video at 10:00.</strong> Generated code is only a hypothesis. Verification turns it into a supported claim.</figcaption></figure>
+            <p>A feature map gives the agent a shared vocabulary for the product: which capabilities exist, how users reach them, what controls matter, and what success looks like. Stable CLIs and browser-control tools give it repeatable hands. Together they are stronger than asking every session to improvise a test script from scratch.</p>
+            <div class="loop-grid">
+              <div><h3>Control surface</h3><p>Deterministic commands for launching, navigating, inspecting, tracing, capturing, and resetting the product.</p></div>
+              <div><h3>Product map</h3><p>Versioned knowledge of features, paths, expected states, evidence requirements, and escalation conditions.</p></div>
+            </div>
+            <p>This also changes code review. A reviewer should not need to infer correctness from a diff alone. The pull request can carry a short video, screenshots, a state diagram, test output, a trace comparison, or another artifact that shows what the agent observed.</p>
+          </section>
+
+          <section id="formal">
+            <p class="eyebrow">Formal and generative checks</p>
+            <h2>Cheap agent labor makes previously expensive verification practical</h2>
+            <p>Tan says the team is experimenting with TLA+, Lean, and property-based UI testing. TLA+ models state machines and explores whether all modeled states are handled correctly. Lean checks whether an implementation satisfies a proof obligation. These tools are not replacements for ordinary tests, but they can expose edge cases that are difficult to reach through example-driven testing.</p>
+            <figure class="visual"><img src="images/2026-11-16-lauren-tan-trust-pyramid-agent-code-quality/formal-verification.jpg?v=20261116" alt="Formal verification slide comparing TLA+ state-machine models with Lean proofs" loading="lazy" /><figcaption><strong>From the video at 11:05.</strong> Tan presents TLA+ and Lean as active experiments that found bugs, not as a mature silver bullet for all application code.</figcaption></figure>
+            <p>The economics are the interesting part. Formal methods often fail to spread because writing models, properties, and proofs costs expert time. Agents can reduce that setup cost, generate candidate invariants, and iterate on failed checks. Humans still decide whether the model matches reality and whether the property is worth enforcing.</p>
+            <p>Tan also mentions Bombadil, a property-based approach to UI testing. Instead of scripting one happy path, a system can generate action sequences and search for invariant violations. This is especially useful in stateful interfaces where bugs emerge only after an unusual ordering of actions.</p>
+          </section>
+
+          <section id="economics">
+            <p class="eyebrow">Verification economics</p>
+            <h2>The token budget shifts from writing to proving</h2>
+            <p>One slide quotes an engineer saying that about 90% of daily token spend goes into verifying patches, while only 10–20% goes into creating them. The percentages are informal and internally inconsistent as a total, but the direction matters: when generation becomes cheap, verification becomes the dominant cost.</p>
+            <figure class="visual"><img src="images/2026-11-16-lauren-tan-trust-pyramid-agent-code-quality/verification-budget.jpg?v=20261116" alt="Quoted post saying most daily token spend now goes into verifying patches" loading="lazy" /><figcaption><strong>From the video at 12:15.</strong> Treat the percentages as anecdotal. The durable observation is that trustworthy agent workflows spend heavily on evidence, reruns, and failed-check repair.</figcaption></figure>
+            <p>That is a healthy inversion. A weak agent workflow optimizes for the first patch. A strong one optimizes for the shortest path from uncertain patch to justified completion. More tokens spent after generation can reduce much more expensive human review, incident response, and rollback later.</p>
+          </section>
+
+          <section id="outcomes">
+            <p class="eyebrow">Reported outcomes</p>
+            <h2>Throughput is meaningful only beside quality and operational signals</h2>
+            <p>Tan reports that the Grokbot team merged roughly 11,000 pull requests in October, following a steep month-over-month increase. She also cites 227 contributors, daily stable-client releases, a relative revert rate around 0.5%, and improved application performance. The framing matters: the team did not accept quality loss as the price of speed.</p>
+            <figure class="visual"><img src="images/2026-11-16-lauren-tan-trust-pyramid-agent-code-quality/eleven-thousand-prs.jpg?v=20261116" alt="Chart showing Grokbot team pull requests increasing to 10,926 in October" loading="lazy" /><figcaption><strong>From the video at 13:40.</strong> The slide shows 10,926 PRs for October, rounded to 11,000 in the talk. It does not by itself show PR size, business value, or how many changes were agent-authored.</figcaption></figure>
+            <div class="metric-grid">
+              <div><span class="number">10,926</span><h3>October PRs</h3><p>Speaker-reported team total, rounded to 11,000 in the narration.</p></div>
+              <div><span class="number">227</span><h3>Contributors</h3><p>Reported October contributor count across the development system.</p></div>
+              <div><span class="number">~0.5%</span><h3>Relative revert rate</h3><p>Reported rollback signal; the exact denominator and comparison are not defined in the talk.</p></div>
+            </div>
+            <p>A mature dashboard would pair those figures with escaped defects, incident severity, customer outcomes, review interventions, time to detect failure, and time to recover. Otherwise, teams may optimize for easily counted output while hiding work in smaller PRs or automated churn.</p>
+          </section>
+
+          <section id="factory">
+            <p class="eyebrow">Before the software factory</p>
+            <h2>Do not automate an inner loop you do not trust</h2>
+            <p>Tan asks whether a team should build a software factory: a system that automatically writes, ships, and deploys code. Her answer is conditional. First, make the manual-with-agents loop produce good changes by default. Only then add the outer loop that discovers work and launches it automatically.</p>
+            <figure class="visual"><img src="images/2026-11-16-lauren-tan-trust-pyramid-agent-code-quality/software-factory-foundations.jpg?v=20261116" alt="Slide asking whether to build a software factory" loading="lazy" /><figcaption><strong>From the video at 15:40.</strong> Automation does not repair a weak engineering loop. It increases the rate at which that loop expresses its strengths and failures.</figcaption></figure>
+            <p>In her example, Grokbot connects external signals to bounded engineering work. A report or detected bug can launch a coding project. The agent reproduces the problem, makes a change, verifies it, and opens a pull request. Auto-merge becomes conceivable only because architecture, static checks, and runtime evidence already constrain the result.</p>
+            <figure class="visual"><img src="images/2026-11-16-lauren-tan-trust-pyramid-agent-code-quality/grokbot-outer-loop.jpg?v=20261116" alt="Grokbot outer-loop slide showing an automated bug investigation thread" loading="lazy" /><figcaption><strong>From the video at 16:40.</strong> The outer loop supplies fresh operational context; the inner loop remains responsible for producing and proving a bounded change.</figcaption></figure>
+          </section>
+
+          <section id="playbook">
+            <p class="eyebrow">Practical playbook</p>
+            <h2>Build trust downward, one repeated failure at a time</h2>
+            <ol>
+              <li><strong>Inventory repeated human interventions.</strong> Record what reviewers repeatedly explain, repair, run, or reject.</li>
+              <li><strong>Fix architecture before prompts.</strong> Remove duplicate paths, narrow APIs, and make ownership and dependency direction explicit.</li>
+              <li><strong>Encode known failures mechanically.</strong> Add types, linters, import rules, compilers, tests, and CI checks with useful remediation messages.</li>
+              <li><strong>Give agents a real control surface.</strong> Provide maintained commands for running the product and collecting evidence.</li>
+              <li><strong>Define completion artifacts.</strong> Require screenshots, traces, state transitions, test results, or formal checks appropriate to the risk.</li>
+              <li><strong>Measure quality beside velocity.</strong> Track intervention rate, repeat defects, escaped regressions, rollback, recovery time, and user outcomes.</li>
+              <li><strong>Automate only bounded, observable workflows.</strong> Start with reversible tasks and explicit escalation conditions before adding auto-merge or deployment.</li>
+            </ol>
+            <div class="callout"><p><strong>For agent-platform teams.</strong> Treat persona prompts as the lightest layer. The durable product is a versioned work contract: allowed tools, repository boundaries, state transitions, verification requirements, evidence schema, escalation rules, and ownership. A BA can compose agents safely when those contracts are visible and testable.</p></div>
+          </section>
+
+          <section id="take">
+            <p class="eyebrow">My take</p>
+            <h2>The strongest idea is categorical elimination</h2>
+            <p>The most useful part of this talk is not the PR count or any single Dune rule. It is the habit of asking: can this failure category disappear? A better prompt might reduce the error rate. A better abstraction, type, or dependency boundary can remove the choice that causes the error.</p>
+            <p>That does not make prose, skills, or human judgment obsolete. Novel work still needs interpretation. Local rules can be wrong. Formal models can omit reality. A test suite can prove only what it asserts. The pyramid works when its layers challenge one another: structure narrows possibilities, static checks reject known invalid states, runtime evidence tests the real product, and humans remain accountable for whether the system is solving the right problem.</p>
+            <p>The talk is best read as a software-quality strategy for an era of abundant code. When generating another implementation is cheap, the competitive advantage moves to deciding which implementations are legal, which evidence is sufficient, and how quickly the organization learns from every failure.</p>
+          </section>
+
+          <section id="map">
+            <p class="eyebrow">Video map</p>
+            <h2>Where the main ideas appear</h2>
+            <ul class="chapter-list">
+              <li><div><time>00:00</time><span>Turning “slop” into trusted software</span></div></li>
+              <li><div><time>02:03</time><span>The trust pyramid and investment order</span></div></li>
+              <li><div><time>05:00</time><span>Dune, one folder per feature, and import bans</span></div></li>
+              <li><div><time>06:56</time><span>Comments, Markdown, and shortcut rationalization</span></div></li>
+              <li><div><time>09:40</time><span>Runtime verification and feature maps</span></div></li>
+              <li><div><time>10:50</time><span>TLA+, Lean, and property-based UI testing</span></div></li>
+              <li><div><time>11:51</time><span>Why verification consumes most tokens</span></div></li>
+              <li><div><time>13:32</time><span>11,000 PRs, contributors, releases, and revert rate</span></div></li>
+              <li><div><time>15:11</time><span>Foundations before a software factory</span></div></li>
+              <li><div><time>16:35</time><span>Grokbot as the operational outer loop</span></div></li>
+            </ul>
+          </section>
+
+          <section id="sources">
+            <p class="eyebrow">Sources</p>
+            <h2>Primary talk and related Reading Room notes</h2>
+            <ol>
+              <li><a href="https://www.youtube.com/watch?v=O_zcc6Xl12g">AI Engineer — “All Code Is Slop (Except Mine) — Lauren Tan, SpaceXSI”</a>. Primary 17:31 video, YouTube automatic English transcript, and direct slide captures.</li>
+              <li><a href="2026-10-05-lauren-tan-trustworthy-agents-michelin-kitchen-en.html">Lauren Tan: Build the Environment Before You Scale the Agents</a>. Related talk on verification skills, feature maps, codebases as memory, and the Michelin-kitchen operating model.</li>
+              <li><a href="2026-10-04-lauren-tan-pstack-trust-ladder-2500-prs-en.html">The System Behind 2,500 Agent-Written PRs</a>. Related interview on trust, bounded autonomy, review sampling, and pstack workflows.</li>
+            </ol>
+            <p class="source-note">Source review completed November 16, 2026. All ten article images are direct 1600×900 captures from the public video, cropped to the slide area with player UI, stage branding, and black title bars removed. Product names, team practices, architecture details, and performance figures are presented as Lauren Tan's public account unless independently stated otherwise.</p>
+          </section>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <p>On this page</p>
+          <nav>
+            <a href="#summary">Executive summary</a><a href="#pyramid">Trust pyramid</a><a href="#codebase">Codebase as context</a><a href="#dune">Dune constraints</a><a href="#comments">No-comments rule</a><a href="#verification">Runtime verification</a><a href="#formal">Formal methods</a><a href="#economics">Verification economics</a><a href="#outcomes">Reported outcomes</a><a href="#factory">Software factory</a><a href="#playbook">Practical playbook</a><a href="#take">My take</a><a href="#map">Video map</a><a href="#sources">Sources</a>
+          </nav>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>
